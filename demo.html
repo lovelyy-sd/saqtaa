@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#f6f1e8">
+  <title>Приглашение — SAQTAA</title>
+  <link rel="icon" type="image/svg+xml" href="images/saqtaa-mark.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/style.css?v=20261019">
+  <link rel="stylesheet" href="css/luxury-template.css?v=20261019">
+  <link rel="stylesheet" href="css/polish.css?v=20261019">
+  <script src="js/demo.js?v=20261019" defer></script>
+</head>
+<body class="luxury-demo">
+  <header class="demo-toolbar">
+    <a class="back-link" id="backLink" href="index.html">← <span id="backLabel">Коллекция</span></a>
+    <span class="demo-style-tag" id="templateName">LUXURY</span>
+    <div class="demo-controls">
+      <label class="control-label" for="languageSelect" id="languageLabel">Язык</label>
+      <select id="languageSelect" aria-label="Выберите язык"><option value="ru">Русский</option><option value="kz">Қазақша</option></select>
+      <label class="toggle-control"><input id="photoToggle" type="checkbox" checked><span id="photoLabel">С фото</span></label>
+      <label class="photo-upload"><span id="uploadLabel">Заменить фото</span><input id="photoInput" type="file" accept="image/*"></label>
+    </div>
+  </header>
+
+  <main class="invitation-wrap">
+    <article id="invitation" class="luxury-invitation">
+      <section class="luxury-hero" aria-labelledby="eventTitle">
+        <img class="hero-image" id="inviteImage" alt="Фото пары" decoding="async">
+        <div class="hero-fallback" aria-hidden="true"></div>
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-frame" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <span class="hero-symbol" aria-hidden="true">✦</span>
+          <p class="hero-eyebrow" id="inviteKicker">ПРИГЛАШЕНИЕ НА ТОРЖЕСТВО</p>
+          <h1 id="eventTitle">Свадебное торжество</h1>
+          <div class="hero-flourish" aria-hidden="true"><i></i><span>❧</span><i></i></div>
+          <p class="hero-couple"><span id="groomName">Муж</span><b aria-hidden="true">&</b><span id="brideName">Жена</span></p>
+          <p class="hero-date" id="coverDate">15 АВГУСТА 2027</p>
+        </div>
+        <a class="scroll-cue" href="#invitationText" aria-label="Прокрутить к приглашению"><span aria-hidden="true">⌄</span></a>
+      </section>
+
+      <section class="invitation-intro" id="invitationText">
+        <span class="section-symbol" aria-hidden="true">✧</span>
+        <p class="section-eyebrow" id="inviteOverline">С БОЛЬШОЙ РАДОСТЬЮ</p>
+        <h2 id="inviteHeading">Приглашаем разделить с нами этот особенный день</h2>
+        <p class="intro-copy" id="inviteDescription">Будем счастливы видеть вас рядом и вместе сохранить тёплые воспоминания об этом дне.</p>
+        <div class="thin-flourish" aria-hidden="true"><span>✦</span></div>
+      </section>
+
+      <section class="details-section" aria-labelledby="eventSectionTitle">
+        <p class="section-eyebrow" id="eventSectionKicker">ДАТА И ВРЕМЯ</p>
+        <h2 id="eventSectionTitle">До встречи осталось</h2>
+        <div class="event-date-line"><span id="inviteDate">15 августа 2027</span><i aria-hidden="true">✧</i><span id="inviteTime">18:00</span></div>
+        <div class="event-countdown" id="eventCountdown" aria-live="off">
+          <p id="countdownTitle">До нашего дня осталось</p>
+          <div class="countdown-grid">
+            <div><strong id="countdownDays">000</strong><span id="countdownDaysUnit">дней</span></div>
+            <div><strong id="countdownHours">00</strong><span id="countdownHoursUnit">часов</span></div>
+            <div><strong id="countdownMinutes">00</strong><span id="countdownMinutesUnit">минут</span></div>
+            <div><strong id="countdownSeconds">00</strong><span id="countdownSecondsUnit">секунд</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="venue-section" aria-labelledby="venueName">
+        <span class="section-symbol" aria-hidden="true">❧</span>
+        <p class="section-eyebrow" id="venueLabel">МЕСТО ВСТРЕЧИ</p>
+        <h2 id="venueName">Название ресторана</h2>
+        <p id="venueAddress">Город, адрес</p>
+        <a class="map-link" id="mapLink" href="https://2gis.kz/astana" target="_blank" rel="noopener noreferrer">
+          <svg class="map-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg>
+          <span id="mapLinkLabel">Открыть в 2ГИС</span><span class="map-arrow" aria-hidden="true">↗</span>
+        </a>
+      </section>
+
+      <section class="rsvp-section" id="rsvpSection">
+        <span class="section-symbol" aria-hidden="true">✧</span>
+        <p class="section-eyebrow" id="rsvpOverline">ПОДТВЕРЖДЕНИЕ ПРИСУТСТВИЯ</p>
+        <h2 id="rsvpTitle">Ждём вашего ответа</h2>
+        <p id="rsvpNote">Пожалуйста, подтвердите, сможете ли вы прийти.</p>
+        <form id="rsvpForm">
+          <label class="guest-name-field" for="guestFirstName"><span id="guestFirstNameLabel">Имя</span><input name="firstName" id="guestFirstName" autocomplete="given-name" aria-required="true" aria-invalid="false" placeholder="Введите имя" maxlength="60"></label>
+          <label class="guest-name-field" for="guestLastName"><span id="guestLastNameLabel">Фамилия</span><input name="lastName" id="guestLastName" autocomplete="family-name" aria-required="true" aria-invalid="false" placeholder="Введите фамилию" maxlength="80"></label>
+          <input type="hidden" name="attendance" id="attendanceValue" value="">
+          <div class="rsvp-choices" role="group" aria-labelledby="rsvpTitle">
+            <button class="attendance-button" type="button" data-attendance="yes" aria-pressed="false"><span aria-hidden="true">✧</span><span id="answerYes">Конечно, приду</span></button>
+            <button class="attendance-button" type="button" data-attendance="no" aria-pressed="false"><span aria-hidden="true">✧</span><span id="answerNo">К сожалению, не смогу прийти</span></button>
+            <button class="attendance-button" type="button" data-attendance="maybe" aria-pressed="false"><span aria-hidden="true">✧</span><span id="answerMaybe">Пока не могу ответить</span></button>
+          </div>
+          <button class="attendance-button rsvp-submit" id="rsvpSubmit" type="submit">Отправить ответ</button>
+          <p class="form-message" id="formMessage" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <footer class="invitation-footer">
+        <div class="footer-flourish" aria-hidden="true"><i></i><span>❧</span><i></i></div>
+        <p id="inviteClosing">С нетерпением ждём встречи с вами</p>
+        <span id="inviteBrand">SAQTAA · ЦИФРОВЫЕ ПРИГЛАШЕНИЯ</span>
+      </footer>
+    </article>
+    <p class="demo-disclaimer" id="demoDisclaimer">Демонстрационный шаблон. Данные можно изменить в настройках проекта.</p>
+  </main>
+  <script src="js/config.js"></script>
+</body>
+</html>
