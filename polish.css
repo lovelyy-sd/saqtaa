@@ -1,0 +1,357 @@
+/* SAQTAA — polish layer.
+   Подключается ПОСЛЕ style.css и luxury-template.css и исправляет найденные недостатки вёрстки. */
+
+:root{--gutter:max(22px,calc((100vw - 1240px)/2))}
+
+/* ───────── Общее ───────── */
+:where(a,button,select,input,label):focus-visible{outline:2px solid #a88957;outline-offset:3px}
+img{max-width:100%}
+
+/* ───────── Каталог: единая сетка отступов ───────── */
+.site-header,
+.catalog-hero,
+.design-section,
+.included-section,
+.process-section{padding-inline:var(--gutter)}
+.site-header{position:sticky;top:0;z-index:20;background:#fbfaf7f2;backdrop-filter:blur(10px)}
+.wordmark{letter-spacing:-.04em}
+.header-nav a{padding:8px 0;transition:color .2s}
+.language-switch{transition:border-color .2s,color .2s}
+.language-switch:hover{border-color:#a88957;color:#8e795a}
+
+/* Заголовки: слишком тугой трекинг ухудшал чтение кириллицы */
+.catalog-hero h1,.section-heading h2,.process-section h2{letter-spacing:-.02em}
+.catalog-hero h1{line-height:.98}
+.included-section>h2{letter-spacing:-.015em}
+.catalog-hero .hero-copy{font-size:15px;max-width:400px}
+
+/* ───────── Каталог: обложка-превью справа ───────── */
+.catalog-hero{padding-block:104px 96px}
+.catalog-hero .hero-art{right:var(--gutter);top:84px}
+.hero-art-card{justify-content:flex-end;padding:0 18px 44px;gap:14px;
+  background:linear-gradient(180deg,#0a1a1655 0%,#0a1a1622 32%,#071a17c4 68%,#071a17ee 100%)}
+.art-small{font-size:9px;text-align:center;text-shadow:0 1px 8px #000a}
+.art-date{font-size:9px;text-shadow:0 1px 8px #000a}
+.art-script{font-size:56px;line-height:1;text-shadow:0 2px 18px #0009}
+.art-names{font-size:23px;text-align:center;text-shadow:0 1px 12px #0009}
+.art-index{color:#8b7c67}
+
+/* ───────── Каталог: сетка карточек 3 + 2 по центру ───────── */
+.design-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:34px 24px}
+.design-card{grid-column:span 2;display:flex;flex-direction:column}
+.design-card:nth-child(4){grid-column:2 / span 2}
+.design-card:nth-child(5){grid-column:4 / span 2}
+.design-preview{transition:transform .35s ease,box-shadow .35s ease}
+.design-preview img{transition:transform .6s ease}
+.design-card:hover .design-preview{box-shadow:0 18px 44px #3a2f1f26}
+.design-card:hover .design-preview img{transform:scale(1.025)}
+.card-meta{padding:18px 1px 6px}
+.card-meta p{font-size:12px}
+
+/* Кнопки карточки: два равных действия + одна главная кнопка на всю ширину */
+.card-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto;padding-top:12px}
+.card-actions .small-link,
+.card-actions .small-button{display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:44px;font-size:11px;letter-spacing:.03em;line-height:1.25;padding:10px 12px;transition:all .2s ease}
+.card-actions .small-link:hover{opacity:1;border-color:#a88957;background:#fff;color:#7a6342}
+.card-actions .order-button{grid-column:1 / -1;min-height:48px;font-weight:600;letter-spacing:.05em}
+
+/* Блок «В каждом приглашении» */
+.included-grid article{text-align:center;padding:28px 24px 26px}
+.included-grid p{margin-inline:auto}
+.included-grid article>span{display:block;font-size:24px;line-height:1}
+
+/* «Как заказать» */
+.process-section{padding-block:88px 96px}
+.process-grid{gap:40px}
+
+/* Финальная карточка */
+.brand-footer-name{letter-spacing:-.035em}
+
+/* ───────── Каталог: планшет ───────── */
+@media(max-width:1000px){
+  .design-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .design-card,.design-card:nth-child(4),.design-card:nth-child(5){grid-column:auto}
+  .design-card:last-child:nth-child(odd){grid-column:1 / -1;justify-self:center;width:calc(50% - 12px)}
+}
+
+@media(max-width:800px){
+  .catalog-hero{min-height:0;padding-block:64px 72px}
+  /* картинка больше не наезжает на текст — идёт отдельным блоком под ним */
+  .catalog-hero .hero-art{--w:min(250px,66vw);position:relative;right:auto;top:auto;opacity:1;
+    width:var(--w);height:calc(var(--w) * 1.45);margin:56px auto 30px;transform:rotate(3deg)}
+  .catalog-hero h1{font-size:clamp(46px,12vw,72px);max-width:none}
+  .catalog-hero .hero-copy{max-width:440px}
+  .section-heading{flex-direction:column;align-items:flex-start;gap:14px}
+  .section-heading>p{max-width:none}
+  .design-section{padding-block:72px}
+}
+
+/* ───────── Каталог: телефон ───────── */
+@media(max-width:520px){
+  .site-header{height:60px}
+  .wordmark{font-size:30px}
+  .header-nav{gap:16px;font-size:10px}
+  .language-switch{padding:9px 11px}
+  .catalog-hero .hero-art{--w:min(230px,62vw)}
+  .design-grid{grid-template-columns:1fr;gap:34px}
+  .design-card:last-child:nth-child(odd){width:auto}
+  .process-grid{grid-template-columns:1fr;gap:26px}
+  .included-grid article{text-align:left}
+}
+
+/* ───────── Демо: утечки стилей каталога ───────── */
+/* .rsvp-section из старого шаблона сужал блок ответа до 370px и добавлял лишний отступ сверху */
+.luxury-invitation .rsvp-section{max-width:none;margin-top:0}
+.luxury-invitation.floral .rsvp-section{margin:16px 15px 0}
+.luxury-invitation.emerald .rsvp-section{margin-top:0}
+
+/* Editorial: трекинг −0.065em слипал буквы */
+.luxury-invitation.editorial .hero-copy h1,
+.luxury-invitation.editorial .hero-couple,
+.luxury-invitation.editorial .invitation-intro h2,
+.luxury-invitation.editorial .details-section h2,
+.luxury-invitation.editorial .venue-section h2,
+.luxury-invitation.editorial .rsvp-section h2{letter-spacing:-.03em}
+
+/* ───────── Демо: RSVP ───────── */
+.luxury-invitation{--att-c:#183b32;--att-on:#fff8ec}
+.luxury-invitation.floral{--att-c:#8a5d5f}
+.luxury-invitation.qazaq{--att-c:#745a32}
+.luxury-invitation.editorial{--att-c:#353531;--att-on:#f4f3ef}
+.luxury-invitation.emerald{--att-c:#e0c78e;--att-on:#183b32}
+
+.rsvp-choices{grid-template-columns:1fr;max-width:380px;gap:10px;margin-inline:auto}
+.luxury-invitation .attendance-button:not(.rsvp-submit){
+  justify-content:flex-start;text-align:left;min-height:52px;padding:10px 16px;gap:12px;
+  font-size:13px;letter-spacing:.01em;background:transparent;color:var(--att-c);
+  border:1px solid var(--att-c);box-shadow:none}
+.luxury-invitation .attendance-button:not(.rsvp-submit)>span:first-child{color:var(--att-c);font-size:14px}
+.luxury-invitation .attendance-button:not(.rsvp-submit):hover{background:color-mix(in srgb,var(--att-c) 9%,transparent)}
+.luxury-invitation .attendance-button:not(.rsvp-submit).is-selected{
+  background:var(--att-c);color:var(--att-on);box-shadow:0 8px 20px color-mix(in srgb,var(--att-c) 30%,transparent);transform:none}
+.luxury-invitation .attendance-button:not(.rsvp-submit).is-selected>span:first-child{color:var(--att-on)}
+.luxury-invitation .attendance-maybe,
+.luxury-invitation .attendance-button[data-attendance="maybe"]{border-style:solid}
+.luxury-invitation.editorial .rsvp-choices{margin-left:0}
+.form-message{margin:12px 0 0;text-align:center}
+
+/* ───────── Демо: панель управления ───────── */
+.luxury-demo .demo-toolbar{gap:14px}
+.luxury-demo .demo-controls{gap:10px 12px;flex-wrap:wrap;justify-content:flex-end}
+.luxury-demo .demo-controls select{border-radius:99px;padding:7px 12px}
+.demo-disclaimer{max-width:520px;margin:18px auto 0;text-align:center;line-height:1.6}
+
+@media(max-width:600px){
+  .luxury-demo .demo-toolbar{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 12px;padding:10px 16px}
+  .luxury-demo .back-link{grid-column:1}
+  .luxury-demo .demo-style-tag{grid-column:2;grid-row:1;align-self:center;margin:0}
+  .luxury-demo .demo-controls{grid-column:1 / -1;grid-row:2;justify-content:flex-start;width:100%}
+  .luxury-demo .control-label{display:none}
+  .luxury-demo .photo-upload{margin-left:auto}
+  .luxury-demo .demo-toolbar{position:sticky;top:0}
+}
+@media(max-width:360px){
+  .luxury-demo .photo-upload{margin-left:0}
+}
+
+/* ═════════ Editorial: всё по центру ═════════ */
+.luxury-invitation.editorial .hero-copy,
+.luxury-invitation.editorial .invitation-intro,
+.luxury-invitation.editorial .details-section,
+.luxury-invitation.editorial .venue-section,
+.luxury-invitation.editorial .rsvp-section,
+.luxury-invitation.editorial .invitation-footer{text-align:center}
+.luxury-invitation.editorial .hero-copy{align-items:center}
+.luxury-invitation.editorial .hero-copy h1{margin-inline:auto}
+.luxury-invitation.editorial .hero-divider,
+.luxury-invitation.editorial .ornament-line{margin-inline:auto}
+.luxury-invitation.editorial .rsvp-choices,
+.luxury-invitation.editorial .guest-name-field{margin-inline:auto}
+.luxury-invitation.editorial .event-countdown,
+.luxury-invitation.editorial .details-section>*{margin-inline:auto}
+
+/* ═════════ Общая «красота»: типографика, ритм, детали ═════════ */
+.luxury-invitation{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.luxury-invitation .invitation-intro h2,
+.luxury-invitation .details-section h2,
+.luxury-invitation .venue-section h2,
+.luxury-invitation .rsvp-section h2{line-height:1.08;text-wrap:balance}
+.luxury-invitation .intro-copy,.luxury-invitation .rsvp-section>p{text-wrap:balance}
+.luxury-invitation{box-shadow:0 30px 90px #2a1f1426,0 2px 0 #fff8 inset}
+
+/* Обратный отсчёт: стеклянная карточка с мягкой тенью */
+.luxury-invitation .event-countdown{box-shadow:0 14px 34px #3a2a1418,inset 0 1px 0 #ffffff66;backdrop-filter:blur(3px)}
+.luxury-invitation .event-countdown strong,.luxury-invitation .event-countdown b{font-variant-numeric:tabular-nums}
+
+/* Кнопка 2ГИС и отправки: чуть более живой отклик */
+.luxury-invitation .map-link,.luxury-demo #rsvpSubmit{transition:transform .25s ease,box-shadow .25s ease,background .25s ease}
+.luxury-invitation .map-link:hover{transform:translateY(-2px)}
+
+/* Поля ввода */
+.guest-name-field input{border-radius:6px;transition:border-color .2s,box-shadow .2s,background .2s}
+.guest-name-field input:focus{background:#fff}
+.luxury-invitation.emerald .guest-name-field input{background:#183b32;border-color:#6e795e;color:#f3e8cc}
+.luxury-invitation.emerald .guest-name-field input::placeholder{color:#f3e8cc80}
+
+/* Фото в обложке — мягкое «дыхание» при загрузке */
+@media(prefers-reduced-motion:no-preference){
+  .luxury-hero .hero-image{animation:heroZoom 1.8s cubic-bezier(.2,.7,.25,1) both}
+  @keyframes heroZoom{from{transform:scale(1.07);opacity:.2}to{transform:scale(1);opacity:1}}
+  .luxury-hero .hero-copy>*{animation:heroRise .9s cubic-bezier(.2,.7,.25,1) both}
+  .luxury-hero .hero-copy>*:nth-child(2){animation-delay:.12s}
+  .luxury-hero .hero-copy>*:nth-child(3){animation-delay:.24s}
+  .luxury-hero .hero-copy>*:nth-child(4){animation-delay:.36s}
+  .luxury-hero .hero-copy>*:nth-child(5){animation-delay:.48s}
+  .luxury-hero .hero-copy>*:nth-child(6){animation-delay:.6s}
+  @keyframes heroRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+}
+
+/* Luxury: золотой градиент на разделителях и заголовке обложки */
+.luxury-invitation.luxury .hero-copy h1{text-shadow:0 2px 30px #000a,0 0 2px #0006}
+.luxury-invitation.luxury .details-section{background:linear-gradient(180deg,#f0e9dc,#f6f0e4)}
+
+/* Floral: мягкая пудровая виньетка и тень арки */
+.luxury-invitation.floral .luxury-hero{box-shadow:0 20px 50px #79585a30}
+.luxury-invitation.floral .invitation-intro{background:radial-gradient(ellipse at 50% 0,#fdf3f0,#faf4f1 70%)}
+.luxury-invitation.floral .details-section{background:linear-gradient(180deg,#f4e9e5,#f8eeea)}
+
+/* Qazaq: орнаментальная кайма по краям секций */
+.luxury-invitation.qazaq .invitation-intro,
+.luxury-invitation.qazaq .venue-section{background-image:
+  repeating-linear-gradient(45deg,transparent 0 25px,#e4d6b922 26px,#e4d6b922 27px,transparent 28px 52px),
+  repeating-linear-gradient(-45deg,transparent 0 25px,#e4d6b922 26px,#e4d6b922 27px,transparent 28px 52px)}
+.luxury-invitation.qazaq .invitation-footer{background:linear-gradient(180deg,#f5efdf,#efe5c8)}
+
+/* Editorial: журнальные линейки и крупные акценты */
+.luxury-invitation.editorial .invitation-intro h2,
+.luxury-invitation.editorial .venue-section h2{font-weight:300}
+.luxury-invitation.editorial .invitation-intro,
+.luxury-invitation.editorial .venue-section{border-top:1px solid #d6d4cc}
+.luxury-invitation.editorial .hero-copy h1{letter-spacing:-.02em;line-height:1.02}
+.luxury-invitation.editorial .invitation-footer{border-top:1px solid #d6d4cc}
+.luxury-invitation.editorial .attendance-button:not(.rsvp-submit){justify-content:center;text-align:center}
+
+/* Emerald: золотое свечение вокруг рамок и фото */
+.luxury-invitation.emerald .luxury-hero .hero-image{filter:saturate(1.05) contrast(1.03)}
+.luxury-invitation.emerald .invitation-intro,
+.luxury-invitation.emerald .venue-section,
+.luxury-invitation.emerald .rsvp-section{box-shadow:0 0 0 1px #c9ad7022,0 18px 40px #07150f55,inset 0 0 60px #0a24;}
+.luxury-invitation.emerald .invitation-footer{background:linear-gradient(180deg,#173b33,#102d27)}
+
+/* Editorial: центрируем оставшиеся элементы, которые стили шаблона прижимали влево */
+.luxury-invitation.editorial .hero-flourish,
+.luxury-invitation.editorial .thin-flourish,
+.luxury-invitation.editorial .event-date-line,
+.luxury-invitation.editorial .footer-flourish{justify-content:center;margin-inline:auto}
+.luxury-invitation.editorial .hero-date,
+.luxury-invitation.editorial .hero-eyebrow,
+.luxury-invitation.editorial .section-eyebrow,
+.luxury-invitation.editorial .section-symbol,
+.luxury-invitation.editorial .intro-copy{text-align:center;margin-inline:auto}
+.luxury-invitation.editorial .hero-copy>*{margin-inline:auto}
+.luxury-invitation.editorial .event-date-line{border-inline:0}
+.luxury-invitation.editorial .map-link{margin-inline:auto}
+
+/* ═════════ Обложки 3–5: заголовок поверх фото (как у Luxury и Floral) ═════════ */
+.luxury-invitation.qazaq:not(.no-photo) .luxury-hero,
+.luxury-invitation.editorial:not(.no-photo) .luxury-hero,
+.luxury-invitation.emerald:not(.no-photo) .luxury-hero{
+  display:block;position:relative;height:760px;min-height:700px;max-height:none;overflow:hidden;
+  background-color:#1d1a15;grid-template-rows:none}
+.luxury-invitation.qazaq:not(.no-photo) .hero-image,
+.luxury-invitation.editorial:not(.no-photo) .hero-image,
+.luxury-invitation.emerald:not(.no-photo) .hero-image{
+  position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;margin:0;
+  object-fit:cover;object-position:center 22%;grid-row:auto}
+.luxury-invitation.qazaq:not(.no-photo) .hero-fallback,
+.luxury-invitation.editorial:not(.no-photo) .hero-fallback,
+.luxury-invitation.emerald:not(.no-photo) .hero-fallback{display:block}
+.luxury-invitation.qazaq:not(.no-photo) .hero-shade,
+.luxury-invitation.editorial:not(.no-photo) .hero-shade,
+.luxury-invitation.emerald:not(.no-photo) .hero-shade{display:block;position:absolute;inset:0}
+.luxury-invitation.qazaq:not(.no-photo) .hero-shade{background:linear-gradient(180deg,#2a1d0a14 0%,#2a1d0a00 30%,#2b1e0acc 72%,#22170af2 100%)}
+.luxury-invitation.editorial:not(.no-photo) .hero-shade{background:linear-gradient(180deg,#0a0a0a22 0%,#0a0a0a00 32%,#0a0a0acc 70%,#0a0a0af5 100%)}
+.luxury-invitation.emerald:not(.no-photo) .hero-shade{background:linear-gradient(180deg,#07211a14 0%,#07211a00 30%,#0a2b22cc 70%,#071a15f5 100%)}
+
+/* рамка поверх фото */
+.luxury-invitation.qazaq:not(.no-photo) .hero-frame,
+.luxury-invitation.editorial:not(.no-photo) .hero-frame,
+.luxury-invitation.emerald:not(.no-photo) .hero-frame{position:absolute;inset:18px;width:auto;height:auto;aspect-ratio:auto;bottom:18px;pointer-events:none}
+.luxury-invitation.editorial:not(.no-photo) .hero-frame{inset:20px;border:1px solid #f4f3efcc}
+
+/* текст — внизу фото, по центру */
+.luxury-invitation.qazaq:not(.no-photo) .hero-copy,
+.luxury-invitation.editorial:not(.no-photo) .hero-copy,
+.luxury-invitation.emerald:not(.no-photo) .hero-copy{
+  position:absolute;left:28px;right:28px;top:auto;bottom:13%;width:auto;min-height:0;height:auto;margin:0;padding:0;
+  background:none;background-image:none;box-shadow:none;border:0;z-index:3;
+  display:block;text-align:center;text-shadow:0 2px 24px #000a,0 0 2px #0006}
+.luxury-invitation.qazaq:not(.no-photo) .hero-copy>*,
+.luxury-invitation.editorial:not(.no-photo) .hero-copy>*,
+.luxury-invitation.emerald:not(.no-photo) .hero-copy>*{margin-inline:auto}
+.luxury-invitation.qazaq:not(.no-photo) .hero-copy h1,
+.luxury-invitation.editorial:not(.no-photo) .hero-copy h1,
+.luxury-invitation.emerald:not(.no-photo) .hero-copy h1{color:#fff9ef;max-width:430px;margin:0 auto;line-height:1}
+.luxury-invitation.qazaq:not(.no-photo) .hero-eyebrow{color:#efd9a6}
+.luxury-invitation.editorial:not(.no-photo) .hero-eyebrow{color:#f0eee6}
+.luxury-invitation.emerald:not(.no-photo) .hero-eyebrow{color:#e8d29c}
+.luxury-invitation.qazaq:not(.no-photo) .hero-couple{color:#fff9ef}
+.luxury-invitation.qazaq:not(.no-photo) .hero-date,
+.luxury-invitation.editorial:not(.no-photo) .hero-date{color:#f3ead4}
+.luxury-invitation.emerald:not(.no-photo) .hero-date{color:#e8d29c}
+.luxury-invitation.qazaq:not(.no-photo) .hero-symbol,
+.luxury-invitation.emerald:not(.no-photo) .hero-symbol{color:#e6cd94}
+.luxury-invitation.editorial:not(.no-photo) .hero-symbol{color:#f0eee6}
+.luxury-invitation.editorial:not(.no-photo) .hero-flourish{color:#f0eee6}
+.luxury-invitation.editorial:not(.no-photo) .hero-flourish i{background:#f0eee699}
+.luxury-invitation.editorial:not(.no-photo) .hero-copy h1{font-size:clamp(38px,9vw,56px);letter-spacing:-.02em}
+
+/* стрелка «вниз» снова светлая, как у Luxury */
+.luxury-invitation.qazaq:not(.no-photo) .scroll-cue,
+.luxury-invitation.editorial:not(.no-photo) .scroll-cue,
+.luxury-invitation.emerald:not(.no-photo) .scroll-cue{color:#f4e8d1;border-color:#e6d4aeaa;background:#0003;bottom:30px}
+
+/* Emerald: арка, как у Floral */
+.luxury-invitation.emerald:not(.no-photo) .luxury-hero{
+  margin:18px 14px 0;width:calc(100% - 28px);border-radius:50% 50% 8px 8px / 22% 22% 8px 8px;
+  box-shadow:0 22px 50px #07150f66}
+.luxury-invitation.emerald:not(.no-photo) .hero-frame{border:1px solid #e0c78eaa;border-radius:50% 50% 6px 6px / 21% 21% 6px 6px;inset:14px}
+.luxury-invitation.emerald:not(.no-photo) .hero-copy{bottom:11%}
+
+@media(max-width:600px){
+  .luxury-invitation.qazaq:not(.no-photo) .luxury-hero,
+  .luxury-invitation.editorial:not(.no-photo) .luxury-hero,
+  .luxury-invitation.emerald:not(.no-photo) .luxury-hero{height:calc(100svh - 120px);min-height:640px;max-height:740px}
+  .luxury-invitation.emerald:not(.no-photo) .luxury-hero{margin:12px 10px 0;width:calc(100% - 20px)}
+  .luxury-invitation.qazaq:not(.no-photo) .hero-copy,
+  .luxury-invitation.editorial:not(.no-photo) .hero-copy,
+  .luxury-invitation.emerald:not(.no-photo) .hero-copy{left:20px;right:20px}
+}
+
+/* ═════════ Режим «без фото» ═════════ */
+/* «Муж & Жена» нужно только свадебным дизайнам; у юбилея и дня рождения скрываем всегда */
+.luxury-invitation.non-wedding .hero-couple{display:none!important}
+/* имена у свадебных дизайнов были белыми на светлом фоне */
+.luxury-invitation.no-photo.luxury .hero-couple{color:#7d6538}
+.luxury-invitation.no-photo.luxury .hero-couple b{color:#b89650}
+.luxury-invitation.no-photo.floral .hero-couple{color:#a36f70}
+.luxury-invitation.no-photo.floral .hero-couple b{color:#c79a8f}
+.luxury-invitation.no-photo.qazaq .hero-couple{color:#795f35}
+.luxury-invitation.no-photo .hero-copy{text-shadow:none}
+.luxury-invitation.no-photo.luxury .hero-copy h1{text-shadow:none}
+/* Editorial без фото — по центру */
+.luxury-invitation.no-photo.editorial .hero-copy{align-items:center;text-align:center}
+.luxury-invitation.no-photo.editorial .hero-copy h1{margin-inline:auto}
+.luxury-invitation.qazaq:not(.no-photo) .hero-shade,
+.luxury-invitation.editorial:not(.no-photo) .hero-shade,
+.luxury-invitation.emerald:not(.no-photo) .hero-shade{inset:0;width:100%;height:100%;border-radius:0;z-index:1}
+.luxury-invitation.qazaq:not(.no-photo) .luxury-hero:after{inset:60% 0 0;opacity:.12}
+
+/* Emerald: воздух между карточками */
+.luxury-invitation.emerald .invitation-intro{margin-top:16px}
+.luxury-invitation.emerald .venue-section,
+.luxury-invitation.emerald .invitation-intro{margin-bottom:16px}
+.luxury-invitation.emerald .venue-section{padding-bottom:52px}
+.luxury-invitation.emerald .rsvp-section{margin-bottom:8px}
+.luxury-invitation.emerald .details-section{margin-top:0}
