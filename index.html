@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SAQTAA — цифровые приглашения на той</title>
+<meta name="description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta name="theme-color" content="#0F4A38">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F4A38'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23D9BC7F' font-family='Georgia,serif'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SAQTAA — цифровые приглашения на той">
+<meta property="og:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SAQTAA — цифровые приглашения на той">
+<meta name="twitter:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ БАЗА ============ */
+:root{
+  --paper:#F5EFE2; --paper2:#EFE6D2; --card:#FFFDF6;
+  --ink:#182720; --ink2:#46584D;
+  --em:#0F4A38; --em-deep:#0A3527;
+  --gold:#B98E45; --gold-soft:#D9BC7F;
+  --burg:#7C2230;
+  --hair:rgba(24,39,32,.15);
+  --fd:"Playfair Display",Georgia,serif;
+  --fb:"Manrope",system-ui,sans-serif;
+  --r:18px; --pad:clamp(18px,5vw,24px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:86px}
+body{
+  font-family:var(--fb);color:var(--ink);background:var(--paper);
+  background-image:radial-gradient(rgba(24,39,32,.05) 1px,transparent 1px);
+  background-size:22px 22px;-webkit-font-smoothing:antialiased;line-height:1.55;
+}
+body::after{content:"";position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.55'/></svg>")}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;background:none;border:0;color:inherit}
+ul,ol{list-style:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+::selection{background:var(--gold-soft);color:var(--em-deep)}
+
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);display:inline-flex;align-items:center;gap:.6em}
+.eyebrow::before{content:"✦";font-size:.9em}
+h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-.01em}
+.section{padding:clamp(56px,12vw,110px) var(--pad)}
+.wrap{max-width:1180px;margin:0 auto}
+
+/* появление блоков при прокрутке */
+[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+[data-reveal].in{opacity:1;transform:none}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:52px;padding:.9em 1.5em;border-radius:999px;font-weight:700;font-size:.95rem;letter-spacing:.02em;white-space:nowrap;transition:transform .25s,box-shadow .25s,background .25s,color .25s,border-color .25s}
+.btn .ar{transition:transform .25s}
+.btn:hover .ar{transform:translateX(4px)}
+.btn:active{transform:scale(.97)}
+.btn-solid{background:var(--em);color:#F6F1E4}
+.btn-solid:hover{background:var(--em-deep);box-shadow:0 14px 28px -14px rgba(10,53,39,.6)}
+.btn-line{border:1px solid var(--hair);color:var(--ink)}
+.btn-line:hover{border-color:var(--em);color:var(--em)}
+.btn-gold{background:var(--gold);color:#241A08}
+.btn-gold:hover{background:var(--gold-soft)}
+
+/* ============ БЕГУЩАЯ СТРОКА ============ */
+.marquee{background:var(--em-deep);color:var(--gold-soft);overflow:hidden;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+.marquee-track{display:flex;width:max-content;animation:mq 30s linear infinite}
+.marquee-track span{padding:.7em 0;white-space:nowrap}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ============ ШАПКА ============ */
+.head{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--pad);transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.head.scrolled{background:rgba(245,239,226,.94);backdrop-filter:blur(8px);border-color:var(--hair)}
+.logo{font-family:var(--fd);font-weight:800;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:.3em;min-height:44px}
+.logo i{font-style:normal;color:var(--gold)}
+.head-nav{display:none;gap:28px;font-size:.9rem;font-weight:600}
+.head-nav a{position:relative;padding:10px 0}
+.head-nav a::after{content:"";position:absolute;left:0;bottom:6px;height:1px;width:0;background:var(--gold);transition:width .3s}
+.head-nav a:hover::after{width:100%}
+.head-right{display:flex;align-items:center;gap:10px}
+.lang{display:inline-flex;align-items:center;gap:.45em;min-height:44px;padding:0 12px;font-size:.75rem;font-weight:800;letter-spacing:.1em;border:1px solid var(--hair);border-radius:999px}
+.lang span{opacity:.45;transition:opacity .2s,color .2s}
+.lang span.on{opacity:1;color:var(--em)}
+.lang i{font-style:normal;color:var(--gold)}
+.burger{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--hair);border-radius:999px}
+.burger div{width:20px;height:12px;position:relative}
+.burger div::before,.burger div::after{content:"";position:absolute;left:0;width:100%;height:2px;background:var(--ink);transition:transform .3s,top .3s}
+.burger div::before{top:0}.burger div::after{top:10px}
+body.menu-open .burger div::before{top:5px;transform:rotate(45deg)}
+body.menu-open .burger div::after{top:5px;transform:rotate(-45deg)}
+
+.mmenu{position:fixed;inset:0;z-index:90;background:var(--em-deep);color:#F2EBDA;display:flex;flex-direction:column;padding:96px var(--pad) 40px;transform:translateY(-102%);transition:transform .5s cubic-bezier(.22,.8,.24,1);
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='44'><path d='M80 38 C80 22 62 24 62 14 a7 7 0 1 1 14 2 M80 38 C80 22 98 24 98 14 a7 7 0 1 0 -14 2' fill='none' stroke='%23D9BC7F' stroke-opacity='.08' stroke-width='1.5' stroke-linecap='round'/></svg>")}
+body.menu-open .mmenu{transform:none}
+.mmenu nav{display:flex;flex-direction:column;gap:4px;margin:auto 0}
+.mmenu a.big{font-family:var(--fd);font-size:clamp(2rem,8vw,2.8rem);padding:12px 0;display:flex;align-items:baseline;gap:16px;border-bottom:1px solid rgba(217,188,127,.18);opacity:0;transform:translateY(18px);transition:opacity .4s,transform .4s}
+body.menu-open .mmenu a.big{opacity:1;transform:none}
+.mmenu a.big:nth-child(2){transition-delay:.08s}.mmenu a.big:nth-child(3){transition-delay:.16s}
+.mmenu a.big sup{font-family:var(--fb);font-size:.7rem;color:var(--gold-soft);letter-spacing:.2em}
+.mmenu .mm-foot{display:flex;flex-direction:column;gap:14px}
+body.menu-open{overflow:hidden}
+
+/* ============ ОТКРЫТИЕ ============ */
+.hero{padding:clamp(28px,6vw,60px) var(--pad) clamp(56px,10vw,90px);position:relative;overflow:hidden}
+.hero .wrap{display:grid;gap:clamp(36px,7vw,60px);align-items:center}
+.star{position:absolute;color:var(--gold);opacity:.55;font-size:1.1rem;animation:tw 4s ease-in-out infinite}
+.star.s2{animation-delay:1.2s;font-size:.8rem}.star.s3{animation-delay:2.1s;font-size:1.5rem}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.9)}50%{opacity:.7;transform:scale(1.1)}}
+.hero-txt h1{font-size:clamp(2.4rem,9.5vw,4.6rem);margin:.5em 0 .45em;font-weight:800}
+.hero-txt h1 em{display:block;font-style:italic;font-weight:600;color:var(--em)}
+.hero-lead{max-width:46ch;color:var(--ink2);font-size:clamp(.98rem,2.6vw,1.08rem)}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 30px}
+.hero-stats{display:flex;flex-wrap:wrap;gap:8px 22px;border-top:1px solid var(--hair);padding-top:18px;font-size:.85rem;color:var(--ink2)}
+.hero-stats b{font-family:var(--fd);font-size:1.5rem;color:var(--ink);margin-right:.35em}
+
+.invite-wrap{position:relative;max-width:390px;margin:0 auto;width:100%;animation:sway 7s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(-1.1deg) translateY(-7px)}}
+.invite-wrap::before,.invite-wrap::after{content:"";position:absolute;inset:0;background:var(--card);border:1px solid var(--hair);border-radius:10px;z-index:-1}
+.invite-wrap::before{transform:rotate(3.5deg) translate(8px,6px)}
+.invite-wrap::after{transform:rotate(-5deg) translate(-9px,10px);opacity:.7}
+.invite{background:var(--card);border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 60%,transparent);border-radius:10px;padding:clamp(22px,6vw,34px) clamp(18px,5vw,30px);text-align:center;box-shadow:0 30px 60px -30px rgba(16,42,32,.4);position:relative;transition:border-color .5s}
+.invite::before{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 50%,transparent);border-radius:6px;pointer-events:none;transition:border-color .5s}
+.invite.t-lux{--inv-acc:#B98E45}.invite.t-flor{--inv-acc:#C08379}.invite.t-qaz{--inv-acc:#9E4453}
+.invite.t-edit{--inv-acc:#5A5A5A}.invite.t-emer{--inv-acc:#2E7B62}.invite.t-tus{--inv-acc:#C98A2E}
+.orn-svg{width:120px;color:var(--inv-acc,var(--gold));margin:0 auto;transition:color .5s}
+.invite .names{font-family:var(--fd);font-size:clamp(2.2rem,8vw,2.8rem);font-weight:700;letter-spacing:.06em;margin:8px 0 2px}
+.invite .sub{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink2)}
+.cycle-tag{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--inv-acc,var(--gold));font-weight:700;margin-top:6px;transition:color .5s}
+.swap-target{transition:opacity .32s,transform .32s}
+.invite.swapping .swap-target{opacity:0;transform:translateY(8px)}
+.invite .date{font-size:.85rem;color:var(--inv-acc,var(--gold));font-weight:700;letter-spacing:.12em;margin:14px 0;transition:color .5s}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.cd>div{border:1px solid var(--hair);background:rgba(185,142,69,.07);border-radius:8px;padding:9px 2px 7px}
+.cd b{display:block;font-family:var(--fd);font-size:clamp(1.15rem,4.5vw,1.45rem);font-weight:700}
+.cd span{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.invite .tags{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);margin-top:14px}
+.invite .tags b{color:var(--inv-acc,var(--gold))}
+.hero-dots{display:flex;gap:6px;justify-content:center;margin-top:16px}
+.hero-dots button{width:26px;height:26px;position:relative;display:grid;place-items:center}
+.hero-dots button::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--hair);transition:background .25s,transform .25s}
+.hero-dots button.on::after{background:var(--gold);transform:scale(1.35)}
+
+/* ============ ВОЗМОЖНОСТИ ============ */
+.feat-h{display:flex;flex-direction:column;gap:10px;margin-bottom:clamp(24px,5vw,44px)}
+.feat-h h2{font-size:clamp(1.8rem,6.5vw,3rem)}
+.feat-list li{display:grid;grid-template-columns:74px 1fr;gap:14px 18px;align-items:start;padding:clamp(20px,4vw,30px) 6px;border-top:1px solid var(--hair);transition:background .3s,padding-left .3s}
+.feat-list li:last-child{border-bottom:1px solid var(--hair)}
+.feat-list li:hover{background:rgba(185,142,69,.06);padding-left:14px}
+.f-no{font-family:var(--fd);font-style:italic;font-size:1.05rem;color:var(--gold);padding-top:.2em;transition:transform .3s}
+.feat-list li:hover .f-no{transform:translateY(-3px) scale(1.1)}
+.feat-list h3{font-size:clamp(1.15rem,4vw,1.5rem);margin-bottom:4px}
+.feat-list p{color:var(--ink2);font-size:.95rem;max-width:52ch}
+
+/* ============ КОЛЛЕКЦИЯ ============ */
+.coll-head{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.coll-head h2{font-size:clamp(1.8rem,6.5vw,3rem)}
+.coll-head p{color:var(--ink2);max-width:56ch}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:6px 0 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--hair);font-size:.85rem;font-weight:700;background:var(--card);transition:all .25s}
+.chip:hover{border-color:var(--gold)}
+.chip.on{background:var(--em);border-color:var(--em);color:#F6F1E4}
+
+.rail-zone{position:relative}
+.cards{display:grid;grid-auto-flow:column;grid-auto-columns:min(82vw,340px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 22px;scrollbar-width:none}
+.cards::-webkit-scrollbar{display:none}
+.card{scroll-snap-align:center;background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .35s,box-shadow .35s,opacity .3s}
+.card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -26px rgba(16,42,32,.35)}
+.card.off{opacity:0;transform:scale(.94);pointer-events:none}
+.preview{position:relative;aspect-ratio:4/4.6;overflow:hidden;display:grid;place-items:center;text-align:center}
+.p-no{position:absolute;bottom:12px;left:14px;font-size:.62rem;letter-spacing:.2em;font-weight:700;opacity:.85;z-index:2}
+.p-tag{position:absolute;top:10px;right:12px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;border:1px solid currentColor;border-radius:999px;padding:5px 10px;opacity:.85;z-index:2}
+.badge{position:absolute;top:12px;left:12px;z-index:2;font-size:.58rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase;border-radius:999px;padding:5px 11px;color:#241A08;background:var(--gold)}
+.badge.new{background:var(--em);color:#F6F1E4}
+
+.p-luxury{background:radial-gradient(120% 100% at 50% 0%,#16281F,#0C1712);color:var(--gold-soft)}
+.p-luxury .p-frame{position:absolute;inset:14px;border:1px solid rgba(217,188,127,.65);outline:1px solid rgba(217,188,127,.3);outline-offset:5px;display:grid;place-content:center;gap:8px;padding:16px}
+.p-luxury strong{font-family:var(--fd);font-size:2.1rem;letter-spacing:.3em;transition:letter-spacing .5s;text-indent:.3em}
+.p-luxury:hover strong{letter-spacing:.45em}
+.p-luxury em{font-size:.6rem;letter-spacing:.34em;text-transform:uppercase;font-style:normal;color:#EFE3C4}
+.p-floral{background:linear-gradient(180deg,#F8EDE4,#EFD6C8);color:var(--burg)}
+.p-arch{width:58%;aspect-ratio:3/4.1;border-radius:999px 999px 10px 10px;background:linear-gradient(180deg,#FFFBF4,#F6E4D8);border:1px solid rgba(124,34,48,.25);display:grid;place-content:center;gap:6px}
+.p-arch strong{font-family:var(--fd);font-style:italic;font-size:1.7rem}
+.p-arch span{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase}
+.flor{position:absolute;font-size:1.1rem;color:#C98A8A;transition:transform .6s}
+.p-floral:hover .flor{transform:rotate(90deg) scale(1.25)}
+.p-qazaq{background:linear-gradient(180deg,#7C2230,#5E1824);color:#F2E3C8}
+.q-orn{position:absolute;left:10px;right:10px;color:var(--gold-soft);transition:transform .5s}
+.q-orn.top{top:36px}.q-orn.bot{bottom:10px;transform:scaleY(-1)}
+.p-qazaq:hover .q-orn.top{transform:translateX(6px)}
+.p-qazaq:hover .q-orn.bot{transform:scaleY(-1) translateX(-6px)}
+.q-mid strong{font-family:var(--fd);font-size:1.9rem;letter-spacing:.12em;display:block}
+.q-mid span{font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold-soft)}
+.p-edit{background:#F3EFE5;color:var(--ink)}
+.p-edit .big50{font-family:var(--fd);font-weight:800;font-size:clamp(5rem,22vw,6.5rem);line-height:.9;transition:transform .45s}
+.p-edit:hover .big50{transform:translateY(-6px)}
+.p-edit .rule{width:70%;height:1px;background:var(--ink);margin:12px auto}
+.p-edit .lab{font-size:.6rem;letter-spacing:.4em;text-transform:uppercase}
+.p-edit .dot{position:absolute;top:16px;right:18px;width:10px;height:10px;border-radius:50%;background:var(--burg)}
+.p-emer{background:linear-gradient(180deg,#0E4D3C,#083527);color:var(--gold-soft)}
+.e-frame{width:56%;aspect-ratio:3/4;border-radius:999px 999px 8px 8px;border:1px solid rgba(217,188,127,.7);box-shadow:inset 0 0 0 6px rgba(217,188,127,.12);display:grid;place-content:center;font-size:1.6rem;transition:box-shadow .4s}
+.p-emer:hover .e-frame{box-shadow:inset 0 0 0 6px rgba(217,188,127,.2),0 0 34px rgba(217,188,127,.25)}
+.p-emer strong{font-family:var(--fd);font-size:1.5rem;margin-top:12px;display:block}
+.p-emer span{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase}
+.p-tusau{background:linear-gradient(180deg,#F8E8C8,#F2D9A8);color:#5C4322}
+.t-sun{position:absolute;top:16px;left:50%;translate:-50% 0;font-size:1.9rem;color:#D89A3E;animation:spin 22s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.p-tusau strong{font-family:var(--fd);font-size:1.7rem}
+.t-age{display:inline-block;margin-top:8px;border:1px solid #B98E45;border-radius:999px;padding:4px 14px;font-size:.68rem;letter-spacing:.2em}
+.t-steps span{position:absolute;font-size:1rem;opacity:.45;transition:opacity .3s}
+.p-tusau:hover .t-steps span{opacity:1}
+.t-steps span:nth-child(1){bottom:22%;left:16%}.t-steps span:nth-child(2){bottom:30%;left:38%;transition-delay:.08s}.t-steps span:nth-child(3){bottom:24%;right:20%;transition-delay:.16s}
+
+.card-info{padding:18px 18px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
+.ci-top{display:flex;justify-content:space-between;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
+.ci-top b{color:var(--gold)}
+.ci-name{font-size:1.35rem}
+.ci-name em{font-style:italic;color:var(--em);font-weight:600}
+.ci-desc{color:var(--ink2);font-size:.9rem;flex:1}
+.ci-feats{display:flex;gap:7px;flex-wrap:wrap}
+.ci-feats li{font-size:.66rem;font-weight:700;letter-spacing:.08em;border:1px solid var(--hair);border-radius:999px;padding:6px 11px;color:var(--ink2)}
+.ci-feats li::before{content:"✓ ";color:var(--gold)}
+.ci-btns{display:grid;grid-template-columns:1.4fr 1fr;gap:9px;margin-top:6px}
+.ci-btns .btn{min-height:48px;padding:.7em 1em;font-size:.85rem}
+.swipe-hint{font-size:.75rem;color:var(--ink2);letter-spacing:.12em;display:flex;align-items:center;gap:8px}
+.swipe-hint::after{content:"⟶";animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(6px)}}
+.rail-nav{display:none;position:absolute;top:-64px;right:0;gap:8px}
+.rail-nav button{width:46px;height:46px;border-radius:50%;border:1px solid var(--hair);background:var(--card);font-size:1.1rem;transition:all .25s}
+.rail-nav button:hover{background:var(--em);color:#F6F1E4;border-color:var(--em)}
+
+/* ============ ПРОЦЕСС ============ */
+.steps{position:relative;display:grid;gap:30px;padding-left:26px}
+.steps::before{content:"";position:absolute;left:21px;top:12px;bottom:12px;border-left:2px dashed rgba(185,142,69,.5)}
+.steps li{position:relative;display:grid;gap:6px}
+.st-n{position:absolute;left:-26px;top:0;width:44px;height:44px;border-radius:50%;background:var(--paper);border:1px solid var(--gold);color:var(--em);font-family:var(--fd);font-weight:700;display:grid;place-items:center;font-size:1rem;transition:background .3s,color .3s,transform .3s}
+.steps li:hover .st-n{background:var(--em);color:var(--gold-soft);transform:scale(1.08)}
+.steps h3{font-size:1.3rem;padding-left:30px}
+.steps p{color:var(--ink2);padding-left:30px;max-width:46ch}
+.st-chip{padding-left:30px;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
+
+/* ============ ЦИТАТА ============ */
+.quote{background:var(--paper2);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);text-align:center;padding:clamp(48px,9vw,80px) var(--pad)}
+.quote .qmark{font-family:var(--fd);font-size:3rem;color:var(--gold);line-height:0}
+.quote p{font-family:var(--fd);font-style:italic;font-size:clamp(1.35rem,4.6vw,2.1rem);max-width:24ch;margin:14px auto 10px}
+.quote span{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink2)}
+
+/* ============ ФУТЕР ============ */
+.foot{background:var(--em-deep);color:#EDE6D3;padding:clamp(56px,10vw,96px) var(--pad) 120px;
+ background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='44'><path d='M80 38 C80 22 62 24 62 14 a7 7 0 1 1 14 2 M80 38 C80 22 98 24 98 14 a7 7 0 1 0 -14 2' fill='none' stroke='%23D9BC7F' stroke-opacity='.09' stroke-width='1.5' stroke-linecap='round'/></svg>")}
+.foot .wrap{display:grid;gap:34px}
+.foot-brand h2{font-size:clamp(3rem,12vw,5.5rem);letter-spacing:.06em;color:#F6F1E4}
+.foot-brand h2 i{font-style:normal;color:var(--gold)}
+.foot-brand .tag{font-family:var(--fd);font-style:italic;font-size:clamp(1.1rem,3.6vw,1.4rem);color:var(--gold-soft);margin-top:8px}
+.foot-brand .sub{color:rgba(237,230,211,.7);font-size:.92rem;margin-top:6px;max-width:40ch}
+.foot-cta{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.foot-links{display:flex;flex-wrap:wrap;gap:8px 26px;font-size:.88rem}
+.foot-links a{opacity:.75;transition:opacity .2s,color .2s;padding:6px 0}
+.foot-links a:hover{opacity:1;color:var(--gold-soft)}
+.foot-bottom{border-top:1px solid rgba(217,188,127,.2);margin-top:10px;padding-top:22px;display:flex;flex-wrap:wrap;gap:10px 24px;font-size:.75rem;color:rgba(237,230,211,.6);align-items:center}
+.foot-bottom .up{margin-left:auto;border:1px solid rgba(217,188,127,.35);border-radius:999px;padding:10px 16px;color:var(--gold-soft);transition:all .25s}
+.foot-bottom .up:hover{background:var(--gold);color:#241A08}
+
+/* ============ ЛИПКИЙ CTA ============ */
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(10,53,39,.96);backdrop-filter:blur(6px);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .4s cubic-bezier(.22,.8,.24,1);border-top:1px solid rgba(217,188,127,.3)}
+.sticky-cta.show{transform:none}
+.sticky-cta .btn{width:100%}
+
+/* тост */
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));translate:-50% 16px;z-index:300;background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,translate .3s;max-width:86vw;text-align:center}
+.toast.show{opacity:1;translate:-50% 0}
+
+/* ============================================================
+   ПРОСМОТР ШАБЛОНОВ
+   ============================================================ */
+.demo-view{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:var(--em-deep);visibility:hidden;opacity:0;transition:opacity .35s,visibility .35s}
+.demo-view.open{visibility:visible;opacity:1}
+.demo-top{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px var(--pad);padding-top:calc(8px + env(safe-area-inset-top));background:rgba(10,35,27,.95);color:#F2EBDA;border-bottom:1px solid rgba(217,188,127,.25)}
+.dt-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--gold-soft);font-weight:700;font-size:.85rem;white-space:nowrap}
+.dt-name{font-family:var(--fd);font-style:italic;color:var(--gold-soft);font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
+.dt-close{width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(217,188,127,.35);border-radius:50%;color:#F2EBDA;display:grid;place-items:center;transition:all .25s}
+.dt-close:hover{background:var(--gold);color:#241A08}
+.demo-stage{flex:1;position:relative;overflow:hidden;touch-action:pan-y}
+.demo-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.22,.8,.24,1)}
+.demo-track.drag{transition:none}
+.demo-slide{flex:0 0 100%;height:100%;overflow-y:auto;overscroll-behavior:contain;position:relative;-webkit-overflow-scrolling:touch}
+.demo-bottom{display:flex;align-items:center;justify-content:center;gap:10px 16px;flex-wrap:wrap;padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));background:rgba(10,35,27,.95);border-top:1px solid rgba(217,188,127,.25)}
+.dnav{width:48px;height:48px;flex:0 0 48px;border-radius:50%;border:1px solid rgba(217,188,127,.4);color:var(--gold-soft);font-size:1.1rem;display:grid;place-items:center;transition:all .25s}
+.dnav:hover{background:var(--gold);color:#241A08;border-color:var(--gold)}
+.ddots{display:flex;gap:4px;align-items:center}
+.ddots button{width:28px;height:28px;display:grid;place-items:center;color:rgba(217,188,127,.35);font-size:.6rem;transition:color .25s,transform .25s}
+.ddots button.on{color:var(--gold);transform:scale(1.55)}
+.dcount{font-size:.75rem;letter-spacing:.22em;color:var(--gold-soft);font-weight:700;min-width:60px;text-align:center}
+.dphoto-ui{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap}
+.dphoto-ui .tab,.dphoto-ui .upl{min-height:42px;padding:0 18px;border-radius:999px;border:1px solid rgba(217,188,127,.35);color:#EDE6D3;font-size:.78rem;font-weight:700;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.dphoto-ui .tab.on{background:var(--gold);color:#241A08;border-color:var(--gold)}
+.dphoto-ui .upl:hover{border-color:var(--gold)}
+.dnote{width:100%;text-align:center;font-size:.66rem;color:rgba(217,188,127,.75);letter-spacing:.04em}
+
+/* ---- страница-приглашение ---- */
+.inv-page{position:relative;min-height:100%;display:flex;justify-content:center;padding:clamp(28px,7vw,56px) var(--pad)}
+.inv-inner{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(22px,5vw,30px);padding:10px 0 26px}
+.inv-kicker{font-size:.66rem;letter-spacing:.34em;text-transform:uppercase;opacity:.85}
+.inv-names{font-size:clamp(2.3rem,9vw,3.4rem);line-height:1.05}
+.inv-sub{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;opacity:.75}
+.inv-lead{max-width:44ch;font-size:.97rem;line-height:1.7;opacity:.92}
+.inv-date{font-weight:700;letter-spacing:.16em;font-size:.95rem}
+.inv-page .cd{width:100%;max-width:340px;margin:0}
+.iv-sec{width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px;align-items:center}
+.iv-eyebrow{font-size:.66rem;letter-spacing:.32em;text-transform:uppercase;color:var(--acc);display:inline-flex;align-items:center;gap:.9em;font-weight:700}
+.iv-eyebrow::before,.iv-eyebrow::after{content:"✦";font-size:.9em}
+.joy-h{font-family:var(--fd);font-size:clamp(1.7rem,7vw,2.35rem);font-weight:600}
+.orn-div{display:flex;align-items:center;gap:16px;width:min(340px,86%);opacity:.75}
+.orn-div::before,.orn-div::after{content:"";flex:1;height:1px;background:currentColor;opacity:.45}
+.orn-div span{font-size:.95rem;color:var(--acc)}
+.v-hall{font-weight:700;font-size:1rem}
+.v-addr{opacity:.75;font-size:.88rem}
+.loc-btns{display:flex;flex-direction:column;gap:10px;width:100%;align-items:center}
+.inv-btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:50px;padding:.8em 1.6em;border-radius:999px;border:1px solid var(--acc);font-weight:700;font-size:.85rem;transition:all .25s;max-width:320px;width:100%}
+.inv-btn:hover{transform:translateY(-2px)}
+.inv-btn svg{flex:0 0 auto}
+
+/* фото-герой */
+.ph-hero{width:100%;display:flex;justify-content:center}
+.ph-frame{
+  position:relative;width:min(430px,100%);aspect-ratio:1/0.92;overflow:hidden;
+  border-radius:999px 999px 26px 26px;display:grid;place-items:center;
+  background:linear-gradient(180deg,rgba(125,125,125,.35),rgba(70,70,70,.62));
+  background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 30%,transparent),color-mix(in srgb,var(--acc) 74%,transparent));
+}
+.theme-editorial .ph-frame{border-radius:0}
+.ph-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+.ph-frame.has-img img{opacity:1}
+.ph-frame.has-img .ph-ph,.ph-frame.has-img .ph-hint{display:none}
+.ph-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.04) 42%,rgba(0,0,0,.4));pointer-events:none}
+.ph-ph{font-size:2.6rem;color:#fff;opacity:.6;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.ph-overlay{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:0 18px;text-align:center}
+.ph-names{font-family:var(--fd);font-style:italic;font-weight:600;font-size:clamp(1.7rem,7.4vw,2.6rem);color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.ph-title{font-size:.95rem;color:#fff;letter-spacing:.05em;text-shadow:0 1px 10px rgba(0,0,0,.55)}
+.ph-hint{position:absolute;bottom:14px;left:0;right:0;z-index:2;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#fff;opacity:.85;text-align:center;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.demo-view.no-photo .ph-hero{display:none}
+.demo-view.no-photo .joy-eyebrow,.demo-view.no-photo .joy-h{display:none}
+.demo-view:not(.no-photo) .inv-kicker,
+.demo-view:not(.no-photo) .inv-names,
+.demo-view:not(.no-photo) .inv-sub{display:none}
+
+/* программа дня */
+.prog{width:100%;max-width:360px;position:relative;display:flex;flex-direction:column;text-align:left}
+.prog::before{content:"";position:absolute;left:61px;top:16px;bottom:16px;border-left:1px dashed var(--acc);opacity:.45}
+.prog li{display:grid;grid-template-columns:52px 18px 1fr;gap:6px;padding:10px 0;align-items:start}
+.prog b{font-family:var(--fd);font-size:1rem;color:var(--acc);padding-top:1px}
+.prog i{width:8px;height:8px;border-radius:50%;border:1px solid var(--acc);justify-self:center;margin-top:6px}
+.prog strong{display:block;font-size:.92rem;font-weight:700}
+.prog span{font-size:.78rem;opacity:.7}
+
+/* RSVP */
+.rs-h{font-family:var(--fd);font-size:clamp(1.6rem,6.4vw,2.15rem);font-weight:600}
+.rs-sub{font-size:.9rem;opacity:.8;max-width:40ch}
+.rs-form{width:100%;display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.rs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:400px){.rs-grid{grid-template-columns:1fr}}
+.rs-field{display:flex;flex-direction:column;gap:8px;text-align:left}
+.rs-field span{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;opacity:.75}
+.rs-field span::after{content:" *";color:var(--acc);opacity:1}
+.rs-field input{
+  min-height:52px;border:1px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 45%,transparent);
+  border-radius:10px;background:var(--field,rgba(255,255,255,.12));color:inherit;padding:0 14px;
+  font-family:inherit;font-size:.95rem;width:100%;transition:border-color .2s,box-shadow .2s;
+}
+.rs-field input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)}
+.rs-field input.err{animation:shake .35s;border-color:var(--acc)}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.rs-opts{display:flex;flex-direction:column;gap:10px}
+.rs-opt{
+  display:flex;align-items:center;gap:14px;border:1px solid var(--acc);
+  border-color:color-mix(in srgb,var(--acc) 40%,transparent);
+  border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;font-size:.95rem;
+  transition:border-color .2s,background .2s;position:relative;
+}
+.rs-opt input{position:absolute;opacity:0;pointer-events:none}
+.rs-opt i{flex:0 0 26px;width:26px;height:26px;border-radius:50%;border:2px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 55%,transparent);position:relative;transition:border-color .2s}
+.rs-opt i::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--acc);transform:scale(0);transition:transform .25s cubic-bezier(.2,1.4,.4,1)}
+.rs-opt.sel{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 9%,transparent)}
+.rs-opt.sel i{border-color:var(--acc)}
+.rs-opt.sel i::after{transform:scale(1)}
+.rs-send{
+  width:100%;min-height:56px;border-radius:999px;border:none;background:var(--acc);color:var(--acc-ink);
+  font-weight:800;letter-spacing:.18em;text-transform:uppercase;font-size:.82rem;
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+  transition:transform .2s,filter .2s,box-shadow .2s,opacity .2s;margin-top:4px;
+}
+.rs-send:hover{filter:brightness(1.07);box-shadow:0 12px 26px -14px color-mix(in srgb,var(--acc) 70%,transparent)}
+.rs-send:active{transform:scale(.98)}
+.rs-send[disabled]{opacity:.55;pointer-events:none}
+.rs-note{font-size:.72rem;opacity:.6}
+.rs-demo-note{font-style:italic;opacity:.65}
+
+/* карточка ответа */
+.rs-done{width:100%;display:flex;justify-content:center}
+.rd-card{
+  width:100%;max-width:420px;border-radius:16px;
+  border:1px solid color-mix(in srgb,var(--acc) 55%,transparent);
+  outline:1px solid color-mix(in srgb,var(--acc) 28%,transparent);outline-offset:5px;
+  background:color-mix(in srgb,var(--acc) 5%,transparent);
+  padding:clamp(26px,6vw,40px) clamp(18px,5vw,30px);
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+  animation:pop .5s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes pop{from{transform:scale(.85);opacity:0}}
+.rd-check{width:84px;height:84px;border:2px solid var(--acc);border-radius:50%;display:grid;place-items:center;color:var(--acc);margin-bottom:4px}
+.rd-check svg{width:42px;height:42px}
+.rd-title{font-family:var(--fd);font-style:italic;font-weight:600;font-size:clamp(2rem,8vw,2.7rem);color:var(--acc);line-height:1}
+.rd-name{font-weight:800;font-size:1.15rem;max-width:100%;overflow-wrap:break-word;word-break:break-word}
+.rd-msg{font-size:.92rem;opacity:.8;max-width:34ch}
+.rd-div{width:56px;height:1px;background:var(--acc);opacity:.6;margin:4px 0}
+.rd-date{font-size:.78rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--acc)}
+.rd-venue{font-size:.85rem;opacity:.75}
+.rd-cal{margin-top:10px}
+.rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7;transition:opacity .2s}
+.rd-edit:hover{opacity:1}
+
+/* подпись и водяной знак */
+.inv-sign{font-family:var(--fd);font-style:italic;font-size:1.15rem;opacity:.9;max-width:40ch}
+.inv-hash{font-size:.72rem;letter-spacing:.2em;opacity:.6;text-transform:uppercase}
+.inv-wm{margin-top:4px;padding-top:14px;border-top:1px solid var(--acc);opacity:.45;font-size:.6rem;letter-spacing:.34em;text-transform:uppercase;width:100%;max-width:300px}
+
+/* вход элементов */
+.demo-slide .fx{opacity:0;transform:translateY(20px)}
+.demo-slide.active .fx{animation:rise .65s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:calc(var(--d,0s) + .12s)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* темы шаблонов */
+.theme-luxury{background:radial-gradient(130% 90% at 50% 0%,#1A2E23 0%,#0B1511 70%);color:#EFE4C6;--acc:#D9BC7F;--acc-ink:#241A08;--field:rgba(255,255,255,.08)}
+.theme-luxury .inv-inner{border:1px solid rgba(217,188,127,.7);outline:1px solid rgba(217,188,127,.3);outline-offset:7px;padding:clamp(30px,7vw,52px) clamp(18px,5vw,40px)}
+.theme-luxury .inv-names{letter-spacing:.12em}
+.theme-luxury .cd>div{border-color:rgba(217,188,127,.35);background:rgba(217,188,127,.07)}
+
+.theme-floral{background:linear-gradient(180deg,#FAF0E7,#F0D5C6);color:#6E2434;--acc:#A85A6C;--acc-ink:#FFF6EF;--field:rgba(255,255,255,.6)}
+.theme-floral .inv-names{font-style:italic}
+.theme-floral .flor{position:absolute;color:#C98A8A;opacity:.85;pointer-events:none}
+.theme-floral .f1{top:4%;left:7%;font-size:1.5rem}
+.theme-floral .f2{top:11%;right:9%;font-size:1rem}
+.theme-floral .f3{bottom:5%;left:11%;font-size:1.9rem}
+.theme-floral .cd>div{border-color:rgba(110,36,52,.25);background:rgba(255,255,255,.5)}
+
+.theme-qazaq{background:linear-gradient(180deg,#7C2230,#54141F);color:#F4E7CB;--acc:#D9BC7F;--acc-ink:#4A1220;--field:rgba(255,255,255,.08)}
+.q-band{width:min(280px,78%);color:var(--acc)}
+.theme-qazaq .cd>div{border-color:rgba(217,188,127,.4);background:rgba(217,188,127,.08)}
+
+.theme-editorial{background:#F3EFE5;color:#141414;--acc:#141414;--acc-ink:#F3EFE5;--field:rgba(255,255,255,.65)}
+.theme-editorial .inv-inner{max-width:620px}
+.ed-big{font-family:var(--fd);font-weight:800;font-size:clamp(5rem,22vw,7.5rem);line-height:.85}
+.theme-editorial .inv-names{font-size:clamp(1.6rem,6vw,2.2rem);letter-spacing:.3em;text-transform:uppercase}
+.theme-editorial .inv-btn{border-radius:0}
+.theme-editorial .rs-send{border-radius:0}
+.theme-editorial .rd-card{border-radius:0}
+.theme-editorial .cd>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
+
+.theme-emerald{background:linear-gradient(180deg,#0E4D3C,#072A20);color:#EFE4C6;--acc:#D9BC7F;--acc-ink:#0A3527;--field:rgba(255,255,255,.08)}
+.theme-emerald .cd>div{border-color:rgba(217,188,127,.35);background:rgba(217,188,127,.07)}
+
+.theme-tusau{background:linear-gradient(180deg,#FAEBCB,#F3D8A2);color:#5C4322;--acc:#B97F22;--acc-ink:#FFF6E2;--field:rgba(255,255,255,.55)}
+.theme-tusau .t-sun2{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:2.2rem;color:#D89A3E;animation:spin 22s linear infinite;pointer-events:none}
+.theme-tusau .fp{position:absolute;font-size:1.2rem;opacity:.5;pointer-events:none}
+.theme-tusau .fp1{bottom:9%;left:9%}.theme-tusau .fp2{bottom:15%;left:28%}.theme-tusau .fp3{bottom:7%;right:12%}
+.theme-tusau .cd>div{border-color:rgba(92,67,34,.3);background:rgba(255,255,255,.45)}
+
+/* ============ ПЛАНШЕТ / ДЕСКТОП ============ */
+@media (min-width:900px){
+  .head-nav{display:flex}
+  .burger{display:none}
+  .mmenu{display:none}
+  .sticky-cta{display:none}
+  .foot{padding-bottom:clamp(40px,6vw,64px)}
+  .hero .wrap{grid-template-columns:1.05fr .95fr}
+  .feat-list li{grid-template-columns:110px 1fr}
+  .cards{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);grid-auto-columns:auto;overflow:visible;scroll-snap-type:none;padding:6px 0}
+  .swipe-hint{display:none}
+  .rail-zone{padding-top:70px}
+  .rail-nav{display:flex}
+  .steps{grid-template-columns:repeat(3,1fr);gap:26px;padding-left:0}
+  .steps::before{left:22px;right:22px;top:21px;bottom:auto;border-left:none;border-top:2px dashed rgba(185,142,69,.5)}
+  .steps h3,.steps p,.st-chip{padding-left:0}
+  .st-n{position:static;margin-bottom:14px}
+  .foot .wrap{grid-template-columns:1.2fr 1fr;align-items:start}
+  .foot-cta{align-items:flex-end}
+  .demo-stage{cursor:grab}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  [data-reveal]{opacity:1;transform:none}
+  .demo-slide .fx{opacity:1;transform:none}
+  .swap-target{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="marquee" aria-hidden="true"><div class="marquee-track"><span id="mq1"></span><span id="mq2"></span></div></div>
+
+<header class="head" id="head">
+  <a class="logo" href="#top">SAQTAA<i>.</i></a>
+  <nav class="head-nav">
+    <a href="#designs" data-i18n="nav_designs">Дизайны</a>
+    <a href="#features" data-i18n="nav_features">Возможности</a>
+    <a href="#process" data-i18n="nav_process">Как заказать</a>
+  </nav>
+  <div class="head-right">
+    <button class="lang" id="langBtn" aria-label="Переключить язык">
+      <span data-lang="ru" class="on">RU</span><i>/</i><span data-lang="kz">ҚАЗ</span>
+    </button>
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><div></div></button>
+  </div>
+</header>
+
+<div class="mmenu" id="mmenu" aria-hidden="true">
+  <nav>
+    <a class="big" href="#designs"><sup>01</sup><span data-i18n="nav_designs">Дизайны</span></a>
+    <a class="big" href="#features"><sup>02</sup><span data-i18n="nav_features">Возможности</span></a>
+    <a class="big" href="#process"><sup>03</sup><span data-i18n="nav_process">Как заказать</span></a>
+  </nav>
+  <div class="mm-foot">
+    <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+  </div>
+</div>
+
+<!-- открытие -->
+<section class="hero" id="top">
+  <span class="star" style="top:14%;left:6%" aria-hidden="true">✦</span>
+  <span class="star s2" style="top:70%;left:3%" aria-hidden="true">✧</span>
+  <span class="star s3" style="top:20%;right:5%" aria-hidden="true">✦</span>
+  <div class="wrap">
+    <div class="hero-txt" data-reveal>
+      <span class="eyebrow" data-i18n="hero_eyebrow">Цифровые приглашения</span>
+      <h1 data-i18n-html="hero_h">Ваш особенный день.<em>В красивой форме.</em></h1>
+      <p class="hero-lead" data-i18n="hero_lead">Индивидуальные онлайн-приглашения на той — с вниманием к каждой детали. Откройте демо и выберите свой стиль.</p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#designs"><span data-i18n="cta_designs">Выбрать дизайн</span><span class="ar">↘</span></a>
+        <button class="btn btn-line" id="heroView">▶ <span data-i18n="view_demo">Смотреть демо</span></button>
+      </div>
+      <div class="hero-stats">
+        <span><b>06</b><span data-i18n="stat_d">дизайнов</span></span>
+        <span><b>02</b><span data-i18n="stat_l">языка</span></span>
+        <span><b>✦</b>RSVP</span>
+      </div>
+    </div>
+    <div class="invite-wrap" data-reveal style="--d:.15s">
+      <div class="invite t-lux" id="heroInvite">
+        <svg class="orn-svg" viewBox="0 0 140 40" aria-hidden="true"><path d="M70 34 C70 18 52 20 52 11 a8 8 0 1 1 16 2 M70 34 C70 18 88 20 88 11 a8 8 0 1 0 -16 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="70" cy="35" r="1.8" fill="currentColor"/></svg>
+        <div class="names swap-target" id="cycleNames">А&nbsp;&amp;&nbsp;Д</div>
+        <div class="sub" data-i18n="inv_sub">Приглашение на той</div>
+        <div class="cycle-tag swap-target" id="cycleTag">Luxury · Wedding</div>
+        <div class="date">14 · 02 · 2027 — 18:00</div>
+        <div class="cd" aria-hidden="true">
+          <div><b data-cd="d">00</b><span data-i18n="cd_d">дней</span></div>
+          <div><b data-cd="h">00</b><span data-i18n="cd_h">часов</span></div>
+          <div><b data-cd="m">00</b><span data-i18n="cd_m">минут</span></div>
+          <div><b data-cd="s">00</b><span data-i18n="cd_s">секунд</span></div>
+        </div>
+        <div class="tags"><b>✦</b> RSVP &nbsp;·&nbsp; <b>✦</b> 2ГИС &nbsp;·&nbsp; <b>✦</b> RU / ҚАЗ</div>
+      </div>
+      <div class="hero-dots" id="heroDots"></div>
+    </div>
+  </div>
+</section>
+
+<!-- возможности -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="feat-h" data-reveal>
+      <span class="eyebrow" data-i18n="f_eyebrow">В каждом приглашении</span>
+      <h2 data-i18n="f_h">Всё важное — в одном месте</h2>
+    </div>
+    <ol class="feat-list">
+      <li data-reveal><span class="f-no">№ 01</span><div><h3 data-i18n="f1t">Обратный отсчёт</h3><p data-i18n="f1d">Гости видят, сколько осталось до вашего события.</p></div></li>
+      <li data-reveal style="--d:.05s"><span class="f-no">№ 02</span><div><h3 data-i18n="f2t">Место в 2ГИС</h3><p data-i18n="f2d">Кнопка ведёт гостей прямо к месту проведения.</p></div></li>
+      <li data-reveal style="--d:.1s"><span class="f-no">№ 03</span><div><h3 data-i18n="f3t">Ответ гостей</h3><p data-i18n="f3d">Имя, фамилия и подтверждение присутствия.</p></div></li>
+      <li data-reveal style="--d:.15s"><span class="f-no">№ 04</span><div><h3 data-i18n="f4t">Два языка</h3><p data-i18n="f4d">Русский и казахский — переключение в один клик.</p></div></li>
+      <li data-reveal style="--d:.2s"><span class="f-no">№ 05</span><div><h3 data-i18n="f5t">Адаптивная вёрстка</h3><p data-i18n="f5d">Красиво и на телефоне, и на компьютере.</p></div></li>
+      <li data-reveal style="--d:.25s"><span class="f-no">№ 06</span><div><h3 data-i18n="f6t">Персональный ответ</h3><p data-i18n="f6d">После ответа приглашение благодарит гостя по имени и напоминает дату и место.</p></div></li>
+      <li data-reveal style="--d:.3s"><span class="f-no">№ 07</span><div><h3 data-i18n="f7t">Добавить в календарь</h3><p data-i18n="f7d">После ответа — одна кнопка: событие с напоминанием за сутки в календаре гостя.</p></div></li>
+      <li data-reveal style="--d:.35s"><span class="f-no">№ 08</span><div><h3 data-i18n="f8t">Ответы на почту</h3><p data-i18n="f8d">Каждый ответ гостя приходит организатору на электронную почту или в Telegram.</p></div></li>
+      <li data-reveal style="--d:.4s"><span class="f-no">№ 09</span><div><h3 data-i18n="f9t">Фото на обложке</h3><p data-i18n="f9d">Арочная рамка для фото пары или героя праздника — в режиме «С фото».</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- коллекция -->
+<section class="section" id="designs" style="padding-top:0">
+  <div class="wrap">
+    <div class="coll-head" data-reveal>
+      <span class="eyebrow" data-i18n="c_eyebrow">Коллекция · № 01 — 06</span>
+      <h2 data-i18n="c_h">Выберите свой стиль</h2>
+      <p data-i18n="c_lead">Шесть направлений — от классики до журнальной подачи. Откройте демо, чтобы увидеть дизайн вживую.</p>
+    </div>
+    <div class="chips" data-reveal>
+      <button class="chip on" data-cat="all" data-i18n="chip_all">Все</button>
+      <button class="chip" data-cat="wedding" data-i18n="cat_wed">Свадьба</button>
+      <button class="chip" data-cat="jubilee" data-i18n="cat_jub">Юбилей</button>
+      <button class="chip" data-cat="birthday" data-i18n="cat_bd">День рождения</button>
+      <button class="chip" data-cat="tusau" data-i18n="cat_tusau">Тұсау кесер</button>
+    </div>
+
+    <div class="rail-zone" data-reveal>
+      <div class="rail-nav">
+        <button id="railPrev" aria-label="Назад">←</button>
+        <button id="railNext" aria-label="Вперёд">→</button>
+      </div>
+      <div class="cards" id="cards">
+
+        <article class="card" data-cat="wedding">
+          <div class="preview p-luxury">
+            <span class="p-no">№ 01</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
+            <div class="p-frame"><span>✦</span><strong>А & Д</strong><em>Luxury · Wedding</em><span>❧</span></div>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 01 ✦</b><span>Luxury</span></div>
+            <h3 class="ci-name">А &amp; Д <em>· Luxury</em></h3>
+            <p class="ci-desc" data-i18n="d1">Классическая обложка, двойная рамка и изящные засечки.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="0"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="0" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cat="wedding">
+          <div class="preview p-floral">
+            <span class="p-no">№ 02</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
+            <span class="flor" style="top:14%;left:12%">✿</span>
+            <span class="flor" style="bottom:12%;right:12%;font-size:1.4rem">✿</span>
+            <span class="flor" style="top:24%;right:16%;font-size:.8rem">✿</span>
+            <div class="p-arch"><strong>А &amp; Д</strong><span>Floral · Wedding</span></div>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 02 ✿</b><span>Floral</span></div>
+            <h3 class="ci-name">А &amp; Д <em>· Floral</em></h3>
+            <p class="ci-desc" data-i18n="d2">Мягкая арка, цветочные мотивы и нежные оттенки.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="1"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="1" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cat="wedding">
+          <div class="preview p-qazaq">
+            <span class="badge" data-i18n="badge_hit">хит</span>
+            <span class="p-no">№ 03</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
+            <svg class="q-orn top" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <div class="q-mid"><span>❧</span><strong>Qazaq · Toy</strong><span data-i18n="cat_wed">Свадьба</span></div>
+            <svg class="q-orn bot" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 03 ❧</b><span>Qazaq</span></div>
+            <h3 class="ci-name">Qazaq <em>· Toy</em></h3>
+            <p class="ci-desc" data-i18n="d3">Орнаментальная панель и национальный колорит.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="2"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="2" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cat="jubilee">
+          <div class="preview p-edit">
+            <span class="p-no">№ 04</span><span class="p-tag" data-i18n="cat_jub">Юбилей</span>
+            <span class="dot"></span>
+            <div class="lab">Jubilee · Editorial</div>
+            <div class="rule"></div>
+            <div class="big50">50</div>
+            <div class="rule"></div>
+            <div class="lab">Invitation ✦</div>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 04 ✦</b><span>Editorial</span></div>
+            <h3 class="ci-name">50 <em>· Editorial</em></h3>
+            <p class="ci-desc" data-i18n="d4">Журнальный блок: крупная типографика и строгая сетка.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="3"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="3" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cat="birthday">
+          <div class="preview p-emer">
+            <span class="p-no">№ 05</span><span class="p-tag" data-i18n="cat_bd">День рождения</span>
+            <div class="e-frame">✧</div>
+            <strong>Аружан</strong>
+            <span>Emerald · Birthday</span>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 05 ✧</b><span>Emerald</span></div>
+            <h3 class="ci-name">Аружан <em>· Emerald</em></h3>
+            <p class="ci-desc" data-i18n="d5">Арочная фоторамка в глубоком изумрудном цвете.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="4"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="4" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-cat="tusau">
+          <div class="preview p-tusau">
+            <span class="badge new" data-i18n="badge_new">new</span>
+            <span class="p-no">№ 06</span><span class="p-tag" data-i18n="cat_tusau">Тұсау кесер</span>
+            <span class="t-sun">☀</span>
+            <div><strong>Иманжан</strong><br><span class="t-age">👶 1 жас</span></div>
+            <div class="t-steps" aria-hidden="true"><span>👣</span><span>👣</span><span>👣</span></div>
+            <div style="font-size:.66rem;letter-spacing:.28em;text-transform:uppercase">Tusau · 1 жас</div>
+          </div>
+          <div class="card-info">
+            <div class="ci-top"><b>№ 06 ☀</b><span>Tusau</span></div>
+            <h3 class="ci-name">Иманжан <em>· 1 жас</em></h3>
+            <p class="ci-desc" data-i18n="d6">Тёплый семейный дизайн для праздника первых шагов малыша.</p>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
+            <div class="ci-btns">
+              <button class="btn btn-solid btn-demo" data-demo="5"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
+              <a class="btn btn-line wa-order" data-wa="5" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+      <p class="swipe-hint" data-i18n="swipe">Листайте</p>
+    </div>
+  </div>
+</section>
+
+<!-- процесс -->
+<section class="section" id="process" style="padding-top:0">
+  <div class="wrap">
+    <div class="coll-head" data-reveal>
+      <span class="eyebrow" data-i18n="p_eyebrow">Простой процесс</span>
+      <h2 data-i18n="p_h">От идеи до вашей ссылки</h2>
+    </div>
+    <ol class="steps">
+      <li data-reveal><span class="st-n">01</span><h3 data-i18n="p1t">Выберите дизайн</h3><p data-i18n="p1d">Посмотрите демо и выберите подходящий стиль.</p><span class="st-chip">6 стилей · демо</span></li>
+      <li data-reveal style="--d:.1s"><span class="st-n">02</span><h3 data-i18n="p2t">Передайте детали</h3><p data-i18n="p2d">Имена, дату, место, язык и фотографии — если нужны.</p><span class="st-chip">WhatsApp · анкета</span></li>
+      <li data-reveal style="--d:.2s"><span class="st-n">03</span><h3 data-i18n="p3t">Получите ссылку</h3><p data-i18n="p3d">Готовое приглашение, которым удобно делиться с гостями.</p><span class="st-chip">ссылка · 1 клик</span></li>
+    </ol>
+  </div>
+</section>
+
+<aside class="quote" data-reveal>
+  <div class="qmark">❝</div>
+  <p data-i18n="quote">Приглашение — это первое впечатление от вашего той.</p>
+  <span>SAQTAA · философия</span>
+</aside>
+
+<footer class="foot" id="footer">
+  <div class="wrap">
+    <div class="foot-brand" data-reveal>
+      <h2>SAQTAA<i>.</i></h2>
+      <p class="tag" data-i18n="foot_tag">Сохраняй моменты, которые хочется помнить.</p>
+      <p class="sub" data-i18n="foot_sub">Цифровые приглашения для особенных событий.</p>
+    </div>
+    <div class="foot-cta" data-reveal style="--d:.1s">
+      <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+      <nav class="foot-links">
+        <a href="#designs" data-i18n="nav_designs">Дизайны</a>
+        <a href="#features" data-i18n="nav_features">Возможности</a>
+        <a href="#process" data-i18n="nav_process">Как заказать</a>
+      </nav>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© 2026 SAQTAA · <span data-i18n="foot_desc">цифровые приглашения</span></span>
+    <span>RU / ҚАЗ</span>
+    <a class="up" href="#top">↑ <span data-i18n="up">наверх</span></a>
+  </div>
+</footer>
+
+<div class="sticky-cta" id="stickyCta">
+  <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<!-- ============ ПРОСМОТР ШАБЛОНОВ ============ -->
+<div class="demo-view no-photo" id="demoView" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="demo-top">
+    <button class="dt-back" id="dvBack">← <span data-i18n="m_back">Коллекция</span></button>
+    <span class="dt-name" id="dvName"></span>
+    <button class="dt-close" id="dvClose" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="demo-stage" id="dvStage">
+    <div class="demo-track" id="dvTrack"></div>
+  </div>
+  <div class="demo-bottom">
+    <div class="dphoto-ui" id="dvPhotoUI">
+      <button class="tab on" id="dvTabDeco" data-i18n="tab_deco">Без фото</button>
+      <button class="tab" id="dvTabPhoto" data-i18n="tab_photo">С фото</button>
+      <button class="upl" id="dvUpload">📷 <span data-i18n="change_photo">Заменить фото</span></button>
+      <input type="file" accept="image/*" id="dvFile" hidden>
+      <span class="dnote" id="dvNote" hidden data-i18n="photo_note">Загруженное фото видно только в этой вкладке — демо-режим.</span>
+    </div>
+    <button class="dnav" id="dvPrev" aria-label="Предыдущий шаблон">←</button>
+    <div class="ddots" id="dvDots"></div>
+    <span class="dcount" id="dvCount">01 / 06</span>
+    <button class="dnav" id="dvNext" aria-label="Следующий шаблон">→</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
+  const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* ============================================================
+     НАСТРОЙКИ — ЗАМЕНИТЕ ЗНАЧЕНИЯ НА СВОИ ПЕРЕД ЗАПУСКОМ
+     1) WA_NUMBER    — ваш номер WhatsApp, международный формат без «+»
+     2) EVENT_*      — дата/время/часовой пояс события (отсчёт и календарь)
+     3) RSVP_CONFIG  — куда приходят ответы гостей (см. комментарий ниже)
+     ============================================================ */
+  const CONFIG={
+    WA_NUMBER:"77000000000",   /* ← ваш номер, напр. "77071234567" */
+    EVENT_DATE:"2027-02-14",   /* ← дата события */
+    EVENT_TIME:"18:00",        /* ← время начала */
+    EVENT_END_TIME:"23:00",    /* ← время окончания (календарь) */
+    EVENT_TZ:"Asia/Almaty"     /* ← часовой пояс */
+  };
+  const TARGET=new Date(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME+":00");
+  const WA_BASE="https://wa.me/"+CONFIG.WA_NUMBER;
+  const NAME_MAX=20; /* лимит символов на имя и фамилию */
+  let lang=localStorage.getItem("saqtaa-lang")||"ru";
+
+  /* КОНФИГ RSVP — как гость отправляет ответ организатору:
+     mode "demo"      — ответ никуда не уходит, показывается только демо-подтверждение
+     mode "web3forms" — бесплатный приём на почту: ключ с https://web3forms.com
+                        (впишите в web3formsKey — РЕКОМЕНДУЕТСЯ, безопасно)
+     mode "telegram"  — ответы в чат бота: впишите telegramToken и telegramChatId.
+                        ВНИМАНИЕ: токен виден в коде страницы любому посетителю —
+                        используйте отдельного бота-«ящика» или прокси на своём сервере. */
+  const RSVP_CONFIG={
+    mode:"demo",
+    telegramToken:"",
+    telegramChatId:"",
+    web3formsKey:""
+  };
+
+  /* ---------- переводы ---------- */
+  const T={
+    ru:{
+      nav_designs:"Дизайны",nav_features:"Возможности",nav_process:"Как заказать",
+      hero_eyebrow:"Цифровые приглашения",
+      hero_h:'Ваш особенный день.<em>В красивой форме.</em>',
+      hero_lead:"Индивидуальные онлайн-приглашения на той — с вниманием к каждой детали. Откройте демо и выберите свой стиль.",
+      cta_designs:"Выбрать дизайн",view_demo:"Смотреть демо",
+      stat_d:"дизайнов",stat_l:"языка",inv_sub:"Приглашение на той",
+      cd_d:"дней",cd_h:"часов",cd_m:"минут",cd_s:"секунд",
+      f_eyebrow:"В каждом приглашении",f_h:"Всё важное — в одном месте",
+      f1t:"Обратный отсчёт",f1d:"Гости видят, сколько осталось до вашего события.",
+      f2t:"Место в 2ГИС",f2d:"Кнопка ведёт гостей прямо к месту проведения.",
+      f3t:"Ответ гостей",f3d:"Имя, фамилия и подтверждение присутствия.",
+      f4t:"Два языка",f4d:"Русский и казахский — переключение в один клик.",
+      f5t:"Адаптивная вёрстка",f5d:"Красиво и на телефоне, и на компьютере.",
+      f6t:"Персональный ответ",f6d:"После ответа приглашение благодарит гостя по имени и напоминает дату и место.",
+      f7t:"Добавить в календарь",f7d:"После ответа — одна кнопка: событие с напоминанием за сутки в календаре гостя.",
+      f8t:"Ответы на почту",f8d:"Каждый ответ гостя приходит организатору на электронную почту или в Telegram.",
+      f9t:"Фото на обложке",f9d:"Арочная рамка для фото пары или героя праздника — в режиме «С фото».",
+      c_eyebrow:"Коллекция · № 01 — 06",c_h:"Выберите свой стиль",
+      c_lead:"Шесть направлений — от классики до журнальной подачи. Откройте демо, чтобы увидеть дизайн вживую.",
+      chip_all:"Все",cat_wed:"Свадьба",cat_jub:"Юбилей",cat_bd:"День рождения",cat_tusau:"Тұсау кесер",
+      d1:"Классическая обложка, двойная рамка и изящные засечки.",
+      d2:"Мягкая арка, цветочные мотивы и нежные оттенки.",
+      d3:"Орнаментальная панель и национальный колорит.",
+      d4:"Журнальный блок: крупная типографика и строгая сетка.",
+      d5:"Арочная фоторамка в глубоком изумрудном цвете.",
+      d6:"Тёплый семейный дизайн для праздника первых шагов малыша.",
+      f_cd:"Отсчёт",open_demo:"Открыть демо",order:"Заказать",swipe:"Листайте",
+      badge_hit:"хит",badge_new:"new",
+      p_eyebrow:"Простой процесс",p_h:"От идеи до вашей ссылки",
+      p1t:"Выберите дизайн",p1d:"Посмотрите демо и выберите подходящий стиль.",
+      p2t:"Передайте детали",p2d:"Имена, дату, место, язык и фотографии — если нужны.",
+      p3t:"Получите ссылку",p3d:"Готовое приглашение, которым удобно делиться с гостями.",
+      quote:"Приглашение — это первое впечатление от вашего той.",
+      foot_tag:"Сохраняй моменты, которые хочется помнить.",
+      foot_sub:"Цифровые приглашения для особенных событий.",
+      wa_cta:"Заказать в WhatsApp",foot_desc:"цифровые приглашения",up:"наверх",
+      m_back:"Коллекция",tab_photo:"С фото",tab_deco:"Без фото",change_photo:"Заменить фото",
+      photo_note:"Загруженное фото видно только в этой вкладке — демо-режим.",
+      lbl_invite:"Приглашение",prog_t:"Программа дня",loc_t:"Место проведения",btn_2gis:"Открыть в 2ГИС",
+      joy_eyebrow:"С большой радостью",
+      ph_hint:"Фото загружается кнопкой 📷 ниже",
+      rsvp_eyebrow:"Подтверждение присутствия",rsvp_h:"Ждём вашего ответа",
+      rsvp_sub:"Пожалуйста, подтвердите, сможете ли вы прийти.",
+      lbl_name:"Имя",lbl_fam:"Фамилия",
+      opt_yes:"✧ Конечно, приду",opt_no:"К сожалению, не смогу прийти",opt_maybe:"Пока не могу ответить",
+      rsvp_send:"Отправить ответ",
+      rd_title:"Спасибо!",rd_edit:"Изменить ответ",
+      date_human:"14 февраля 2027 · 18:00",
+      ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",
+      ok_no:"Спасибо за ответ. Нам жаль — но мы всё равно вас любим!",
+      ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
+      demo_note:"Демо-режим: в настоящем приглашении ответы приходят организатору на почту или в Telegram.",
+      rsvp_err:"Не удалось отправить ответ. Попробуйте ещё раз.",
+      cal_btn:"Добавить в календарь",
+      cal_alarm:"Завтра ваше торжество! Не забудьте подтверждение 🤍",
+      cal_desc:"Цифровое приглашение SAQTAA. Программа: ",
+      cal_done:"📅 Файл события скачан — откройте его для добавления в календарь",
+      mq:"SAQTAA ✦ Свадьба ✦ Юбилей ✦ День рождения ✦ Тұсау кесер ✦ Цифровые приглашения ✦ Два языка ✦ ",
+      site_title:"SAQTAA — цифровые приглашения на той",
+      dot_st:"Стиль",dot_tpl:"Шаблон",
+      kicks:["Luxury · Wedding","Floral · Wedding","Qazaq · Toy","Jubilee · Editorial","Emerald · Birthday","Tusau · 1 жас"],
+      inv:[
+        {title:"Свадебное торжество",
+         lead:"Дорогие родные и близкие! В нашей жизни начинается самая красивая глава, и мы хотим разделить этот день с вами. Приглашаем вас на торжество по случаю нашей свадьбы.",
+         prog:[["17:30","Сбор гостей","Приветственный коктейль и фотозона"],["18:00","Церемония","Торжественный выход и клятвы"],["19:00","Банкет","Праздничный ужин, тосты и живая музыка"],["22:30","Торт","Сладкий финал вечера"]],
+         venue:"Той-холл «Алма», зал Diamond",addr:"Алматы, пр. Аль-Фараби, 150",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"С любовью и нетерпением ждём встречи — А & Д",hash:"#АиД_14февраля"},
+        {title:"Свадебное торжество",
+         lead:"Милые и дорогие! Однажды два сердца решили биться в одном ритме — и мы приглашаем вас стать свидетелями этого чуда.",
+         prog:[["16:00","Welcome-зона","Лёгкие закуски и лимонады"],["17:00","Церемония","Трогательные клятвы под аркой"],["18:30","Ужин","Семейный стол и тёплые тосты"],["21:30","Первый танец","И праздничный торт"]],
+         venue:"Ресторан «Гардения», летняя терраса",addr:"Алматы, ул. Керимбекова, 12",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"С нежностью, ваши А & Д",hash:"#НашаИстория_2027"},
+        {title:"Семейный той",
+         lead:"Дорогие родственники и друзья! Приглашаем вас на большой семейный той — праздник единения двух семей. Пусть наш общий дастархан будет щедрым!",
+         prog:[["17:00","Қонақ күту","Встреча гостей и шашу"],["18:00","Той басталу","Торжественное открытие"],["19:00","Дастархан","Национальные блюда и бата"],["21:00","Беташар","Обряд и концертная программа"]],
+         venue:"Тойхана «Дастархан», зал «Қонақжай»",addr:"Астана, ул. Кабанбай батыра, 30",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"С уважением, семьи Асылбековых и Оспановых",hash:"#ЕкіӘулет_БірТой"},
+        {title:"Юбилейный вечер",
+         lead:"Друзья! Полвека — это только начало красивого сюжета. Приглашаю вас на вечер по случаю моего 50-летия — вечер историй, смеха и музыки.",
+         prog:[["18:00","Сбор гостей","Велком-зона и аперитив"],["19:00","Торжественная часть","История юбиляра в фактах"],["20:00","Ужин","Гастрономический сет от шефа"],["22:00","Танцы","Живая группа и диджей"]],
+         venue:"Лофт «Печать», 2-й этаж",addr:"Алматы, ул. Панфилова, 98",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"Жду каждого из вас — юбиляр",hash:"#ПолвекаВОтличнойФорме"},
+        {title:"День рождения",
+         lead:"Дорогие мои! Ещё один год вокруг солнца — и я хочу отпраздновать его рядом с самыми близкими. Жду вас на своём дне рождения!",
+         prog:[["18:30","Сбор гостей","Игристое и лёгкие закуски"],["19:30","Ужин","Любимые блюда и сюрпризы"],["21:00","Караоке и игры","Самая весёлая часть вечера"],["23:00","Торт","Загадаем желание вместе"]],
+         venue:"Гастробар «Марсала», основной зал",addr:"Алматы, ул. Гоголя, 58",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"С любовью, ваша Аружан",hash:"#Аружан25"},
+        {title:"Тұсау кесер",
+         lead:"Дорогие родные! Нашему малышу исполняется один год — и мы с радостью приглашаем вас на праздник первых шагов. Пусть путь Иманжана будет светлым и ровным!",
+         prog:[["12:00","Жиналыс","Сбор гостей и фотосессия"],["13:00","Тұсау кесер","Обряд перерезания пут"],["13:30","Дастархан","Праздничный обед"],["15:00","Игры и подарки","Весёлый финал"]],
+         venue:"Семейный ресторан «Алтын бесік»",addr:"Алматы, мкр. Самал-2, 15",
+         deadline:"Просим подтвердить присутствие до 01.02.2027",
+         sign:"С любовью, родители Иманжана",hash:"#АлғашқыҚадам"}
+      ]
+    },
+    kz:{
+      nav_designs:"Дизайндар",nav_features:"Мүмкіндіктер",nav_process:"Тапсырыс жолы",
+      hero_eyebrow:"Цифрлық шақырулар",
+      hero_h:'Ерекше күніңіз.<em>Әдемі үлгіде.</em>',
+      hero_lead:"Тойға арналған жеке онлайн-шақырулар — әр бөлшегіне мұқият көңілмен. Демо ашып, өз стиліңізді таңдаңыз.",
+      cta_designs:"Дизайн таңдау",view_demo:"Демо көру",
+      stat_d:"дизайн",stat_l:"тіл",inv_sub:"Тойға шақыру",
+      cd_d:"күн",cd_h:"сағат",cd_m:"минут",cd_s:"секунд",
+      f_eyebrow:"Әр шақыруда",f_h:"Маңыздының бәрі — бір жерде",
+      f1t:"Кері санақ",f1d:"Қонақтар оқиғаға қанша уақыт қалғанын көреді.",
+      f2t:"2ГИС-тегі орын",f2d:"Түйме қонақтарды өткізілетін орынға апарады.",
+      f3t:"Қонақтардың жауабы",f3d:"Аты-жөні және қатысуды растау.",
+      f4t:"Екі тіл",f4d:"Орыс және қазақ тілдері — бір басумен ауыстыру.",
+      f5t:"Бейімделгіш макет",f5d:"Телефонда да, компьютерде де әдемі.",
+      f6t:"Жеке жауап",f6d:"Жауаптан кейін шақыру қонақты атымен атап алғыс айтады, күн мен орынды еске салады.",
+      f7t:"Күнтізбеге қосу",f7d:"Жауаптан кейін — бір батырма: тәулігіне ескертпемен оқиға қонақтың күнтізбесінде.",
+      f8t:"Жауаплар поштаға",f8d:"Қонақтың әр жауабы ұйымдастырушының поштасына немесе Telegram-ына келеді.",
+      f9t:"Мұқабадағы фото",f9d:"Жұптың немесе мереке иесінің фотосына арналған аркалы рамка — «Фотомен» режимінде.",
+      c_eyebrow:"Коллекция · № 01 — 06",c_h:"Өз стиліңізді таңдаңыз",
+      c_lead:"Алты бағыт — классикадан журналдық үлгіге дейін. Дизайнды толық көру үшін демо ашыңыз.",
+      chip_all:"Барлығы",cat_wed:"Той",cat_jub:"Мерейтой",cat_bd:"Туған күн",cat_tusau:"Тұсау кесер",
+      d1:"Классикалық мұқаба, қос рамка және әдемі серифтер.",
+      d2:"Жұмсақ арка, гүл мотивтері және нәзік реңктер.",
+      d3:"Өрнекті панель және ұлттық нақыш.",
+      d4:"Журналдық блок: ірі типографика және қатаң тор.",
+      d5:"Терең көк-жасыл түстегі аркалы фоторамка.",
+      d6:"Баланың алғашқы қадамы мерекесіне арналған жылы отбасылық дизайн.",
+      f_cd:"Санақ",open_demo:"Демо ашу",order:"Тапсырыс",swipe:"Айналдырыңыз",
+      badge_hit:"хит",badge_new:"жаңа",
+      p_eyebrow:"Қарапайым процесс",p_h:"Идеядан дайын сілтемеге",
+      p1t:"Дизайн таңдаңыз",p1d:"Демо қарап, лайықты стилді таңдаңыз.",
+      p2t:"Мәліметтерді жіберіңіз",p2d:"Есімдер, күн, орын, тіл және фотолар — қажет болса.",
+      p3t:"Сілтеме алыңыз",p3d:"Қонақтармен бөлісуге ыңғайлы дайын шақыру.",
+      quote:"Шақыру — тойыңыздың алғашқы әсері.",
+      foot_tag:"Есте сақтағыңыз келетін сәттерді сақтаңыз.",
+      foot_sub:"Ерекше оқиғаларға арналған цифрлық шақырулар.",
+      wa_cta:"WhatsApp-қа тапсырыс",foot_desc:"цифрлық шақырулар",up:"жоғары",
+      m_back:"Коллекция",tab_photo:"Фотомен",tab_deco:"Фотосыз",change_photo:"Фотоны ауыстыру",
+      photo_note:"Жүктелген фото тек осы қойындыда көрінеді — демо-режим.",
+      lbl_invite:"Шақыру",prog_t:"Бағдарлама",loc_t:"Өткізілетін орын",btn_2gis:"2ГИС-тен ашу",
+      joy_eyebrow:"Үлкен қуанышпен",
+      ph_hint:"Фото 📷 батырмасымен жүктеледі",
+      rsvp_eyebrow:"Қатысуды растау",rsvp_h:"Жауабыңызды күтеміз",
+      rsvp_sub:"Келе алатыныңызды растаңызшы.",
+      lbl_name:"Аты",lbl_fam:"Жөні",
+      opt_yes:"✧ Әрине, барамын",opt_no:"Өкінішке, келе алмаймын",opt_maybe:"Әзірге жауап бере алмаймын",
+      rsvp_send:"Жауап жіберу",
+      rd_title:"Рахмет!",rd_edit:"Жауапты өзгерту",
+      date_human:"14 ақпан 2027 · 18:00",
+      ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",
+      ok_no:"Жауабыңызға рақмет. Өкінішті — біз бәрібір сізді жақсы көреміз!",
+      ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
+      demo_note:"Демо-режим: нақты шақыруда жауаплар ұйымдастырушының поштасына немесе Telegram-ына келеді.",
+      rsvp_err:"Жауап жіберілмеді. Қайталап көріңізші.",
+      cal_btn:"Күнтізбеге қосу",
+      cal_alarm:"Ертең — сіздің тойыңыз! Растауды ұмытпаңыз 🤍",
+      cal_desc:"SAQTAA цифрлық шақыруы. Бағдарлама: ",
+      cal_done:"📅 Оқиға файлы жүктелді — күнтізбеге қосу үшін ашыңыз",
+      mq:"SAQTAA ✦ Той ✦ Мерейтой ✦ Туған күн ✦ Тұсау кесер ✦ Цифрлық шақырулар ✦ Екі тіл ✦ ",
+      site_title:"SAQTAA — тойға цифрлық шақырулар",
+      dot_st:"Стиль",dot_tpl:"Үлгі",
+      kicks:["Luxury · Үйлену тойы","Floral · Үйлену тойы","Qazaq · Той","Jubilee · Мерейтой","Emerald · Туған күн","Tusau · Тұсау кесер"],
+      inv:[
+        {title:"Үйлену тойы",
+         lead:"Құрметті туыстар мен достар! Өміріміздің ең әдемі тарауы басталып келеді — осы күнді сіздермен бірге өткізгіміз келеді. Тойымызға шақырамыз!",
+         prog:[["17:30","Қонақтардың жиналуы","Қарсы алу кеші және фотозона"],["18:00","Салтанатты рәсім","Салтанатты шығу және анттар"],["19:00","Той банкеті","Құттықтаулар, тосттар және музыка"],["22:30","Торт","Кештің тәтті нүктесі"]],
+         venue:"«Алма» тойханасы, Diamond залы",addr:"Алматы, Әл-Фараби даңғылы, 150",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Асыға күтеміз — А & Д",hash:"#АжД_14ақпан"},
+        {title:"Үйлену тойы",
+         lead:"Қымбатты жақындар! Екі жүрек бір соғысты таңдады — осы керемет сәттің куәсі болуға шақырамыз.",
+         prog:[["16:00","Welcome-аймақ","Жеңіл тағамдар мен лимонад"],["17:00","Рәсім","Арка астындағы әсерлі анттар"],["18:30","Кешкі ас","Жылы отбасылық дастархан"],["21:30","Алғашқы би","Мерекелік торт"]],
+         venue:"«Гардения» мейрамханасы, жазғы терраса",addr:"Алматы, Керімбеков көш., 12",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Сүйіспеншілікпен, А & Д",hash:"#БіздіңХикая_2027"},
+        {title:"Отбасылық той",
+         lead:"Құрметті ағайын, туыстар және достар! Екі әулеттің қосылу тойына шақырамыз — ортақ қуанышымызды бірге бөлісейік!",
+         prog:[["17:00","Қонақ күту","Шашу және қонақтарды қарсы алу"],["18:00","Тойдың басталуы","Салтанатты ашылу"],["19:00","Дастархан","Ұлттық тағамдар мен бата"],["21:00","Беташар","Рәсім және концерт"]],
+         venue:"«Дастархан» тойханасы, «Қонақжай» залы",addr:"Астана, Қабанбай батыр көш., 30",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Құрметпен, Асылбековтер мен Оспановтар әулеті",hash:"#ЕкіӘулет_БірТой"},
+        {title:"Мерейтой кеші",
+         lead:"Қымбатты достар! Жарты ғасыр — әдемі әңгіменің бастауы ғана. Менің 50 жылдығыма арналған кешке шақырамын — әңгіме, күлкі және музыка кеші.",
+         prog:[["18:00","Қонақтардың жиналуы","Аперитив аймағы"],["19:00","Салтанатты бөлім","Юбиляр туралы деректер"],["20:00","Кешкі ас","Шефтің арнайы сеті"],["22:00","Би","Топ және диджей"]],
+         venue:"«Печать» лофты, 2-қабат",addr:"Алматы, Панфилов көш., 98",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Әрқайсысыңызды күтемін — юбиляр",hash:"#ЖартыҒасыр"},
+        {title:"Туған күн",
+         lead:"Қымбаттыларым! Тағы бір жыл — ең жақындарымның қасында атап өткім келеді. Туған күніме күтемін!",
+         prog:[["18:30","Қонақтардың жиналуы","Шампан және жеңіл тағамдар"],["19:30","Кешкі ас","Сүйікті тағамдар мен сыйлықтар"],["21:00","Караоке мен ойындар","Ең көңілді бөлім"],["23:00","Торт","Тілек тілейік"]],
+         venue:"«Марсала» гастробары, негізгі зал",addr:"Алматы, Гоголь көш., 58",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Сүйіспеншілікпен, Аружан",hash:"#Аружан25"},
+        {title:"Тұсау кесер",
+         lead:"Қымбатты жақындар! Бүлдіршінімізге 1 жас толды — алғашқы қадам мерекесіне шақырамыз. Иманжанның жолы жарқын болсын!",
+         prog:[["12:00","Жиналыс","Қонақтардың жиналуы және фотосессия"],["13:00","Тұсау кесер","Тұсау кесу рәсімі"],["13:30","Дастархан","Мерекелік түскі ас"],["15:00","Ойындар мен сыйлықтар","Көңілді аяқталу"]],
+         venue:"«Алтын бесік» отбасылық мейрамханасы",addr:"Алматы, Самал-2 шағынауданы, 15",
+         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
+         sign:"Сүйіспеншілікпен, Иманжанның ата-анасы",hash:"#АлғашқыҚадам"}
+      ]
+    }
+  };
+  const t=k=>(T[lang]&&T[lang][k])||T.ru[k]||k;
+  const invC=i=>((T[lang]&&T[lang].inv)||T.ru.inv)[i];
+  const kick=i=>{const a=t("kicks");return Array.isArray(a)&&a[i]?a[i]:DEMOS[i].kicker;};
+
+  /* ---------- разметка-кусочки ---------- */
+  const ORN='<svg class="orn-svg fx" style="--d:0s" viewBox="0 0 140 40" aria-hidden="true"><path d="M70 34 C70 18 52 20 52 11 a8 8 0 1 1 16 2 M70 34 C70 18 88 20 88 11 a8 8 0 1 0 -16 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="70" cy="35" r="1.8" fill="currentColor"/></svg>';
+  const QBAND='<svg class="q-band" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+  const CAL_ICON='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
+  const CHECK_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 25l8 8 14-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function cdHTML(){return `<div class="cd fx" style="--d:.26s">
+    <div><b data-cd="d">00</b><span>${t("cd_d")}</span></div>
+    <div><b data-cd="h">00</b><span>${t("cd_h")}</span></div>
+    <div><b data-cd="m">00</b><span>${t("cd_m")}</span></div>
+    <div><b data-cd="s">00</b><span>${t("cd_s")}</span></div></div>`;}
+
+  const KEYS=["luxury","floral","qazaq","editorial","emerald","tusau"];
+  const DEMOS=[
+    {theme:"theme-luxury",  names:"А & Д",           kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧"},
+    {theme:"theme-floral",  names:"А & Д",           kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀",
+     deco:'<span class="flor f1">✿</span><span class="flor f2">✿</span><span class="flor f3">✿</span>'},
+    {theme:"theme-qazaq",   names:"Qazaq · Toy",     kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", band:true},
+    {theme:"theme-editorial",names:"Мерейтой",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", edBig:"50"},
+    {theme:"theme-emerald", names:"Аружан",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧"},
+    {theme:"theme-tusau",   names:"Иманжан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀",
+     deco:'<span class="t-sun2">☀</span><span class="fp fp1">👣</span><span class="fp fp2">👣</span><span class="fp fp3">👣</span>'}
+  ];
+
+  /* ---------- WhatsApp ---------- */
+  function waMsg(i){
+    if(i==null)return lang==="kz"
+      ?"Сәлеметсіз бе! SAQTAA цифрлық шақыруына тапсырыс бергім келеді."
+      :"Здравствуйте! Хочу заказать цифровое приглашение SAQTAA.";
+    return lang==="kz"
+      ?`Сәлеметсіз бе! №0${i+1} «${kick(i)}» үлгісі ұнады. Шақыруға тапсырыс бергім келеді.`
+      :`Здравствуйте! Понравился шаблон №0${i+1} «${kick(i)}». Хочу заказать приглашение.`;
+  }
+  function applyWA(){
+    qsa("a.wa-order").forEach(a=>{
+      const i=a.dataset.wa!=null?+a.dataset.wa:null;
+      a.href=WA_BASE+"?text="+encodeURIComponent(waMsg(i));
+    });
+  }
+
+  /* ---------- .ics ---------- */
+  const stampDT=s=>s.replace(/-/g,"").replace(/:/g,"");
+  const EVENT_CFG=i=>{
+    const c=invC(i),d=DEMOS[i];
+    return{
+      uid:"saqtaa-"+KEYS[i]+"-"+stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME)+"@saqtaa",
+      summary:d.names+" — "+c.title,
+      start:stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME),
+      end:stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_END_TIME),
+      location:c.venue+", "+c.addr,
+      desc:t("cal_desc")+c.prog.map(p=>p[0]+" — "+p[1]).join("; ")+"."
+    };
+  };
+  const icsEsc=s=>String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
+  function icsFold(line){
+    const enc=new TextEncoder();const out=[];let cur="",bytes=0;
+    for(const ch of line){
+      const b=enc.encode(ch).length;
+      if(bytes+b>74&&cur){out.push(cur);cur=" "+ch;bytes=1+b;}
+      else{cur+=ch;bytes+=b;}
+    }
+    if(cur)out.push(cur);
+    return out.join("\r\n");
+  }
+  function buildICS(cfg){
+    const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z/,"Z");
+    const L=[
+      "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Digital Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
+      "BEGIN:VTIMEZONE","TZID:"+CONFIG.EVENT_TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:+0500","TZOFFSETTO:+0500","TZNAME:ALMT","END:STANDARD","END:VTIMEZONE",
+      "BEGIN:VEVENT",
+      "UID:"+cfg.uid,
+      "DTSTAMP:"+stamp,
+      "DTSTART;TZID="+CONFIG.EVENT_TZ+":"+cfg.start,
+      "DTEND;TZID="+CONFIG.EVENT_TZ+":"+cfg.end,
+      icsFold("SUMMARY:"+icsEsc(cfg.summary)),
+      icsFold("LOCATION:"+icsEsc(cfg.location)),
+      icsFold("DESCRIPTION:"+icsEsc(cfg.desc)),
+      "STATUS:CONFIRMED",
+      "BEGIN:VALARM","ACTION:DISPLAY",
+      icsFold("DESCRIPTION:"+icsEsc(t("cal_alarm"))),
+      "TRIGGER:-P1D",
+      "END:VALARM",
+      "END:VEVENT","END:VCALENDAR"
+    ];
+    return L.join("\r\n")+"\r\n";
+  }
+  function downloadICS(i){
+    const blob=new Blob([buildICS(EVENT_CFG(i))],{type:"text/calendar;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download="saqtaa-"+KEYS[i]+"-"+CONFIG.EVENT_DATE+".ics";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    showToast(t("cal_done"));
+  }
+
+  /* ---------- отправка RSVP ---------- */
+  async function sendRSVP(p){
+    try{
+      if(RSVP_CONFIG.mode==="telegram"&&RSVP_CONFIG.telegramToken){
+        const text=`🤍 SAQTAA — новый ответ\n👤 ${p.full}\n💬 ${p.answer}\n🎨 ${p.template}`;
+        const r=await fetch(`https://api.telegram.org/bot${RSVP_CONFIG.telegramToken}/sendMessage`,{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({chat_id:RSVP_CONFIG.telegramChatId,text})});
+        return r.ok;
+      }
+      if(RSVP_CONFIG.mode==="web3forms"&&RSVP_CONFIG.web3formsKey){
+        const r=await fetch("https://api.web3forms.com/submit",{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({access_key:RSVP_CONFIG.web3formsKey,subject:"SAQTAA: ответ гостя",
+            name:p.name,family:p.fam,answer:p.answer,template:p.template})});
+        return r.ok;
+      }
+      return true;
+    }catch(_){return false;}
+  }
+
+  /* тост */
+  const toast=qs("#toast");let toastT;
+  function showToast(msg){
+    toast.textContent=msg;toast.classList.add("show");
+    clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove("show"),2600);
+  }
+
+  /* ---------- сборка слайда ---------- */
+  function slideHTML(d,i){
+    const c=invC(i);
+    const prog=c.prog.map(p=>`<li><b>${p[0]}</b><i></i><div><strong>${p[1]}</strong><span>${p[2]}</span></div></li>`).join("");
+    const gis="https://2gis.kz/search/"+encodeURIComponent(c.venue+", "+c.addr);
+    return `<div class="demo-slide" data-i="${i}">
+      <article class="inv-page ${d.theme}">
+        ${d.deco||""}
+        <div class="inv-inner">
+          ${d.band?QBAND.replace('class="q-band"','class="q-band fx" style="--d:0s"'):""}
+          ${d.orn||""}
+          ${d.edBig?`<div class="ed-big fx" style="--d:.04s">${d.edBig}</div>`:""}
+
+          <div class="ph-hero fx" style="--d:.05s">
+            <figure class="ph-frame">
+              <span class="ph-ph">${d.glyph}</span>
+              <img data-photo="${i}" alt="" draggable="false">
+              <div class="ph-overlay">
+                <h2 class="ph-names">${d.names}</h2>
+                <span class="ph-title">${d.tglyph} ${c.title}</span>
+              </div>
+              <span class="ph-hint">${t("ph_hint")}</span>
+            </figure>
+          </div>
+
+          <p class="inv-kicker fx" style="--d:.06s">${t("lbl_invite")} · 14.02.2027</p>
+          <h2 class="inv-names fx" style="--d:.1s">${d.names}</h2>
+          <p class="inv-sub fx" style="--d:.14s">${t("inv_sub")}</p>
+          <p class="iv-eyebrow joy-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p>
+          <h3 class="joy-h fx" style="--d:.16s">${c.title}</h3>
+          <p class="inv-lead fx" style="--d:.18s">${c.lead}</p>
+          <div class="orn-div fx" style="--d:.22s"><span>❧</span></div>
+          <div class="inv-date fx" style="--d:.24s">14 · 02 · 2027 · 18:00</div>
+          ${cdHTML()}
+
+          <section class="iv-sec fx" style="--d:.32s">
+            <p class="iv-eyebrow">${t("prog_t")}</p>
+            <ul class="prog">${prog}</ul>
+          </section>
+
+          <section class="iv-sec fx" style="--d:.38s">
+            <p class="iv-eyebrow">${t("loc_t")}</p>
+            <p class="v-hall">${c.venue}</p>
+            <p class="v-addr">${c.addr}</p>
+            <div class="loc-btns">
+              <a class="inv-btn" href="${gis}" target="_blank" rel="noopener">📍 ${t("btn_2gis")}</a>
+            </div>
+          </section>
+
+          <section class="iv-sec fx" style="--d:.44s">
+            <p class="iv-eyebrow">${t("rsvp_eyebrow")}</p>
+            <h3 class="rs-h">${t("rsvp_h")}</h3>
+            <p class="rs-sub">${t("rsvp_sub")}</p>
+            <form class="rs-form">
+              <div class="rs-grid">
+                <label class="rs-field"><span>${t("lbl_name")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="given-name"></label>
+                <label class="rs-field"><span>${t("lbl_fam")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="family-name"></label>
+              </div>
+              <div class="rs-opts">
+                <label class="rs-opt"><input type="radio" name="att${i}" value="yes" checked><i></i><span>${t("opt_yes")}</span></label>
+                <label class="rs-opt"><input type="radio" name="att${i}" value="no"><i></i><span>${t("opt_no")}</span></label>
+                <label class="rs-opt"><input type="radio" name="att${i}" value="maybe"><i></i><span>${t("opt_maybe")}</span></label>
+              </div>
+              <button class="rs-send" type="submit">${t("rsvp_send")}</button>
+              <p class="rs-note rs-demo-note" hidden>${t("demo_note")}</p>
+              <p class="rs-note">${c.deadline}</p>
+            </form>
+            <div class="rs-done" hidden>
+              <div class="rd-card">
+                <span class="rd-check">${CHECK_ICON}</span>
+                <h3 class="rd-title">${t("rd_title")}</h3>
+                <p class="rd-name"></p>
+                <p class="rd-msg"></p>
+                <span class="rd-div"></span>
+                <p class="rd-date">${t("date_human")}</p>
+                <p class="rd-venue">${c.venue}, ${c.addr}</p>
+                <button class="rs-send rd-cal" type="button" data-cal="${i}">${CAL_ICON}<span>${t("cal_btn")}</span></button>
+                <button class="rd-edit" type="button">${t("rd_edit")}</button>
+              </div>
+            </div>
+          </section>
+
+          <p class="inv-sign fx" style="--d:.5s">${c.sign}</p>
+          <p class="inv-hash fx" style="--d:.52s">${c.hash}</p>
+          <p class="inv-wm fx" style="--d:.54s">SAQTAA ✦ digital invitation</p>
+          ${d.band?QBAND.replace('class="q-band"','class="q-band fx" style="--d:.56s"'):""}
+        </div>
+      </article>
+    </div>`;
+  }
+
+  /* ---------- просмотр ---------- */
+  const view=qs("#demoView"),track=qs("#dvTrack"),stage=qs("#dvStage"),
+        dots=qs("#dvDots"),count=qs("#dvCount"),nameEl=qs("#dvName"),
+        tabP=qs("#dvTabPhoto"),tabD=qs("#dvTabDeco"),note=qs("#dvNote");
+  let cur=0,lastFocus=null;
+  const photoStore={};
+
+  function syncOpts(form){
+    form.querySelectorAll(".rs-opt").forEach(l=>{
+      l.classList.toggle("sel",l.querySelector("input").checked);
+    });
+  }
+  function renderSlides(){
+    track.innerHTML=DEMOS.map(slideHTML).join("");
+    dots.innerHTML=DEMOS.map((d,i)=>`<button data-i="${i}" aria-label="${t("dot_tpl")} ${i+1}">✦</button>`).join("");
+    qsa(".rs-form").forEach(syncOpts);
+    qsa(".rs-demo-note").forEach(el=>el.hidden=RSVP_CONFIG.mode!=="demo");
+    applyPhotos();setSlide(cur,true);
+  }
+  function applyPhotos(){
+    qsa("#dvTrack .ph-frame img[data-photo]").forEach(img=>{
+      const u=photoStore[img.dataset.photo];
+      if(u){img.src=u;img.closest(".ph-frame").classList.add("has-img");}
+    });
+  }
+  function setSlide(i,instant){
+    cur=Math.max(0,Math.min(DEMOS.length-1,i));
+    if(instant)track.classList.add("drag");
+    track.style.transform=`translateX(${-cur*stage.clientWidth}px)`;
+    if(instant)requestAnimationFrame(()=>track.classList.remove("drag"));
+    qsa(".demo-slide").forEach((s,k)=>{
+      s.classList.toggle("active",k===cur);
+      if(k===cur)s.scrollTop=0;
+    });
+    qsa("#dvDots button").forEach((b,k)=>b.classList.toggle("on",k===cur));
+    count.textContent=String(cur+1).padStart(2,"0")+" / "+String(DEMOS.length).padStart(2,"0");
+    nameEl.textContent=kick(cur)+" · "+DEMOS[cur].names;
+  }
+  function openViewer(i){
+    setPhotoMode(false);
+    setSlide(i||0,true);
+    view.classList.add("open");view.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+    lastFocus=document.activeElement;qs("#dvClose").focus();
+    updCta();
+  }
+  function closeViewer(){
+    view.classList.remove("open");view.setAttribute("aria-hidden","true");
+    document.body.style.overflow="";
+    /* освобождаем память от загруженных фото */
+    Object.values(photoStore).forEach(u=>URL.revokeObjectURL(u));
+    for(const k in photoStore)delete photoStore[k];
+    qsa("#dvTrack .ph-frame").forEach(fr=>{fr.classList.remove("has-img");const im=fr.querySelector("img");if(im)im.src="";});
+    setPhotoMode(false);
+    if(lastFocus)lastFocus.focus();updCta();
+  }
+  qs("#dvClose").addEventListener("click",closeViewer);
+  qs("#dvBack").addEventListener("click",closeViewer);
+  qs("#dvPrev").addEventListener("click",()=>setSlide(cur-1));
+  qs("#dvNext").addEventListener("click",()=>setSlide(cur+1));
+  dots.addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(b)setSlide(+b.dataset.i);});
+  qsa(".btn-demo").forEach(b=>b.addEventListener("click",()=>openViewer(+b.dataset.demo)));
+  qs("#heroView").addEventListener("click",()=>openViewer(0));
+
+  /* Свайп: обычный клик и вертикальная прокрутка не меняют позицию слайда. */
+  let sx=0,sy=0,dx=0,axis=null,dragging=false;
+  stage.addEventListener("pointerdown",e=>{
+    if(e.pointerType==="mouse"&&e.button!==0)return;
+    if(e.target.closest("a,button,input,label,.rs-opt,[contenteditable='true']"))return;
+    sx=e.clientX;sy=e.clientY;dx=0;axis=null;dragging=true;
+    track.classList.add("drag");
+  });
+  stage.addEventListener("pointermove",e=>{
+    if(!dragging)return;
+    const mx=e.clientX-sx,my=e.clientY-sy;
+    if(!axis&&(Math.abs(mx)>8||Math.abs(my)>8)){
+      axis=Math.abs(mx)>Math.abs(my)?"x":"y";
+      if(axis==="x"){
+        try{stage.setPointerCapture(e.pointerId);}catch(_){}
+      }
+    }
+    if(axis!=="x")return;
+    dx=mx;
+    if((cur===0&&dx>0)||(cur===DEMOS.length-1&&dx<0))dx*=.35;
+    track.style.transform=`translateX(${-cur*stage.clientWidth+dx}px)`;
+  });
+  function endDrag(){
+    if(!dragging)return;
+    dragging=false;
+    track.classList.remove("drag");
+
+    // Только горизонтальный жест может переключить шаблон.
+    if(axis==="x"){
+      if(Math.abs(dx)>60){
+        setSlide(cur+(dx<0?1:-1));
+      }else{
+        // Возвращаем ленту на место, не вызывая setSlide и не сбрасывая scrollTop.
+        track.style.transform=`translateX(${-cur*stage.clientWidth}px)`;
+      }
+    }
+    dx=0;
+    axis=null;
+  }
+  stage.addEventListener("pointerup",endDrag);
+  stage.addEventListener("pointercancel",endDrag);
+  stage.addEventListener("lostpointercapture",endDrag);
+
+  addEventListener("keydown",e=>{
+    if(view.classList.contains("open")){
+      if(e.key==="Escape"){closeViewer();return;}
+      const typing=e.target instanceof Element&&!!e.target.closest("input,textarea,[contenteditable]");
+      if(e.key==="ArrowRight"&&!typing)setSlide(cur+1);
+      if(e.key==="ArrowLeft"&&!typing)setSlide(cur-1);
+      if(e.key==="Tab"){
+        /* focus trap: Tab не выходит за пределы диалога */
+        const f=qsa('#demoView a[href],#demoView button,#demoView input').filter(el=>el.offsetParent!==null);
+        if(!f.length)return;
+        const first=f[0],last=f[f.length-1];
+        if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+        else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+      }
+    }else if(e.key==="Escape")setMenu(false);
+  });
+  addEventListener("resize",()=>setSlide(cur,true));
+
+  /* фото-режим */
+  function setPhotoMode(on){
+    view.classList.toggle("no-photo",!on);
+    tabP.classList.toggle("on",on);tabD.classList.toggle("on",!on);
+    note.hidden=!on;
+  }
+  tabP.addEventListener("click",()=>setPhotoMode(true));
+  tabD.addEventListener("click",()=>setPhotoMode(false));
+  qs("#dvUpload").addEventListener("click",()=>qs("#dvFile").click());
+  qs("#dvFile").addEventListener("change",e=>{
+    const f=e.target.files[0];if(!f)return;
+    if(photoStore[cur])URL.revokeObjectURL(photoStore[cur]);
+    photoStore[cur]=URL.createObjectURL(f);
+    setPhotoMode(true);applyPhotos();
+  });
+
+  /* RSVP: обязательные имя+фамилия, лимит символов, персональная карточка */
+  function fieldErr(el){
+    el.classList.add("err");
+    setTimeout(()=>el.classList.remove("err"),400);
+    el.focus();
+  }
+  track.addEventListener("change",e=>{
+    if(e.target.matches(".rs-opt input"))syncOpts(e.target.closest(".rs-form"));
+  });
+  track.addEventListener("click",e=>{
+    const cal=e.target.closest("[data-cal]");
+    if(cal){downloadICS(+cal.dataset.cal);return;}
+    const ed=e.target.closest(".rd-edit");
+    if(ed){
+      const sec=ed.closest(".iv-sec");
+      sec.querySelector(".rs-done").hidden=true;
+      sec.querySelector(".rs-form").hidden=false;
+    }
+  });
+  track.addEventListener("submit",async e=>{
+    const f=e.target.closest(".rs-form");if(!f)return;
+    e.preventDefault();
+    const inputs=f.querySelectorAll("input[type=text]");
+    const name=inputs[0],fam=inputs[1];
+    /* обрезка по лимиту на всякий случай (вставка мимо maxlength) */
+    if(name.value.length>NAME_MAX)name.value=name.value.slice(0,NAME_MAX);
+    if(fam.value.length>NAME_MAX)fam.value=fam.value.slice(0,NAME_MAX);
+    if(!name.value.trim()){fieldErr(name);return;}
+    if(!fam.value.trim()){fieldErr(fam);return;}
+    const full=[name.value.trim(),fam.value.trim()].filter(Boolean).join(" ");
+    const val=f.querySelector("input:checked").value;
+    const i=+f.closest(".demo-slide").dataset.i;
+    const btn=f.querySelector(".rs-send");
+    btn.disabled=true;
+    const ok=await sendRSVP({full,name:name.value.trim(),fam:fam.value.trim(),answer:t("opt_"+val),template:DEMOS[i].kicker});
+    btn.disabled=false;
+    if(!ok){showToast(t("rsvp_err"));return;}
+    const sec=f.closest(".iv-sec");
+    const done=sec.querySelector(".rs-done");
+    done.querySelector(".rd-name").textContent=full;
+    done.querySelector(".rd-msg").textContent=t("ok_"+val);
+    f.hidden=true;
+    done.hidden=false;
+    done.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"});
+  });
+
+  /* ---------- hero: авто-перелистывание тем ---------- */
+  const HERO=[
+    {n:"А & Д",tag:"Luxury · Wedding",cls:"t-lux"},
+    {n:"А & Д",tag:"Floral · Wedding",cls:"t-flor"},
+    {n:"Айдана & Нұрлан",tag:"Qazaq · Toy",cls:"t-qaz"},
+    {n:"Мерейтой · 50",tag:"Jubilee · Editorial",cls:"t-edit"},
+    {n:"Аружан",tag:"Emerald · Birthday",cls:"t-emer"},
+    {n:"Иманжан · 1 жас",tag:"Tusau · 1 жас",cls:"t-tus"}
+  ];
+  const invEl=qs("#heroInvite"),cNames=qs("#cycleNames"),cTag=qs("#cycleTag"),hDots=qs("#heroDots");
+  let hIdx=0,hTimer=null,hSwapT=null;
+  hDots.innerHTML=HERO.map((_,i)=>`<button data-i="${i}" aria-label="${t("dot_st")} ${i+1}"></button>`).join("");
+  function heroDots(){qsa("#heroDots button").forEach((b,k)=>b.classList.toggle("on",k===hIdx));}
+  function setHero(i){
+    hIdx=i;const h=HERO[i];
+    invEl.classList.add("swapping");
+    clearTimeout(hSwapT);
+    hSwapT=setTimeout(()=>{
+      HERO.forEach(x=>invEl.classList.remove(x.cls));
+      invEl.classList.add(h.cls);
+      cNames.textContent=h.n;cTag.textContent=h.tag;
+      invEl.classList.remove("swapping");
+      heroDots();
+    },320);
+  }
+  function heroStart(){if(!reduced&&!hTimer)hTimer=setInterval(()=>{if(!document.hidden)setHero((hIdx+1)%HERO.length);},4500);}
+  function heroStop(){clearInterval(hTimer);hTimer=null;}
+  hDots.addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(!b)return;heroStop();setHero(+b.dataset.i);heroStart();});
+  invEl.addEventListener("mouseenter",heroStop);
+  invEl.addEventListener("mouseleave",heroStart);
+  heroDots();heroStart();
+
+  /* ---------- шапка / меню ---------- */
+  const head=qs("#head");
+  addEventListener("scroll",()=>head.classList.toggle("scrolled",scrollY>8),{passive:true});
+  const burger=qs("#burger");
+  function setMenu(open){
+    document.body.classList.toggle("menu-open",open);
+    if(!view.classList.contains("open"))document.body.style.overflow=open?"hidden":"";
+    burger.setAttribute("aria-expanded",open);
+    qs("#mmenu").setAttribute("aria-hidden",!open);
+  }
+  burger.addEventListener("click",()=>setMenu(!document.body.classList.contains("menu-open")));
+  qsa(".mmenu a").forEach(a=>a.addEventListener("click",()=>setMenu(false)));
+  /* если меню открыто на телефоне, а окно расширили до десктопа — закрываем */
+  addEventListener("resize",()=>{if(innerWidth>=900&&document.body.classList.contains("menu-open"))setMenu(false);});
+
+  /* ---------- отсчёт ---------- */
+  function pad(n){return String(n).padStart(2,"0");}
+  function tick(){
+    let d=Math.max(0,TARGET-Date.now());
+    const days=Math.floor(d/864e5),h=Math.floor(d/36e5)%24,m=Math.floor(d/6e4)%60,s=Math.floor(d/1e3)%60;
+    qsa('[data-cd="d"]').forEach(e=>e.textContent=pad(days));
+    qsa('[data-cd="h"]').forEach(e=>e.textContent=pad(h));
+    qsa('[data-cd="m"]').forEach(e=>e.textContent=pad(m));
+    qsa('[data-cd="s"]').forEach(e=>e.textContent=pad(s));
+  }
+  tick();setInterval(tick,1000);
+
+  /* ---------- появление ---------- */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.15});
+  qsa("[data-reveal]").forEach(el=>io.observe(el));
+
+  /* ---------- фильтр ---------- */
+  const cards=qsa(".card");
+  qsa(".chip").forEach(ch=>ch.addEventListener("click",()=>{
+    qsa(".chip").forEach(c=>c.classList.remove("on"));ch.classList.add("on");
+    const cat=ch.dataset.cat;
+    cards.forEach(c=>{
+      const show=cat==="all"||c.dataset.cat===cat;
+      if(show){c.hidden=false;requestAnimationFrame(()=>c.classList.remove("off"));}
+      else{c.classList.add("off");setTimeout(()=>{if(c.classList.contains("off"))c.hidden=true;},260);}
+    });
+    qs("#cards").scrollTo({left:0,behavior:reduced?"auto":"smooth"});
+  }));
+  const rail=qs("#cards");
+  qs("#railPrev").addEventListener("click",()=>rail.scrollBy({left:-360,behavior:"smooth"}));
+  qs("#railNext").addEventListener("click",()=>rail.scrollBy({left:360,behavior:"smooth"}));
+
+  /* ---------- липкий CTA ---------- */
+  const cta=qs("#stickyCta"),heroEl=qs(".hero");let pastHero=false,footVisible=false;
+  function updCta(){cta.classList.toggle("show",pastHero&&!footVisible&&!view.classList.contains("open"));}
+  addEventListener("scroll",()=>{pastHero=scrollY>heroEl.offsetHeight*.7;updCta();},{passive:true});
+  new IntersectionObserver(es=>{footVisible=es[0].isIntersecting;updCta();},{threshold:.05}).observe(qs("#footer"));
+
+  /* ---------- язык ---------- */
+  function applyLang(){
+    document.documentElement.lang=lang==="kz"?"kk":"ru";
+    document.title=t("site_title");
+    qsa("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n);});
+    qsa("[data-i18n-html]").forEach(el=>{el.innerHTML=t(el.dataset.i18nHtml);});
+    qsa("#langBtn span").forEach(s=>s.classList.toggle("on",s.dataset.lang===lang));
+    const mq=t("mq");qs("#mq1").textContent=mq;qs("#mq2").textContent=mq;
+    localStorage.setItem("saqtaa-lang",lang);
+    applyWA();
+    renderSlides();
+  }
+  qs("#langBtn").addEventListener("click",()=>{lang=lang==="ru"?"kz":"ru";applyLang();});
+
+  applyWA();
+  applyLang();
+})();
+</script>
+</body>
+</html>
