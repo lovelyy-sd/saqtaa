@@ -281,7 +281,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  send:"Отправить ответ",sending:"Отправляем…",thanks:"Спасибо!",edit:"Изменить ответ",
  ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",ok_no:"Спасибо за ответ. Жаль, что вы не сможете прийти. Спасибо, что сообщили!",ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
  e_name:"Укажите имя",e_fam:"Укажите фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
- e_wait:"Пожалуйста, подождите несколько секунд перед повторной отправкой.",
+ e_wait:"Пожалуйста, подождите 30 секунд перед повторной отправкой.",
  by:"Просим подтвердить присутствие до {date}",cal:"Добавить в календарь",gcal:"Или открыть в Google Календаре",
  calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
  alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",cdesc:"Программа: ",cdone:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
@@ -293,7 +293,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  send:"Жауап жіберу",sending:"Жіберілуде…",thanks:"Рақмет!",edit:"Жауапты өзгерту",
  ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",ok_no:"Жауабыңызға рақмет. Қатыса алмайтыныңыз өкінішті. Хабарлағаныңызға рақмет!",ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
  e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
- e_wait:"Қайта жіберу алдында бірнеше секунд күтіңіз.",
+ e_wait:"Қайта жіберу алдында 30 секунд күтіңіз.",
  by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",cal:"Күнтізбеге қосу",gcal:"Немесе Google Күнтізбеде ашу",
  calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
  alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",cdesc:"Бағдарлама: ",cdone:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
@@ -316,7 +316,7 @@ var TPL={
 };
 
 /* ---------- данные, даты и локальное состояние RSVP ---------- */
-var D=null,lang="ru",langs=["ru"],tickTimer=null,isSubmitting=false,rsvpState=null;
+var D=null,lang="ru",langs=["ru"],tickTimer=null,isSubmitting=false,rsvpState=null,memRsvp={};
 function t(k){return S[lang][k];}
 function fill(s,o){return String(s).replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:"";});}
 function addDays(str,n){var x=new Date(str+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10);}
@@ -334,32 +334,44 @@ function makeId(){return(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(
 function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
 function invKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
 function loadRsvpState(){
-  var def={id:makeId(),nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",rev:0,guests:0,editing:false,lastSentAt:0,lang:""};
+  var key=invKey(),cached=memRsvp[key];
+  var def={id:makeId(),nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",rev:0,guests:0,maybe:0,editing:false,lastSentAt:0,lang:""};
+  var p=null;
   try{
-    var raw=localStorage.getItem(invKey());
-    if(!raw)return def;
-    var p=JSON.parse(raw);
-    if(!p||typeof p!=="object")return def;
-    return{
-      id:String(p.id||def.id).slice(0,64),
-      nm:normName(p.nm),
-      fm:normName(p.fm),
-      att:validAtt(p.att),
-      sent:Boolean(p.sent&&p.sentNm&&p.sentFm),
-      sentNm:normName(p.sentNm),
-      sentFm:normName(p.sentFm),
-      sentAtt:validAtt(p.sentAtt),
-      rev:Number.isFinite(+p.rev)&&+p.rev>0?Math.floor(+p.rev):0,
-      guests:validAtt(p.sentAtt)==="yes"?1:0,
-      editing:false,
-      lastSentAt:Number.isFinite(+p.lastSentAt)?+p.lastSentAt:0,
-      lang:(p.lang==="ru"||p.lang==="kz")?p.lang:""
-    };
-  }catch(_){return def;}
+    var raw=localStorage.getItem(key);
+    if(raw)p=JSON.parse(raw);
+  }catch(_){}
+  if((!p||typeof p!=="object")&&cached&&typeof cached==="object")p=cached;
+  if(!p||typeof p!=="object"){memRsvp[key]=def;return def;}
+  var st={
+    id:String(p.id||def.id).slice(0,64),
+    nm:normName(p.nm),
+    fm:normName(p.fm),
+    att:validAtt(p.att),
+    sent:Boolean(p.sent&&p.sentNm&&p.sentFm),
+    sentNm:normName(p.sentNm),
+    sentFm:normName(p.sentFm),
+    sentAtt:validAtt(p.sentAtt),
+    rev:Number.isFinite(+p.rev)&&+p.rev>0?Math.floor(+p.rev):0,
+    guests:validAtt(p.sentAtt)==="yes"?1:0,
+    maybe:validAtt(p.sentAtt)==="maybe"?1:0,
+    editing:false,
+    lastSentAt:Number.isFinite(+p.lastSentAt)?+p.lastSentAt:0,
+    lang:(p.lang==="ru"||p.lang==="kz")?p.lang:""
+  };
+  memRsvp[key]=st;
+  return st;
 }
 function saveRsvpState(){
   if(!D||!rsvpState)return;
-  try{localStorage.setItem(invKey(),JSON.stringify(rsvpState));}catch(_){}
+  var key=invKey();
+  memRsvp[key]={
+    id:rsvpState.id,nm:rsvpState.nm,fm:rsvpState.fm,att:rsvpState.att,
+    sent:rsvpState.sent,sentNm:rsvpState.sentNm,sentFm:rsvpState.sentFm,sentAtt:rsvpState.sentAtt,
+    rev:rsvpState.rev,guests:rsvpState.guests,maybe:rsvpState.maybe,editing:rsvpState.editing,
+    lastSentAt:rsvpState.lastSentAt,lang:rsvpState.lang
+  };
+  try{localStorage.setItem(key,JSON.stringify(rsvpState));}catch(_){}
 }
 function captureFormToState(){
   if(!rsvpState)return;
@@ -392,8 +404,7 @@ function evCfg(){
     uid:"saqtaa-"+D.d.replace(/-/g,"")+"-"+Math.abs(hash(names()+D.d))+"@saqtaa",
     summary:names()+(c.ti?" — "+c.ti:""),
     start:icsDT(D.d,D.s),end:icsDT(endDate(),D.e),location:loc,
-    desc:[pr.length?(t("cdesc")+pr.map(function(p){return p[0]+" — "+p[1];}).join("; ")):"",D.ve,D.ad,location.href].filter(Boolean).join("\n"),
-    url:location.href,
+    desc:[pr.length?(t("cdesc")+pr.map(function(p){return p[0]+" — "+p[1];}).join("; ")):"",D.ve,D.ad].filter(Boolean).join("\n"),
     alarm:fill(t("alarm"),{title:c.ti||names(),time:D.s})
   };
 }
@@ -411,7 +422,7 @@ function buildICS(c){
   return["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
    "BEGIN:VTIMEZONE","TZID:"+TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:"+TZ_NUM,"TZOFFSETTO:"+TZ_NUM,"TZNAME:"+TZ_NUM.slice(0,3),"END:STANDARD","END:VTIMEZONE",
    "BEGIN:VEVENT","UID:"+c.uid,"DTSTAMP:"+stamp,"DTSTART;TZID="+TZ+":"+c.start,"DTEND;TZID="+TZ+":"+c.end,
-   icsFold("SUMMARY:"+icsEsc(c.summary)),icsFold("LOCATION:"+icsEsc(c.location)),icsFold("DESCRIPTION:"+icsEsc(c.desc)),icsFold("URL:"+icsEsc(c.url)),"STATUS:CONFIRMED",
+   icsFold("SUMMARY:"+icsEsc(c.summary)),icsFold("LOCATION:"+icsEsc(c.location)),icsFold("DESCRIPTION:"+icsEsc(c.desc)),"STATUS:CONFIRMED",
    "BEGIN:VALARM","ACTION:DISPLAY",icsFold("DESCRIPTION:"+icsEsc(c.alarm)),"TRIGGER:-P1D","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";
 }
 function downloadICS(){
@@ -453,7 +464,9 @@ function render(){
   var curAtt=validAtt(st.att),showDone=Boolean(st.sent&&!st.editing);
   var sentFull=(st.sentNm+" "+st.sentFm).trim(),sentAtt=validAtt(st.sentAtt);
   var rsvpHTML=D.rsvp===false?'':'<section class="iv-sec fx" style="--d:.44s"><p class="iv-eyebrow">'+t("rh")+'</p><h3 class="rs-h">'+t("rt")+'</h3><p class="rs-sub">'+t("rs")+'</p>'+
-    '<form class="rs-form" novalidate'+(showDone?' hidden':'')+'><div class="rs-grid">'+
+    '<form class="rs-form" novalidate'+(showDone?' hidden':'')+'>'+
+      '<input type="checkbox" name="botcheck" class="rs-hp" tabindex="-1" autocomplete="off" aria-hidden="true">'+
+      '<div class="rs-grid">'+
       '<label class="rs-field"><span>'+t("name")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="given-name" value="'+esc(st.nm)+'"></label>'+
       '<label class="rs-field"><span>'+t("fam")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="family-name" value="'+esc(st.fm)+'"></label></div>'+
       '<div class="rs-opts">'+
@@ -491,12 +504,17 @@ function tick(){
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
 /* ---------- отправка ответа на почту (Web3Forms) ---------- */
-async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId){
-  if(!D.k)return false;
+async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId,prevGuestInfo,botChecked){
+  if(!D.k||botChecked)return false;
   var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
   var label=labels[val]||labels.yes;
   var guestsCount=val==="yes"?1:0;
+  var maybeCount=val==="maybe"?1:0;
+  var attCategory=val==="yes"?"Подтверждено (1 гость)":(val==="maybe"?"Не определился — под вопросом (1 гость)":"Отказ (0 гостей)");
   var subj=(isUpdate?"Изменение ответа: ":"Ответ гостя: ")+full+" — "+label;
+  var statusText=isUpdate
+    ?("Изменение ранее отправленного ответа (обновление №"+rev+", было: "+(labels[prevVal]||prevVal)+")")
+    :(prevGuestInfo?("Новый гость с этого устройства (ранее указывался: "+prevGuestInfo+")"):"Первичный ответ");
   var payload={
     access_key:D.k,
     subject:subj,
@@ -504,11 +522,14 @@ async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId){
     "Приглашение":names()+" ("+dDot(D.d)+" "+D.s+")",
     "Гость":full,
     "Ответ":label,
+    "Статус присутствия":attCategory,
     "Количество гостей":guestsCount,
-    "Статус записи":isUpdate?("Изменение ранее отправленного ответа (обновление №"+rev+", было: "+(labels[prevVal]||prevVal)+")"):"Первичный ответ",
+    "Под вопросом (пока не знают)":maybeCount,
+    "Статус записи":statusText,
     "ID ответа":rsvpId,
-    botcheck:""
+    botcheck:botChecked?"true":""
   };
+  if(prevGuestInfo)payload["Предыдущий гость на устройстве"]=prevGuestInfo;
   try{
     var r=await fetch(W3F,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
     var j=await r.json().catch(function(){return{};});
@@ -526,6 +547,8 @@ function showDoneCard(sec,full,val,scroll){
 }
 app.addEventListener("submit",async function(e){
   var f=e.target.closest(".rs-form");if(!f||isSubmitting)return;e.preventDefault();
+  var hp=f.querySelector('input[name="botcheck"]');
+  if(hp&&hp.checked)return;
   var inputs=f.querySelectorAll("input[type=text]"),nm=inputs[0],fm=inputs[1],err=f.querySelector(".rs-err");
   function bad(el,key){err.textContent=t(key);el.classList.remove("err");void el.offsetWidth;el.classList.add("err");el.focus();}
   var cleanNm=normName(nm.value),cleanFm=normName(fm.value);
@@ -544,20 +567,26 @@ app.addEventListener("submit",async function(e){
     showDoneCard(sec,full,val,true);
     return;
   }
-  /* Защита от слишком частой повторной отправки */
+  /* Защита от слишком частой повторной отправки (клиентский cooldown 30 секунд) */
   if(rsvpState&&rsvpState.lastSentAt&&(Date.now()-rsvpState.lastSentAt)<RSVP_COOLDOWN_MS){
     err.textContent=t("e_wait");
     return;
   }
 
-  var isUpdate=Boolean(rsvpState&&rsvpState.sent);
+  var hadSent=Boolean(rsvpState&&rsvpState.sent);
+  var samePerson=hadSent&&rsvpState.sentNm.toLowerCase()===cleanNm.toLowerCase()&&rsvpState.sentFm.toLowerCase()===cleanFm.toLowerCase();
+  var isUpdate=hadSent&&samePerson;
   var prevVal=rsvpState?rsvpState.sentAtt:"yes";
-  var nextRev=(rsvpState&&rsvpState.rev?rsvpState.rev:0)+1;
-  var rsvpId=(rsvpState&&rsvpState.id)?rsvpState.id:makeId();
+  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  var prevGuestInfo=(hadSent&&!samePerson)
+    ?((rsvpState.sentNm+" "+rsvpState.sentFm).trim()+" — "+(labels[prevVal]||prevVal)+", прежний ID: "+rsvpState.id)
+    :"";
+  var nextRev=isUpdate?((rsvpState.rev||1)+1):1;
+  var rsvpId=isUpdate?(rsvpState.id||makeId()):(hadSent?makeId():((rsvpState&&rsvpState.id)?rsvpState.id:makeId()));
 
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
-  var ok=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId);
+  var ok=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked));
   isSubmitting=false;
   btn.disabled=false;btn.textContent=t("send");
   if(!ok){
@@ -569,7 +598,7 @@ app.addEventListener("submit",async function(e){
   rsvpState.id=rsvpId;
   rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;
   rsvpState.sent=true;rsvpState.sentNm=cleanNm;rsvpState.sentFm=cleanFm;rsvpState.sentAtt=val;
-  rsvpState.rev=nextRev;rsvpState.guests=(val==="yes"?1:0);
+  rsvpState.rev=nextRev;rsvpState.guests=(val==="yes"?1:0);rsvpState.maybe=(val==="maybe"?1:0);
   rsvpState.editing=false;rsvpState.lastSentAt=Date.now();
   saveRsvpState();
   showDoneCard(sec,full,val,true);
