@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Анимации появления включаются только при работающем JavaScript.
+   Если основной скрипт не запустился — контент показывается сразу, без анимаций. */
+document.documentElement.classList.add("js");
+(function(){var d=document.documentElement;function off(){if(!window.SAQTAA_READY)d.classList.remove("js");}addEventListener("error",off);addEventListener("load",function(){setTimeout(off,1500);});})();
+</script>
+<noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 <title>SAQTAA — цифровые приглашения на той</title>
 <meta name="description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
 <meta name="theme-color" content="#0F4A38">
@@ -10,13 +17,24 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="SAQTAA — цифровые приглашения на той">
 <meta property="og:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta property="og:url" content="https://lovelyy-sd.github.io/saqtaa/">
+<meta property="og:site_name" content="SAQTAA">
+<meta property="og:image" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
+<meta property="og:image:secure_url" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="SAQTAA — цифровые приглашения на той, 2 990 ₸">
 <meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="kk_KZ">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SAQTAA — цифровые приглашения на той">
 <meta name="twitter:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta name="twitter:image" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
+<link rel="canonical" href="https://lovelyy-sd.github.io/saqtaa/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 <style>
 /* ============ БАЗА ============ */
 :root{
@@ -26,7 +44,7 @@
   --gold:#B98E45; --gold-soft:#D9BC7F;
   --burg:#7C2230;
   --hair:rgba(24,39,32,.15);
-  --fd:"Playfair Display",Georgia,serif;
+  --fd:"Playfair Display","PT Serif",Georgia,serif;
   --fb:"Manrope",system-ui,sans-serif;
   --r:18px; --pad:clamp(18px,5vw,24px);
 }
@@ -54,8 +72,8 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 .wrap{max-width:1180px;margin:0 auto}
 
 /* появление блоков при прокрутке */
-[data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
-[data-reveal].in{opacity:1;transform:none}
+.js [data-reveal]{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js [data-reveal].in{opacity:1;transform:none}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:52px;padding:.9em 1.5em;border-radius:999px;font-weight:700;font-size:.95rem;letter-spacing:.02em;white-space:nowrap;transition:transform .25s,box-shadow .25s,background .25s,color .25s,border-color .25s}
 .btn .ar{transition:transform .25s}
@@ -89,11 +107,11 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 .lang span.on{opacity:1;color:var(--em)}
 .lang i{font-style:normal;color:var(--gold)}
 .burger{width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--hair);border-radius:999px}
-.burger div{width:20px;height:12px;position:relative}
-.burger div::before,.burger div::after{content:"";position:absolute;left:0;width:100%;height:2px;background:var(--ink);transition:transform .3s,top .3s}
-.burger div::before{top:0}.burger div::after{top:10px}
-body.menu-open .burger div::before{top:5px;transform:rotate(45deg)}
-body.menu-open .burger div::after{top:5px;transform:rotate(-45deg)}
+.burger span{display:block;width:20px;height:12px;position:relative}
+.burger span::before,.burger span::after{content:"";position:absolute;left:0;width:100%;height:2px;background:var(--ink);transition:transform .3s,top .3s}
+.burger span::before{top:0}.burger span::after{top:10px}
+body.menu-open .burger span::before{top:5px;transform:rotate(45deg)}
+body.menu-open .burger span::after{top:5px;transform:rotate(-45deg)}
 
 .mmenu{position:fixed;inset:0;z-index:90;background:var(--em-deep);color:#F2EBDA;display:flex;flex-direction:column;padding:96px var(--pad) 40px;transform:translateY(-102%);transition:transform .5s cubic-bezier(.22,.8,.24,1);
  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='44'><path d='M80 38 C80 22 62 24 62 14 a7 7 0 1 1 14 2 M80 38 C80 22 98 24 98 14 a7 7 0 1 0 -14 2' fill='none' stroke='%23D9BC7F' stroke-opacity='.08' stroke-width='1.5' stroke-linecap='round'/></svg>")}
@@ -495,10 +513,57 @@ body.menu-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
-  [data-reveal]{opacity:1;transform:none}
+  .js [data-reveal]{opacity:1;transform:none}
   .demo-slide .fx{opacity:1;transform:none}
   .swap-target{opacity:1!important;transform:none!important}
 }
+
+/* ===== правки: контраст, меню, фокус, ошибки формы, примечание и цена ===== */
+:root{--gold-text:#7F5D22}
+.eyebrow,.f-no,.ci-top b,.st-chip{color:var(--gold-text)}
+.mmenu{visibility:hidden;transition:transform .5s cubic-bezier(.22,.8,.24,1),visibility 0s linear .5s}
+body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.22,.8,.24,1),visibility 0s linear 0s}
+.mmenu a.big:nth-child(4){transition-delay:.24s}
+.hero-dots{gap:0}
+.hero-dots button{width:40px;height:40px}
+.coll-head .c-note{display:flex;gap:.65em;align-items:flex-start;max-width:64ch;margin-top:6px;padding:12px 16px;border:1px solid var(--hair);border-radius:12px;background:var(--card);color:var(--ink);font-size:.92rem;line-height:1.5}
+.c-note b{color:var(--gold-text);flex:0 0 auto}
+.rs-opt:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:3px}
+.rs-field input[aria-invalid="true"]{border-color:var(--acc)}
+.rs-err{font-size:.82rem;font-weight:700;color:var(--acc)}
+.rs-err:empty{display:none}
+.rd-cals{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:2px}
+.rd-gcal{display:inline-flex;align-items:center;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7;transition:opacity .2s}
+.rd-gcal:hover{opacity:1}
+.rd-title:focus{outline:none} /* заголовок получает фокус только для экранного диктора */
+.price-card{display:grid;gap:28px;background:var(--em);color:#F2EBDA;border-radius:calc(var(--r) + 6px);padding:clamp(26px,6vw,52px)}
+.price-card .eyebrow{color:var(--gold-soft)}
+.pc-h{font-size:clamp(1.7rem,6vw,2.6rem);color:#FFF7E4;margin-top:10px}
+.pc-sum{font-family:var(--fd);font-weight:700;font-size:clamp(2.8rem,12vw,4.4rem);line-height:1;color:var(--gold-soft);margin:14px 0 10px}
+.pc-lead{opacity:.85;max-width:40ch;margin-bottom:24px}
+.pc-list{list-style:none;display:grid;gap:14px;align-content:center}
+.pc-list li{display:flex;gap:.75em;align-items:flex-start;line-height:1.45}
+.pc-list li::before{content:"✦";color:var(--gold-soft);flex:0 0 auto}
+@media (min-width:900px){.price-card{grid-template-columns:1.05fr 1fr;align-items:center;gap:56px}}
+
+/* --- условия и контакты --- */
+.pc-note{display:inline-block;font-size:.82rem;letter-spacing:.08em;color:#241A08;background:var(--gold-soft);border-radius:999px;padding:5px 12px;margin:-2px 0 16px}
+.terms{margin-top:18px;border:1px solid rgba(15,74,56,.18);border-radius:calc(var(--r) + 6px);padding:clamp(22px,5vw,40px);background:rgba(255,255,255,.45)}
+.terms-h{font-family:var(--fd);font-size:clamp(1.3rem,4.4vw,1.7rem);color:var(--em);margin-bottom:18px}
+.terms-grid{display:grid;gap:18px 28px}
+@media(min-width:720px){.terms-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1040px){.terms-grid{grid-template-columns:repeat(3,1fr)}}
+.term{border-top:1px solid rgba(185,142,69,.45);padding-top:12px}
+.term b{display:block;font-size:1rem;color:var(--em);margin-bottom:4px}
+.term p{font-size:.92rem;line-height:1.5;opacity:.85}
+.foot-contacts{display:grid;gap:10px;margin:6px 0 4px}
+.foot-contacts a{display:flex;flex-direction:column;gap:2px;padding:4px 0;transition:color .2s}
+.foot-contacts a span{font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(237,230,211,.6)}
+.foot-contacts a b{font-size:1.05rem;font-weight:600;color:#F6F1E4}
+.foot-contacts a:hover b{color:var(--gold-soft)}
+@media(min-width:720px){.foot-contacts{grid-auto-flow:column;gap:28px;text-align:right}.foot-contacts a{align-items:flex-end}}
+.invite .names{font-size:clamp(1.55rem,6.4vw,2.4rem);letter-spacing:.02em;line-height:1.15;overflow-wrap:break-word}
+@media(max-width:420px){.hero-txt h1{font-size:clamp(2rem,8.6vw,2.6rem)}}
 </style>
 </head>
 <body>
@@ -511,12 +576,13 @@ body.menu-open{overflow:hidden}
     <a href="#designs" data-i18n="nav_designs">Дизайны</a>
     <a href="#features" data-i18n="nav_features">Возможности</a>
     <a href="#process" data-i18n="nav_process">Как заказать</a>
+    <a href="#price" data-i18n="nav_price">Цена</a>
   </nav>
   <div class="head-right">
-    <button class="lang" id="langBtn" aria-label="Переключить язык">
+    <button class="lang" id="langBtn" aria-label="Переключить язык" data-i18n-aria="a_lang">
       <span data-lang="ru" class="on">RU</span><i>/</i><span data-lang="kz">ҚАЗ</span>
     </button>
-    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false"><div></div></button>
+    <button class="burger" id="burger" aria-label="Меню" data-i18n-aria="a_menu" aria-expanded="false" aria-controls="mmenu"><span></span></button>
   </div>
 </header>
 
@@ -525,9 +591,10 @@ body.menu-open{overflow:hidden}
     <a class="big" href="#designs"><sup>01</sup><span data-i18n="nav_designs">Дизайны</span></a>
     <a class="big" href="#features"><sup>02</sup><span data-i18n="nav_features">Возможности</span></a>
     <a class="big" href="#process"><sup>03</sup><span data-i18n="nav_process">Как заказать</span></a>
+    <a class="big" href="#price"><sup>04</sup><span data-i18n="nav_price">Цена</span></a>
   </nav>
   <div class="mm-foot">
-    <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+    <a class="btn btn-gold wa-order" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%82%D0%BE%D0%B9." target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
   </div>
 </div>
 
@@ -549,20 +616,21 @@ body.menu-open{overflow:hidden}
         <span><b>06</b><span data-i18n="stat_d">дизайнов</span></span>
         <span><b>02</b><span data-i18n="stat_l">языка</span></span>
         <span><b>✦</b>RSVP</span>
+        <span><b data-price>2&nbsp;990&nbsp;₸</b><span data-i18n="stat_p">за приглашение</span></span>
       </div>
     </div>
     <div class="invite-wrap" data-reveal style="--d:.15s">
       <div class="invite t-lux" id="heroInvite">
         <svg class="orn-svg" viewBox="0 0 140 40" aria-hidden="true"><path d="M70 34 C70 18 52 20 52 11 a8 8 0 1 1 16 2 M70 34 C70 18 88 20 88 11 a8 8 0 1 0 -16 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="70" cy="35" r="1.8" fill="currentColor"/></svg>
-        <div class="names swap-target" id="cycleNames">А&nbsp;&amp;&nbsp;Д</div>
+        <div class="names swap-target" id="cycleNames">Ерасыл &amp; Аяулым</div>
         <div class="sub" data-i18n="inv_sub">Приглашение на той</div>
         <div class="cycle-tag swap-target" id="cycleTag">Luxury · Wedding</div>
-        <div class="date">14 · 02 · 2027 — 18:00</div>
-        <div class="cd" aria-hidden="true">
-          <div><b data-cd="d">00</b><span data-i18n="cd_d">дней</span></div>
-          <div><b data-cd="h">00</b><span data-i18n="cd_h">часов</span></div>
-          <div><b data-cd="m">00</b><span data-i18n="cd_m">минут</span></div>
-          <div><b data-cd="s">00</b><span data-i18n="cd_s">секунд</span></div>
+        <div class="date" id="heroDate">14 · 02 · 2027 — 17:30</div>
+        <div class="cd" id="heroCd" data-ev="0" aria-hidden="true">
+          <div><b data-cd="d">00</b><span data-cdl="d">дней</span></div>
+          <div><b data-cd="h">00</b><span data-cdl="h">часов</span></div>
+          <div><b data-cd="m">00</b><span data-cdl="m">минут</span></div>
+          <div><b data-cd="s">00</b><span data-cdl="s">секунд</span></div>
         </div>
         <div class="tags"><b>✦</b> RSVP &nbsp;·&nbsp; <b>✦</b> 2ГИС &nbsp;·&nbsp; <b>✦</b> RU / ҚАЗ</div>
       </div>
@@ -585,8 +653,8 @@ body.menu-open{overflow:hidden}
       <li data-reveal style="--d:.15s"><span class="f-no">№ 04</span><div><h3 data-i18n="f4t">Два языка</h3><p data-i18n="f4d">Русский и казахский — переключение в один клик.</p></div></li>
       <li data-reveal style="--d:.2s"><span class="f-no">№ 05</span><div><h3 data-i18n="f5t">Адаптивная вёрстка</h3><p data-i18n="f5d">Красиво и на телефоне, и на компьютере.</p></div></li>
       <li data-reveal style="--d:.25s"><span class="f-no">№ 06</span><div><h3 data-i18n="f6t">Персональный ответ</h3><p data-i18n="f6d">После ответа приглашение благодарит гостя по имени и напоминает дату и место.</p></div></li>
-      <li data-reveal style="--d:.3s"><span class="f-no">№ 07</span><div><h3 data-i18n="f7t">Добавить в календарь</h3><p data-i18n="f7d">После ответа — одна кнопка: событие с напоминанием за сутки в календаре гостя.</p></div></li>
-      <li data-reveal style="--d:.35s"><span class="f-no">№ 08</span><div><h3 data-i18n="f8t">Ответы на почту</h3><p data-i18n="f8d">Каждый ответ гостя приходит организатору на электронную почту или в Telegram.</p></div></li>
+      <li data-reveal style="--d:.3s"><span class="f-no">№ 07</span><div><h3 data-i18n="f7t">Добавить в календарь</h3><p data-i18n="f7d">После ответа гость в один клик добавляет событие в свой календарь — с напоминанием за сутки.</p></div></li>
+      <li data-reveal style="--d:.35s"><span class="f-no">№ 08</span><div><h3 data-i18n="f8t">Ответы на почту</h3><p data-i18n="f8d">Каждый ответ гостя приходит организатору на электронную почту.</p></div></li>
       <li data-reveal style="--d:.4s"><span class="f-no">№ 09</span><div><h3 data-i18n="f9t">Фото на обложке</h3><p data-i18n="f9d">Арочная рамка для фото пары или героя праздника — в режиме «С фото».</p></div></li>
     </ol>
   </div>
@@ -599,6 +667,7 @@ body.menu-open{overflow:hidden}
       <span class="eyebrow" data-i18n="c_eyebrow">Коллекция · № 01 — 06</span>
       <h2 data-i18n="c_h">Выберите свой стиль</h2>
       <p data-i18n="c_lead">Шесть направлений — от классики до журнальной подачи. Откройте демо, чтобы увидеть дизайн вживую.</p>
+      <p class="c-note" data-i18n-html="c_note"><b>✦</b><span>Каждый шаблон меняем под вас: имена, дату, место, цвета и тексты. Подходит для любого праздника — свадьбы, юбилея, дня рождения, тұсау кесер и других.</span></p>
     </div>
     <div class="chips" data-reveal>
       <button class="chip on" data-cat="all" data-i18n="chip_all">Все</button>
@@ -610,24 +679,24 @@ body.menu-open{overflow:hidden}
 
     <div class="rail-zone" data-reveal>
       <div class="rail-nav">
-        <button id="railPrev" aria-label="Назад">←</button>
-        <button id="railNext" aria-label="Вперёд">→</button>
+        <button id="railPrev" aria-label="Назад" data-i18n-aria="a_prev">←</button>
+        <button id="railNext" aria-label="Вперёд" data-i18n-aria="a_next">→</button>
       </div>
       <div class="cards" id="cards">
 
         <article class="card" data-cat="wedding">
           <div class="preview p-luxury">
             <span class="p-no">№ 01</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
-            <div class="p-frame"><span>✦</span><strong>А & Д</strong><em>Luxury · Wedding</em><span>❧</span></div>
+            <div class="p-frame"><span>✦</span><strong>Ерасыл &amp; Аяулым</strong><em>Luxury · Wedding</em><span>❧</span></div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 01 ✦</b><span>Luxury</span></div>
-            <h3 class="ci-name">А &amp; Д <em>· Luxury</em></h3>
+            <h3 class="ci-name">Ерасыл &amp; Аяулым <em>· Luxury</em></h3>
             <p class="ci-desc" data-i18n="d1">Классическая обложка, двойная рамка и изящные засечки.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="0"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="0" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="0" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2001%20%C2%ABLuxury%20%C2%B7%20Wedding%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
@@ -638,16 +707,16 @@ body.menu-open{overflow:hidden}
             <span class="flor" style="top:14%;left:12%">✿</span>
             <span class="flor" style="bottom:12%;right:12%;font-size:1.4rem">✿</span>
             <span class="flor" style="top:24%;right:16%;font-size:.8rem">✿</span>
-            <div class="p-arch"><strong>А &amp; Д</strong><span>Floral · Wedding</span></div>
+            <div class="p-arch"><strong>Әмір &amp;<br>Томирис</strong><span>Floral · Wedding</span></div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 02 ✿</b><span>Floral</span></div>
-            <h3 class="ci-name">А &amp; Д <em>· Floral</em></h3>
+            <h3 class="ci-name">Әмір &amp; Томирис <em>· Floral</em></h3>
             <p class="ci-desc" data-i18n="d2">Мягкая арка, цветочные мотивы и нежные оттенки.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="1"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="1" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="1" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2002%20%C2%ABFloral%20%C2%B7%20Wedding%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
@@ -657,17 +726,17 @@ body.menu-open{overflow:hidden}
             <span class="badge" data-i18n="badge_hit">хит</span>
             <span class="p-no">№ 03</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
             <svg class="q-orn top" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            <div class="q-mid"><span>❧</span><strong>Qazaq · Toy</strong><span data-i18n="cat_wed">Свадьба</span></div>
+            <div class="q-mid"><span>❧</span><strong>Бауыржан &amp; Айым</strong><span data-i18n="cat_wed">Свадьба</span></div>
             <svg class="q-orn bot" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 03 ❧</b><span>Qazaq</span></div>
-            <h3 class="ci-name">Qazaq <em>· Toy</em></h3>
+            <h3 class="ci-name">Бауыржан &amp; Айым <em>· Qazaq</em></h3>
             <p class="ci-desc" data-i18n="d3">Орнаментальная панель и национальный колорит.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="2"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="2" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="2" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2003%20%C2%ABQazaq%20%C2%B7%20Toy%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
@@ -680,16 +749,16 @@ body.menu-open{overflow:hidden}
             <div class="rule"></div>
             <div class="big50">50</div>
             <div class="rule"></div>
-            <div class="lab">Invitation ✦</div>
+            <div class="lab">Гүлнара ✦</div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 04 ✦</b><span>Editorial</span></div>
-            <h3 class="ci-name">50 <em>· Editorial</em></h3>
+            <h3 class="ci-name">Гүлнара · 50 <em>· Editorial</em></h3>
             <p class="ci-desc" data-i18n="d4">Журнальный блок: крупная типографика и строгая сетка.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="3"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="3" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="3" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2004%20%C2%ABJubilee%20%C2%B7%20Editorial%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
@@ -698,38 +767,38 @@ body.menu-open{overflow:hidden}
           <div class="preview p-emer">
             <span class="p-no">№ 05</span><span class="p-tag" data-i18n="cat_bd">День рождения</span>
             <div class="e-frame">✧</div>
-            <strong>Аружан</strong>
+            <strong>Медина</strong>
             <span>Emerald · Birthday</span>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 05 ✧</b><span>Emerald</span></div>
-            <h3 class="ci-name">Аружан <em>· Emerald</em></h3>
+            <h3 class="ci-name">Медина <em>· Emerald</em></h3>
             <p class="ci-desc" data-i18n="d5">Арочная фоторамка в глубоком изумрудном цвете.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="4"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="4" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="4" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2005%20%C2%ABEmerald%20%C2%B7%20Birthday%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
 
         <article class="card" data-cat="tusau">
           <div class="preview p-tusau">
-            <span class="badge new" data-i18n="badge_new">new</span>
+            <span class="badge new" data-i18n="badge_new">новинка</span>
             <span class="p-no">№ 06</span><span class="p-tag" data-i18n="cat_tusau">Тұсау кесер</span>
             <span class="t-sun">☀</span>
-            <div><strong>Иманжан</strong><br><span class="t-age">👶 1 жас</span></div>
+            <div><strong>Айсұлтан</strong><br><span class="t-age">👶 1 жас</span></div>
             <div class="t-steps" aria-hidden="true"><span>👣</span><span>👣</span><span>👣</span></div>
             <div style="font-size:.66rem;letter-spacing:.28em;text-transform:uppercase">Tusau · 1 жас</div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 06 ☀</b><span>Tusau</span></div>
-            <h3 class="ci-name">Иманжан <em>· 1 жас</em></h3>
+            <h3 class="ci-name">Айсұлтан <em>· 1 жас</em></h3>
             <p class="ci-desc" data-i18n="d6">Тёплый семейный дизайн для праздника первых шагов малыша.</p>
             <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="5"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
-              <a class="btn btn-line wa-order" data-wa="5" href="https://wa.me/77000000000" target="_blank" rel="noopener" data-i18n="order">Заказать</a>
+              <a class="btn btn-line wa-order" data-wa="5" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2006%20%C2%ABTusau%20%C2%B7%201%20%D0%B6%D0%B0%D1%81%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
             </div>
           </div>
         </article>
@@ -748,16 +817,50 @@ body.menu-open{overflow:hidden}
       <h2 data-i18n="p_h">От идеи до вашей ссылки</h2>
     </div>
     <ol class="steps">
-      <li data-reveal><span class="st-n">01</span><h3 data-i18n="p1t">Выберите дизайн</h3><p data-i18n="p1d">Посмотрите демо и выберите подходящий стиль.</p><span class="st-chip">6 стилей · демо</span></li>
-      <li data-reveal style="--d:.1s"><span class="st-n">02</span><h3 data-i18n="p2t">Передайте детали</h3><p data-i18n="p2d">Имена, дату, место, язык и фотографии — если нужны.</p><span class="st-chip">WhatsApp · анкета</span></li>
-      <li data-reveal style="--d:.2s"><span class="st-n">03</span><h3 data-i18n="p3t">Получите ссылку</h3><p data-i18n="p3d">Готовое приглашение, которым удобно делиться с гостями.</p><span class="st-chip">ссылка · 1 клик</span></li>
+      <li data-reveal><span class="st-n">01</span><h3 data-i18n="p1t">Выберите дизайн</h3><p data-i18n="p1d">Посмотрите демо и выберите подходящий стиль.</p><span class="st-chip" data-i18n="p1c">6 стилей · демо</span></li>
+      <li data-reveal style="--d:.1s"><span class="st-n">02</span><h3 data-i18n="p2t">Передайте детали</h3><p data-i18n="p2d">Имена, дату, место, язык и фотографии — если нужны.</p><span class="st-chip" data-i18n="p2c">через WhatsApp</span></li>
+      <li data-reveal style="--d:.2s"><span class="st-n">03</span><h3 data-i18n="p3t">Получите ссылку</h3><p data-i18n="p3d">Готовое приглашение, которым удобно делиться с гостями.</p><span class="st-chip" data-i18n="p3c">ссылка · 1 клик</span></li>
     </ol>
+  </div>
+</section>
+
+<!-- цена: сумма подставляется из CONFIG.PRICE в скрипте -->
+<section class="section" id="price" style="padding-top:0">
+  <div class="wrap">
+    <div class="price-card" data-reveal>
+      <div>
+        <span class="eyebrow" data-i18n="pr_eyebrow">Стоимость</span>
+        <h2 class="pc-h" data-i18n="pr_h">Одна цена за любой шаблон</h2>
+        <p class="pc-sum" data-price>2&nbsp;990&nbsp;₸</p>
+        <p class="pc-note" data-i18n="pr_note">для первых 15 клиентов</p>
+        <p class="pc-lead" data-i18n="pr_lead">Все возможности — в каждом приглашении.</p>
+        <a class="btn btn-gold wa-order" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%82%D0%BE%D0%B9." target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+      </div>
+      <ul class="pc-list">
+        <li data-i18n="pr_i1">Имена, дата, место, цвета и тексты — под вас</li>
+        <li data-i18n="pr_i2">Любой праздник: свадьба, юбилей, день рождения, тұсау кесер</li>
+        <li data-i18n="pr_i3">Русский и казахский языки</li>
+        <li data-i18n="pr_i4">Обратный отсчёт, кнопка 2ГИС и добавление в календарь</li>
+        <li data-i18n="pr_i5">Ответы гостей — на вашу почту</li>
+        <li data-i18n="pr_i6">Готовая ссылка, которой удобно делиться</li>
+      </ul>
+    </div>
+    <div class="terms" data-reveal style="--d:.1s">
+      <h3 class="terms-h" data-i18n="tm_h">Условия заказа</h3>
+      <div class="terms-grid">
+        <div class="term"><b data-i18n="tm1t">Готово за 1 день</b><p data-i18n="tm1d">После получения всех данных и предоплаты.</p></div>
+        <div class="term"><b data-i18n="tm2t">2 правки бесплатно</b><p data-i18n="tm2d">Каждая следующая — 500&nbsp;₸. Одна правка — все изменения, присланные одним сообщением.</p></div>
+        <div class="term"><b data-i18n="tm3t">Оплата через Kaspi</b><p data-i18n="tm3d">50% — предоплата, 50% — после готовности приглашения.</p></div>
+        <div class="term"><b data-i18n="tm4t">Ссылка работает</b><p data-i18n="tm4d">До дня мероприятия включительно.</p></div>
+        <div class="term"><b data-i18n="tm5t">Свой дизайн</b><p data-i18n="tm5d">Возможен — цена по договорённости.</p></div>
+      </div>
+    </div>
   </div>
 </section>
 
 <aside class="quote" data-reveal>
   <div class="qmark">❝</div>
-  <p data-i18n="quote">Приглашение — это первое впечатление от вашего той.</p>
+  <p data-i18n="quote">Приглашение — это первое впечатление от вашего праздника.</p>
   <span>SAQTAA · философия</span>
 </aside>
 
@@ -765,15 +868,21 @@ body.menu-open{overflow:hidden}
   <div class="wrap">
     <div class="foot-brand" data-reveal>
       <h2>SAQTAA<i>.</i></h2>
-      <p class="tag" data-i18n="foot_tag">Сохраняй моменты, которые хочется помнить.</p>
+      <p class="tag" data-i18n="foot_tag">Сохраните моменты, которые хочется помнить.</p>
       <p class="sub" data-i18n="foot_sub">Цифровые приглашения для особенных событий.</p>
     </div>
     <div class="foot-cta" data-reveal style="--d:.1s">
-      <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+      <a class="btn btn-gold wa-order" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%82%D0%BE%D0%B9." target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+      <div class="foot-contacts">
+        <a href="tel:+77788613881"><span data-i18n="c_phone">Телефон</span><b>+7 778 861 38 81</b></a>
+        <a href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%82%D0%BE%D0%B9." class="wa-order" target="_blank" rel="noopener"><span>WhatsApp</span><b>+7 778 861 38 81</b></a>
+        <a href="https://t.me/saqtaa" target="_blank" rel="noopener"><span>Telegram</span><b>@saqtaa</b></a>
+      </div>
       <nav class="foot-links">
         <a href="#designs" data-i18n="nav_designs">Дизайны</a>
         <a href="#features" data-i18n="nav_features">Возможности</a>
         <a href="#process" data-i18n="nav_process">Как заказать</a>
+        <a href="#price" data-i18n="nav_price">Цена</a>
       </nav>
     </div>
   </div>
@@ -785,33 +894,33 @@ body.menu-open{overflow:hidden}
 </footer>
 
 <div class="sticky-cta" id="stickyCta">
-  <a class="btn btn-gold wa-order" href="https://wa.me/77000000000" target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
+  <a class="btn btn-gold wa-order" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%D0%BD%D0%B0%20%D1%82%D0%BE%D0%B9." target="_blank" rel="noopener">✦ <span data-i18n="wa_cta">Заказать в WhatsApp</span></a>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
 
 <!-- ============ ПРОСМОТР ШАБЛОНОВ ============ -->
-<div class="demo-view no-photo" id="demoView" role="dialog" aria-modal="true" aria-hidden="true">
+<div class="demo-view no-photo" id="demoView" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="dvName">
   <div class="demo-top">
     <button class="dt-back" id="dvBack">← <span data-i18n="m_back">Коллекция</span></button>
     <span class="dt-name" id="dvName"></span>
-    <button class="dt-close" id="dvClose" aria-label="Закрыть">✕</button>
+    <button class="dt-close" id="dvClose" aria-label="Закрыть" data-i18n-aria="a_close">✕</button>
   </div>
   <div class="demo-stage" id="dvStage">
     <div class="demo-track" id="dvTrack"></div>
   </div>
   <div class="demo-bottom">
     <div class="dphoto-ui" id="dvPhotoUI">
-      <button class="tab on" id="dvTabDeco" data-i18n="tab_deco">Без фото</button>
-      <button class="tab" id="dvTabPhoto" data-i18n="tab_photo">С фото</button>
+      <button class="tab on" id="dvTabDeco" data-i18n="tab_deco" aria-pressed="true">Без фото</button>
+      <button class="tab" id="dvTabPhoto" data-i18n="tab_photo" aria-pressed="false">С фото</button>
       <button class="upl" id="dvUpload">📷 <span data-i18n="change_photo">Заменить фото</span></button>
       <input type="file" accept="image/*" id="dvFile" hidden>
       <span class="dnote" id="dvNote" hidden data-i18n="photo_note">Загруженное фото видно только в этой вкладке — демо-режим.</span>
     </div>
-    <button class="dnav" id="dvPrev" aria-label="Предыдущий шаблон">←</button>
+    <button class="dnav" id="dvPrev" aria-label="Предыдущий шаблон" data-i18n-aria="a_tprev">←</button>
     <div class="ddots" id="dvDots"></div>
     <span class="dcount" id="dvCount">01 / 06</span>
-    <button class="dnav" id="dvNext" aria-label="Следующий шаблон">→</button>
+    <button class="dnav" id="dvNext" aria-label="Следующий шаблон" data-i18n-aria="a_tnext">→</button>
   </div>
 </div>
 
@@ -820,48 +929,55 @@ body.menu-open{overflow:hidden}
   "use strict";
   const qs=s=>document.querySelector(s), qsa=s=>[...document.querySelectorAll(s)];
   const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  /* ============================================================
-     НАСТРОЙКИ — ЗАМЕНИТЕ ЗНАЧЕНИЯ НА СВОИ ПЕРЕД ЗАПУСКОМ
-     1) WA_NUMBER    — ваш номер WhatsApp, международный формат без «+»
-     2) EVENT_*      — дата/время/часовой пояс события (отсчёт и календарь)
-     3) RSVP_CONFIG  — куда приходят ответы гостей (см. комментарий ниже)
-     ============================================================ */
+  /* ================================================================
+     НАСТРОЙКИ — всё, что меняется, собрано здесь
+     ----------------------------------------------------------------
+     CONFIG — номер WhatsApp, цена, часовой пояс, срок ответа гостей.
+     EVENTS — дата и время каждого демо-шаблона (№ 01 — № 06).
+              Отсюда берутся: дата на обложке и на главном экране,
+              обратный отсчёт, время в программе дня, срок
+              подтверждения и событие для календаря.
+     Тексты (названия, программа, адреса) — в словаре T ниже,
+     отдельно для русского (ru) и казахского (kz).
+     ================================================================ */
   const CONFIG={
-    WA_NUMBER:"77000000000",   /* ← ваш номер, напр. "77071234567" */
-    EVENT_DATE:"2027-02-14",   /* ← дата события */
-    EVENT_TIME:"18:00",        /* ← время начала */
-    EVENT_END_TIME:"23:00",    /* ← время окончания (календарь) */
-    EVENT_TZ:"Asia/Almaty"     /* ← часовой пояс */
+    WA_NUMBER:"77788613881", /* ← номер WhatsApp: только цифры, без «+», например "77071234567" */
+    PRICE:2990,              /* ← цена приглашения в тенге (на сайте: «2 990 ₸») */
+    TZ:"Asia/Almaty",        /* ← часовой пояс события — для календаря */
+    TZ_OFFSET:"+05:00",      /* ← смещение этого пояса от UTC (весь Казахстан — +05:00) */
+    RSVP_DAYS:14,            /* ← за сколько дней до события просим подтвердить присутствие */
+    NAME_MAX:40              /* ← максимум символов в полях «Имя» и «Фамилия» */
   };
-  const TARGET=new Date(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME+":00");
-  const WA_BASE="https://wa.me/"+CONFIG.WA_NUMBER;
-  const NAME_MAX=20; /* лимит символов на имя и фамилию */
-  let lang=localStorage.getItem("saqtaa-lang")||"ru";
+  /* times — время пунктов программы дня по порядку; первое время = начало события.
+     end   — окончание (для календаря); если оно раньше начала — значит, после полуночи. */
+  const EVENTS=[
+    {date:"2027-02-14", times:["17:30","18:00","19:00","22:30"], end:"23:30"}, /* № 01 Luxury · свадьба */
+    {date:"2027-06-19", times:["16:00","17:00","18:30","21:30"], end:"23:00"}, /* № 02 Floral · свадьба на летней террасе */
+    {date:"2027-09-18", times:["17:00","18:00","19:00","21:00"], end:"23:30"}, /* № 03 Qazaq · семейный той */
+    {date:"2027-03-20", times:["18:00","19:00","20:00","22:00"], end:"23:30"}, /* № 04 Editorial · юбилей */
+    {date:"2027-04-24", times:["18:30","19:30","21:00","23:00"], end:"00:30"}, /* № 05 Emerald · день рождения */
+    {date:"2027-05-15", times:["12:00","13:00","13:30","15:00"], end:"16:00"}  /* № 06 Tusau · тұсау кесер */
+  ];
+  /* ======================= конец настроек ======================== */
 
-  /* КОНФИГ RSVP — как гость отправляет ответ организатору:
-     mode "demo"      — ответ никуда не уходит, показывается только демо-подтверждение
-     mode "web3forms" — бесплатный приём на почту: ключ с https://web3forms.com
-                        (впишите в web3formsKey — РЕКОМЕНДУЕТСЯ, безопасно)
-     mode "telegram"  — ответы в чат бота: впишите telegramToken и telegramChatId.
-                        ВНИМАНИЕ: токен виден в коде страницы любому посетителю —
-                        используйте отдельного бота-«ящика» или прокси на своём сервере. */
-  const RSVP_CONFIG={
-    mode:"demo",
-    telegramToken:"",
-    telegramChatId:"",
-    web3formsKey:""
-  };
+  const WA_BASE="https://wa.me/"+String(CONFIG.WA_NUMBER).replace(/\D/g,"");
+  const NAME_MAX=CONFIG.NAME_MAX;
+  /* начало события как точный момент времени — одинаково в любом часовом поясе гостя */
+  const evStart=i=>new Date(EVENTS[i].date+"T"+EVENTS[i].times[0]+":00"+CONFIG.TZ_OFFSET);
+  let lang="ru";
+  try{lang=localStorage.getItem("saqtaa-lang")||"ru";}catch(_){}
+  if(lang!=="ru"&&lang!=="kz")lang="ru";
 
   /* ---------- переводы ---------- */
   const T={
     ru:{
-      nav_designs:"Дизайны",nav_features:"Возможности",nav_process:"Как заказать",
+      nav_designs:"Дизайны",nav_features:"Возможности",nav_process:"Как заказать",nav_price:"Цена",
       hero_eyebrow:"Цифровые приглашения",
       hero_h:'Ваш особенный день.<em>В красивой форме.</em>',
       hero_lead:"Индивидуальные онлайн-приглашения на той — с вниманием к каждой детали. Откройте демо и выберите свой стиль.",
       cta_designs:"Выбрать дизайн",view_demo:"Смотреть демо",
-      stat_d:"дизайнов",stat_l:"языка",inv_sub:"Приглашение на той",
-      cd_d:"дней",cd_h:"часов",cd_m:"минут",cd_s:"секунд",
+      stat_d:"дизайнов",stat_l:"языка",stat_p:"за приглашение",inv_sub:"Приглашение на той",
+      cd_d:["день","дня","дней"],cd_h:["час","часа","часов"],cd_m:["минута","минуты","минут"],cd_s:["секунда","секунды","секунд"],
       f_eyebrow:"В каждом приглашении",f_h:"Всё важное — в одном месте",
       f1t:"Обратный отсчёт",f1d:"Гости видят, сколько осталось до вашего события.",
       f2t:"Место в 2ГИС",f2d:"Кнопка ведёт гостей прямо к месту проведения.",
@@ -869,11 +985,12 @@ body.menu-open{overflow:hidden}
       f4t:"Два языка",f4d:"Русский и казахский — переключение в один клик.",
       f5t:"Адаптивная вёрстка",f5d:"Красиво и на телефоне, и на компьютере.",
       f6t:"Персональный ответ",f6d:"После ответа приглашение благодарит гостя по имени и напоминает дату и место.",
-      f7t:"Добавить в календарь",f7d:"После ответа — одна кнопка: событие с напоминанием за сутки в календаре гостя.",
-      f8t:"Ответы на почту",f8d:"Каждый ответ гостя приходит организатору на электронную почту или в Telegram.",
+      f7t:"Добавить в календарь",f7d:"После ответа гость в один клик добавляет событие в свой календарь — с напоминанием за сутки.",
+      f8t:"Ответы на почту",f8d:"Каждый ответ гостя приходит организатору на электронную почту.",
       f9t:"Фото на обложке",f9d:"Арочная рамка для фото пары или героя праздника — в режиме «С фото».",
       c_eyebrow:"Коллекция · № 01 — 06",c_h:"Выберите свой стиль",
       c_lead:"Шесть направлений — от классики до журнальной подачи. Откройте демо, чтобы увидеть дизайн вживую.",
+      c_note:"<b>✦</b><span>Каждый шаблон меняем под вас: имена, дату, место, цвета и тексты. Подходит для любого праздника — свадьбы, юбилея, дня рождения, тұсау кесер и других.</span>",
       chip_all:"Все",cat_wed:"Свадьба",cat_jub:"Юбилей",cat_bd:"День рождения",cat_tusau:"Тұсау кесер",
       d1:"Классическая обложка, двойная рамка и изящные засечки.",
       d2:"Мягкая арка, цветочные мотивы и нежные оттенки.",
@@ -882,13 +999,23 @@ body.menu-open{overflow:hidden}
       d5:"Арочная фоторамка в глубоком изумрудном цвете.",
       d6:"Тёплый семейный дизайн для праздника первых шагов малыша.",
       f_cd:"Отсчёт",open_demo:"Открыть демо",order:"Заказать",swipe:"Листайте",
-      badge_hit:"хит",badge_new:"new",
+      badge_hit:"хит",badge_new:"новинка",
       p_eyebrow:"Простой процесс",p_h:"От идеи до вашей ссылки",
-      p1t:"Выберите дизайн",p1d:"Посмотрите демо и выберите подходящий стиль.",
-      p2t:"Передайте детали",p2d:"Имена, дату, место, язык и фотографии — если нужны.",
-      p3t:"Получите ссылку",p3d:"Готовое приглашение, которым удобно делиться с гостями.",
-      quote:"Приглашение — это первое впечатление от вашего той.",
-      foot_tag:"Сохраняй моменты, которые хочется помнить.",
+      p1t:"Выберите дизайн",p1d:"Посмотрите демо и выберите подходящий стиль.",p1c:"6 стилей · демо",
+      p2t:"Передайте детали",p2d:"Имена, дату, место, язык и фотографии — если нужны.",p2c:"через WhatsApp",
+      p3t:"Получите ссылку",p3d:"Готовое приглашение, которым удобно делиться с гостями.",p3c:"ссылка · 1 клик",
+      pr_eyebrow:"Стоимость",pr_h:"Одна цена за любой шаблон",pr_lead:"Все возможности — в каждом приглашении.",
+      pr_i1:"Имена, дата, место, цвета и тексты — под вас",pr_i2:"Любой праздник: свадьба, юбилей, день рождения, тұсау кесер",
+      pr_i3:"Русский и казахский языки",pr_i4:"Обратный отсчёт, кнопка 2ГИС и добавление в календарь",
+      pr_i5:"Ответы гостей — на вашу почту",pr_i6:"Готовая ссылка, которой удобно делиться",
+      pr_note:"для первых 15 клиентов",
+      tm_h:"Условия заказа",tm1t:"Готово за 1 день",tm1d:"После получения всех данных и предоплаты.",
+      tm2t:"2 правки бесплатно",tm2d:"Каждая следующая — 500 ₸. Одна правка — все изменения, присланные одним сообщением.",
+      tm3t:"Оплата через Kaspi",tm3d:"50% — предоплата, 50% — после готовности приглашения.",
+      tm4t:"Ссылка работает",tm4d:"До дня мероприятия включительно.",
+      tm5t:"Свой дизайн",tm5d:"Возможен — цена по договорённости.",c_phone:"Телефон",
+      quote:"Приглашение — это первое впечатление от вашего праздника.",
+      foot_tag:"Сохраните моменты, которые хочется помнить.",
       foot_sub:"Цифровые приглашения для особенных событий.",
       wa_cta:"Заказать в WhatsApp",foot_desc:"цифровые приглашения",up:"наверх",
       m_back:"Коллекция",tab_photo:"С фото",tab_deco:"Без фото",change_photo:"Заменить фото",
@@ -902,80 +1029,77 @@ body.menu-open{overflow:hidden}
       opt_yes:"✧ Конечно, приду",opt_no:"К сожалению, не смогу прийти",opt_maybe:"Пока не могу ответить",
       rsvp_send:"Отправить ответ",
       rd_title:"Спасибо!",rd_edit:"Изменить ответ",
-      date_human:"14 февраля 2027 · 18:00",
       ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",
       ok_no:"Спасибо за ответ. Нам жаль — но мы всё равно вас любим!",
       ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
-      demo_note:"Демо-режим: в настоящем приглашении ответы приходят организатору на почту или в Telegram.",
-      rsvp_err:"Не удалось отправить ответ. Попробуйте ещё раз.",
+      demo_note:"Демо-режим: ответ никуда не отправляется. В настоящем приглашении ответы гостей приходят организатору на почту.",
+      err_name:"Укажите имя",err_fam:"Укажите фамилию",
+      rsvp_by:"Просим подтвердить присутствие до {date}",
       cal_btn:"Добавить в календарь",
-      cal_alarm:"Завтра ваше торжество! Не забудьте подтверждение 🤍",
+      cal_alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",
       cal_desc:"Цифровое приглашение SAQTAA. Программа: ",
-      cal_done:"📅 Файл события скачан — откройте его для добавления в календарь",
+      cal_done:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
+      gcal_btn:"Добавить в Google Календарь",
       mq:"SAQTAA ✦ Свадьба ✦ Юбилей ✦ День рождения ✦ Тұсау кесер ✦ Цифровые приглашения ✦ Два языка ✦ ",
       site_title:"SAQTAA — цифровые приглашения на той",
       dot_st:"Стиль",dot_tpl:"Шаблон",
+      a_menu:"Меню",a_close:"Закрыть",a_prev:"Назад",a_next:"Вперёд",a_tprev:"Предыдущий шаблон",a_tnext:"Следующий шаблон",a_lang:"Переключить язык",
       kicks:["Luxury · Wedding","Floral · Wedding","Qazaq · Toy","Jubilee · Editorial","Emerald · Birthday","Tusau · 1 жас"],
       inv:[
         {title:"Свадебное торжество",
          lead:"Дорогие родные и близкие! В нашей жизни начинается самая красивая глава, и мы хотим разделить этот день с вами. Приглашаем вас на торжество по случаю нашей свадьбы.",
-         prog:[["17:30","Сбор гостей","Приветственный коктейль и фотозона"],["18:00","Церемония","Торжественный выход и клятвы"],["19:00","Банкет","Праздничный ужин, тосты и живая музыка"],["22:30","Торт","Сладкий финал вечера"]],
+         prog:[["Сбор гостей","Приветственный коктейль и фотозона"],["Церемония","Торжественный выход и клятвы"],["Банкет","Праздничный ужин, тосты и живая музыка"],["Торт","Сладкий финал вечера"]],
          venue:"Той-холл «Алма», зал Diamond",addr:"Алматы, пр. Аль-Фараби, 150",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
-         sign:"С любовью и нетерпением ждём встречи — А & Д",hash:"#АиД_14февраля"},
+         sign:"С любовью и нетерпением ждём встречи — Ерасыл & Аяулым",hash:"#ЕрасылАяулым_14февраля"},
         {title:"Свадебное торжество",
          lead:"Милые и дорогие! Однажды два сердца решили биться в одном ритме — и мы приглашаем вас стать свидетелями этого чуда.",
-         prog:[["16:00","Welcome-зона","Лёгкие закуски и лимонады"],["17:00","Церемония","Трогательные клятвы под аркой"],["18:30","Ужин","Семейный стол и тёплые тосты"],["21:30","Первый танец","И праздничный торт"]],
+         prog:[["Welcome-зона","Лёгкие закуски и лимонады"],["Церемония","Трогательные клятвы под аркой"],["Ужин","Семейный стол и тёплые тосты"],["Первый танец","И праздничный торт"]],
          venue:"Ресторан «Гардения», летняя терраса",addr:"Алматы, ул. Керимбекова, 12",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
-         sign:"С нежностью, ваши А & Д",hash:"#НашаИстория_2027"},
+         sign:"С нежностью, ваши Әмір & Томирис",hash:"#НашаИстория_2027"},
         {title:"Семейный той",
          lead:"Дорогие родственники и друзья! Приглашаем вас на большой семейный той — праздник единения двух семей. Пусть наш общий дастархан будет щедрым!",
-         prog:[["17:00","Қонақ күту","Встреча гостей и шашу"],["18:00","Той басталу","Торжественное открытие"],["19:00","Дастархан","Национальные блюда и бата"],["21:00","Беташар","Обряд и концертная программа"]],
+         prog:[["Қонақ күту","Встреча гостей и шашу"],["Той басталу","Торжественное открытие"],["Дастархан","Национальные блюда и бата"],["Беташар","Обряд и концертная программа"]],
          venue:"Тойхана «Дастархан», зал «Қонақжай»",addr:"Астана, ул. Кабанбай батыра, 30",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
          sign:"С уважением, семьи Асылбековых и Оспановых",hash:"#ЕкіӘулет_БірТой"},
         {title:"Юбилейный вечер",
          lead:"Друзья! Полвека — это только начало красивого сюжета. Приглашаю вас на вечер по случаю моего 50-летия — вечер историй, смеха и музыки.",
-         prog:[["18:00","Сбор гостей","Велком-зона и аперитив"],["19:00","Торжественная часть","История юбиляра в фактах"],["20:00","Ужин","Гастрономический сет от шефа"],["22:00","Танцы","Живая группа и диджей"]],
+         prog:[["Сбор гостей","Welcome-зона и аперитив"],["Торжественная часть","История юбилярши в фактах"],["Ужин","Гастрономический сет от шефа"],["Танцы","Живая группа и диджей"]],
          venue:"Лофт «Печать», 2-й этаж",addr:"Алматы, ул. Панфилова, 98",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
-         sign:"Жду каждого из вас — юбиляр",hash:"#ПолвекаВОтличнойФорме"},
+         sign:"Жду каждого из вас — Гүлнара",hash:"#ПолвекаВОтличнойФорме"},
         {title:"День рождения",
          lead:"Дорогие мои! Ещё один год вокруг солнца — и я хочу отпраздновать его рядом с самыми близкими. Жду вас на своём дне рождения!",
-         prog:[["18:30","Сбор гостей","Игристое и лёгкие закуски"],["19:30","Ужин","Любимые блюда и сюрпризы"],["21:00","Караоке и игры","Самая весёлая часть вечера"],["23:00","Торт","Загадаем желание вместе"]],
+         prog:[["Сбор гостей","Игристое и лёгкие закуски"],["Ужин","Любимые блюда и сюрпризы"],["Караоке и игры","Самая весёлая часть вечера"],["Торт","Загадаем желание вместе"]],
          venue:"Гастробар «Марсала», основной зал",addr:"Алматы, ул. Гоголя, 58",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
-         sign:"С любовью, ваша Аружан",hash:"#Аружан25"},
+         sign:"С любовью, ваша Медина",hash:"#Медина25"},
         {title:"Тұсау кесер",
-         lead:"Дорогие родные! Нашему малышу исполняется один год — и мы с радостью приглашаем вас на праздник первых шагов. Пусть путь Иманжана будет светлым и ровным!",
-         prog:[["12:00","Жиналыс","Сбор гостей и фотосессия"],["13:00","Тұсау кесер","Обряд перерезания пут"],["13:30","Дастархан","Праздничный обед"],["15:00","Игры и подарки","Весёлый финал"]],
+         lead:"Дорогие родные! Нашему малышу исполняется один год — и мы с радостью приглашаем вас на праздник первых шагов. Пусть путь Айсұлтана будет светлым и ровным!",
+         prog:[["Жиналыс","Сбор гостей и фотосессия"],["Тұсау кесер","Обряд перерезания пут"],["Дастархан","Праздничный обед"],["Игры и подарки","Весёлый финал"]],
          venue:"Семейный ресторан «Алтын бесік»",addr:"Алматы, мкр. Самал-2, 15",
-         deadline:"Просим подтвердить присутствие до 01.02.2027",
-         sign:"С любовью, родители Иманжана",hash:"#АлғашқыҚадам"}
+         sign:"С любовью, родители Айсұлтана",hash:"#АлғашқыҚадам"}
       ]
     },
     kz:{
-      nav_designs:"Дизайндар",nav_features:"Мүмкіндіктер",nav_process:"Тапсырыс жолы",
+      nav_designs:"Дизайндар",nav_features:"Мүмкіндіктер",nav_process:"Тапсырыс жолы",nav_price:"Баға",
       hero_eyebrow:"Цифрлық шақырулар",
       hero_h:'Ерекше күніңіз.<em>Әдемі үлгіде.</em>',
       hero_lead:"Тойға арналған жеке онлайн-шақырулар — әр бөлшегіне мұқият көңілмен. Демо ашып, өз стиліңізді таңдаңыз.",
       cta_designs:"Дизайн таңдау",view_demo:"Демо көру",
-      stat_d:"дизайн",stat_l:"тіл",inv_sub:"Тойға шақыру",
+      stat_d:"дизайн",stat_l:"тіл",stat_p:"бір шақыру үшін",inv_sub:"Тойға шақыру",
       cd_d:"күн",cd_h:"сағат",cd_m:"минут",cd_s:"секунд",
       f_eyebrow:"Әр шақыруда",f_h:"Маңыздының бәрі — бір жерде",
       f1t:"Кері санақ",f1d:"Қонақтар оқиғаға қанша уақыт қалғанын көреді.",
-      f2t:"2ГИС-тегі орын",f2d:"Түйме қонақтарды өткізілетін орынға апарады.",
+      f2t:"2ГИС-тегі орын",f2d:"Батырма қонақтарды тікелей мереке өтетін орынға апарады.",
       f3t:"Қонақтардың жауабы",f3d:"Аты-жөні және қатысуды растау.",
       f4t:"Екі тіл",f4d:"Орыс және қазақ тілдері — бір басумен ауыстыру.",
       f5t:"Бейімделгіш макет",f5d:"Телефонда да, компьютерде де әдемі.",
       f6t:"Жеке жауап",f6d:"Жауаптан кейін шақыру қонақты атымен атап алғыс айтады, күн мен орынды еске салады.",
-      f7t:"Күнтізбеге қосу",f7d:"Жауаптан кейін — бір батырма: тәулігіне ескертпемен оқиға қонақтың күнтізбесінде.",
-      f8t:"Жауаплар поштаға",f8d:"Қонақтың әр жауабы ұйымдастырушының поштасына немесе Telegram-ына келеді.",
+      f7t:"Күнтізбеге қосу",f7d:"Жауап бергеннен кейін қонақ оқиғаны бір басумен күнтізбесіне қосады — бір тәулік бұрын еске салатын хабарламамен.",
+      f8t:"Жауаптар поштаға",f8d:"Қонақтың әр жауабы ұйымдастырушының электрондық поштасына келеді.",
       f9t:"Мұқабадағы фото",f9d:"Жұптың немесе мереке иесінің фотосына арналған аркалы рамка — «Фотомен» режимінде.",
       c_eyebrow:"Коллекция · № 01 — 06",c_h:"Өз стиліңізді таңдаңыз",
       c_lead:"Алты бағыт — классикадан журналдық үлгіге дейін. Дизайнды толық көру үшін демо ашыңыз.",
-      chip_all:"Барлығы",cat_wed:"Той",cat_jub:"Мерейтой",cat_bd:"Туған күн",cat_tusau:"Тұсау кесер",
+      c_note:"<b>✦</b><span>Әр үлгіні өзіңізге қарай өзгертеміз: есімдер, күн, орын, түстер мен мәтіндер. Кез келген мерекеге лайық — үйлену тойы, мерейтой, туған күн, тұсау кесер және басқалар.</span>",
+      chip_all:"Барлығы",cat_wed:"Үйлену тойы",cat_jub:"Мерейтой",cat_bd:"Туған күн",cat_tusau:"Тұсау кесер",
       d1:"Классикалық мұқаба, қос рамка және әдемі серифтер.",
       d2:"Жұмсақ арка, гүл мотивтері және нәзік реңктер.",
       d3:"Өрнекті панель және ұлттық нақыш.",
@@ -985,75 +1109,81 @@ body.menu-open{overflow:hidden}
       f_cd:"Санақ",open_demo:"Демо ашу",order:"Тапсырыс",swipe:"Айналдырыңыз",
       badge_hit:"хит",badge_new:"жаңа",
       p_eyebrow:"Қарапайым процесс",p_h:"Идеядан дайын сілтемеге",
-      p1t:"Дизайн таңдаңыз",p1d:"Демо қарап, лайықты стилді таңдаңыз.",
-      p2t:"Мәліметтерді жіберіңіз",p2d:"Есімдер, күн, орын, тіл және фотолар — қажет болса.",
-      p3t:"Сілтеме алыңыз",p3d:"Қонақтармен бөлісуге ыңғайлы дайын шақыру.",
+      p1t:"Дизайн таңдаңыз",p1d:"Демо қарап, лайықты стилді таңдаңыз.",p1c:"6 стиль · демо",
+      p2t:"Мәліметтерді жіберіңіз",p2d:"Есімдер, күн, орын, тіл және фотолар — қажет болса.",p2c:"WhatsApp арқылы",
+      p3t:"Сілтеме алыңыз",p3d:"Қонақтармен бөлісуге ыңғайлы дайын шақыру.",p3c:"сілтеме · 1 басу",
+      pr_eyebrow:"Бағасы",pr_h:"Кез келген үлгі — бір баға",pr_lead:"Барлық мүмкіндіктер — әр шақыруда.",
+      pr_i1:"Есімдер, күн, орын, түстер мен мәтіндер — сізге қарай",pr_i2:"Кез келген мереке: үйлену тойы, мерейтой, туған күн, тұсау кесер",
+      pr_i3:"Орыс және қазақ тілдері",pr_i4:"Кері санақ, 2ГИС батырмасы және күнтізбеге қосу",
+      pr_i5:"Қонақтардың жауаптары — сіздің поштаңызға",pr_i6:"Бөлісуге ыңғайлы дайын сілтеме",
+      pr_note:"алғашқы 15 клиентке",
+      tm_h:"Тапсырыс шарттары",tm1t:"1 күнде дайын",tm1d:"Барлық мәліметтер мен алдын ала төлем түскеннен кейін.",
+      tm2t:"2 түзету тегін",tm2d:"Әр келесі түзету — 500 ₸. Бір түзету — бір хабарламамен жіберілген барлық өзгерістер.",
+      tm3t:"Kaspi арқылы төлем",tm3d:"50% — алдын ала төлем, 50% — шақыру дайын болғаннан кейін.",
+      tm4t:"Сілтеме жұмыс істейді",tm4d:"Іс-шара өтетін күнді қоса алғанда.",
+      tm5t:"Жеке дизайн",tm5d:"Мүмкін — бағасы келісім бойынша.",c_phone:"Телефон",
       quote:"Шақыру — тойыңыздың алғашқы әсері.",
       foot_tag:"Есте сақтағыңыз келетін сәттерді сақтаңыз.",
       foot_sub:"Ерекше оқиғаларға арналған цифрлық шақырулар.",
-      wa_cta:"WhatsApp-қа тапсырыс",foot_desc:"цифрлық шақырулар",up:"жоғары",
+      wa_cta:"WhatsApp арқылы тапсырыс беру",foot_desc:"цифрлық шақырулар",up:"жоғары",
       m_back:"Коллекция",tab_photo:"Фотомен",tab_deco:"Фотосыз",change_photo:"Фотоны ауыстыру",
       photo_note:"Жүктелген фото тек осы қойындыда көрінеді — демо-режим.",
       lbl_invite:"Шақыру",prog_t:"Бағдарлама",loc_t:"Өткізілетін орын",btn_2gis:"2ГИС-тен ашу",
       joy_eyebrow:"Үлкен қуанышпен",
-      ph_hint:"Фото 📷 батырмасымен жүктеледі",
+      ph_hint:"Фото төмендегі 📷 батырмасымен жүктеледі",
       rsvp_eyebrow:"Қатысуды растау",rsvp_h:"Жауабыңызды күтеміз",
       rsvp_sub:"Келе алатыныңызды растаңызшы.",
-      lbl_name:"Аты",lbl_fam:"Жөні",
-      opt_yes:"✧ Әрине, барамын",opt_no:"Өкінішке, келе алмаймын",opt_maybe:"Әзірге жауап бере алмаймын",
+      lbl_name:"Аты",lbl_fam:"Тегі",
+      opt_yes:"✧ Әрине, келемін",opt_no:"Өкінішке қарай, келе алмаймын",opt_maybe:"Әзірге жауап бере алмаймын",
       rsvp_send:"Жауап жіберу",
-      rd_title:"Рахмет!",rd_edit:"Жауапты өзгерту",
-      date_human:"14 ақпан 2027 · 18:00",
+      rd_title:"Рақмет!",rd_edit:"Жауапты өзгерту",
       ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",
       ok_no:"Жауабыңызға рақмет. Өкінішті — біз бәрібір сізді жақсы көреміз!",
       ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
-      demo_note:"Демо-режим: нақты шақыруда жауаплар ұйымдастырушының поштасына немесе Telegram-ына келеді.",
-      rsvp_err:"Жауап жіберілмеді. Қайталап көріңізші.",
+      demo_note:"Демо-режим: жауап ешқайда жіберілмейді. Нақты шақыруда қонақтардың жауаптары ұйымдастырушының поштасына келеді.",
+      err_name:"Атыңызды жазыңыз",err_fam:"Тегіңізді жазыңыз",
+      rsvp_by:"Қатысатыныңызды {date} дейін растауды сұраймыз",
       cal_btn:"Күнтізбеге қосу",
-      cal_alarm:"Ертең — сіздің тойыңыз! Растауды ұмытпаңыз 🤍",
+      cal_alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",
       cal_desc:"SAQTAA цифрлық шақыруы. Бағдарлама: ",
-      cal_done:"📅 Оқиға файлы жүктелді — күнтізбеге қосу үшін ашыңыз",
+      cal_done:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
+      gcal_btn:"Google Күнтізбеге қосу",
       mq:"SAQTAA ✦ Той ✦ Мерейтой ✦ Туған күн ✦ Тұсау кесер ✦ Цифрлық шақырулар ✦ Екі тіл ✦ ",
       site_title:"SAQTAA — тойға цифрлық шақырулар",
       dot_st:"Стиль",dot_tpl:"Үлгі",
+      a_menu:"Мәзір",a_close:"Жабу",a_prev:"Артқа",a_next:"Алға",a_tprev:"Алдыңғы үлгі",a_tnext:"Келесі үлгі",a_lang:"Тілді ауыстыру",
       kicks:["Luxury · Үйлену тойы","Floral · Үйлену тойы","Qazaq · Той","Jubilee · Мерейтой","Emerald · Туған күн","Tusau · Тұсау кесер"],
       inv:[
         {title:"Үйлену тойы",
          lead:"Құрметті туыстар мен достар! Өміріміздің ең әдемі тарауы басталып келеді — осы күнді сіздермен бірге өткізгіміз келеді. Тойымызға шақырамыз!",
-         prog:[["17:30","Қонақтардың жиналуы","Қарсы алу кеші және фотозона"],["18:00","Салтанатты рәсім","Салтанатты шығу және анттар"],["19:00","Той банкеті","Құттықтаулар, тосттар және музыка"],["22:30","Торт","Кештің тәтті нүктесі"]],
+         prog:[["Қонақтардың жиналуы","Қарсы алу кеші және фотозона"],["Салтанатты рәсім","Салтанатты шығу және анттар"],["Той банкеті","Құттықтаулар, тосттар және музыка"],["Торт","Кештің тәтті нүктесі"]],
          venue:"«Алма» тойханасы, Diamond залы",addr:"Алматы, Әл-Фараби даңғылы, 150",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
-         sign:"Асыға күтеміз — А & Д",hash:"#АжД_14ақпан"},
+         sign:"Асыға күтеміз — Ерасыл & Аяулым",hash:"#ЕрасылАяулым_14ақпан"},
         {title:"Үйлену тойы",
          lead:"Қымбатты жақындар! Екі жүрек бір соғысты таңдады — осы керемет сәттің куәсі болуға шақырамыз.",
-         prog:[["16:00","Welcome-аймақ","Жеңіл тағамдар мен лимонад"],["17:00","Рәсім","Арка астындағы әсерлі анттар"],["18:30","Кешкі ас","Жылы отбасылық дастархан"],["21:30","Алғашқы би","Мерекелік торт"]],
+         prog:[["Welcome-аймақ","Жеңіл тағамдар мен лимонад"],["Рәсім","Арка астындағы әсерлі анттар"],["Кешкі ас","Жылы отбасылық дастархан"],["Алғашқы би","Мерекелік торт"]],
          venue:"«Гардения» мейрамханасы, жазғы терраса",addr:"Алматы, Керімбеков көш., 12",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
-         sign:"Сүйіспеншілікпен, А & Д",hash:"#БіздіңХикая_2027"},
+         sign:"Сүйіспеншілікпен, Әмір & Томирис",hash:"#БіздіңХикая_2027"},
         {title:"Отбасылық той",
          lead:"Құрметті ағайын, туыстар және достар! Екі әулеттің қосылу тойына шақырамыз — ортақ қуанышымызды бірге бөлісейік!",
-         prog:[["17:00","Қонақ күту","Шашу және қонақтарды қарсы алу"],["18:00","Тойдың басталуы","Салтанатты ашылу"],["19:00","Дастархан","Ұлттық тағамдар мен бата"],["21:00","Беташар","Рәсім және концерт"]],
+         prog:[["Қонақ күту","Шашу және қонақтарды қарсы алу"],["Тойдың басталуы","Салтанатты ашылу"],["Дастархан","Ұлттық тағамдар мен бата"],["Беташар","Рәсім және концерт"]],
          venue:"«Дастархан» тойханасы, «Қонақжай» залы",addr:"Астана, Қабанбай батыр көш., 30",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
          sign:"Құрметпен, Асылбековтер мен Оспановтар әулеті",hash:"#ЕкіӘулет_БірТой"},
         {title:"Мерейтой кеші",
          lead:"Қымбатты достар! Жарты ғасыр — әдемі әңгіменің бастауы ғана. Менің 50 жылдығыма арналған кешке шақырамын — әңгіме, күлкі және музыка кеші.",
-         prog:[["18:00","Қонақтардың жиналуы","Аперитив аймағы"],["19:00","Салтанатты бөлім","Юбиляр туралы деректер"],["20:00","Кешкі ас","Шефтің арнайы сеті"],["22:00","Би","Топ және диджей"]],
+         prog:[["Қонақтардың жиналуы","Аперитив аймағы"],["Салтанатты бөлім","Мерейтой иесінің өмір жолы"],["Кешкі ас","Шефтің арнайы сеті"],["Би","Топ және диджей"]],
          venue:"«Печать» лофты, 2-қабат",addr:"Алматы, Панфилов көш., 98",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
-         sign:"Әрқайсысыңызды күтемін — юбиляр",hash:"#ЖартыҒасыр"},
+         sign:"Әрқайсысыңызды күтемін — Гүлнара",hash:"#ЖартыҒасыр"},
         {title:"Туған күн",
          lead:"Қымбаттыларым! Тағы бір жыл — ең жақындарымның қасында атап өткім келеді. Туған күніме күтемін!",
-         prog:[["18:30","Қонақтардың жиналуы","Шампан және жеңіл тағамдар"],["19:30","Кешкі ас","Сүйікті тағамдар мен сыйлықтар"],["21:00","Караоке мен ойындар","Ең көңілді бөлім"],["23:00","Торт","Тілек тілейік"]],
+         prog:[["Қонақтардың жиналуы","Шампан және жеңіл тағамдар"],["Кешкі ас","Сүйікті тағамдар мен сыйлықтар"],["Караоке мен ойындар","Ең көңілді бөлім"],["Торт","Тілек тілейік"]],
          venue:"«Марсала» гастробары, негізгі зал",addr:"Алматы, Гоголь көш., 58",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
-         sign:"Сүйіспеншілікпен, Аружан",hash:"#Аружан25"},
+         sign:"Сүйіспеншілікпен, Медина",hash:"#Медина25"},
         {title:"Тұсау кесер",
-         lead:"Қымбатты жақындар! Бүлдіршінімізге 1 жас толды — алғашқы қадам мерекесіне шақырамыз. Иманжанның жолы жарқын болсын!",
-         prog:[["12:00","Жиналыс","Қонақтардың жиналуы және фотосессия"],["13:00","Тұсау кесер","Тұсау кесу рәсімі"],["13:30","Дастархан","Мерекелік түскі ас"],["15:00","Ойындар мен сыйлықтар","Көңілді аяқталу"]],
+         lead:"Қымбатты жақындар! Бүлдіршінімізге 1 жас толды — алғашқы қадам мерекесіне шақырамыз. Айсұлтанның жолы жарқын болсын!",
+         prog:[["Жиналыс","Қонақтардың жиналуы және фотосессия"],["Тұсау кесер","Тұсау кесу рәсімі"],["Дастархан","Мерекелік түскі ас"],["Ойындар мен сыйлықтар","Көңілді аяқталу"]],
          venue:"«Алтын бесік» отбасылық мейрамханасы",addr:"Алматы, Самал-2 шағынауданы, 15",
-         deadline:"Қатысатыныңызды 01.02.2027 дейін растауды сұраймыз",
-         sign:"Сүйіспеншілікпен, Иманжанның ата-анасы",hash:"#АлғашқыҚадам"}
+         sign:"Сүйіспеншілікпен, Айсұлтанның ата-анасы",hash:"#АлғашқыҚадам"}
       ]
     }
   };
@@ -1061,37 +1191,53 @@ body.menu-open{overflow:hidden}
   const invC=i=>((T[lang]&&T[lang].inv)||T.ru.inv)[i];
   const kick=i=>{const a=t("kicks");return Array.isArray(a)&&a[i]?a[i]:DEMOS[i].kicker;};
 
+  /* ---------- даты, цена, склонения — всё считается из CONFIG и EVENTS ---------- */
+  const MONTHS={
+    ru:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],
+    kz:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"]
+  };
+  const ymd=str=>str.split("-");
+  const dDot=str=>{const[y,m,d]=ymd(str);return d+"."+m+"."+y;};                       /* 14.02.2027 */
+  const dSpaced=str=>{const[y,m,d]=ymd(str);return d+" · "+m+" · "+y;};               /* 14 · 02 · 2027 */
+  const dHuman=str=>{const[y,m,d]=ymd(str);return (+d)+" "+(MONTHS[lang]||MONTHS.ru)[+m-1]+" "+y;}; /* 14 февраля 2027 */
+  const addDays=(str,n)=>{const x=new Date(str+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10);};
+  const rsvpBy=i=>dDot(addDays(EVENTS[i].date,-CONFIG.RSVP_DAYS));
+  const fill=(str,o)=>String(str).replace(/\{(\w+)\}/g,(_,k)=>o[k]!=null?o[k]:"");
+  const fmtPrice=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\u00a0")+"\u00a0₸";      /* 2 990 ₸ */
+  /* русские окончания: 1 день, 2 дня, 5 дней; в казахском форма не меняется */
+  const plural=(n,f)=>{if(!Array.isArray(f))return f;const a=n%10,b=n%100;return f[a===1&&b!==11?0:a>=2&&a<=4&&(b<12||b>14)?1:2];};
+
   /* ---------- разметка-кусочки ---------- */
   const ORN='<svg class="orn-svg fx" style="--d:0s" viewBox="0 0 140 40" aria-hidden="true"><path d="M70 34 C70 18 52 20 52 11 a8 8 0 1 1 16 2 M70 34 C70 18 88 20 88 11 a8 8 0 1 0 -16 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="70" cy="35" r="1.8" fill="currentColor"/></svg>';
   const QBAND='<svg class="q-band" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
   const CAL_ICON='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>';
   const CHECK_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 25l8 8 14-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  function cdHTML(){return `<div class="cd fx" style="--d:.26s">
-    <div><b data-cd="d">00</b><span>${t("cd_d")}</span></div>
-    <div><b data-cd="h">00</b><span>${t("cd_h")}</span></div>
-    <div><b data-cd="m">00</b><span>${t("cd_m")}</span></div>
-    <div><b data-cd="s">00</b><span>${t("cd_s")}</span></div></div>`;}
+  function cdHTML(i){return `<div class="cd fx" style="--d:.26s" data-ev="${i}">
+    <div><b data-cd="d">00</b><span data-cdl="d">${plural(0,t("cd_d"))}</span></div>
+    <div><b data-cd="h">00</b><span data-cdl="h">${plural(0,t("cd_h"))}</span></div>
+    <div><b data-cd="m">00</b><span data-cdl="m">${plural(0,t("cd_m"))}</span></div>
+    <div><b data-cd="s">00</b><span data-cdl="s">${plural(0,t("cd_s"))}</span></div></div>`;}
 
   const KEYS=["luxury","floral","qazaq","editorial","emerald","tusau"];
   const DEMOS=[
-    {theme:"theme-luxury",  names:"А & Д",           kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧"},
-    {theme:"theme-floral",  names:"А & Д",           kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀",
+    {theme:"theme-luxury",  names:"Ерасыл & Аяулым", kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧"},
+    {theme:"theme-floral",  names:"Әмір & Томирис", kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀",
      deco:'<span class="flor f1">✿</span><span class="flor f2">✿</span><span class="flor f3">✿</span>'},
-    {theme:"theme-qazaq",   names:"Qazaq · Toy",     kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", band:true},
-    {theme:"theme-editorial",names:"Мерейтой",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", edBig:"50"},
-    {theme:"theme-emerald", names:"Аружан",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧"},
-    {theme:"theme-tusau",   names:"Иманжан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀",
+    {theme:"theme-qazaq",   names:"Бауыржан & Айым", kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", band:true},
+    {theme:"theme-editorial",names:"Гүлнара",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", edBig:"50"},
+    {theme:"theme-emerald", names:"Медина",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧"},
+    {theme:"theme-tusau",   names:"Айсұлтан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀",
      deco:'<span class="t-sun2">☀</span><span class="fp fp1">👣</span><span class="fp fp2">👣</span><span class="fp fp3">👣</span>'}
   ];
 
   /* ---------- WhatsApp ---------- */
   function waMsg(i){
     if(i==null)return lang==="kz"
-      ?"Сәлеметсіз бе! SAQTAA цифрлық шақыруына тапсырыс бергім келеді."
-      :"Здравствуйте! Хочу заказать цифровое приглашение SAQTAA.";
+      ?"Сәлеметсіз бе! Тойға шақыруға тапсырыс бергім келеді."
+      :"Здравствуйте! Хочу заказать приглашение на той.";
     return lang==="kz"
-      ?`Сәлеметсіз бе! №0${i+1} «${kick(i)}» үлгісі ұнады. Шақыруға тапсырыс бергім келеді.`
-      :`Здравствуйте! Понравился шаблон №0${i+1} «${kick(i)}». Хочу заказать приглашение.`;
+      ?`Сәлеметсіз бе! № 0${i+1} «${kick(i)}» үлгісі бойынша шақыруға тапсырыс бергім келеді.`
+      :`Здравствуйте! Хочу заказать приглашение № 0${i+1} «${kick(i)}».`;
   }
   function applyWA(){
     qsa("a.wa-order").forEach(a=>{
@@ -1100,19 +1246,32 @@ body.menu-open{overflow:hidden}
     });
   }
 
-  /* ---------- .ics ---------- */
-  const stampDT=s=>s.replace(/-/g,"").replace(/:/g,"");
+  /* ---------- календарь: файл .ics и ссылка Google ---------- */
+  const TZO=CONFIG.TZ_OFFSET.replace(":","");                                   /* "+0500" */
+  const icsDT=(date,time)=>date.replace(/-/g,"")+"T"+time.replace(":","")+"00"; /* 20270214T173000 */
   const EVENT_CFG=i=>{
-    const c=invC(i),d=DEMOS[i];
+    const c=invC(i),d=DEMOS[i],ev=EVENTS[i];
+    const endDate=ev.end<=ev.times[0]?addDays(ev.date,1):ev.date;   /* окончание после полуночи — следующий день */
     return{
-      uid:"saqtaa-"+KEYS[i]+"-"+stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME)+"@saqtaa",
+      uid:"saqtaa-"+KEYS[i]+"-"+ev.date.replace(/-/g,"")+"@saqtaa",
       summary:d.names+" — "+c.title,
-      start:stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_TIME),
-      end:stampDT(CONFIG.EVENT_DATE+"T"+CONFIG.EVENT_END_TIME),
+      start:icsDT(ev.date,ev.times[0]),
+      end:icsDT(endDate,ev.end),
       location:c.venue+", "+c.addr,
-      desc:t("cal_desc")+c.prog.map(p=>p[0]+" — "+p[1]).join("; ")+"."
+      desc:t("cal_desc")+c.prog.map((p,k)=>ev.times[k]+" — "+p[0]).join("; ")+".",
+      alarm:fill(t("cal_alarm"),{title:c.title,time:ev.times[0]})
     };
   };
+  /* запасной вариант для встроенных браузеров (Instagram, WhatsApp), где файл не скачивается */
+  function gcalURL(i){
+    const c=EVENT_CFG(i);
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE"
+      +"&text="+encodeURIComponent(c.summary)
+      +"&dates="+c.start+"/"+c.end
+      +"&ctz="+encodeURIComponent(CONFIG.TZ)
+      +"&details="+encodeURIComponent(c.desc)
+      +"&location="+encodeURIComponent(c.location);
+  }
   const icsEsc=s=>String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
   function icsFold(line){
     const enc=new TextEncoder();const out=[];let cur="",bytes=0;
@@ -1128,18 +1287,18 @@ body.menu-open{overflow:hidden}
     const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z/,"Z");
     const L=[
       "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Digital Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
-      "BEGIN:VTIMEZONE","TZID:"+CONFIG.EVENT_TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:+0500","TZOFFSETTO:+0500","TZNAME:ALMT","END:STANDARD","END:VTIMEZONE",
+      "BEGIN:VTIMEZONE","TZID:"+CONFIG.TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:"+TZO,"TZOFFSETTO:"+TZO,"TZNAME:"+TZO.slice(0,3),"END:STANDARD","END:VTIMEZONE",
       "BEGIN:VEVENT",
       "UID:"+cfg.uid,
       "DTSTAMP:"+stamp,
-      "DTSTART;TZID="+CONFIG.EVENT_TZ+":"+cfg.start,
-      "DTEND;TZID="+CONFIG.EVENT_TZ+":"+cfg.end,
+      "DTSTART;TZID="+CONFIG.TZ+":"+cfg.start,
+      "DTEND;TZID="+CONFIG.TZ+":"+cfg.end,
       icsFold("SUMMARY:"+icsEsc(cfg.summary)),
       icsFold("LOCATION:"+icsEsc(cfg.location)),
       icsFold("DESCRIPTION:"+icsEsc(cfg.desc)),
       "STATUS:CONFIRMED",
       "BEGIN:VALARM","ACTION:DISPLAY",
-      icsFold("DESCRIPTION:"+icsEsc(t("cal_alarm"))),
+      icsFold("DESCRIPTION:"+icsEsc(cfg.alarm)),
       "TRIGGER:-P1D",
       "END:VALARM",
       "END:VEVENT","END:VCALENDAR"
@@ -1150,32 +1309,13 @@ body.menu-open{overflow:hidden}
     const blob=new Blob([buildICS(EVENT_CFG(i))],{type:"text/calendar;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const a=document.createElement("a");
-    a.href=url;a.download="saqtaa-"+KEYS[i]+"-"+CONFIG.EVENT_DATE+".ics";
+    a.href=url;a.download="saqtaa-"+KEYS[i]+"-"+EVENTS[i].date+".ics";
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),2000);
     showToast(t("cal_done"));
   }
 
-  /* ---------- отправка RSVP ---------- */
-  async function sendRSVP(p){
-    try{
-      if(RSVP_CONFIG.mode==="telegram"&&RSVP_CONFIG.telegramToken){
-        const text=`🤍 SAQTAA — новый ответ\n👤 ${p.full}\n💬 ${p.answer}\n🎨 ${p.template}`;
-        const r=await fetch(`https://api.telegram.org/bot${RSVP_CONFIG.telegramToken}/sendMessage`,{
-          method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({chat_id:RSVP_CONFIG.telegramChatId,text})});
-        return r.ok;
-      }
-      if(RSVP_CONFIG.mode==="web3forms"&&RSVP_CONFIG.web3formsKey){
-        const r=await fetch("https://api.web3forms.com/submit",{
-          method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({access_key:RSVP_CONFIG.web3formsKey,subject:"SAQTAA: ответ гостя",
-            name:p.name,family:p.fam,answer:p.answer,template:p.template})});
-        return r.ok;
-      }
-      return true;
-    }catch(_){return false;}
-  }
+  /* RSVP в демо-шаблоне: ответ гостя никуда не отправляется — показывается только карточка «Спасибо». */
 
   /* тост */
   const toast=qs("#toast");let toastT;
@@ -1186,8 +1326,8 @@ body.menu-open{overflow:hidden}
 
   /* ---------- сборка слайда ---------- */
   function slideHTML(d,i){
-    const c=invC(i);
-    const prog=c.prog.map(p=>`<li><b>${p[0]}</b><i></i><div><strong>${p[1]}</strong><span>${p[2]}</span></div></li>`).join("");
+    const c=invC(i),ev=EVENTS[i];
+    const prog=c.prog.map((p,k)=>`<li><b>${ev.times[k]||""}</b><i></i><div><strong>${p[0]}</strong><span>${p[1]}</span></div></li>`).join("");
     const gis="https://2gis.kz/search/"+encodeURIComponent(c.venue+", "+c.addr);
     return `<div class="demo-slide" data-i="${i}">
       <article class="inv-page ${d.theme}">
@@ -1209,15 +1349,15 @@ body.menu-open{overflow:hidden}
             </figure>
           </div>
 
-          <p class="inv-kicker fx" style="--d:.06s">${t("lbl_invite")} · 14.02.2027</p>
+          <p class="inv-kicker fx" style="--d:.06s">${t("lbl_invite")} · ${dDot(ev.date)}</p>
           <h2 class="inv-names fx" style="--d:.1s">${d.names}</h2>
           <p class="inv-sub fx" style="--d:.14s">${t("inv_sub")}</p>
           <p class="iv-eyebrow joy-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p>
           <h3 class="joy-h fx" style="--d:.16s">${c.title}</h3>
           <p class="inv-lead fx" style="--d:.18s">${c.lead}</p>
           <div class="orn-div fx" style="--d:.22s"><span>❧</span></div>
-          <div class="inv-date fx" style="--d:.24s">14 · 02 · 2027 · 18:00</div>
-          ${cdHTML()}
+          <div class="inv-date fx" style="--d:.24s">${dSpaced(ev.date)} · ${ev.times[0]}</div>
+          ${cdHTML(i)}
 
           <section class="iv-sec fx" style="--d:.32s">
             <p class="iv-eyebrow">${t("prog_t")}</p>
@@ -1237,19 +1377,20 @@ body.menu-open{overflow:hidden}
             <p class="iv-eyebrow">${t("rsvp_eyebrow")}</p>
             <h3 class="rs-h">${t("rsvp_h")}</h3>
             <p class="rs-sub">${t("rsvp_sub")}</p>
-            <form class="rs-form">
+            <form class="rs-form" novalidate>
               <div class="rs-grid">
-                <label class="rs-field"><span>${t("lbl_name")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="given-name"></label>
-                <label class="rs-field"><span>${t("lbl_fam")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="family-name"></label>
+                <label class="rs-field"><span>${t("lbl_name")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="given-name" aria-required="true"></label>
+                <label class="rs-field"><span>${t("lbl_fam")}</span><input type="text" maxlength="${NAME_MAX}" autocomplete="family-name" aria-required="true"></label>
               </div>
               <div class="rs-opts">
                 <label class="rs-opt"><input type="radio" name="att${i}" value="yes" checked><i></i><span>${t("opt_yes")}</span></label>
                 <label class="rs-opt"><input type="radio" name="att${i}" value="no"><i></i><span>${t("opt_no")}</span></label>
                 <label class="rs-opt"><input type="radio" name="att${i}" value="maybe"><i></i><span>${t("opt_maybe")}</span></label>
               </div>
+              <p class="rs-err" role="alert"></p>
               <button class="rs-send" type="submit">${t("rsvp_send")}</button>
-              <p class="rs-note rs-demo-note" hidden>${t("demo_note")}</p>
-              <p class="rs-note">${c.deadline}</p>
+              <p class="rs-note rs-demo-note">${t("demo_note")}</p>
+              <p class="rs-note">${fill(t("rsvp_by"),{date:rsvpBy(i)})}</p>
             </form>
             <div class="rs-done" hidden>
               <div class="rd-card">
@@ -1258,9 +1399,12 @@ body.menu-open{overflow:hidden}
                 <p class="rd-name"></p>
                 <p class="rd-msg"></p>
                 <span class="rd-div"></span>
-                <p class="rd-date">${t("date_human")}</p>
+                <p class="rd-date">${dHuman(ev.date)} · ${ev.times[0]}</p>
                 <p class="rd-venue">${c.venue}, ${c.addr}</p>
-                <button class="rs-send rd-cal" type="button" data-cal="${i}">${CAL_ICON}<span>${t("cal_btn")}</span></button>
+                <div class="rd-cals">
+                  <button class="rs-send rd-cal" type="button" data-cal="${i}">${CAL_ICON}<span>${t("cal_btn")}</span></button>
+                  <a class="rd-gcal" href="${gcalURL(i).replace(/&/g,"&amp;")}" target="_blank" rel="noopener">${t("gcal_btn")}</a>
+                </div>
                 <button class="rd-edit" type="button">${t("rd_edit")}</button>
               </div>
             </div>
@@ -1291,8 +1435,7 @@ body.menu-open{overflow:hidden}
     track.innerHTML=DEMOS.map(slideHTML).join("");
     dots.innerHTML=DEMOS.map((d,i)=>`<button data-i="${i}" aria-label="${t("dot_tpl")} ${i+1}">✦</button>`).join("");
     qsa(".rs-form").forEach(syncOpts);
-    qsa(".rs-demo-note").forEach(el=>el.hidden=RSVP_CONFIG.mode!=="demo");
-    applyPhotos();setSlide(cur,true);
+    applyPhotos();setSlide(cur,true);tick();
   }
   function applyPhotos(){
     qsa("#dvTrack .ph-frame img[data-photo]").forEach(img=>{
@@ -1300,25 +1443,32 @@ body.menu-open{overflow:hidden}
       if(u){img.src=u;img.closest(".ph-frame").classList.add("has-img");}
     });
   }
-  function setSlide(i,instant){
+  function setSlide(i,instant,resetScroll){
+    const prev=cur;
     cur=Math.max(0,Math.min(DEMOS.length-1,i));
     if(instant)track.classList.add("drag");
     track.style.transform=`translateX(${-cur*stage.clientWidth}px)`;
     if(instant)requestAnimationFrame(()=>track.classList.remove("drag"));
     qsa(".demo-slide").forEach((s,k)=>{
-      s.classList.toggle("active",k===cur);
-      if(k===cur)s.scrollTop=0;
+      const on=k===cur;
+      s.classList.toggle("active",on);
+      s.inert=!on;                                    /* Tab не уходит в соседние шаблоны */
+      if(on&&(resetScroll||cur!==prev))s.scrollTop=0; /* прокрутка сбрасывается только при смене шаблона */
     });
     qsa("#dvDots button").forEach((b,k)=>b.classList.toggle("on",k===cur));
     count.textContent=String(cur+1).padStart(2,"0")+" / "+String(DEMOS.length).padStart(2,"0");
     nameEl.textContent=kick(cur)+" · "+DEMOS[cur].names;
   }
+  /* пока открыт просмотр, страница под ним недоступна для Tab и экранного диктора */
+  function pageInert(on){[...document.body.children].forEach(el=>{if(el!==view&&el.id!=="toast"&&el.tagName!=="SCRIPT")el.inert=on;});}
+  /* фокус на «Закрыть» — повторяем, пока диалог не станет видимым (идёт анимация появления) */
+  function focusClose(n){const b=qs("#dvClose");b.focus();if(document.activeElement!==b&&n>0&&view.classList.contains("open"))requestAnimationFrame(()=>focusClose(n-1));}
   function openViewer(i){
     setPhotoMode(false);
-    setSlide(i||0,true);
+    setSlide(i||0,true,true);
     view.classList.add("open");view.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
-    lastFocus=document.activeElement;qs("#dvClose").focus();
+    lastFocus=document.activeElement;pageInert(true);focusClose(30);
     updCta();
   }
   function closeViewer(){
@@ -1329,7 +1479,7 @@ body.menu-open{overflow:hidden}
     for(const k in photoStore)delete photoStore[k];
     qsa("#dvTrack .ph-frame").forEach(fr=>{fr.classList.remove("has-img");const im=fr.querySelector("img");if(im)im.src="";});
     setPhotoMode(false);
-    if(lastFocus)lastFocus.focus();updCta();
+    pageInert(false);if(lastFocus)lastFocus.focus();updCta();
   }
   qs("#dvClose").addEventListener("click",closeViewer);
   qs("#dvBack").addEventListener("click",closeViewer);
@@ -1390,20 +1540,25 @@ body.menu-open{overflow:hidden}
       if(e.key==="ArrowLeft"&&!typing)setSlide(cur-1);
       if(e.key==="Tab"){
         /* focus trap: Tab не выходит за пределы диалога */
-        const f=qsa('#demoView a[href],#demoView button,#demoView input').filter(el=>el.offsetParent!==null);
+        const f=qsa('#demoView a[href],#demoView button,#demoView input').filter(el=>el.offsetParent!==null&&!el.closest("[inert]"));
         if(!f.length)return;
         const first=f[0],last=f[f.length-1];
+        if(!view.contains(document.activeElement)){e.preventDefault();(e.shiftKey?last:first).focus();return;}
         if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
         else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
       }
     }else if(e.key==="Escape")setMenu(false);
   });
-  addEventListener("resize",()=>setSlide(cur,true));
+  /* ленту пересчитываем только при смене ширины (поворот экрана);
+     высота меняется от клавиатуры и панелей браузера — форму не трогаем */
+  let lastW=innerWidth;
+  addEventListener("resize",()=>{if(innerWidth===lastW)return;lastW=innerWidth;setSlide(cur,true);});
 
   /* фото-режим */
   function setPhotoMode(on){
     view.classList.toggle("no-photo",!on);
     tabP.classList.toggle("on",on);tabD.classList.toggle("on",!on);
+    tabP.setAttribute("aria-pressed",on?"true":"false");tabD.setAttribute("aria-pressed",on?"false":"true");
     note.hidden=!on;
   }
   tabP.addEventListener("click",()=>setPhotoMode(true));
@@ -1416,14 +1571,24 @@ body.menu-open{overflow:hidden}
     setPhotoMode(true);applyPhotos();
   });
 
-  /* RSVP: обязательные имя+фамилия, лимит символов, персональная карточка */
-  function fieldErr(el){
-    el.classList.add("err");
+  /* RSVP (демо): имя и фамилия обязательны; ответ никуда не отправляется —
+     гость видит персональную карточку «Спасибо» */
+  function fieldErr(f,el,key){
+    const err=f.querySelector(".rs-err");
+    if(err)err.textContent=t(key);
+    el.setAttribute("aria-invalid","true");
+    el.classList.remove("err");void el.offsetWidth;el.classList.add("err");
     setTimeout(()=>el.classList.remove("err"),400);
     el.focus();
   }
   track.addEventListener("change",e=>{
     if(e.target.matches(".rs-opt input"))syncOpts(e.target.closest(".rs-form"));
+  });
+  track.addEventListener("input",e=>{
+    if(!e.target.matches(".rs-field input"))return;
+    e.target.removeAttribute("aria-invalid");
+    const err=e.target.closest(".rs-form").querySelector(".rs-err");
+    if(err)err.textContent="";
   });
   track.addEventListener("click",e=>{
     const cal=e.target.closest("[data-cal]");
@@ -1432,47 +1597,47 @@ body.menu-open{overflow:hidden}
     if(ed){
       const sec=ed.closest(".iv-sec");
       sec.querySelector(".rs-done").hidden=true;
-      sec.querySelector(".rs-form").hidden=false;
+      const f=sec.querySelector(".rs-form");
+      f.hidden=false;
+      f.querySelector("input[type=text]").focus();
     }
   });
-  track.addEventListener("submit",async e=>{
+  track.addEventListener("submit",e=>{
     const f=e.target.closest(".rs-form");if(!f)return;
     e.preventDefault();
-    const inputs=f.querySelectorAll("input[type=text]");
-    const name=inputs[0],fam=inputs[1];
-    /* обрезка по лимиту на всякий случай (вставка мимо maxlength) */
+    const [name,fam]=f.querySelectorAll("input[type=text]");
+    /* обрезка по лимиту на случай вставки мимо maxlength */
     if(name.value.length>NAME_MAX)name.value=name.value.slice(0,NAME_MAX);
     if(fam.value.length>NAME_MAX)fam.value=fam.value.slice(0,NAME_MAX);
-    if(!name.value.trim()){fieldErr(name);return;}
-    if(!fam.value.trim()){fieldErr(fam);return;}
-    const full=[name.value.trim(),fam.value.trim()].filter(Boolean).join(" ");
-    const val=f.querySelector("input:checked").value;
-    const i=+f.closest(".demo-slide").dataset.i;
-    const btn=f.querySelector(".rs-send");
-    btn.disabled=true;
-    const ok=await sendRSVP({full,name:name.value.trim(),fam:fam.value.trim(),answer:t("opt_"+val),template:DEMOS[i].kicker});
-    btn.disabled=false;
-    if(!ok){showToast(t("rsvp_err"));return;}
+    if(!name.value.trim()){fieldErr(f,name,"err_name");return;}
+    if(!fam.value.trim()){fieldErr(f,fam,"err_fam");return;}
+    const full=name.value.trim()+" "+fam.value.trim();
+    const val=(f.querySelector("input[type=radio]:checked")||{value:"yes"}).value;
     const sec=f.closest(".iv-sec");
     const done=sec.querySelector(".rs-done");
     done.querySelector(".rd-name").textContent=full;
     done.querySelector(".rd-msg").textContent=t("ok_"+val);
+    done.querySelector(".rd-cals").hidden=val==="no";   /* «не смогу прийти» — календарь не предлагаем */
     f.hidden=true;
     done.hidden=false;
+    const ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});
     done.scrollIntoView({behavior:reduced?"auto":"smooth",block:"center"});
   });
 
   /* ---------- hero: авто-перелистывание тем ---------- */
   const HERO=[
-    {n:"А & Д",tag:"Luxury · Wedding",cls:"t-lux"},
-    {n:"А & Д",tag:"Floral · Wedding",cls:"t-flor"},
-    {n:"Айдана & Нұрлан",tag:"Qazaq · Toy",cls:"t-qaz"},
-    {n:"Мерейтой · 50",tag:"Jubilee · Editorial",cls:"t-edit"},
-    {n:"Аружан",tag:"Emerald · Birthday",cls:"t-emer"},
-    {n:"Иманжан · 1 жас",tag:"Tusau · 1 жас",cls:"t-tus"}
+    {n:"Ерасыл & Аяулым",tag:"Luxury · Wedding",cls:"t-lux"},
+    {n:"Әмір & Томирис",tag:"Floral · Wedding",cls:"t-flor"},
+    {n:"Бауыржан & Айым",tag:"Qazaq · Toy",cls:"t-qaz"},
+    {n:"Гүлнара · 50",tag:"Jubilee · Editorial",cls:"t-edit"},
+    {n:"Медина",tag:"Emerald · Birthday",cls:"t-emer"},
+    {n:"Айсұлтан · 1 жас",tag:"Tusau · 1 жас",cls:"t-tus"}
   ];
   const invEl=qs("#heroInvite"),cNames=qs("#cycleNames"),cTag=qs("#cycleTag"),hDots=qs("#heroDots");
   let hIdx=0,hTimer=null,hSwapT=null;
+  /* дата и отсчёт на карточке — из EVENTS того же шаблона */
+  const heroDate=qs("#heroDate"),heroCd=qs("#heroCd");
+  function heroEvent(i){heroDate.textContent=dSpaced(EVENTS[i].date)+" — "+EVENTS[i].times[0];heroCd.dataset.ev=String(i);tick();}
   hDots.innerHTML=HERO.map((_,i)=>`<button data-i="${i}" aria-label="${t("dot_st")} ${i+1}"></button>`).join("");
   function heroDots(){qsa("#heroDots button").forEach((b,k)=>b.classList.toggle("on",k===hIdx));}
   function setHero(i){
@@ -1483,6 +1648,7 @@ body.menu-open{overflow:hidden}
       HERO.forEach(x=>invEl.classList.remove(x.cls));
       invEl.classList.add(h.cls);
       cNames.textContent=h.n;cTag.textContent=h.tag;
+      heroEvent(i);
       invEl.classList.remove("swapping");
       heroDots();
     },320);
@@ -1492,7 +1658,12 @@ body.menu-open{overflow:hidden}
   hDots.addEventListener("click",e=>{const b=e.target.closest("button[data-i]");if(!b)return;heroStop();setHero(+b.dataset.i);heroStart();});
   invEl.addEventListener("mouseenter",heroStop);
   invEl.addEventListener("mouseleave",heroStart);
-  heroDots();heroStart();
+  /* пауза автопрокрутки при фокусе с клавиатуры и при касании */
+  const hWrap=qs(".invite-wrap");let hResume=null;
+  hWrap.addEventListener("focusin",heroStop);
+  hWrap.addEventListener("focusout",heroStart);
+  hWrap.addEventListener("touchstart",()=>{heroStop();clearTimeout(hResume);hResume=setTimeout(heroStart,8000);},{passive:true});
+  heroDots();heroEvent(0);heroStart();
 
   /* ---------- шапка / меню ---------- */
   const head=qs("#head");
@@ -1511,24 +1682,33 @@ body.menu-open{overflow:hidden}
 
   /* ---------- отсчёт ---------- */
   function pad(n){return String(n).padStart(2,"0");}
+  /* у каждого блока отсчёта своё событие: data-ev → EVENTS */
   function tick(){
-    let d=Math.max(0,TARGET-Date.now());
-    const days=Math.floor(d/864e5),h=Math.floor(d/36e5)%24,m=Math.floor(d/6e4)%60,s=Math.floor(d/1e3)%60;
-    qsa('[data-cd="d"]').forEach(e=>e.textContent=pad(days));
-    qsa('[data-cd="h"]').forEach(e=>e.textContent=pad(h));
-    qsa('[data-cd="m"]').forEach(e=>e.textContent=pad(m));
-    qsa('[data-cd="s"]').forEach(e=>e.textContent=pad(s));
+    const now=Date.now();
+    qsa(".cd[data-ev]").forEach(cd=>{
+      const d=Math.max(0,evStart(+cd.dataset.ev)-now);
+      const v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};
+      for(const k in v){
+        const b=cd.querySelector('[data-cd="'+k+'"]'),l=cd.querySelector('[data-cdl="'+k+'"]');
+        if(b)b.textContent=pad(v[k]);
+        if(l)l.textContent=plural(v[k],t("cd_"+k));
+      }
+    });
   }
   tick();setInterval(tick,1000);
 
   /* ---------- появление ---------- */
-  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.15});
+  if(!("IntersectionObserver" in window))qsa("[data-reveal]").forEach(el=>el.classList.add("in"));
+  const io=!("IntersectionObserver" in window)?{observe(){},unobserve(){}}:new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}}),{threshold:.15});
   qsa("[data-reveal]").forEach(el=>io.observe(el));
+  setTimeout(()=>qsa("[data-reveal]").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)el.classList.add("in");}),2500);
 
   /* ---------- фильтр ---------- */
   const cards=qsa(".card");
+  qsa(".chip").forEach(c=>c.setAttribute("aria-pressed",c.classList.contains("on")?"true":"false"));
   qsa(".chip").forEach(ch=>ch.addEventListener("click",()=>{
-    qsa(".chip").forEach(c=>c.classList.remove("on"));ch.classList.add("on");
+    qsa(".chip").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-pressed","false");});
+    ch.classList.add("on");ch.setAttribute("aria-pressed","true");
     const cat=ch.dataset.cat;
     cards.forEach(c=>{
       const show=cat==="all"||c.dataset.cat===cat;
@@ -1545,7 +1725,7 @@ body.menu-open{overflow:hidden}
   const cta=qs("#stickyCta"),heroEl=qs(".hero");let pastHero=false,footVisible=false;
   function updCta(){cta.classList.toggle("show",pastHero&&!footVisible&&!view.classList.contains("open"));}
   addEventListener("scroll",()=>{pastHero=scrollY>heroEl.offsetHeight*.7;updCta();},{passive:true});
-  new IntersectionObserver(es=>{footVisible=es[0].isIntersecting;updCta();},{threshold:.05}).observe(qs("#footer"));
+  if("IntersectionObserver" in window)new IntersectionObserver(es=>{footVisible=es[0].isIntersecting;updCta();},{threshold:.05}).observe(qs("#footer"));
 
   /* ---------- язык ---------- */
   function applyLang(){
@@ -1553,9 +1733,11 @@ body.menu-open{overflow:hidden}
     document.title=t("site_title");
     qsa("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n);});
     qsa("[data-i18n-html]").forEach(el=>{el.innerHTML=t(el.dataset.i18nHtml);});
+    qsa("[data-i18n-aria]").forEach(el=>{el.setAttribute("aria-label",t(el.dataset.i18nAria));});
+    qsa("[data-price]").forEach(el=>{el.textContent=fmtPrice(CONFIG.PRICE);});
     qsa("#langBtn span").forEach(s=>s.classList.toggle("on",s.dataset.lang===lang));
     const mq=t("mq");qs("#mq1").textContent=mq;qs("#mq2").textContent=mq;
-    localStorage.setItem("saqtaa-lang",lang);
+    try{localStorage.setItem("saqtaa-lang",lang);}catch(_){}
     applyWA();
     renderSlides();
   }
@@ -1563,6 +1745,7 @@ body.menu-open{overflow:hidden}
 
   applyWA();
   applyLang();
+  window.SAQTAA_READY=true;
 })();
 </script>
 </body>
