@@ -113,6 +113,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .rd-div{width:56px;height:1px;background:var(--acc);opacity:.6;margin:4px 0}
 .rd-date{font-size:.78rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--acc)}
 .rd-venue{font-size:.85rem;opacity:.75}
+.rd-cals{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 .rd-gcal{display:inline-flex;align-items:center;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.75}
 .rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7}
 
@@ -168,7 +169,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 <script>
 (function(){
 "use strict";
-var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,W3F="https://api.web3forms.com/submit";
+var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,W3F="https://api.web3forms.com/submit",RSVP_COOLDOWN_MS=5000;
 var $=function(s){return document.querySelector(s);},app=$("#app");
 
 /* ---------- утилиты ---------- */
@@ -177,15 +178,95 @@ function safeUrl(u){try{var x=new URL(u);return(x.protocol==="https:"||x.protoco
 function pad(n){return String(n).padStart(2,"0");}
 function plural(n,f){if(!Array.isArray(f))return f;var a=n%10,b=n%100;return f[a===1&&b!==11?0:a>=2&&a<=4&&(b<12||b>14)?1:2];}
 function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+
+/* Запасной распаковщик RFC 1951 (deflate-raw) для браузеров без DecompressionStream */
+function rawInflate(src,maxOut){
+  var pos=0,bitBuf=0,bitCnt=0,limit=maxOut||200000;
+  var out=new Uint8Array(Math.min(limit,Math.max(1024,src.length*4))),outPos=0;
+  function writeByte(b){
+    if(outPos>=limit)throw new Error("too-large");
+    if(outPos>=out.length){var next=new Uint8Array(Math.min(limit,out.length*2));next.set(out);out=next;}
+    out[outPos++]=b;
+  }
+  function bits(n){
+    while(bitCnt<n){if(pos>=src.length)throw new Error("eof");bitBuf|=src[pos++]<<bitCnt;bitCnt+=8;}
+    var v=bitBuf&((1<<n)-1);bitBuf>>>=n;bitCnt-=n;return v;
+  }
+  function buildTree(lengths){
+    var counts=new Int32Array(16),nextCode=new Int32Array(16),maxBits=0;
+    for(var i=0;i<lengths.length;i++)if(lengths[i]){counts[lengths[i]]++;if(lengths[i]>maxBits)maxBits=lengths[i];}
+    var code=0;for(var b=1;b<=15;b++){code=(code+counts[b-1])<<1;nextCode[b]=code;}
+    var map=new Int32Array(1<<(maxBits+1)).fill(-1);
+    for(var sym=0;sym<lengths.length;sym++){var l=lengths[sym];if(l)map[(1<<l)|(nextCode[l]++)]=sym;}
+    return{map:map,maxBits:maxBits};
+  }
+  function decodeSym(tree){
+    var code=1;
+    for(var l=1;l<=tree.maxBits;l++){code=(code<<1)|bits(1);var s=tree.map[code];if(s!==undefined&&s>=0)return s;}
+    throw new Error("bad-huff");
+  }
+  var FIX_L=new Uint8Array(288),FIX_D=new Uint8Array(32),i=0;
+  for(;i<=143;i++)FIX_L[i]=8;for(;i<=255;i++)FIX_L[i]=9;for(;i<=279;i++)FIX_L[i]=7;for(;i<=287;i++)FIX_L[i]=8;
+  for(i=0;i<32;i++)FIX_D[i]=5;
+  var FIX_LT=buildTree(FIX_L),FIX_DT=buildTree(FIX_D);
+  var LEN_B=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+  var LEN_E=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  var DST_B=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+  var DST_E=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+  var CL_O=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],bfinal=0;
+  while(!bfinal){
+    bfinal=bits(1);var btype=bits(2);
+    if(btype===0){
+      bitBuf=0;bitCnt=0;if(pos+4>src.length)throw new Error("eof");
+      var len=src[pos]|(src[pos+1]<<8),nlen=src[pos+2]|(src[pos+3]<<8);pos+=4;
+      if((len^0xffff)!==nlen||pos+len>src.length)throw new Error("bad-uncomp");
+      for(var k=0;k<len;k++)writeByte(src[pos++]);
+    }else if(btype===1||btype===2){
+      var lt=FIX_LT,dt=FIX_DT;
+      if(btype===2){
+        var hlit=bits(5)+257,hdist=bits(5)+1,hclen=bits(4)+4,clLens=new Uint8Array(19);
+        for(var j=0;j<hclen;j++)clLens[CL_O[j]]=bits(3);
+        var clTree=buildTree(clLens),allLens=new Uint8Array(hlit+hdist),idx=0;
+        while(idx<hlit+hdist){
+          var s=decodeSym(clTree);
+          if(s<16)allLens[idx++]=s;
+          else if(s===16){var pv=allLens[idx-1],rp=bits(2)+3;while(rp--)allLens[idx++]=pv;}
+          else if(s===17){var z=bits(3)+3;while(z--)allLens[idx++]=0;}
+          else{var z2=bits(7)+11;while(z2--)allLens[idx++]=0;}
+        }
+        lt=buildTree(allLens.subarray(0,hlit));dt=buildTree(allLens.subarray(hlit));
+      }
+      for(;;){
+        var sym=decodeSym(lt);if(sym===256)break;
+        if(sym<256)writeByte(sym);
+        else{
+          var li=sym-257,length=LEN_B[li]+bits(LEN_E[li]),di=decodeSym(dt),dist=DST_B[di]+bits(DST_E[di]);
+          if(dist>outPos)throw new Error("bad-dist");
+          for(var m=0;m<length;m++)writeByte(out[outPos-dist]);
+        }
+      }
+    }else throw new Error("bad-btype");
+  }
+  return out.subarray(0,outPos);
+}
 async function decode(h){
   h=String(h||"").replace(/^#/,"");if(!h)return null;
   if(h.length>50000)throw new Error("too-large");
   var mode=h[0],bytes=unb64u(h.slice(1));
   if(mode==="z"){
-    if(typeof DecompressionStream==="undefined")throw new Error("no-ds");
-    var rdr=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader(),chunks=[],total=0;
-    for(;;){var step=await rdr.read();if(step.done)break;total+=step.value.byteLength;if(total>200000){try{rdr.cancel();}catch(_){}throw new Error("too-large");}chunks.push(step.value);}
-    bytes=new Uint8Array(total);var off=0;for(var c of chunks){bytes.set(c,off);off+=c.byteLength;}
+    if(typeof DecompressionStream!=="undefined"){
+      try{
+        var rdr=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader(),chunks=[],total=0;
+        for(;;){var step=await rdr.read();if(step.done)break;total+=step.value.byteLength;if(total>200000){try{rdr.cancel();}catch(_){}throw new Error("too-large");}chunks.push(step.value);}
+        var out=new Uint8Array(total),off=0;for(var c of chunks){out.set(c,off);off+=c.byteLength;}
+        bytes=out;
+      }catch(e){
+        if(e&&e.message==="too-large")throw e;
+        bytes=rawInflate(bytes,200000);
+      }
+    }else{
+      bytes=rawInflate(bytes,200000);
+    }
   }else if(mode!=="j"){throw new Error("unknown-format");}
   var data=JSON.parse(new TextDecoder().decode(bytes));
   if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("invalid-data");
@@ -200,7 +281,9 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  send:"Отправить ответ",sending:"Отправляем…",thanks:"Спасибо!",edit:"Изменить ответ",
  ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",ok_no:"Спасибо за ответ. Жаль, что вы не сможете прийти. Спасибо, что сообщили!",ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
  e_name:"Укажите имя",e_fam:"Укажите фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
- by:"Просим подтвердить присутствие до {date}",cal:"Добавить в календарь",calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
+ e_wait:"Пожалуйста, подождите несколько секунд перед повторной отправкой.",
+ by:"Просим подтвердить присутствие до {date}",cal:"Добавить в календарь",gcal:"Или открыть в Google Календаре",
+ calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
  alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",cdesc:"Программа: ",cdone:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
  cd:{d:["день","дня","дней"],h:["час","часа","часов"],m:["минута","минуты","минут"],s:["секунда","секунды","секунд"]},
  months:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],sw:"ҚАЗ"},
@@ -210,7 +293,9 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  send:"Жауап жіберу",sending:"Жіберілуде…",thanks:"Рақмет!",edit:"Жауапты өзгерту",
  ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",ok_no:"Жауабыңызға рақмет. Қатыса алмайтыныңыз өкінішті. Хабарлағаныңызға рақмет!",ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
  e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
- by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",cal:"Күнтізбеге қосу",calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
+ e_wait:"Қайта жіберу алдында бірнеше секунд күтіңіз.",
+ by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",cal:"Күнтізбеге қосу",gcal:"Немесе Google Күнтізбеде ашу",
+ calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
  alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",cdesc:"Бағдарлама: ",cdone:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
  cd:{d:"күн",h:"сағат",m:"минут",s:"секунд"},
  months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"],sw:"РУС"}
@@ -230,8 +315,8 @@ var TPL={
  tusau:{cls:"theme-tusau",glyph:"☀",tglyph:"☀",deco:'<span class="t-sun2">☀</span><span class="fp fp1">👣</span><span class="fp fp2">👣</span><span class="fp fp3">👣</span>'}
 };
 
-/* ---------- данные и даты ---------- */
-var D=null,lang="ru",langs=["ru"];
+/* ---------- данные, даты и локальное состояние RSVP ---------- */
+var D=null,lang="ru",langs=["ru"],tickTimer=null,isSubmitting=false,rsvpState=null;
 function t(k){return S[lang][k];}
 function fill(s,o){return String(s).replace(/\{(\w+)\}/g,function(_,k){return o[k]!=null?o[k]:"";});}
 function addDays(str,n){var x=new Date(str+"T12:00:00Z");x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10);}
@@ -243,6 +328,51 @@ function endDate(){return D.e<=D.s?addDays(D.d,1):D.d;}
 function endMs(){return new Date(endDate()+"T"+D.e+":00"+TZO).getTime();}
 function deadline(){return Math.max(endMs(),new Date(D.d+"T23:59:59"+TZO).getTime());}
 function names(){return D.n||"";}
+function validAtt(v){return(v==="yes"||v==="no"||v==="maybe")?v:"yes";}
+function normName(s){return String(s||"").replace(/\s+/g," ").trim().slice(0,NAME_MAX);}
+function makeId(){return(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("rsvp-"+Date.now()+"-"+Math.random().toString(36).slice(2,10));}
+function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
+function invKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
+function loadRsvpState(){
+  var def={id:makeId(),nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",rev:0,guests:0,editing:false,lastSentAt:0,lang:""};
+  try{
+    var raw=localStorage.getItem(invKey());
+    if(!raw)return def;
+    var p=JSON.parse(raw);
+    if(!p||typeof p!=="object")return def;
+    return{
+      id:String(p.id||def.id).slice(0,64),
+      nm:normName(p.nm),
+      fm:normName(p.fm),
+      att:validAtt(p.att),
+      sent:Boolean(p.sent&&p.sentNm&&p.sentFm),
+      sentNm:normName(p.sentNm),
+      sentFm:normName(p.sentFm),
+      sentAtt:validAtt(p.sentAtt),
+      rev:Number.isFinite(+p.rev)&&+p.rev>0?Math.floor(+p.rev):0,
+      guests:validAtt(p.sentAtt)==="yes"?1:0,
+      editing:false,
+      lastSentAt:Number.isFinite(+p.lastSentAt)?+p.lastSentAt:0,
+      lang:(p.lang==="ru"||p.lang==="kz")?p.lang:""
+    };
+  }catch(_){return def;}
+}
+function saveRsvpState(){
+  if(!D||!rsvpState)return;
+  try{localStorage.setItem(invKey(),JSON.stringify(rsvpState));}catch(_){}
+}
+function captureFormToState(){
+  if(!rsvpState)return;
+  var f=app.querySelector(".rs-form");
+  if(!f)return;
+  var inputs=f.querySelectorAll("input[type=text]");
+  if(inputs[0])rsvpState.nm=inputs[0].value.slice(0,NAME_MAX);
+  if(inputs[1])rsvpState.fm=inputs[1].value.slice(0,NAME_MAX);
+  var ch=f.querySelector("input[type=radio]:checked");
+  if(ch)rsvpState.att=validAtt(ch.value);
+  saveRsvpState();
+}
+
 /* тексты выбранного языка; если какого-то поля нет — берём из другого языка, чтобы текст не пропадал */
 function blk(){
   var a=D[lang]||{},b=D[lang==="ru"?"kz":"ru"]||{};
@@ -262,12 +392,20 @@ function evCfg(){
     uid:"saqtaa-"+D.d.replace(/-/g,"")+"-"+Math.abs(hash(names()+D.d))+"@saqtaa",
     summary:names()+(c.ti?" — "+c.ti:""),
     start:icsDT(D.d,D.s),end:icsDT(endDate(),D.e),location:loc,
-    desc:[t("cdesc")+pr.map(function(p){return p[0]+" — "+p[1];}).join("; "),D.ve,D.ad,location.href].filter(Boolean).join("\n"),
+    desc:[pr.length?(t("cdesc")+pr.map(function(p){return p[0]+" — "+p[1];}).join("; ")):"",D.ve,D.ad,location.href].filter(Boolean).join("\n"),
     url:location.href,
     alarm:fill(t("alarm"),{title:c.ti||names(),time:D.s})
   };
 }
-function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
+function gcalURL(){
+  var c=evCfg();
+  return"https://calendar.google.com/calendar/render?action=TEMPLATE"+
+    "&text="+encodeURIComponent(c.summary)+
+    "&dates="+c.start+"/"+c.end+
+    "&ctz="+encodeURIComponent(TZ)+
+    "&details="+encodeURIComponent(c.desc)+
+    "&location="+encodeURIComponent(c.location);
+}
 function buildICS(c){
   var stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z/,"Z");
   return["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
@@ -277,9 +415,13 @@ function buildICS(c){
    "BEGIN:VALARM","ACTION:DISPLAY",icsFold("DESCRIPTION:"+icsEsc(c.alarm)),"TRIGGER:-P1D","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";
 }
 function downloadICS(){
-  var blob=new Blob([buildICS(evCfg())],{type:"text/calendar;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-  a.href=url;a.download="SAQTAA-"+D.d+".ics";document.body.appendChild(a);a.click();a.remove();
-  setTimeout(function(){URL.revokeObjectURL(url);},2000);toast(t("cdone"));
+  try{
+    var blob=new Blob([buildICS(evCfg())],{type:"text/calendar;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download="SAQTAA-"+D.d+".ics";document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},2000);toast(t("cdone"));
+  }catch(_){
+    window.open(gcalURL(),"_blank","noopener");
+  }
 }
 var toastT;
 function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove("show");},2800);}
@@ -306,17 +448,22 @@ function render(){
   var todayKz=new Date(Date.now()+5*36e5).toISOString().slice(0,10),rawBy=addDays(D.d,-RSVP_DAYS);
   var by=fill(t("by"),{date:dDot(rawBy<todayKz?(todayKz<D.d?todayKz:D.d):rawBy)});
   var venueLine=[D.ve,D.ad].filter(Boolean).join(", ");
+  var gcalHref=esc(gcalURL());
+  var st=rsvpState||{nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",editing:false};
+  var curAtt=validAtt(st.att),showDone=Boolean(st.sent&&!st.editing);
+  var sentFull=(st.sentNm+" "+st.sentFm).trim(),sentAtt=validAtt(st.sentAtt);
   var rsvpHTML=D.rsvp===false?'':'<section class="iv-sec fx" style="--d:.44s"><p class="iv-eyebrow">'+t("rh")+'</p><h3 class="rs-h">'+t("rt")+'</h3><p class="rs-sub">'+t("rs")+'</p>'+
-    '<form class="rs-form" novalidate><div class="rs-grid">'+
-      '<label class="rs-field"><span>'+t("name")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="given-name"></label>'+
-      '<label class="rs-field"><span>'+t("fam")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="family-name"></label></div>'+
+    '<form class="rs-form" novalidate'+(showDone?' hidden':'')+'><div class="rs-grid">'+
+      '<label class="rs-field"><span>'+t("name")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="given-name" value="'+esc(st.nm)+'"></label>'+
+      '<label class="rs-field"><span>'+t("fam")+'</span><input type="text" maxlength="'+NAME_MAX+'" autocomplete="family-name" value="'+esc(st.fm)+'"></label></div>'+
       '<div class="rs-opts">'+
-        '<label class="rs-opt sel"><input type="radio" name="att" value="yes" checked><i></i><span>'+t("yes")+'</span></label>'+
-        '<label class="rs-opt"><input type="radio" name="att" value="no"><i></i><span>'+t("no")+'</span></label>'+
-        '<label class="rs-opt"><input type="radio" name="att" value="maybe"><i></i><span>'+t("maybe")+'</span></label></div>'+
+        '<label class="rs-opt'+(curAtt==="yes"?' sel':'')+'"><input type="radio" name="att" value="yes"'+(curAtt==="yes"?' checked':'')+'><i></i><span>'+t("yes")+'</span></label>'+
+        '<label class="rs-opt'+(curAtt==="no"?' sel':'')+'"><input type="radio" name="att" value="no"'+(curAtt==="no"?' checked':'')+'><i></i><span>'+t("no")+'</span></label>'+
+        '<label class="rs-opt'+(curAtt==="maybe"?' sel':'')+'"><input type="radio" name="att" value="maybe"'+(curAtt==="maybe"?' checked':'')+'><i></i><span>'+t("maybe")+'</span></label></div>'+
       '<p class="rs-err" role="alert"></p><button class="rs-send" type="submit">'+t("send")+'</button><p class="rs-note">'+by+'</p></form>'+
-    '<div class="rs-done" hidden><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name"></p><p class="rd-msg"></p><span class="rd-div"></span>'+
+    '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><span class="rd-div"></span>'+
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
+      '<div class="rd-cals"'+(sentAtt==="no"?' hidden':'')+'><button class="rs-send rd-cal" type="button" data-cal>'+CAL_ICON+' <span>'+t("cal")+'</span></button><a class="rd-gcal" href="'+gcalHref+'" target="_blank" rel="noopener">'+t("gcal")+'</a></div>'+
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div></section>';
   app.innerHTML='<article class="inv-page '+T.cls+'">'+sw+(T.deco||"")+'<div class="inv-inner">'+
     (T.band?qband("0s"):"")+(T.orn?ORN:"")+big+head+
@@ -324,7 +471,7 @@ function render(){
     '<div class="orn-div fx" style="--d:.22s"><span>❧</span></div>'+
     '<div class="inv-date fx" style="--d:.24s">'+dSpaced(D.d)+' · '+esc(D.s)+'</div>'+
     '<div class="cd fx" style="--d:.26s"><div><b data-cd="d">00</b><span data-cdl="d"></span></div><div><b data-cd="h">00</b><span data-cdl="h"></span></div><div><b data-cd="m">00</b><span data-cdl="m"></span></div><div><b data-cd="s">00</b><span data-cdl="s"></span></div></div>'+
-    '<section class="iv-sec fx calendar-sec" style="--d:.28s"><p class="iv-eyebrow">'+t("cal")+'</p><p class="rs-note">'+t("calhint")+'</p><button class="inv-btn" type="button" data-cal>'+CAL_ICON+' '+t("cal")+'</button></section>'+
+    '<section class="iv-sec fx calendar-sec" style="--d:.28s"><p class="iv-eyebrow">'+t("cal")+'</p><p class="rs-note">'+t("calhint")+'</p><button class="inv-btn" type="button" data-cal>'+CAL_ICON+' '+t("cal")+'</button><a class="rd-gcal" href="'+gcalHref+'" target="_blank" rel="noopener">'+t("gcal")+'</a></section>'+
     progHTML+locHTML+rsvpHTML+
     (c.sg?'<p class="inv-sign fx" style="--d:.5s">'+esc(sub(c.sg))+'</p>':'')+
     (D.h?'<p class="inv-hash fx" style="--d:.52s">'+esc(D.h)+'</p>':'')+
@@ -344,52 +491,142 @@ function tick(){
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
 /* ---------- отправка ответа на почту (Web3Forms) ---------- */
-async function postRsvp(full,val){
+async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId){
   if(!D.k)return false;
-  var label={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"}[val]||val;
+  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  var label=labels[val]||labels.yes;
+  var guestsCount=val==="yes"?1:0;
+  var subj=(isUpdate?"Изменение ответа: ":"Ответ гостя: ")+full+" — "+label;
+  var payload={
+    access_key:D.k,
+    subject:subj,
+    from_name:"SAQTAA · приглашение",
+    "Приглашение":names()+" ("+dDot(D.d)+" "+D.s+")",
+    "Гость":full,
+    "Ответ":label,
+    "Количество гостей":guestsCount,
+    "Статус записи":isUpdate?("Изменение ранее отправленного ответа (обновление №"+rev+", было: "+(labels[prevVal]||prevVal)+")"):"Первичный ответ",
+    "ID ответа":rsvpId,
+    botcheck:""
+  };
   try{
-    var r=await fetch(W3F,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({
-      access_key:D.k,subject:"Ответ гостя: "+full+" — "+label,from_name:"SAQTAA · приглашение",
-      "Приглашение":names()+" ("+dDot(D.d)+" "+D.s+")","Гость":full,"Ответ":label,botcheck:""
-    })});
+    var r=await fetch(W3F,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
     var j=await r.json().catch(function(){return{};});
     return r.ok&&j.success!==false;
   }catch(_){return false;}
 }
-app.addEventListener("submit",async function(e){
-  var f=e.target.closest(".rs-form");if(!f)return;e.preventDefault();
-  var inputs=f.querySelectorAll("input[type=text]"),nm=inputs[0],fm=inputs[1],err=f.querySelector(".rs-err");
-  function bad(el,key){err.textContent=t(key);el.classList.remove("err");void el.offsetWidth;el.classList.add("err");el.focus();}
-  if(!nm.value.trim()){bad(nm,"e_name");return;}
-  if(!fm.value.trim()){bad(fm,"e_fam");return;}
-  err.textContent="";
-  var full=nm.value.trim().slice(0,NAME_MAX)+" "+fm.value.trim().slice(0,NAME_MAX);
-  var val=(f.querySelector("input[type=radio]:checked")||{value:"yes"}).value;
-  var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
-  var ok=await postRsvp(full,val);
-  btn.disabled=false;btn.textContent=t("send");
-  if(!ok){err.textContent=t("e_send");return;}
-  var sec=f.closest(".iv-sec"),done=sec.querySelector(".rs-done");
+function showDoneCard(sec,full,val,scroll){
+  var f=sec.querySelector(".rs-form"),done=sec.querySelector(".rs-done"),cals=done.querySelector(".rd-cals");
   done.querySelector(".rd-name").textContent=full;
   done.querySelector(".rd-msg").textContent=t("ok_"+val);
+  if(cals)cals.hidden=(val==="no");
   f.hidden=true;done.hidden=false;
   var ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});
-  done.scrollIntoView({behavior:"smooth",block:"center"});
+  if(scroll)done.scrollIntoView({behavior:"smooth",block:"center"});
+}
+app.addEventListener("submit",async function(e){
+  var f=e.target.closest(".rs-form");if(!f||isSubmitting)return;e.preventDefault();
+  var inputs=f.querySelectorAll("input[type=text]"),nm=inputs[0],fm=inputs[1],err=f.querySelector(".rs-err");
+  function bad(el,key){err.textContent=t(key);el.classList.remove("err");void el.offsetWidth;el.classList.add("err");el.focus();}
+  var cleanNm=normName(nm.value),cleanFm=normName(fm.value);
+  nm.value=cleanNm;fm.value=cleanFm;
+  if(!cleanNm){bad(nm,"e_name");return;}
+  if(!cleanFm){bad(fm,"e_fam");return;}
+  err.textContent="";
+  var val=validAtt((f.querySelector("input[type=radio]:checked")||{value:"yes"}).value);
+  var full=cleanNm+" "+cleanFm;
+  var sec=f.closest(".iv-sec");
+
+  /* Если гость нажал «Изменить ответ», но ничего не менял — не отправляем дубликат в Web3Forms */
+  if(rsvpState&&rsvpState.sent&&rsvpState.sentNm===cleanNm&&rsvpState.sentFm===cleanFm&&rsvpState.sentAtt===val){
+    rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;rsvpState.editing=false;
+    saveRsvpState();
+    showDoneCard(sec,full,val,true);
+    return;
+  }
+  /* Защита от слишком частой повторной отправки */
+  if(rsvpState&&rsvpState.lastSentAt&&(Date.now()-rsvpState.lastSentAt)<RSVP_COOLDOWN_MS){
+    err.textContent=t("e_wait");
+    return;
+  }
+
+  var isUpdate=Boolean(rsvpState&&rsvpState.sent);
+  var prevVal=rsvpState?rsvpState.sentAtt:"yes";
+  var nextRev=(rsvpState&&rsvpState.rev?rsvpState.rev:0)+1;
+  var rsvpId=(rsvpState&&rsvpState.id)?rsvpState.id:makeId();
+
+  isSubmitting=true;
+  var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
+  var ok=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId);
+  isSubmitting=false;
+  btn.disabled=false;btn.textContent=t("send");
+  if(!ok){
+    if(rsvpState){rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;saveRsvpState();}
+    err.textContent=t("e_send");
+    return;
+  }
+  if(!rsvpState)rsvpState=loadRsvpState();
+  rsvpState.id=rsvpId;
+  rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;
+  rsvpState.sent=true;rsvpState.sentNm=cleanNm;rsvpState.sentFm=cleanFm;rsvpState.sentAtt=val;
+  rsvpState.rev=nextRev;rsvpState.guests=(val==="yes"?1:0);
+  rsvpState.editing=false;rsvpState.lastSentAt=Date.now();
+  saveRsvpState();
+  showDoneCard(sec,full,val,true);
 });
-app.addEventListener("change",function(e){if(e.target.matches(".rs-opt input"))syncOpts(e.target.closest(".rs-form"));});
-app.addEventListener("input",function(e){if(e.target.matches(".rs-field input")){var er=e.target.closest(".rs-form").querySelector(".rs-err");if(er)er.textContent="";}});
+app.addEventListener("change",function(e){
+  if(e.target.matches(".rs-opt input")){
+    syncOpts(e.target.closest(".rs-form"));
+    captureFormToState();
+  }
+});
+app.addEventListener("input",function(e){
+  if(e.target.matches(".rs-field input")){
+    var er=e.target.closest(".rs-form").querySelector(".rs-err");
+    if(er)er.textContent="";
+    captureFormToState();
+  }
+});
 app.addEventListener("click",function(e){
   if(e.target.closest("[data-cal]")){downloadICS();return;}
-  if(e.target.closest("[data-sw]")){lang=lang==="ru"?"kz":"ru";render();return;}
+  if(e.target.closest("[data-sw]")){
+    captureFormToState();
+    lang=lang==="ru"?"kz":"ru";
+    if(rsvpState){rsvpState.lang=lang;saveRsvpState();}
+    render();
+    return;
+  }
   var ed=e.target.closest(".rd-edit");
-  if(ed){var sec=ed.closest(".iv-sec");sec.querySelector(".rs-done").hidden=true;var f=sec.querySelector(".rs-form");f.hidden=false;f.querySelector("input[type=text]").focus();}
+  if(ed){
+    var sec=ed.closest(".iv-sec");
+    if(rsvpState){
+      rsvpState.editing=true;
+      rsvpState.nm=rsvpState.sentNm||rsvpState.nm;
+      rsvpState.fm=rsvpState.sentFm||rsvpState.fm;
+      rsvpState.att=validAtt(rsvpState.sentAtt||rsvpState.att);
+      saveRsvpState();
+    }
+    sec.querySelector(".rs-done").hidden=true;
+    var f=sec.querySelector(".rs-form");
+    var inputs=f.querySelectorAll("input[type=text]");
+    if(rsvpState){
+      if(inputs[0])inputs[0].value=rsvpState.nm;
+      if(inputs[1])inputs[1].value=rsvpState.fm;
+      var rad=f.querySelector('input[type=radio][value="'+validAtt(rsvpState.att)+'"]');
+      if(rad)rad.checked=true;
+      syncOpts(f);
+    }
+    f.hidden=false;
+    if(inputs[0])inputs[0].focus();
+  }
 });
 
 /* ---------- служебные экраны ---------- */
 function screen(h,p){document.body.style.background="#0F4A38";app.innerHTML='<div class="msg"><div><h1>'+h+'</h1>'+p+'</div></div>';}
 
 /* ---------- запуск ---------- */
-(async function init(){
+async function init(){
+  if(tickTimer){clearInterval(tickTimer);tickTimer=null;}
   try{D=await decode(location.hash);}catch(_){D=null;}
   var dateText=String(D&&D.d||""),dateCheck=new Date(dateText+"T12:00:00Z");
   if(!D||typeof D!=="object"||Array.isArray(D)||!/^\d{4}-\d{2}-\d{2}$/.test(dateText)||
@@ -409,13 +646,19 @@ function screen(h,p){document.body.style.background="#0F4A38";app.innerHTML='<di
   });
   D.rsvp=D.rsvp!==false;
   langs=D.l==="both"?["ru","kz"]:[D.l==="kz"?"kz":"ru"];
-  lang=langs[0];if(langs.length>1&&/^kk/i.test(navigator.language||""))lang="kz";
+  rsvpState=loadRsvpState();
+  lang=langs[0];
+  if(langs.length>1){
+    if(rsvpState.lang&&langs.indexOf(rsvpState.lang)>=0)lang=rsvpState.lang;
+    else if(/^kk/i.test(navigator.language||""))lang="kz";
+  }
   if(Date.now()>deadline()){
     screen("Приглашение больше недоступно ✦","<p>Мероприятие уже состоялось. Спасибо, что были с нами!</p><p>Мереке өтіп кетті. Бізбен бірге болғаныңызға рақмет!</p>");return;
   }
-  render();setInterval(tick,1000);
-  addEventListener("hashchange",function(){location.reload();});
-})();
+  render();tickTimer=setInterval(tick,1000);
+}
+addEventListener("hashchange",function(){init();});
+init();
 })();
 </script>
 </body>

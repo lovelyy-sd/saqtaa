@@ -349,14 +349,84 @@ async function encode(obj){
   }
   return"j"+b64u(raw);
 }
+function rawInflate(src,maxOut){
+  var p=0,b=0,n=0,out=[];
+  function bits(k){while(n<k){if(p>=src.length)throw new Error("eof");b|=src[p++]<<n;n+=8;}var v=b&((1<<k)-1);b>>>=k;n-=k;return v;}
+  function build(lens){
+    var max=0,cnt=[],next=[],tbl={},i;
+    for(i=0;i<lens.length;i++)if(lens[i]>max)max=lens[i];
+    if(!max)return{tbl:tbl,max:0};
+    for(i=0;i<=max;i++)cnt[i]=0;
+    for(i=0;i<lens.length;i++)if(lens[i])cnt[lens[i]]++;
+    var code=0;cnt[0]=0;
+    for(i=1;i<=max;i++){code=(code+cnt[i-1])<<1;next[i]=code;}
+    for(i=0;i<lens.length;i++){var l=lens[i];if(l){tbl[(l<<16)|next[l]]=i;next[l]++;}}
+    return{tbl:tbl,max:max};
+  }
+  function sym(h){
+    var code=0;
+    for(var l=1;l<=h.max;l++){code=(code<<1)|bits(1);var k=(l<<16)|code;if(k in h.tbl)return h.tbl[k];}
+    throw new Error("huff");
+  }
+  var FL=[],FD=[],i;
+  for(i=0;i<=143;i++)FL[i]=8;for(;i<=255;i++)FL[i]=9;for(;i<=279;i++)FL[i]=7;for(;i<=287;i++)FL[i]=8;
+  for(i=0;i<32;i++)FD[i]=5;
+  var fixL=build(FL),fixD=build(FD);
+  var LB=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+  var LE=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  var DB=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+  var DE=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+  var CO=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+  var last=0;
+  while(!last){
+    last=bits(1);var t=bits(2);
+    if(t===0){
+      b=0;n=0;if(p+4>src.length)throw new Error("eof");
+      var len=src[p]|(src[p+1]<<8),nlen=src[p+2]|(src[p+3]<<8);p+=4;
+      if((len^nlen)!==0xffff)throw new Error("len");
+      if(p+len>src.length||out.length+len>maxOut)throw new Error("overflow");
+      for(i=0;i<len;i++)out.push(src[p++]);
+    }else if(t===1||t===2){
+      var hL=fixL,hD=fixD;
+      if(t===2){
+        var hlit=bits(5)+257,hdist=bits(5)+1,hclen=bits(4)+4,cl=[];
+        for(i=0;i<19;i++)cl[i]=0;
+        for(i=0;i<hclen;i++)cl[CO[i]]=bits(3);
+        var hC=build(cl),ll=[];
+        while(ll.length<hlit+hdist){
+          var s=sym(hC);
+          if(s<16)ll.push(s);
+          else if(s===16){var r=bits(2)+3,pv=ll[ll.length-1]||0;while(r--)ll.push(pv);}
+          else if(s===17){var r2=bits(3)+3;while(r2--)ll.push(0);}
+          else{var r3=bits(7)+11;while(r3--)ll.push(0);}
+        }
+        hL=build(ll.slice(0,hlit));hD=build(ll.slice(hlit));
+      }
+      for(;;){
+        var c=sym(hL);
+        if(c===256)break;
+        if(c<256){out.push(c);if(out.length>maxOut)throw new Error("overflow");}
+        else{
+          var li=c-257,ln=LB[li]+bits(LE[li]),di=sym(hD),ds=DB[di]+bits(DE[di]);
+          if(ds>out.length||out.length+ln>maxOut)throw new Error("dist");
+          for(i=0;i<ln;i++)out.push(out[out.length-ds]);
+        }
+      }
+    }else throw new Error("block");
+  }
+  return new Uint8Array(out);
+}
 async function decodeHash(h){
   h=String(h||"").replace(/^#/,"");
   if(h.length<2)throw new Error("empty");
   var mode=h[0],bytes=unb64u(h.slice(1));
   if(mode==="z"){
-    if(typeof DecompressionStream==="undefined")throw new Error("compression-unsupported");
-    var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
-    bytes=new Uint8Array(await r.arrayBuffer());
+    if(typeof DecompressionStream!=="undefined"){
+      var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
+      bytes=new Uint8Array(await r.arrayBuffer());
+    }else{
+      bytes=rawInflate(bytes,200000);
+    }
   }else if(mode!=="j"){throw new Error("unknown-format");}
   var o=JSON.parse(new TextDecoder().decode(bytes));
   if(!o||typeof o!=="object"||Array.isArray(o))throw new Error("invalid-data");
@@ -403,7 +473,9 @@ function validate(o){
 }
 
 /* ---------- черновик ---------- */
-function save(){try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));var ss=$("#saveState");if(ss)ss.textContent="Черновик сохранён на этом устройстве · "+new Date().toLocaleTimeString();}catch(_){var ss=$("#saveState");if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";}schedulePreview();}
+var saveTimer=null;
+function save(){clearTimeout(saveTimer);try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));var ss=$("#saveState");if(ss)ss.textContent="Черновик сохранён на этом устройстве · "+new Date().toLocaleTimeString();}catch(_){var ss=$("#saveState");if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";}schedulePreview();}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,220);schedulePreview();}
 function fillFrom(o){
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
   lastTpl=$("#tpl").value;
@@ -457,13 +529,14 @@ $("#prog").addEventListener("click",function(e){
   var d=e.target.closest(".del");if(!d)return;
   grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();
 });
-document.addEventListener("change",function(e){if(e.target.closest("main")&&e.target.id!=="old")schedulePreview();});
+document.addEventListener("change",function(e){if(e.target.closest("main")&&e.target.id!=="old")save();});
 document.addEventListener("input",function(e){
   if(e.target.closest("main")&&e.target.id!=="old"){
-    save();
+    scheduleSave();
     if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Создайте ссылку заново, чтобы обновить приглашение.";
   }
 });
+window.addEventListener("beforeunload",function(){if(saveTimer)save();});
 
 try{$("#base").value=new URL("invite.html",location.href).href;}catch(_){$("#base").value="";}
 
