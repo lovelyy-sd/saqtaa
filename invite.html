@@ -240,6 +240,11 @@ function endDate(){return D.e<=D.s?addDays(D.d,1):D.d;}
 function endMs(){return new Date(endDate()+"T"+D.e+":00"+TZO).getTime();}
 function deadline(){return Math.max(endMs(),new Date(D.d+"T23:59:59"+TZO).getTime());}
 function names(){return D.n||"";}
+/* тексты выбранного языка; если какого-то поля нет — берём из другого языка, чтобы текст не пропадал */
+function blk(){
+  var a=D[lang]||{},b=D[lang==="ru"?"kz":"ru"]||{};
+  return{ti:a.ti||b.ti||"",le:a.le||b.le||"",sg:a.sg||b.sg||"",pr:(a.pr&&a.pr.length)?a.pr:(b.pr||[])};
+}
 function sub(s){return String(s||"").replace(/\{names\}/g,names());}
 
 /* ---------- календарь ---------- */
@@ -248,7 +253,7 @@ function icsDT(date,time){return date.replace(/-/g,"")+"T"+time.replace(":","")+
 function icsEsc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");}
 function icsFold(line){var enc=new TextEncoder(),out=[],cur="",bytes=0;for(var ch of line){var b=enc.encode(ch).length;if(bytes+b>74&&cur){out.push(cur);cur=" "+ch;bytes=1+b;}else{cur+=ch;bytes+=b;}}if(cur)out.push(cur);return out.join("\r\n");}
 function evCfg(){
-  var c=D[lang]||{},pr=c.pr||[];
+  var c=blk(),pr=c.pr||[];
   var loc=[D.ve,D.ad].filter(Boolean).join(", ");
   return{
     uid:"saqtaa-"+D.d.replace(/-/g,"")+"-"+Math.abs(hash(names()+D.d))+"@saqtaa",
@@ -278,7 +283,7 @@ function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");c
 
 /* ---------- сборка страницы ---------- */
 function render(){
-  var T=TPL[D.t]||TPL.luxury,c=D[lang]||{},pr=c.pr||[];
+  var T=TPL[D.t]||TPL.luxury,c=blk(),pr=c.pr||[];
   var photo=safeUrl(D.p),title=esc(c.ti||""),nm=esc(names());
   var progHTML=pr.length?'<section class="iv-sec fx" style="--d:.32s"><p class="iv-eyebrow">'+t("prog")+'</p><ul class="prog">'+pr.map(function(p){
     return'<li><b>'+esc(p[0])+'</b><i></i><div><strong>'+esc(p[1])+'</strong>'+(p[2]?'<span>'+esc(p[2])+'</span>':'')+'</div></li>';}).join("")+'</ul></section>':"";

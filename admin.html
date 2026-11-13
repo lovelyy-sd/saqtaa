@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0F4A38">
 <title>SAQTAA · Создать приглашение</title>
+<meta name="referrer" content="no-referrer">
 <style>
 :root{--em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gs:#D9BC7F;--paper:#F5EFE2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;--hair:rgba(24,39,32,.18)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -43,11 +44,28 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 .toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;max-width:88vw;text-align:center}
 .toast.show{opacity:1}
 [hidden]{display:none!important}
+.gate{max-width:420px;margin:0 auto;padding:40px 18px}
+.gate form{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:22px 18px}
+.gate h2{font-size:1.2rem;margin-bottom:6px;color:var(--em)}
+.gate p{font-size:.88rem;color:var(--ink2);margin-bottom:12px}
+.lh{font-weight:800;color:var(--em);margin:4px 0 0;font-size:.95rem}
+.lblock+.lblock{border-top:1px dashed var(--hair);margin-top:16px;padding-top:14px}
+.ptag{display:inline-block;font-size:.7rem;font-weight:800;color:#7F5D22;margin:2px 0}
 </style>
 </head>
 <body>
 <header><h1>SAQTAA · Создать приглашение</h1><p>Заполните поля → нажмите «Создать ссылку» → отправьте клиенту</p></header>
-<main>
+<section class="gate" id="gate">
+  <form id="gateForm" autocomplete="off">
+    <h2>Вход</h2>
+    <p id="gateHint">Введите пароль, чтобы создавать приглашения.</p>
+    <input id="gatePw" type="password" placeholder="Пароль" autocomplete="current-password" required>
+    <button class="btn main" id="gateBtn" type="submit">Войти</button>
+    <p class="err" id="gateErr" role="alert"></p>
+    <textarea id="gateOut" class="out" readonly hidden></textarea>
+  </form>
+</section>
+<main hidden>
 
 <div class="box">
   <h2>0. Продолжить старое</h2>
@@ -107,17 +125,8 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 
 <div class="box">
   <h2>4. Тексты</h2>
-  <div class="tabs" id="textTabs" hidden>
-    <button type="button" data-t="ru" class="on">Русский</button>
-    <button type="button" data-t="kz">Қазақша</button>
-  </div>
-  <label for="ti">Заголовок (например, «Свадебное торжество»)</label>
-  <input id="ti" type="text" maxlength="80" autocomplete="off">
-  <label for="le">Текст приглашения</label>
-  <textarea id="le" maxlength="700"></textarea>
-  <label for="sg">Подпись</label>
-  <input id="sg" type="text" maxlength="160" autocomplete="off">
-  <p class="hint">В тексте и подписи можно писать {names} — подставятся имена с обложки.</p>
+  <div id="txt"></div>
+  <p class="hint">В тексте и подписи можно писать {names} — подставятся имена с обложки. Если выбран язык «Оба», у каждого языка своё отдельное поле: казахский текст не переводится сам, его нужно вписать (или попросить перевод в чате с Claude и вставить сюда).</p>
   <label for="h">Хештег (необязательно)</label>
   <input id="h" type="text" maxlength="60" placeholder="#ЕрасылАяулым" autocomplete="off">
 </div>
@@ -126,7 +135,7 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   <h2>5. Программа дня</h2>
   <div id="prog"></div>
   <button class="btn line" id="addRow" type="button">+ Добавить пункт</button>
-  <p class="hint">Время общее для обоих языков, названия — для выбранной вкладки языка.</p>
+  <p class="hint">Время общее, названия и описания — отдельно для каждого языка.</p>
 </div>
 
 <div class="box">
@@ -151,6 +160,14 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
     <textarea id="out" class="out" readonly></textarea>
     <p class="ok" id="len"></p>
     <button class="btn gold" id="copy" type="button">Скопировать ссылку</button>
+    <button class="btn line" id="sh" type="button">Сократить ссылку (is.gd)</button>
+    <p class="hint">Сокращатель — сторонний сервис is.gd: он увидит содержимое ссылки (имена, дату, место). Проверьте короткую ссылку перед отправкой.</p>
+    <p class="err" id="shErr" hidden></p>
+    <div id="shBox" hidden>
+      <label for="shOut">Короткая ссылка</label>
+      <input id="shOut" type="text" readonly>
+      <button class="btn gold" id="shCopy" type="button">Скопировать короткую</button>
+    </div>
     <a class="btn main" id="open" target="_blank" rel="noopener">Открыть и проверить</a>
     <a class="btn line" id="wa" target="_blank" rel="noopener">Отправить в WhatsApp</a>
   </div>
@@ -194,40 +211,58 @@ tusau:{ti:["Тұсау кесер","Тұсау кесер"],
 };
 
 /* ---------- состояние ---------- */
-var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};  /* rows: [time, ruT, ruD, kzT, kzD] */
-var tab="ru",lang="ru";
-
-function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("show");},2200);}
+var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};  /* rows: [время, названиеRU, описаниеRU, названиеKZ, описаниеKZ] */
+var lang="ru";
+function act(){return lang==="both"?["ru","kz"]:[lang];}
+function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("show");},3200);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function val(sel){var el=document.querySelector(sel);return el?el.value:null;}
 
-/* забираем текст с экрана в состояние */
+/* забираем то, что сейчас на экране, в состояние */
 function grabText(){
-  st[tab].ti=$("#ti").value;st[tab].le=$("#le").value;st[tab].sg=$("#sg").value;
-  var off=tab==="ru"?0:2;
+  act().forEach(function(k){
+    var a=val("#ti_"+k),b=val("#le_"+k),c=val("#sg_"+k);
+    if(a!==null)st[k].ti=a;if(b!==null)st[k].le=b;if(c!==null)st[k].sg=c;
+  });
   document.querySelectorAll(".prow").forEach(function(r,i){
     if(!st.rows[i])return;
-    st.rows[i][0]=r.querySelector(".tm").value;
-    st.rows[i][1+off]=r.querySelector(".t1").value;
-    st.rows[i][2+off]=r.querySelector(".t2").value;
+    var tm=r.querySelector(".tm");if(tm)st.rows[i][0]=tm.value;
+    act().forEach(function(k){
+      var off=k==="ru"?0:2,a=r.querySelector(".t1_"+k),b=r.querySelector(".t2_"+k);
+      if(a)st.rows[i][1+off]=a.value;if(b)st.rows[i][2+off]=b.value;
+    });
   });
 }
 function showText(){
-  $("#ti").value=st[tab].ti;$("#le").value=st[tab].le;$("#sg").value=st[tab].sg;
-  var off=tab==="ru"?0:2;
+  var two=lang==="both";
+  $("#txt").innerHTML=act().map(function(k){
+    return'<div class="lblock">'+(two?'<p class="lh">'+(k==="ru"?"Русский":"Қазақша")+'</p>':'')+
+      '<label for="ti_'+k+'">Заголовок</label><input id="ti_'+k+'" type="text" maxlength="80" autocomplete="off" value="'+esc(st[k].ti)+'">'+
+      '<label for="le_'+k+'">Текст приглашения</label><textarea id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
+      '<label for="sg_'+k+'">Подпись</label><input id="sg_'+k+'" type="text" maxlength="160" autocomplete="off" value="'+esc(st[k].sg)+'"></div>';}).join("");
   $("#prog").innerHTML=st.rows.map(function(r,i){
     return'<div class="prow" data-i="'+i+'"><button class="del" type="button" aria-label="Удалить">✕</button>'+
       '<input class="tm" type="time" value="'+esc(r[0])+'" aria-label="Время">'+
-      '<input class="t1" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
-      '<input class="t2" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'"></div>';}).join("");
+      act().map(function(k){
+        var off=k==="ru"?0:2;
+        return(two?'<span class="ptag">'+(k==="ru"?"RU":"ҚАЗ")+'</span>':'')+
+          '<input class="t1_'+k+'" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
+          '<input class="t2_'+k+'" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'">';}).join("")+'</div>';}).join("");
 }
-function setTab(x){grabText();tab=x;document.querySelectorAll("#textTabs button").forEach(function(b){b.classList.toggle("on",b.dataset.t===x);});showText();}
+/* если у языка пусто — подставляем заготовку шаблона, чтобы текст не «пропадал» */
+function ensure(k){
+  var p=PRE[$("#tpl").value],i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
+  if(!clean(st[k].ti)&&!clean(st[k].le)&&!clean(st[k].sg)){st[k]={ti:p.ti[i],le:p.le[i],sg:p.sg[i]};filled=true;}
+  if(!st.rows.length)st.rows=p.pr.map(function(r){return r.slice();});
+  else st.rows.forEach(function(r,j){if(!clean(r[1+off])&&!clean(r[2+off])&&p.pr[j]){r[1+off]=p.pr[j][1+off];r[2+off]=p.pr[j][2+off];}});
+  return filled;
+}
 function setLang(l){
   grabText();lang=l;
   document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===l);});
-  $("#textTabs").hidden=(l!=="both");
-  if(l!=="both")tab=l; else if(tab!=="ru"&&tab!=="kz")tab="ru";
-  document.querySelectorAll("#textTabs button").forEach(function(b){b.classList.toggle("on",b.dataset.t===tab);});
+  var filled=act().filter(ensure);
   showText();
+  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на этом языке подставлены из шаблона — замените их переводом вашего текста");
 }
 function applyPreset(k){
   var p=PRE[k];if(!p)return;
@@ -273,7 +308,6 @@ function collect(){
   if(o.t==="editorial")o.b=clean($("#b").value);
   if(lang==="ru"||lang==="both")o.ru=langBlock(0);
   if(lang==="kz"||lang==="both")o.kz=langBlock(1);
-  /* для одного языка инвайт берёт блок нужного языка; для "kz" блок лежит в o.kz */
   return o;
 }
 function validate(o){
@@ -281,13 +315,15 @@ function validate(o){
   if(!o.d)return"Выберите дату.";
   if(!o.s)return"Укажите время начала.";
   if(!o.e)return"Укажите время окончания.";
+  var need=act().filter(function(k){return !clean(st[k].le);});
+  if(need.length)return"Впишите текст приглашения: "+need.map(function(k){return k==="ru"?"русский":"казахский";}).join(" и ")+".";
   if(o.g&&!/^https?:\/\//i.test(o.g))return"Ссылка 2ГИС должна начинаться с https://";
   if(o.p&&!/^https?:\/\//i.test(o.p))return"Ссылка на фото должна начинаться с https://";
   if(o.k&&!/^[0-9a-f-]{20,}$/i.test(o.k))return"Ключ Web3Forms выглядит неверно — это длинный код из букв и цифр.";
   return"";
 }
 
-/* ---------- сохранение черновика ---------- */
+/* ---------- черновик ---------- */
 function save(){try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value}));}catch(_){}}
 function fillFrom(o){
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
@@ -297,16 +333,10 @@ function fillFrom(o){
   $("#p").value=o.p||"";$("#k").value=o.k||"";$("#b").value=o.b||"";
   function fromBlock(b){return{ti:(b&&b.ti)||"",le:(b&&b.le)||"",sg:(b&&b.sg)||""};}
   st.ru=fromBlock(o.ru);st.kz=fromBlock(o.kz);
-  /* программу собираем по порядку: время из любого языка, названия из своих блоков */
   var a=(o.ru&&o.ru.pr)||[],b=(o.kz&&o.kz.pr)||[],n=Math.max(a.length,b.length);st.rows=[];
-  for(var i=0;i<n;i++){
-    var x=a[i]||[],y=b[i]||[];
-    st.rows.push([x[0]||y[0]||"",x[1]||"",x[2]||"",y[1]||"",y[2]||""]);
-  }
-  lang=(o.l==="kz"||o.l==="both")?o.l:"ru";tab=lang==="kz"?"kz":"ru";
+  for(var i=0;i<n;i++){var x=a[i]||[],y=b[i]||[];st.rows.push([x[0]||y[0]||"",x[1]||"",x[2]||"",y[1]||"",y[2]||""]);}
+  lang=(o.l==="kz"||o.l==="both")?o.l:"ru";
   document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===lang);});
-  $("#textTabs").hidden=(lang!=="both");
-  document.querySelectorAll("#textTabs button").forEach(function(b){b.classList.toggle("on",b.dataset.t===tab);});
   showText();
 }
 
@@ -317,8 +347,7 @@ $("#tpl").addEventListener("change",function(){
   save();
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
-document.querySelectorAll("#textTabs button").forEach(function(b){b.addEventListener("click",function(){setTab(b.dataset.t);});});
-$("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();var ins=document.querySelectorAll(".prow .t1");if(ins.length)ins[ins.length-1].focus();});
+$("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();var ins=document.querySelectorAll(".prow .tm");if(ins.length)ins[ins.length-1].focus();});
 $("#prog").addEventListener("click",function(e){
   var d=e.target.closest(".del");if(!d)return;
   grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();
@@ -327,6 +356,10 @@ document.addEventListener("input",function(e){if(e.target.closest("main")&&e.tar
 
 $("#base").value=location.href.replace(/admin\.html.*$/,"")+"invite.html";
 
+function waLink(link){
+  var pre=lang==="kz"?"Сізді тойға шақырамыз ✦ ":lang==="both"?"Приглашаем вас на праздник ✦ Сізді тойға шақырамыз ✦ ":"Приглашаем вас на праздник ✦ ";
+  return"https://wa.me/?text="+encodeURIComponent(pre+clean($("#n").value)+"\n"+link);
+}
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
   var o=collect(),msg=validate(o);
@@ -334,17 +367,39 @@ $("#make").addEventListener("click",async function(){
   var base=clean($("#base").value);
   if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
   var url=base.replace(/#.*$/,"")+"#"+await encode(o);
-  $("#out").value=url;$("#result").hidden=false;
-  $("#open").href=url;
-  var text=(lang==="kz"?"Сізді тойға шақырамыз ✦ ":"Приглашаем вас на праздник ✦ ")+o.n+"\n"+url;
-  $("#wa").href="https://wa.me/?text="+encodeURIComponent(text);
+  $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
+  $("#open").href=url;$("#wa").href=waLink(url);
   $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
   save();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
 });
-$("#copy").addEventListener("click",async function(){
-  var v=$("#out").value;
-  try{await navigator.clipboard.writeText(v);toast("Ссылка скопирована");}
-  catch(_){var t=$("#out");t.focus();t.select();try{document.execCommand("copy");toast("Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
+async function copyFrom(sel){
+  var el=$(sel);
+  try{await navigator.clipboard.writeText(el.value);toast("Ссылка скопирована");}
+  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
+}
+$("#copy").addEventListener("click",function(){copyFrom("#out");});
+$("#shCopy").addEventListener("click",function(){copyFrom("#shOut");});
+
+/* сокращение ссылки через is.gd (JSONP — без проблем с CORS) */
+function jsonp(url,ms){return new Promise(function(res,rej){
+  var cb="sq"+Date.now(),s=document.createElement("script");
+  var to=setTimeout(function(){cl();rej(new Error("timeout"));},ms);
+  function cl(){clearTimeout(to);try{delete window[cb];}catch(_){window[cb]=undefined;}s.remove();}
+  window[cb]=function(j){cl();res(j);};
+  s.onerror=function(){cl();rej(new Error("net"));};
+  s.src=url+"&callback="+cb;document.head.appendChild(s);});}
+$("#sh").addEventListener("click",async function(){
+  var er=$("#shErr"),btn=this,long=$("#out").value;er.hidden=true;if(!long)return;
+  btn.disabled=true;var old=btn.textContent;btn.textContent="Сокращаю…";
+  try{
+    var j=await jsonp("https://is.gd/create.php?format=json&url="+encodeURIComponent(long),10000);
+    if(!j||!j.shorturl)throw new Error("bad");
+    $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl);
+    toast("Короткая ссылка готова — откройте её и проверьте");
+  }catch(_){
+    er.textContent="Не удалось сократить: сервис недоступен или заблокирован. Отправьте обычную ссылку или сократите её вручную на is.gd / tinyurl.com.";er.hidden=false;
+  }
+  btn.disabled=false;btn.textContent=old;
 });
 $("#loadOld").addEventListener("click",async function(){
   var er=$("#oldErr");er.hidden=true;
@@ -355,8 +410,31 @@ $("#loadOld").addEventListener("click",async function(){
     if(!o||typeof o!=="object")throw 0;
     fillFrom(o);$("#base").value=v.slice(0,i);save();toast("Данные загружены — поправьте и создайте новую ссылку");
     $("#tpl").scrollIntoView({behavior:"smooth"});
-  }catch(_){er.textContent="Не удалось прочитать ссылку. Скопируйте её целиком — вместе с частью после «#».";er.hidden=false;}
+  }catch(_){er.textContent="Не удалось прочитать ссылку. Нужна полная длинная ссылка (с частью после «#»), короткая is.gd не подойдёт.";er.hidden=false;}
 });
+
+/* ---------- вход по паролю ---------- */
+/* Это защита от случайных людей, а не настоящая безопасность: сайт статический. */
+var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
+async function pwHash(pw){
+  var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
+  var b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(PW_SALT),iterations:PW_ITER},k,256);
+  return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");
+}
+function unlock(){$("#gate").hidden=true;document.querySelector("main").hidden=false;}
+var helper=(location.hash==="#newpw");
+if(helper){$("#gateHint").textContent="Режим смены пароля: введите новый пароль — получите строку для вставки в файл.";$("#gateBtn").textContent="Получить код";}
+$("#gateForm").addEventListener("submit",async function(e){
+  e.preventDefault();var er=$("#gateErr");er.textContent="";
+  if(!(window.crypto&&crypto.subtle)){er.textContent="Откройте страницу по адресу https://";return;}
+  var pw=$("#gatePw").value;if(!pw)return;
+  var h=await pwHash(pw);
+  if(helper){$("#gateOut").value='PW_HASH="'+h+'"';$("#gateOut").hidden=false;return;}
+  if(h===PW_HASH){try{localStorage.setItem(OK_KEY,PW_HASH);}catch(_){}unlock();}
+  else{er.textContent="Неверный пароль";$("#gatePw").select();}
+});
+var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
+if(remembered&&remembered===PW_HASH&&!helper)unlock();
 
 /* ---------- старт ---------- */
 var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
