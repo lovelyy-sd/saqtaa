@@ -83,6 +83,11 @@
       border-color: #3498db;
     }
 
+    textarea[readonly] {
+      background: #f8f9fa;
+      color: #555;
+    }
+
     .btn {
       padding: 12px 24px;
       border: none;
@@ -91,6 +96,10 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-primary {
@@ -296,6 +305,47 @@
       color: #555;
     }
 
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+
+    .alert-error {
+      background: #fff1f0;
+      color: #a8071a;
+      border: 1px solid #ffa39e;
+    }
+
+    .done-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .form-note {
+      margin-top: 14px;
+      font-size: 14px;
+      color: #7f8c8d;
+      min-height: 20px;
+    }
+
+    .form-note.success {
+      color: #27ae60;
+      font-weight: 600;
+    }
+
+    .form-note.error {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .mt-20 {
+      margin-top: 20px;
+    }
+
     @media (max-width: 768px) {
       body {
         padding: 10px;
@@ -310,17 +360,11 @@
         gap: 12px;
       }
 
-      .editor-actions .btn {
+      .editor-actions .btn,
+      .done-actions .btn {
         width: 100%;
       }
     }
-  
-    .done-actions{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-    .done-actions .btn,.editor-actions .btn{min-height:46px;text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-    .editor-actions{display:flex;flex-wrap:wrap;gap:10px}
-    @media (max-width:600px){.editor-actions .btn{flex:1 1 100%}}
-    .toast-a{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2c2c2b;color:#fff;padding:12px 18px;border-radius:10px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:99;max-width:90vw;text-align:center}
-    .toast-a.show{opacity:1}
   </style>
 </head>
 <body>
@@ -442,20 +486,6 @@
 
       <div class="lang-ru">
         <div class="form-group">
-          <label for="f-ti-ru">Повод (русский)</label>
-          <input type="text" id="f-ti-ru" placeholder="Свадьба">
-          <span class="small-note">Короткая подпись под именами: «Свадьба», «Юбилей 60 лет» и т. п.</span>
-        </div>
-      </div>
-      <div class="lang-kz">
-        <div class="form-group">
-          <label for="f-ti-kz">Себеп (қазақша)</label>
-          <input type="text" id="f-ti-kz" placeholder="Үйлену тойы">
-        </div>
-      </div>
-
-      <div class="lang-ru">
-        <div class="form-group">
           <label for="f-text-ru">Текст приглашения (русский)</label>
           <textarea id="f-text-ru" placeholder="Дорогие {names}! ..."></textarea>
         </div>
@@ -514,39 +544,65 @@
         </span>
       </div>
 
-      <h3 class="section-subtitle">7. Адрес страницы приглашения</h3>
-      <div class="form-group">
-        <label for="f-base-url">Где лежит invite.html</label>
-        <input type="url" id="f-base-url" inputmode="url" placeholder="https://lovelyy-sd.github.io/saqtaa/invite.html">
-        <span class="small-note">Настраивается один раз и запоминается для всех приглашений. Если admin.html и invite.html лежат в одной папке сайта — можно оставить пустым.</span>
-      </div>
-
       <div class="editor-actions">
         <button class="btn btn-secondary" onclick="saveAndExit()">← Сохранить и выйти</button>
-        <button class="btn btn-secondary" onclick="previewInvite()">👁 Предпросмотр</button>
-        <button class="btn btn-primary" onclick="finishInvite()">✓ Готово — получить ссылку</button>
+        <button class="btn btn-primary" onclick="saveNow(true)">Сохранить</button>
+        <button class="btn btn-primary" onclick="goToDone()">Создать ссылку →</button>
       </div>
     </div>
 
     <!-- Экран готово -->
     <div id="screen-done" class="screen">
-      <h2 class="section-title">Приглашение готово 🎉</h2>
-      <p id="done-name" style="margin-bottom:12px;font-weight:600;"></p>
+      <h2 class="section-title">Готово</h2>
+
       <div class="form-group">
-        <label for="done-link">Ссылка для гостей</label>
-        <textarea id="done-link" readonly rows="4" style="font-size:13px;word-break:break-all;" onclick="this.select()"></textarea>
-        <span class="small-note" id="done-note"></span>
+        <label for="invite-base-url">Адрес страницы приглашения</label>
+        <input type="text" id="invite-base-url" onchange="saveInviteBaseUrl(this.value)">
+        <span class="small-note">
+          Заполнится само. Если страница лежит в другом месте — поправьте один раз, запомнится.
+        </span>
       </div>
-      <div class="done-actions">
-        <button class="btn btn-primary" onclick="doneCopy()">📋 Копировать ссылку</button>
-        <button class="btn btn-primary" id="btn-share" onclick="doneShare()">📤 Поделиться</button>
-        <a class="btn btn-secondary" id="btn-wa" target="_blank" rel="noopener">WhatsApp</a>
-        <a class="btn btn-secondary" id="btn-tg" target="_blank" rel="noopener">Telegram</a>
-        <a class="btn btn-secondary" id="btn-open" target="_blank" rel="noopener">👁 Открыть приглашение</a>
+
+      <button class="btn btn-primary" onclick="createCurrentLink()">Создать ссылку</button>
+
+      <div id="done-error" class="alert alert-error" hidden></div>
+
+      <div id="done-result" hidden class="mt-20">
+        <div class="form-group">
+          <label>Ссылка приглашения</label>
+          <textarea id="invite-link" rows="5" readonly></textarea>
+        </div>
+
+        <div class="done-actions">
+          <button class="btn btn-primary" onclick="copyCurrentLink()">Скопировать ссылку</button>
+          <button class="btn btn-secondary" onclick="openCurrentLink()">Открыть и проверить</button>
+          <button class="btn btn-secondary" onclick="sendWhatsApp()">Отправить в WhatsApp</button>
+          <button class="btn btn-secondary" onclick="shortenCurrentLink()">Сократить ссылку (is.gd)</button>
+        </div>
+
+        <div id="short-link-block" hidden class="mt-20">
+          <div class="form-group">
+            <label>Короткая ссылка</label>
+            <input type="text" id="short-link" readonly>
+          </div>
+
+          <div class="done-actions">
+            <button class="btn btn-secondary" onclick="copyShortLink()">Скопировать короткую</button>
+            <a id="open-short-link" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Открыть короткую</a>
+          </div>
+        </div>
+
+        <div id="done-status" class="form-note"></div>
+
+        <p class="small-note">
+          Сокращатель — сторонний сервис is.gd: он увидит содержимое ссылки (имена, дату, место).
+          Проверьте короткую ссылку перед отправкой.
+        </p>
       </div>
-      <div class="editor-actions" style="margin-top:20px;">
-        <button class="btn btn-secondary" onclick="editInvite(currentDoneId)">← Изменить</button>
-        <button class="btn btn-secondary" onclick="showScreen('list')">К списку</button>
+
+      <div class="editor-actions">
+        <button class="btn btn-secondary" onclick="backToEditorFromDone()">← Назад в редактор</button>
+        <button class="btn btn-secondary" onclick="saveAndExit()">К списку</button>
       </div>
     </div>
   </div>
@@ -556,6 +612,7 @@
     const Storage = {
       KEY: 'saqtaa_invites',
       SESSION_KEY: 'saqtaa_logged',
+      BASE_URL_KEY: 'saqtaa_invite_base_url',
 
       getAll() {
         try {
@@ -771,6 +828,7 @@
         photoUrl: '',
         web3formsKey: '',
 
+        fullUrl: '',
         shortUrl: ''
       };
 
@@ -811,9 +869,6 @@
       document.getElementById('f-map-url').value = invite.mapUrl || '';
 
       document.getElementById('f-text-ru').value = invite.textRu || '';
-      document.getElementById('f-ti-ru').value = invite.titleRu != null ? invite.titleRu : (TEMPLATE_TITLES[invite.template||'01']||TEMPLATE_TITLES['01']).ru;
-      document.getElementById('f-ti-kz').value = invite.titleKz != null ? invite.titleKz : (TEMPLATE_TITLES[invite.template||'01']||TEMPLATE_TITLES['01']).kz;
-      document.getElementById('f-base-url').value = Settings.getBase();
       document.getElementById('f-signature-ru').value = invite.signatureRu || '';
       document.getElementById('f-text-kz').value = invite.textKz || '';
       document.getElementById('f-signature-kz').value = invite.signatureKz || '';
@@ -935,7 +990,7 @@
     }
 
     function hasFilledTexts() {
-      return ['f-text-ru', 'f-signature-ru', 'f-text-kz', 'f-signature-kz', 'f-ti-ru', 'f-ti-kz']
+      return ['f-text-ru', 'f-signature-ru', 'f-text-kz', 'f-signature-kz']
         .some(id => document.getElementById(id).value.trim() !== '');
     }
 
@@ -946,9 +1001,6 @@
       document.getElementById('f-signature-ru').value = example.ru.signature;
       document.getElementById('f-text-kz').value = example.kz.text;
       document.getElementById('f-signature-kz').value = example.kz.signature;
-      const tt = TEMPLATE_TITLES[templateId] || TEMPLATE_TITLES['01'];
-      document.getElementById('f-ti-ru').value = tt.ru;
-      document.getElementById('f-ti-kz').value = tt.kz;
     }
 
     // ===== Хештег =====
@@ -977,8 +1029,7 @@
       });
 
       const names = document.getElementById('f-names').value.trim();
-      let title = document.getElementById('f-title').value.trim();
-      if (!title || title === 'Новое приглашение') title = names || 'Новое приглашение';
+      const title = document.getElementById('f-title').value.trim() || names || 'Новое приглашение';
 
       return {
         title,
@@ -996,8 +1047,6 @@
         address: document.getElementById('f-address').value.trim(),
         mapUrl: document.getElementById('f-map-url').value.trim(),
 
-        titleRu: document.getElementById('f-ti-ru').value.trim(),
-        titleKz: document.getElementById('f-ti-kz').value.trim(),
         textRu: document.getElementById('f-text-ru').value,
         signatureRu: document.getElementById('f-signature-ru').value.trim(),
         textKz: document.getElementById('f-text-kz').value,
@@ -1011,7 +1060,9 @@
 
         status: current.status || 'draft',
         createdAt: current.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        fullUrl: current.fullUrl || '',
+        shortUrl: current.shortUrl || ''
       };
     }
 
@@ -1034,7 +1085,6 @@
 
     function saveNow(showAlert = false) {
       if (!currentId) return;
-      Settings.setBase(document.getElementById('f-base-url').value);
 
       const data = collectFormData();
       Storage.update(currentId, data);
@@ -1124,7 +1174,6 @@
               ${invite.status === 'ready' ? `
                 <button class="btn btn-secondary btn-small" onclick="openInvite('${invite.id}')">Открыть</button>
                 <button class="btn btn-secondary btn-small" onclick="copyInviteLink('${invite.id}')">Копировать ссылку</button>
-                <button class="btn btn-secondary btn-small" onclick="linkFor('${invite.id}').then(l=>showDone('${invite.id}',l))">Поделиться</button>
               ` : ''}
               <button class="btn btn-danger btn-small" onclick="deleteInvite('${invite.id}')">Удалить</button>
             </div>
@@ -1139,169 +1188,411 @@
       return div.innerHTML;
     }
 
-    
+    async function openInvite(id) {
+      const link = buildInviteLinkById(id, true);
+      if (link) {
+        window.open(link, '_blank');
+      }
+    }
+
+    async function copyInviteLink(id) {
+      const link = buildInviteLinkById(id, true);
+      if (!link) return;
+
+      const ok = await copyText(link);
+      alert(ok ? 'Ссылка скопирована' : 'Не удалось скопировать автоматически');
+    }
+
     function deleteInvite(id) {
       if (confirm('Удалить это приглашение? Это действие нельзя отменить.')) {
+        if (currentId === id) {
+          currentId = null;
+        }
+
         Storage.remove(id);
         renderInviteList();
       }
     }
 
+    // ===== Создание ссылки =====
+    function encodePayload(obj) {
+      try {
+        const json = JSON.stringify(obj);
+        const percent = encodeURIComponent(json);
+        const base64 = btoa(percent);
 
-    // ===== Поводы по шаблонам =====
-    const TEMPLATE_TITLES = {
-      '01': { ru: 'Свадьба', kz: 'Үйлену тойы' },
-      '02': { ru: 'Свадьба', kz: 'Үйлену тойы' },
-      '03': { ru: 'Той', kz: 'Той' },
-      '04': { ru: 'Юбилей', kz: 'Мерейтой' },
-      '05': { ru: 'День рождения', kz: 'Туған күн' },
-      '06': { ru: 'Тұсау кесер', kz: 'Тұсау кесер' }
-    };
-    const TEMPLATE_KEYS = { '01': 'luxury', '02': 'floral', '03': 'qazaq', '04': 'editorial', '05': 'emerald', '06': 'tusau' };
-
-    // ===== Настройки (адрес invite.html) =====
-    const Settings = {
-      KEY: 'saqtaa_base_url',
-      getBase() { return localStorage.getItem(this.KEY) || ''; },
-      setBase(v) { v = (v || '').trim(); if (v) localStorage.setItem(this.KEY, v); else localStorage.removeItem(this.KEY); },
-      resolve() {
-        let b = this.getBase();
-        if (!b) { try { b = new URL('invite.html', location.href).href; } catch (_) { b = 'invite.html'; } }
-        if (/\/$/.test(b)) b += 'invite.html';
-        return b.split('#')[0];
+        return base64
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=+$/, '');
+      } catch (e) {
+        console.error(e);
+        return '';
       }
-    };
-
-    // ===== Кодирование данных в ссылку (формат invite.html) =====
-    function b64u(bytes) {
-      let bin = '';
-      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-      return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     }
-    async function encodePayload(obj) {
-      const raw = new TextEncoder().encode(JSON.stringify(obj));
-      if (typeof CompressionStream !== 'undefined') {
-        try {
-          const r = new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw')));
-          const z = new Uint8Array(await r.arrayBuffer());
-          return 'z' + b64u(z);
-        } catch (_) {}
+
+    function getInviteBaseUrl() {
+      const saved = localStorage.getItem(Storage.BASE_URL_KEY);
+      if (saved && saved.trim()) {
+        return saved.trim();
       }
-      return 'j' + b64u(raw);
-    }
-    function clean(o) {
-      Object.keys(o).forEach(k => { if (o[k] === '' || o[k] == null || (Array.isArray(o[k]) && !o[k].length)) delete o[k]; });
-      return o;
-    }
-    function buildPayload(inv) {
-      const langBlock = (sfx) => clean({
-        ti: (inv['title' + sfx] || '').trim(),
-        le: (inv['text' + sfx] || '').trim(),
-        sg: (inv['signature' + sfx] || '').trim(),
-        pr: (inv.program || []).map(p => {
-          const t = (p['title' + sfx] || '').trim(), d = (p['desc' + sfx] || '').trim();
-          if (!p.time && !t && !d) return null;
-          return d ? [p.time || '', t, d] : [p.time || '', t];
-        }).filter(Boolean).sort((a, b) => String(a[0]).localeCompare(String(b[0])))
-      });
-      const lang = inv.language || 'ru';
-      const D = clean({
-        t: TEMPLATE_KEYS[inv.template] || 'luxury',
-        l: lang,
-        n: (inv.names || '').trim(),
-        b: (inv.bigNumber || '').trim(),
-        d: inv.date,
-        s: inv.startTime || '18:00',
-        e: inv.endTime || '23:30',
-        ve: (inv.venueName || '').trim(),
-        ad: (inv.address || '').trim(),
-        g: (inv.mapUrl || '').trim(),
-        p: (inv.photoUrl || '').trim(),
-        k: (inv.web3formsKey || '').trim(),
-        h: (inv.hashtag || '').trim()
-      });
-      if (lang === 'ru' || lang === 'both') D.ru = langBlock('Ru');
-      if (lang === 'kz' || lang === 'both') D.kz = langBlock('Kz');
-      return D;
-    }
-    function validate(inv) {
-      const errs = [];
-      if (!inv.names) errs.push('• Имена на обложке');
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(inv.date || '')) errs.push('• Дата');
-      if (!inv.startTime) errs.push('• Время начала');
-      if ((inv.language === 'kz' || inv.language === 'both') && !(inv.textKz || '').trim()) errs.push('• Текст на казахском');
-      return errs;
-    }
-    async function makeLink(inv) {
-      return Settings.resolve() + '#' + await encodePayload(buildPayload(inv));
+
+      try {
+        const url = new URL(location.href);
+        url.hash = '';
+        url.search = '';
+
+        if (url.pathname.endsWith('admin.html')) {
+          url.pathname = url.pathname.replace(/admin\.html$/, 'invite.html');
+        } else {
+          if (!url.pathname.endsWith('/')) {
+            url.pathname += '/';
+          }
+          url.pathname += 'invite.html';
+        }
+
+        return url.toString();
+      } catch (e) {
+        return location.href.replace(/admin\.html.*$/, 'invite.html');
+      }
     }
 
-    // ===== Готово / предпросмотр =====
-    let currentDoneId = null;
-    function toastA(msg) {
-      let el = document.getElementById('toast-a');
-      if (!el) { el = document.createElement('div'); el.id = 'toast-a'; el.className = 'toast-a'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
-      el.textContent = msg; el.classList.add('show');
-      clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2400);
+    function saveInviteBaseUrl(value) {
+      const v = (value || '').trim();
+
+      if (v) {
+        localStorage.setItem(Storage.BASE_URL_KEY, v);
+      } else {
+        localStorage.removeItem(Storage.BASE_URL_KEY);
+      }
     }
-    async function previewInvite() {
+
+    function getPublicInvite(invite) {
+      return {
+        template: invite.template || '01',
+        language: invite.language || 'ru',
+
+        names: invite.names || '',
+        bigNumber: invite.bigNumber || '',
+        date: invite.date || '',
+        startTime: invite.startTime || '',
+        endTime: invite.endTime || '',
+        timezone: invite.timezone || 'Asia/Almaty',
+
+        venueName: invite.venueName || '',
+        address: invite.address || '',
+        mapUrl: invite.mapUrl || '',
+
+        textRu: invite.textRu || '',
+        signatureRu: invite.signatureRu || '',
+        textKz: invite.textKz || '',
+        signatureKz: invite.signatureKz || '',
+        hashtag: invite.hashtag || '',
+
+        program: Array.isArray(invite.program) ? invite.program : [],
+
+        photoUrl: invite.photoUrl || '',
+        web3formsKey: invite.web3formsKey || ''
+      };
+    }
+
+    function validateInvite(invite) {
+      const errors = [];
+
+      if (!invite.names || !invite.names.trim()) {
+        errors.push('Имена');
+      }
+
+      if (!invite.date) {
+        errors.push('Дата');
+      }
+
+      if (!invite.startTime) {
+        errors.push('Начало');
+      }
+
+      if (!invite.endTime) {
+        errors.push('Окончание');
+      }
+
+      if (invite.language === 'ru' || invite.language === 'both') {
+        if (!invite.textRu || !invite.textRu.trim()) {
+          errors.push('Русский текст приглашения');
+        }
+      }
+
+      if (invite.language === 'kz' || invite.language === 'both') {
+        if (!invite.textKz || !invite.textKz.trim()) {
+          errors.push('Казахский текст приглашения');
+        }
+      }
+
+      if (invite.photoUrl && !/^https:\/\//i.test(invite.photoUrl)) {
+        errors.push('Фото должно быть по ссылке с https://');
+      }
+
+      if (invite.mapUrl && !/^https?:\/\//i.test(invite.mapUrl)) {
+        errors.push('Ссылка 2ГИС должна начинаться с http:// или https://');
+      }
+
+      return errors;
+    }
+
+    function getBuildResult(id) {
+      const invite = Storage.getById(id);
+
+      if (!invite) {
+        return { errors: ['Приглашение не найдено'] };
+      }
+
+      const errors = validateInvite(invite);
+
+      if (errors.length) {
+        return { errors };
+      }
+
+      const payload = encodePayload(getPublicInvite(invite));
+
+      if (!payload) {
+        return { errors: ['Не удалось упаковать данные приглашения'] };
+      }
+
+      const baseUrl = getInviteBaseUrl();
+      const link = baseUrl + '#d=' + payload;
+
+      return { link };
+    }
+
+    function buildInviteLinkById(id, showErrors = false) {
+      const result = getBuildResult(id);
+
+      if (result.errors) {
+        if (showErrors) {
+          alert('Проверьте поля:\n\n' + result.errors.join('\n'));
+        }
+
+        return null;
+      }
+
+      Storage.update(id, {
+        status: 'ready',
+        fullUrl: result.link
+      });
+
+      return result.link;
+    }
+
+    // ===== Экран Готово =====
+    function goToDone() {
       saveNow(false);
-      const inv = Storage.getById(currentId);
-      const errs = validate(inv);
-      if (errs.length) { alert('Для предпросмотра заполните:\n' + errs.join('\n')); return; }
-      window.open(await makeLink(inv), '_blank');
+      showDoneForCurrent();
     }
-    async function finishInvite() {
-      saveNow(false);
-      const inv = Storage.getById(currentId);
-      const errs = validate(inv);
-      if (errs.length) { alert('Заполните обязательные поля:\n' + errs.join('\n')); return; }
-      const link = await makeLink(inv);
-      Storage.update(currentId, { status: 'ready', shortUrl: link });
-      showDone(currentId, link);
-    }
-    function showDone(id, link) {
-      const inv = Storage.getById(id);
-      currentDoneId = id;
-      document.getElementById('done-name').textContent = inv.title || inv.names || '';
-      document.getElementById('done-link').value = link;
-      const msg = (inv.names ? inv.names + ' — ' : '') + 'приглашение 🤍\n' + link;
-      document.getElementById('btn-wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
-      document.getElementById('btn-tg').href = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent((inv.names || '') + ' — приглашение 🤍');
-      document.getElementById('btn-open').href = link;
-      document.getElementById('btn-share').style.display = navigator.share ? '' : 'none';
-      const notes = [];
-      if (!inv.web3formsKey) notes.push('⚠️ Ключ Web3Forms не указан — ответы гостей не придут на почту.');
-      if (link.length > 2000) notes.push('⚠️ Ссылка длинная (' + link.length + ' симв.). Сократите тексты или программу, если мессенджер её обрезает.');
-      if (location.protocol === 'file:' && !Settings.getBase()) notes.push('⚠️ Укажите адрес invite.html на сайте (раздел 7), иначе ссылка не откроется у гостей.');
-      document.getElementById('done-note').textContent = notes.join(' ');
+
+    function showDoneForCurrent() {
+      if (!currentId) {
+        showScreen('list');
+        return;
+      }
+
+      const invite = Storage.getById(currentId);
+
+      document.getElementById('invite-base-url').value = getInviteBaseUrl();
+      hideDoneError();
+      setDoneStatus('', false);
+
+      if (invite && invite.fullUrl) {
+        document.getElementById('invite-link').value = invite.fullUrl;
+        document.getElementById('done-result').hidden = false;
+        document.getElementById('short-link-block').hidden = true;
+      } else {
+        document.getElementById('done-result').hidden = true;
+      }
+
       showScreen('done');
     }
-    async function copyText(text) {
-      try { await navigator.clipboard.writeText(text); return true; }
-      catch (_) {
-        const ta = document.getElementById('done-link'); ta.value = text; ta.focus(); ta.select();
-        try { return document.execCommand('copy'); } catch (__) { return false; }
+
+    function createCurrentLink() {
+      if (!currentId) return;
+
+      saveInviteBaseUrl(document.getElementById('invite-base-url').value);
+      saveNow(false);
+
+      const result = getBuildResult(currentId);
+
+      if (result.errors) {
+        showDoneError(result.errors);
+        return;
+      }
+
+      Storage.update(currentId, {
+        status: 'ready',
+        fullUrl: result.link
+      });
+
+      document.getElementById('invite-link').value = result.link;
+      document.getElementById('done-result').hidden = false;
+      document.getElementById('short-link-block').hidden = true;
+
+      hideDoneError();
+      setDoneStatus('Ссылка создана', true);
+    }
+
+    function showDoneError(errors) {
+      const box = document.getElementById('done-error');
+
+      box.innerHTML = '<strong>Проверьте поля:</strong><br>' +
+        errors.map(err => `• ${escapeHtml(err)}`).join('<br>');
+
+      box.hidden = false;
+    }
+
+    function hideDoneError() {
+      const box = document.getElementById('done-error');
+      box.hidden = true;
+      box.innerHTML = '';
+    }
+
+    function setDoneStatus(text, isSuccess) {
+      const el = document.getElementById('done-status');
+      el.textContent = text || '';
+      el.className = 'form-note' + (text ? (isSuccess ? ' success' : ' error') : '');
+    }
+
+    function backToEditorFromDone() {
+      if (currentId) {
+        showScreen('editor');
+      } else {
+        showScreen('list');
       }
     }
-    async function doneCopy() {
-      const ok = await copyText(document.getElementById('done-link').value);
-      toastA(ok ? 'Ссылка скопирована ✓' : 'Выделите ссылку и скопируйте вручную');
+
+    // ===== Копирование =====
+    async function copyText(text) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+
+        return fallbackCopy(text);
+      } catch (e) {
+        return fallbackCopy(text);
+      }
     }
-    async function doneShare() {
-      const inv = Storage.getById(currentDoneId) || {};
-      try { await navigator.share({ title: inv.names || 'Приглашение', text: (inv.names || '') + ' — приглашение 🤍', url: document.getElementById('done-link').value }); } catch (_) {}
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      textarea.style.left = '-9999px';
+
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      let ok = false;
+
+      try {
+        ok = document.execCommand('copy');
+      } catch (e) {
+        ok = false;
+      }
+
+      textarea.remove();
+      return ok;
     }
-    async function linkFor(id) {
-      const inv = Storage.getById(id);
-      const link = await makeLink(inv);
-      Storage.update(id, { shortUrl: link });
-      return link;
+
+    async function copyCurrentLink() {
+      const link = document.getElementById('invite-link').value;
+
+      if (!link) {
+        setDoneStatus('Сначала создайте ссылку', false);
+        return;
+      }
+
+      const ok = await copyText(link);
+      setDoneStatus(ok ? 'Ссылка скопирована' : 'Не удалось скопировать автоматически', ok);
     }
-    async function openInvite(id) { window.open(await linkFor(id), '_blank'); }
-    async function copyInviteLink(id) {
-      const ok = await copyText(await linkFor(id));
-      toastA(ok ? 'Ссылка скопирована ✓' : 'Не удалось скопировать');
+
+    async function copyShortLink() {
+      const link = document.getElementById('short-link').value;
+
+      if (!link) {
+        setDoneStatus('Сначала сократите ссылку', false);
+        return;
+      }
+
+      const ok = await copyText(link);
+      setDoneStatus(ok ? 'Короткая ссылка скопирована' : 'Не удалось скопировать автоматически', ok);
+    }
+
+    function openCurrentLink() {
+      const link = document.getElementById('invite-link').value;
+
+      if (!link) {
+        setDoneStatus('Сначала создайте ссылку', false);
+        return;
+      }
+
+      window.open(link, '_blank');
+    }
+
+    function sendWhatsApp() {
+      const invite = Storage.getById(currentId);
+      const link = document.getElementById('invite-link').value;
+
+      if (!link) {
+        setDoneStatus('Сначала создайте ссылку', false);
+        return;
+      }
+
+      const dateText = invite && invite.date
+        ? formatDateReadable(invite.date + 'T00:00:00')
+        : '';
+
+      const message = [
+        invite && invite.names ? invite.names : '',
+        dateText,
+        link
+      ].filter(Boolean).join('\n');
+
+      const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
+      window.open(whatsappUrl, '_blank');
+    }
+
+    async function shortenCurrentLink() {
+      const longUrl = document.getElementById('invite-link').value;
+
+      if (!longUrl) {
+        setDoneStatus('Сначала создайте ссылку', false);
+        return;
+      }
+
+      setDoneStatus('Сокращаем ссылку...', false);
+
+      try {
+        const apiUrl = 'https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl);
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (data.shorturl) {
+          document.getElementById('short-link').value = data.shorturl;
+          document.getElementById('open-short-link').href = data.shorturl;
+          document.getElementById('short-link-block').hidden = false;
+
+          if (currentId) {
+            Storage.update(currentId, { shortUrl: data.shorturl });
+          }
+
+          setDoneStatus('Короткая ссылка готова', true);
+        } else {
+          setDoneStatus(data.errormessage || 'Не удалось сократить ссылку', false);
+        }
+      } catch (e) {
+        console.error(e);
+        setDoneStatus('Не удалось сократить автоматически. Используйте длинную ссылку.', false);
+      }
     }
 
     // ===== Старт =====
