@@ -1,1608 +1,469 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SAQTAA · Создать приглашение</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #f5f5f5;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-
-    .header {
-      background: #2c3e50;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .header h1 {
-      font-size: 24px;
-      font-weight: 600;
-    }
-
-    .screen {
-      display: none;
-      padding: 32px;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #555;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-
-    .form-group textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #3498db;
-    }
-
-    textarea[readonly] {
-      background: #f8f9fa;
-      color: #555;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-primary {
-      background: #3498db;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #2980b9;
-    }
-
-    .btn-secondary {
-      background: #95a5a6;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #7f8c8d;
-    }
-
-    .btn-danger {
-      background: #e74c3c;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background: #c0392b;
-    }
-
-    .btn-small {
-      padding: 8px 16px;
-      font-size: 13px;
-    }
-
-    .invite-list {
-      margin-top: 20px;
-    }
-
-    .invite-card {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 16px;
-    }
-
-    .invite-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 12px;
-    }
-
-    .invite-card-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #2c3e50;
-    }
-
-    .invite-card-meta {
-      font-size: 14px;
-      color: #7f8c8d;
-      margin-top: 4px;
-    }
-
-    .invite-card-dates {
-      font-size: 13px;
-      color: #95a5a6;
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .invite-card-dates span {
-      display: block;
-    }
-
-    .invite-card-dates .date-event {
-      color: #27ae60;
-      font-weight: 600;
-    }
-
-    .invite-card-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #95a5a6;
-    }
-
-    .empty-state p {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      color: #2c3e50;
-      padding-bottom: 12px;
-      border-bottom: 2px solid #ecf0f1;
-    }
-
-    .section-subtitle {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 30px 0 18px;
-      color: #2c3e50;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #ecf0f1;
-    }
-
-    .small-note {
-      display: block;
-      font-size: 12px;
-      color: #7f8c8d;
-      margin-top: 6px;
-    }
-
-    .radio-group {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: normal;
-      cursor: pointer;
-      margin-bottom: 0;
-    }
-
-    .radio-group input {
-      width: auto;
-    }
-
-    .editor-dates {
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 14px 16px;
-      margin-bottom: 12px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    .autosave-status {
-      font-size: 13px;
-      color: #27ae60;
-      margin-bottom: 22px;
-      min-height: 18px;
-    }
-
-    .editor-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 34px;
-      padding-top: 24px;
-      border-top: 1px solid #ecf0f1;
-    }
-
-    .program-item {
-      position: relative;
-      background: #f8f9fa;
-      border: 1px solid #e9ecef;
-      border-radius: 8px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .program-delete {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .program-time {
-      max-width: 180px;
-      margin-bottom: 14px;
-    }
-
-    .program-lang-block {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #ddd;
-    }
-
-    .program-lang-title {
-      font-weight: 600;
-      margin-bottom: 10px;
-      color: #555;
-    }
-
-    .alert {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin: 16px 0;
-      font-size: 14px;
-    }
-
-    .alert-error {
-      background: #fff1f0;
-      color: #a8071a;
-      border: 1px solid #ffa39e;
-    }
-
-    .done-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
-
-    .form-note {
-      margin-top: 14px;
-      font-size: 14px;
-      color: #7f8c8d;
-      min-height: 20px;
-    }
-
-    .form-note.success {
-      color: #27ae60;
-      font-weight: 600;
-    }
-
-    .form-note.error {
-      color: #e74c3c;
-      font-weight: 600;
-    }
-
-    .mt-20 {
-      margin-top: 20px;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      .screen {
-        padding: 20px;
-      }
-
-      .invite-card-header {
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .editor-actions .btn,
-      .done-actions .btn {
-        width: 100%;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0F4A38">
+<title>SAQTAA · Создать приглашение</title>
+<meta name="referrer" content="no-referrer">
+<style>
+:root{--em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gs:#D9BC7F;--paper:#F5EFE2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;--hair:rgba(24,39,32,.18)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--paper);color:var(--ink);line-height:1.45;padding-bottom:40px;-webkit-font-smoothing:antialiased}
+header{background:var(--em2);color:#F2EBDA;padding:16px 16px 14px;position:sticky;top:0;z-index:10}
+header h1{font-size:1.15rem;letter-spacing:.08em}
+header p{font-size:.78rem;opacity:.75;margin-top:2px}
+main{max-width:560px;margin:0 auto;padding:14px 14px 0}
+.box{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:14px;margin-bottom:14px}
+.box h2{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:#7F5D22;margin-bottom:10px}
+label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);margin:10px 0 4px}
+label:first-of-type{margin-top:0}
+input,select,textarea{width:100%;min-height:48px;border:1px solid var(--hair);border-radius:10px;padding:10px 12px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.hint{font-size:.74rem;color:var(--ink2);margin-top:4px}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tabs button,.seg button{flex:1;min-height:44px;border:1px solid var(--hair);border-radius:999px;background:#fff;font:inherit;font-weight:700;font-size:.9rem;cursor:pointer}
+.tabs button.on,.seg button.on{background:var(--em);color:#F6F1E4;border-color:var(--em)}
+.seg{display:flex;gap:8px}
+.prow{border:1px dashed var(--hair);border-radius:10px;padding:10px;margin-bottom:10px;position:relative}
+.prow .del{position:absolute;top:6px;right:6px;width:36px;height:36px;border:0;background:none;font-size:1.1rem;color:#7C2230;cursor:pointer}
+.prow input{margin-bottom:6px;min-height:44px}
+.prow .tm{max-width:120px}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border:0;border-radius:999px;font:inherit;font-weight:800;font-size:.95rem;cursor:pointer;text-decoration:none;margin-top:10px}
+.btn.main{background:var(--em);color:#F6F1E4}
+.btn.gold{background:var(--gold);color:#241A08}
+.btn.line{background:none;border:1px solid var(--em);color:var(--em)}
+.btn:active{transform:scale(.98)}
+.out{width:100%;min-height:90px;font-size:.78rem;word-break:break-all}
+.err{color:#7C2230;font-weight:700;font-size:.85rem;margin-top:8px}
+.ok{color:var(--em);font-weight:700;font-size:.85rem;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;max-width:88vw;text-align:center}
+.toast.show{opacity:1}
+[hidden]{display:none!important}
+.gate{max-width:420px;margin:0 auto;padding:40px 18px}
+.gate form{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:22px 18px}
+.gate h2{font-size:1.2rem;margin-bottom:6px;color:var(--em)}
+.gate p{font-size:.88rem;color:var(--ink2);margin-bottom:12px}
+.lh{font-weight:800;color:var(--em);margin:4px 0 0;font-size:.95rem}
+.lblock+.lblock{border-top:1px dashed var(--hair);margin-top:16px;padding-top:14px}
+.ptag{display:inline-block;font-size:.7rem;font-weight:800;color:#7F5D22;margin:2px 0}
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>SAQTAA · Создать приглашение</h1>
-    </div>
+<header><h1>SAQTAA · Создать приглашение</h1><p>Заполните поля → нажмите «Создать ссылку» → отправьте клиенту</p></header>
+<section class="gate" id="gate">
+  <form id="gateForm" autocomplete="off">
+    <h2>Вход</h2>
+    <p id="gateHint">Введите пароль, чтобы создавать приглашения.</p>
+    <input id="gatePw" type="password" placeholder="Пароль" autocomplete="current-password" required>
+    <button class="btn main" id="gateBtn" type="submit">Войти</button>
+    <p class="err" id="gateErr" role="alert"></p>
+    <textarea id="gateOut" class="out" readonly hidden></textarea>
+  </form>
+</section>
+<main hidden>
 
-    <!-- Экран входа -->
-    <div id="screen-login" class="screen active">
-      <h2 class="section-title">Вход</h2>
-      <p style="margin-bottom: 20px; color: #7f8c8d;">Введите пароль, чтобы создавать приглашения.</p>
+<div class="box">
+  <h2>0. Продолжить старое</h2>
+  <label for="old">Вставьте ссылку приглашения, чтобы поправить её</label>
+  <input id="old" type="url" placeholder="https://…/invite.html#…" inputmode="url" autocomplete="off">
+  <button class="btn line" id="loadOld" type="button">Загрузить из ссылки</button>
+  <p class="err" id="oldErr" hidden></p>
+</div>
 
-      <div class="form-group">
-        <label for="password">Пароль</label>
-        <input type="password" id="password" placeholder="Введите пароль">
-      </div>
-
-      <button class="btn btn-primary" onclick="handleLogin()">Войти</button>
-    </div>
-
-    <!-- Экран списка -->
-    <div id="screen-list" class="screen">
-      <h2 class="section-title">Мои приглашения</h2>
-
-      <button class="btn btn-primary" onclick="createNewInvite()">+ Новое приглашение</button>
-
-      <div id="invite-list" class="invite-list"></div>
-    </div>
-
-    <!-- Экран редактора -->
-    <div id="screen-editor" class="screen">
-      <h2 class="section-title">Редактор приглашения</h2>
-
-      <div id="editor-dates" class="editor-dates"></div>
-      <div id="autosave-status" class="autosave-status"></div>
-
-      <div class="form-group">
-        <label for="f-title">Название заказа (для себя)</label>
-        <input type="text" id="f-title" placeholder="Например: Свадьба Айдана и Армана, 25 декабря">
-        <span class="small-note">Это название видно только вам в списке заказов.</span>
-      </div>
-
-      <h3 class="section-subtitle">1. Шаблон и язык</h3>
-
-      <div class="form-group">
-        <label for="f-template">Шаблон</label>
-        <select id="f-template" onchange="onTemplateChange(this)">
-          <option value="01">№ 01 Luxury · свадьба</option>
-          <option value="02">№ 02 Floral · свадьба</option>
-          <option value="03">№ 03 Qazaq · той</option>
-          <option value="04">№ 04 Editorial · юбилей</option>
-          <option value="05">№ 05 Emerald · день рождения</option>
-          <option value="06">№ 06 Tusau · тұсау кесер</option>
-        </select>
-        <span class="small-note">При смене шаблона подставятся примерные тексты — потом их можно править.</span>
-      </div>
-
-      <div class="form-group">
-        <label>Язык приглашения</label>
-        <div class="radio-group">
-          <label><input type="radio" name="language" value="ru" checked onchange="onLanguageChange()"> Русский</label>
-          <label><input type="radio" name="language" value="kz" onchange="onLanguageChange()"> Қазақша</label>
-          <label><input type="radio" name="language" value="both" onchange="onLanguageChange()"> Оба</label>
-        </div>
-      </div>
-
-      <h3 class="section-subtitle">2. Главное</h3>
-
-      <div class="form-group">
-        <label for="f-names">Имена (как на обложке)</label>
-        <input type="text" id="f-names" placeholder="Айдана & Арман">
-      </div>
-
-      <div class="form-group">
-        <label for="f-big-number">Крупное число на обложке (возраст юбиляра)</label>
-        <input type="text" id="f-big-number" placeholder="Например: 25 или 50">
-      </div>
-
-      <div class="form-group">
-        <label for="f-date">Дата</label>
-        <input type="date" id="f-date">
-      </div>
-
-      <div class="form-group">
-        <label for="f-start-time">Начало</label>
-        <input type="time" id="f-start-time">
-      </div>
-
-      <div class="form-group">
-        <label for="f-end-time">Окончание</label>
-        <input type="time" id="f-end-time">
-        <span class="small-note">
-          Время по Казахстану (Asia/Almaty, UTC+5). Окончание нужно для календаря гостя.
-        </span>
-      </div>
-
-      <h3 class="section-subtitle">3. Место</h3>
-
-      <div class="form-group">
-        <label for="f-venue-name">Название зала / ресторана</label>
-        <input type="text" id="f-venue-name" placeholder="Ресторан «Астана»">
-      </div>
-
-      <div class="form-group">
-        <label for="f-address">Адрес</label>
-        <input type="text" id="f-address" placeholder="г. Астана, ул. ...">
-      </div>
-
-      <div class="form-group">
-        <label for="f-map-url">Ссылка 2ГИС (необязательно)</label>
-        <input type="text" id="f-map-url" placeholder="https://2gis.kz/...">
-        <span class="small-note">
-          Если пусто — откроется поиск 2ГИС по адресу. Точная ссылка лучше: в 2ГИС откройте место → «Поделиться» → скопировать.
-        </span>
-      </div>
-
-      <h3 class="section-subtitle">4. Тексты</h3>
-
-      <div class="lang-ru">
-        <div class="form-group">
-          <label for="f-text-ru">Текст приглашения (русский)</label>
-          <textarea id="f-text-ru" placeholder="Дорогие {names}! ..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="f-signature-ru">Подпись (русский)</label>
-          <input type="text" id="f-signature-ru" placeholder="С любовью, {names}">
-        </div>
-      </div>
-
-      <div class="lang-kz">
-        <div class="form-group">
-          <label for="f-text-kz">Текст приглашения (қазақша)</label>
-          <textarea id="f-text-kz" placeholder="Құрметті {names}! ..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="f-signature-kz">Подпись (қазақша)</label>
-          <input type="text" id="f-signature-kz" placeholder="Ілтипатпен, {names}">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="f-hashtag">Хештег (необязательно)</label>
-        <input type="text" id="f-hashtag" placeholder="#АйданаАрман2026">
-        <span class="small-note">
-          В тексте и подписи можно писать {names} — подставятся имена с обложки.
-          Если выбран язык «Оба», казахский текст нужно вписать отдельно.
-        </span>
-      </div>
-
-      <h3 class="section-subtitle">5. Программа дня</h3>
-
-      <div id="program-items"></div>
-
-      <button type="button" class="btn btn-secondary" onclick="addProgramItem()">+ Добавить пункт</button>
-      <span class="small-note">
-        Время общее, названия и описания — отдельно для каждого языка.
-      </span>
-
-      <h3 class="section-subtitle">6. Фото и почта</h3>
-
-      <div class="form-group">
-        <label for="f-photo-url">Ссылка на фото (необязательно)</label>
-        <input type="text" id="f-photo-url" placeholder="https://lovelyy-sd.github.io/saqtaa/img/photo.jpg">
-        <span class="small-note">
-          Прямая ссылка на картинку (например, из папки img/ на GitHub Pages). Если пусто — шаблон без фото.
-        </span>
-      </div>
-
-      <div class="form-group">
-        <label for="f-web3forms-key">Ключ Web3Forms клиента (для ответов на почту)</label>
-        <input type="text" id="f-web3forms-key" placeholder="Вставьте ключ от web3forms.com">
-        <span class="small-note">
-          Получить: web3forms.com → указать почту клиента → ключ придёт на неё. Без ключа ответы никуда не уйдут.
-        </span>
-      </div>
-
-      <div class="editor-actions">
-        <button class="btn btn-secondary" onclick="saveAndExit()">← Сохранить и выйти</button>
-        <button class="btn btn-primary" onclick="saveNow(true)">Сохранить</button>
-        <button class="btn btn-primary" onclick="goToDone()">Создать ссылку →</button>
-      </div>
-    </div>
-
-    <!-- Экран готово -->
-    <div id="screen-done" class="screen">
-      <h2 class="section-title">Готово</h2>
-
-      <div class="form-group">
-        <label for="invite-base-url">Адрес страницы приглашения</label>
-        <input type="text" id="invite-base-url" onchange="saveInviteBaseUrl(this.value)">
-        <span class="small-note">
-          Заполнится само. Если страница лежит в другом месте — поправьте один раз, запомнится.
-        </span>
-      </div>
-
-      <button class="btn btn-primary" onclick="createCurrentLink()">Создать ссылку</button>
-
-      <div id="done-error" class="alert alert-error" hidden></div>
-
-      <div id="done-result" hidden class="mt-20">
-        <div class="form-group">
-          <label>Ссылка приглашения</label>
-          <textarea id="invite-link" rows="5" readonly></textarea>
-        </div>
-
-        <div class="done-actions">
-          <button class="btn btn-primary" onclick="copyCurrentLink()">Скопировать ссылку</button>
-          <button class="btn btn-secondary" onclick="openCurrentLink()">Открыть и проверить</button>
-          <button class="btn btn-secondary" onclick="sendWhatsApp()">Отправить в WhatsApp</button>
-          <button class="btn btn-secondary" onclick="shortenCurrentLink()">Сократить ссылку (is.gd)</button>
-        </div>
-
-        <div id="short-link-block" hidden class="mt-20">
-          <div class="form-group">
-            <label>Короткая ссылка</label>
-            <input type="text" id="short-link" readonly>
-          </div>
-
-          <div class="done-actions">
-            <button class="btn btn-secondary" onclick="copyShortLink()">Скопировать короткую</button>
-            <a id="open-short-link" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">Открыть короткую</a>
-          </div>
-        </div>
-
-        <div id="done-status" class="form-note"></div>
-
-        <p class="small-note">
-          Сокращатель — сторонний сервис is.gd: он увидит содержимое ссылки (имена, дату, место).
-          Проверьте короткую ссылку перед отправкой.
-        </p>
-      </div>
-
-      <div class="editor-actions">
-        <button class="btn btn-secondary" onclick="backToEditorFromDone()">← Назад в редактор</button>
-        <button class="btn btn-secondary" onclick="saveAndExit()">К списку</button>
-      </div>
-    </div>
+<div class="box">
+  <h2>1. Шаблон и язык</h2>
+  <label for="tpl">Шаблон</label>
+  <select id="tpl">
+    <option value="luxury">№ 01 Luxury · свадьба</option>
+    <option value="floral">№ 02 Floral · свадьба</option>
+    <option value="qazaq">№ 03 Qazaq · той</option>
+    <option value="editorial">№ 04 Editorial · юбилей</option>
+    <option value="emerald">№ 05 Emerald · день рождения</option>
+    <option value="tusau">№ 06 Tusau · тұсау кесер</option>
+  </select>
+  <p class="hint">При смене шаблона подставятся примерные тексты — потом их можно править.</p>
+  <label>Язык приглашения</label>
+  <div class="seg" id="langSeg">
+    <button type="button" data-l="ru" class="on">Русский</button>
+    <button type="button" data-l="kz">Қазақша</button>
+    <button type="button" data-l="both">Оба</button>
   </div>
+</div>
 
-  <script>
-    // ===== localStorage =====
-    const Storage = {
-      KEY: 'saqtaa_invites',
-      SESSION_KEY: 'saqtaa_logged',
-      BASE_URL_KEY: 'saqtaa_invite_base_url',
+<div class="box">
+  <h2>2. Главное</h2>
+  <label for="n">Имена (как на обложке)</label>
+  <input id="n" type="text" maxlength="120" placeholder="Ерасыл & Аяулым" autocomplete="off">
+  <div id="bigWrap" hidden>
+    <label for="b">Крупное число на обложке (возраст юбиляра)</label>
+    <input id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
+  </div>
+  <label for="d">Дата</label>
+  <input id="d" type="date">
+  <div class="row2">
+    <div><label for="s">Начало</label><input id="s" type="time"></div>
+    <div><label for="e">Окончание</label><input id="e" type="time"></div>
+  </div>
+  <p class="hint">Время по Казахстану (UTC+5). Окончание нужно для календаря гостя. Ссылка перестаёт открываться после конца дня мероприятия.</p>
+</div>
 
-      getAll() {
-        try {
-          return JSON.parse(localStorage.getItem(this.KEY) || '[]');
-        } catch {
-          return [];
-        }
-      },
+<div class="box">
+  <h2>3. Место</h2>
+  <label for="ve">Название зала / ресторана</label>
+  <input id="ve" type="text" maxlength="120" autocomplete="off">
+  <label for="ad">Адрес</label>
+  <input id="ad" type="text" maxlength="160" autocomplete="off">
+  <label for="g">Ссылка 2ГИС (необязательно)</label>
+  <input id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
+  <p class="hint">Если пусто — откроется поиск 2ГИС по адресу. Точная ссылка лучше: в 2ГИС откройте место → «Поделиться» → скопировать.</p>
+</div>
 
-      save(list) {
-        localStorage.setItem(this.KEY, JSON.stringify(list));
-      },
+<div class="box">
+  <h2>4. Тексты</h2>
+  <div id="txt"></div>
+  <p class="hint">В тексте и подписи можно писать {names} — подставятся имена с обложки. Если выбран язык «Оба», у каждого языка своё отдельное поле: казахский текст не переводится сам, его нужно вписать (или попросить перевод в чате с Claude и вставить сюда).</p>
+  <label for="h">Хештег (необязательно)</label>
+  <input id="h" type="text" maxlength="60" placeholder="#ЕрасылАяулым" autocomplete="off">
+</div>
 
-      add(invite) {
-        const list = this.getAll();
-        list.push(invite);
-        this.save(list);
-      },
+<div class="box">
+  <h2>5. Программа дня</h2>
+  <div id="prog"></div>
+  <button class="btn line" id="addRow" type="button">+ Добавить пункт</button>
+  <p class="hint">Время общее, названия и описания — отдельно для каждого языка.</p>
+</div>
 
-      update(id, updates) {
-        const list = this.getAll();
-        const index = list.findIndex(i => i.id === id);
-        if (index !== -1) {
-          list[index] = { ...list[index], ...updates, updatedAt: new Date().toISOString() };
-          this.save(list);
-        }
-      },
+<div class="box">
+  <h2>6. Фото и подтверждение присутствия</h2>
+  <label for="p">Ссылка на фото (необязательно)</label>
+  <input id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
+  <p class="hint">Прямая ссылка на изображение. Если пусто — приглашение будет без фото.</p>
+  <label style="display:flex;align-items:center;gap:10px;margin-top:14px">
+    <input id="rsvp" type="checkbox" checked style="width:20px;min-height:20px;margin:0">
+    Включить RSVP (ответы гостей)
+  </label>
+  <label for="k">Ключ Web3Forms клиента</label>
+  <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+  <p class="hint">Ключ создаётся в Web3Forms на почту клиента. При включённом RSVP он обязателен.</p>
+</div>
 
-      remove(id) {
-        const list = this.getAll().filter(i => i.id !== id);
-        this.save(list);
-      },
+<div class="box">
+  <h2>7. Готово</h2>
+  <label for="base">Адрес страницы invite.html</label>
+  <input id="base" type="url" inputmode="url" autocomplete="off">
+  <p class="hint">Заполнится автоматически. При необходимости укажите адрес страницы приглашения.</p>
+  <button class="btn main" id="make" type="button">Создать ссылку</button>
+  <p class="err" id="mkErr" hidden></p>
+  <div id="result" hidden>
+    <label for="out">Ссылка приглашения</label>
+    <textarea id="out" class="out" readonly></textarea>
+    <p class="ok" id="len"></p>
+    <button class="btn gold" id="copy" type="button">Скопировать ссылку</button>
+    <button class="btn line" id="sh" type="button">Сократить ссылку (is.gd)</button>
+    <p class="hint">Сокращатель is.gd увидит содержимое ссылки. Проверьте короткую ссылку перед отправкой.</p>
+    <p class="err" id="shErr" hidden></p>
+    <div id="shBox" hidden>
+      <label for="shOut">Короткая ссылка</label>
+      <input id="shOut" type="text" readonly>
+      <button class="btn gold" id="shCopy" type="button">Скопировать короткую</button>
+    </div>
+    <a class="btn main" id="open" target="_blank" rel="noopener">Предпросмотр приглашения</a>
+    <a class="btn line" id="wa" target="_blank" rel="noopener">Отправить в WhatsApp</a>
+  </div>
+</div>
 
-      getById(id) {
-        return this.getAll().find(i => i.id === id);
-      },
+</main>
+<div class="toast" id="toast" role="status"></div>
 
-      isLoggedIn() {
-        return sessionStorage.getItem(this.SESSION_KEY) === '1';
-      },
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var KEY="saqtaa-admin-v1";
 
-      setLoggedIn() {
-        sessionStorage.setItem(this.SESSION_KEY, '1');
-      }
-    };
+/* ---------- заготовки шаблонов: [время, название RU, описание RU, название KZ, описание KZ] ---------- */
+var PRE={
+luxury:{ti:["Свадебное торжество","Үйлену тойы"],
+ le:["Дорогие родные и близкие! Мы начинаем новую главу нашей жизни и будем рады разделить этот особенный день с вами. Приглашаем вас на нашу свадьбу!","Құрметті ағайын-туыс, жақындарымыз бен достарымыз! Өміріміздегі ерекше күнді сіздермен бірге атап өткіміз келеді. Сіздерді үйлену тойымыздың қадірлі қонағы болуға шақырамыз!"],
+ sg:["С любовью и нетерпением ждём встречи — {names}","Асыға күтеміз — {names}"],
+ pr:[["17:30","Встреча гостей","Приветственный коктейль и фотозона","Қонақтарды қарсы алу","Қонақтарды қарсы алып, фотосуретке түсу"],["18:00","Церемония","Выход молодожёнов и свадебные клятвы","Салтанатты рәсім","Жас жұбайлардың шығуы мен ақ тілектер"],["19:00","Банкет","Праздничный ужин, тосты и живая музыка","Мерекелік дастарқан","Құттықтаулар, ақ тілектер мен әуен"],["22:30","Торт","Завершение вечера праздничным тортом","Торт","Кештің тәтті сәті — мерекелік торт"]],s:"17:30",e:"23:30"},
+floral:{ti:["Свадебное торжество","Үйлену тойы"],
+ le:["Дорогие близкие! Две истории стали одной, и мы хотим разделить этот счастливый момент с вами. Будем рады видеть вас на нашей свадьбе!","Қымбатты жақындарымыз! Екі жүрек бір арнада тоғысқан осы қуанышты күнімізге ортақтасып, тойымыздың қадірлі қонағы болыңыздар!"],
+ sg:["С нежностью, ваши {names}","Сүйіспеншілікпен, {names}"],
+ pr:[["16:00","Зона встречи гостей","Лёгкие закуски и лимонады","Қонақтарды қарсы алу аймағы","Жеңіл дәмтатымдар мен лимонадтар"],["17:00","Церемония","Трогательные клятвы под аркой","Рәсім","Арка астында айтылатын тілектер"],["18:30","Ужин","Семейный стол и тёплые тосты","Кешкі ас","Жылы отбасылық дастархан"],["21:30","Первый танец","И праздничный торт","Алғашқы би","Мерекелік торт"]],s:"16:00",e:"23:00"},
+qazaq:{ti:["Семейный той","Отбасылық той"],
+ le:["Дорогие родные и друзья! Приглашаем вас на семейный той — праздник встречи двух семей. Будем рады разделить этот день за одним дастарханом!","Құрметті ағайын-туыс, құда-жекжат және достар! Екі әулеттің қуанышын бөлісіп, отбасылық тойымыздың қадірлі қонағы болуға шақырамыз!"],
+ sg:["С уважением, {names}","Құрметпен, {names}"],
+ pr:[["17:00","Қонақ күту","Встреча гостей и шашу","Қонақ күту","Шашу және қонақтарды қарсы алу"],["18:00","Той басталу","Торжественное открытие","Тойдың басталуы","Салтанатты ашылу"],["19:00","Дастархан","Национальные блюда и бата","Дастархан","Ұлттық тағамдар мен бата"],["21:00","Беташар","Обряд и концертная программа","Беташар","Рәсім және концерт"]],s:"17:00",e:"23:30"},
+editorial:{ti:["Юбилейный вечер","Мерейтой кеші"],
+ le:["Дорогие друзья! Приглашаю вас отметить мой юбилей. Буду рада провести этот вечер в кругу близких людей — за разговорами, музыкой и тёплыми воспоминаниями.","Қымбатты достар! Сіздерді мерейтойыма арналған салтанатты кештің қадірлі қонағы болуға шақырамын!"],
+ sg:["Жду каждого из вас — {names}","Әрқайсысыңызды күтемін — {names}"],
+ pr:[["18:00","Встреча гостей","Зона встречи гостей и аперитив","Қонақтарды қарсы алу","Аперитив аймағы"],["19:00","Торжественная часть","История юбиляра в фактах","Салтанатты бөлім","Мерейтой иесінің өмір жолы"],["20:00","Ужин","Ужин от шеф-повара","Кешкі ас","Аспаздың арнайы мәзірі"],["22:00","Танцы","Живая музыка и диджей","Би","Топ және диджей"]],s:"18:00",e:"23:30",b:"50"},
+emerald:{ti:["День рождения","Туған күн"],
+ le:["Дорогие мои! Хочу отметить свой день рождения в кругу самых близких и разделить с вами радость этого дня. Буду ждать вас на празднике!","Ардақты жақындарым! Туған күнімді сіздермен бірге атап өтіп, қуанышымды бөліскім келеді. Мерекелік кешімде сіздерді асыға күтемін!"],
+ sg:["С любовью, ваша {names}","Сүйіспеншілікпен, {names}"],
+ pr:[["18:30","Встреча гостей","Игристое и лёгкие закуски","Қонақтарды қарсы алу","Шампан және жеңіл тағамдар"],["19:30","Ужин","Любимые блюда и сюрпризы","Кешкі ас","Сүйікті тағамдар мен сыйлықтар"],["21:00","Караоке и игры","Самая весёлая часть вечера","Караоке мен ойындар","Ең көңілді бөлім"],["23:00","Торт","Загадаем желание вместе","Торт","Тілек тілейік"]],s:"18:30",e:"00:30"},
+tusau:{ti:["Тұсау кесер","Тұсау кесер"],
+ le:["Дорогие родные! Нашему малышу исполняется один год. Приглашаем вас разделить с нами радость его первых шагов и отметить тұсау кесер! Пусть его жизненный путь будет светлым и счастливым.","Қымбатты ағайын-туыс! Бүлдіршініміз бір жасқа толып, тәй-тәй басқан алғашқы қадамын атап өтпекпіз. Тұсаукесер тойына сіздерді шын жүректен шақырамыз!"],
+ sg:["С любовью, родители — {names}","Сүйіспеншілікпен, ата-анасы — {names}"],
+ pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"}
+};
 
-    // ===== Примерные тексты для шаблонов =====
-    const TEMPLATE_EXAMPLES = {
-      '01': {
-        ru: {
-          text: 'Дорогие {names}! Приглашаем вас разделить с нами один из самых важных и тёплых дней в нашей жизни.',
-          signature: 'С любовью, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Сізді өміріміздегі ең маңызды әрі жылы күндердің біріне шақырамыз.',
-          signature: 'Ілтипатпен, {names}'
-        }
-      },
-      '02': {
-        ru: {
-          text: 'Дорогие {names}! Будем счастливы видеть вас на нашем празднике любви и нежности.',
-          signature: 'Ждём вас, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Махаббат пен нәзіктік мерекесінде сізді көргенімізге қуаныштымыз.',
-          signature: 'Сізді күтеміз, {names}'
-        }
-      },
-      '03': {
-        ru: {
-          text: 'Дорогие {names}! Приглашаем вас на той! Разделите с нами этот радостный день.',
-          signature: 'С уважением, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Сізді тойға шақырамыз! Бұл қуанышты күнді бізбен бөлісіңіз.',
-          signature: 'Құрметпен, {names}'
-        }
-      },
-      '04': {
-        ru: {
-          text: 'Дорогие {names}! Приглашаем вас отметить вместе с нами этот прекрасный юбилей.',
-          signature: 'С теплом, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Сізді осы әдемі мерейтойды бізбен бірге атап өтуге шақырамыз.',
-          signature: 'Жылылықпен, {names}'
-        }
-      },
-      '05': {
-        ru: {
-          text: 'Дорогие {names}! Приглашаем вас на день рождения! Будет красиво, весело и душевно.',
-          signature: 'Ждём вас, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Сізді туған күнге шақырамыз! Әдемі, көңілді әрі жүректен болады.',
-          signature: 'Сізді күтеміз, {names}'
-        }
-      },
-      '06': {
-        ru: {
-          text: 'Дорогие {names}! Приглашаем вас на тұсау кесер — первый шаг малыша в большой мир.',
-          signature: 'С любовью, {names}'
-        },
-        kz: {
-          text: 'Құрметті {names}! Сізді тұсау кесер тойына шақырамыз — бүлдіршіннің үлкен өмірге алғашқы қадамы.',
-          signature: 'Ілтипатпен, {names}'
-        }
-      }
-    };
+/* ---------- состояние ---------- */
+var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};  /* rows: [время, названиеRU, описаниеRU, названиеKZ, описаниеKZ] */
+var lang="ru";
+function act(){return lang==="both"?["ru","kz"]:[lang];}
+function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("show");},3200);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function val(sel){var el=document.querySelector(sel);return el?el.value:null;}
 
-    let currentId = null;
-    let autosaveTimer = null;
-    let currentTemplateBeforeChange = '01';
-
-    // ===== Экраны =====
-    function showScreen(screenName) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(`screen-${screenName}`).classList.add('active');
-
-      if (screenName === 'list') {
-        renderInviteList();
-      }
-    }
-
-    // ===== Вход =====
-    function handleLogin() {
-      const pwd = document.getElementById('password').value;
-
-      if (pwd === 'admin123') {
-        Storage.setLoggedIn();
-        showScreen('list');
-      } else {
-        alert('Неверный пароль');
-      }
-    }
-
-    document.getElementById('password').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleLogin();
+/* забираем то, что сейчас на экране, в состояние */
+function grabText(){
+  act().forEach(function(k){
+    var a=val("#ti_"+k),b=val("#le_"+k),c=val("#sg_"+k);
+    if(a!==null)st[k].ti=a;if(b!==null)st[k].le=b;if(c!==null)st[k].sg=c;
+  });
+  document.querySelectorAll(".prow").forEach(function(r,i){
+    if(!st.rows[i])return;
+    var tm=r.querySelector(".tm");if(tm)st.rows[i][0]=tm.value;
+    act().forEach(function(k){
+      var off=k==="ru"?0:2,a=r.querySelector(".t1_"+k),b=r.querySelector(".t2_"+k);
+      if(a)st.rows[i][1+off]=a.value;if(b)st.rows[i][2+off]=b.value;
     });
-
-    // ===== Даты =====
-    function formatDate(isoString) {
-      if (!isoString) return '—';
-      const date = new Date(isoString);
-      if (isNaN(date.getTime())) return '—';
-
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-
-      return `${day}.${month}.${year} ${hours}:${minutes}`;
-    }
-
-    function formatDateReadable(isoString) {
-      if (!isoString) return 'не указана';
-      const date = new Date(isoString);
-      if (isNaN(date.getTime())) return 'не указана';
-
-      const options = { year: 'numeric', month: 'long', day: 'numeric' };
-      return date.toLocaleDateString('ru-RU', options);
-    }
-
-    function updateEditorDates(invite) {
-      const box = document.getElementById('editor-dates');
-      if (!box || !invite) return;
-
-      const eventDate = invite.date ? formatDateReadable(invite.date + 'T00:00:00') : 'не указана';
-      const created = formatDate(invite.createdAt);
-      const updated = formatDate(invite.updatedAt);
-
-      box.innerHTML = `
-        <div>📅 <strong>Дата события:</strong> ${escapeHtml(eventDate)}</div>
-        <div>🕐 <strong>Создано:</strong> ${escapeHtml(created)}</div>
-        <div>✏️ <strong>Обновлено:</strong> ${escapeHtml(updated)}</div>
-      `;
-    }
-
-    // ===== Создание нового =====
-    function createNewInvite() {
-      const id = 'inv_' + Date.now();
-
-      const newInvite = {
-        id,
-        title: 'Новое приглашение',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: 'draft',
-
-        template: '01',
-        language: 'ru',
-
-        names: '',
-        bigNumber: '',
-        date: '',
-        startTime: '',
-        endTime: '',
-        timezone: 'Asia/Almaty',
-
-        venueName: '',
-        address: '',
-        mapUrl: '',
-
-        textRu: TEMPLATE_EXAMPLES['01'].ru.text,
-        signatureRu: TEMPLATE_EXAMPLES['01'].ru.signature,
-        textKz: TEMPLATE_EXAMPLES['01'].kz.text,
-        signatureKz: TEMPLATE_EXAMPLES['01'].kz.signature,
-        hashtag: '',
-
-        program: [],
-
-        photoUrl: '',
-        web3formsKey: '',
-
-        fullUrl: '',
-        shortUrl: ''
-      };
-
-      Storage.add(newInvite);
-      editInvite(id);
-    }
-
-    // ===== Редактор =====
-    function editInvite(id) {
-      const invite = Storage.getById(id);
-      if (!invite) {
-        alert('Приглашение не найдено');
-        return;
-      }
-
-      currentId = id;
-      fillEditor(invite);
-      showScreen('editor');
-    }
-
-    function fillEditor(invite) {
-      document.getElementById('f-title').value = invite.title || '';
-      document.getElementById('f-template').value = invite.template || '01';
-      currentTemplateBeforeChange = invite.template || '01';
-
-      document.querySelectorAll('input[name="language"]').forEach(radio => {
-        radio.checked = radio.value === (invite.language || 'ru');
-      });
-
-      document.getElementById('f-names').value = invite.names || '';
-      document.getElementById('f-big-number').value = invite.bigNumber || '';
-      document.getElementById('f-date').value = invite.date ? String(invite.date).slice(0, 10) : '';
-      document.getElementById('f-start-time').value = invite.startTime || '';
-      document.getElementById('f-end-time').value = invite.endTime || '';
-
-      document.getElementById('f-venue-name').value = invite.venueName || '';
-      document.getElementById('f-address').value = invite.address || '';
-      document.getElementById('f-map-url').value = invite.mapUrl || '';
-
-      document.getElementById('f-text-ru').value = invite.textRu || '';
-      document.getElementById('f-signature-ru').value = invite.signatureRu || '';
-      document.getElementById('f-text-kz').value = invite.textKz || '';
-      document.getElementById('f-signature-kz').value = invite.signatureKz || '';
-      document.getElementById('f-hashtag').value = invite.hashtag || '';
-
-      document.getElementById('f-photo-url').value = invite.photoUrl || '';
-      document.getElementById('f-web3forms-key').value = invite.web3formsKey || '';
-
-      renderProgram(invite.program || []);
-      updateLanguageVisibility();
-      updateEditorDates(invite);
-      setStatus('');
-    }
-
-    function renderProgram(program) {
-      const container = document.getElementById('program-items');
-      container.innerHTML = '';
-
-      program.forEach(item => {
-        container.appendChild(createProgramItem(item));
-      });
-
-      updateLanguageVisibility();
-    }
-
-    function createProgramItem(item = {}) {
-      const div = document.createElement('div');
-      div.className = 'program-item';
-
-      div.innerHTML = `
-        <button type="button" class="btn btn-danger program-delete">Удалить</button>
-
-        <div class="form-group program-time">
-          <label>Время</label>
-          <input type="time" class="p-time">
-        </div>
-
-        <div class="lang-ru program-lang-block">
-          <div class="program-lang-title">Русский</div>
-          <div class="form-group">
-            <label>Название пункта</label>
-            <input type="text" class="p-title-ru" placeholder="Сбор гостей">
-          </div>
-          <div class="form-group">
-            <label>Описание</label>
-            <textarea class="p-desc-ru" placeholder="Приветственный фуршет"></textarea>
-          </div>
-        </div>
-
-        <div class="lang-kz program-lang-block">
-          <div class="program-lang-title">Қазақша</div>
-          <div class="form-group">
-            <label>Пункт атауы</label>
-            <input type="text" class="p-title-kz" placeholder="Қонақтарды қарсы алу">
-          </div>
-          <div class="form-group">
-            <label>Сипаттама</label>
-            <textarea class="p-desc-kz" placeholder="Қош келдіңіз фуршеті"></textarea>
-          </div>
-        </div>
-      `;
-
-      div.querySelector('.p-time').value = item.time || '';
-      div.querySelector('.p-title-ru').value = item.titleRu || '';
-      div.querySelector('.p-desc-ru').value = item.descRu || '';
-      div.querySelector('.p-title-kz').value = item.titleKz || '';
-      div.querySelector('.p-desc-kz').value = item.descKz || '';
-
-      div.querySelector('.program-delete').addEventListener('click', () => {
-        div.remove();
-        scheduleAutosave();
-      });
-
-      return div;
-    }
-
-    function addProgramItem() {
-      const container = document.getElementById('program-items');
-      container.appendChild(createProgramItem({}));
-      updateLanguageVisibility();
-      scheduleAutosave();
-    }
-
-    // ===== Язык =====
-    function getLanguage() {
-      const checked = document.querySelector('input[name="language"]:checked');
-      return checked ? checked.value : 'ru';
-    }
-
-    function updateLanguageVisibility() {
-      const lang = getLanguage();
-
-      document.querySelectorAll('.lang-ru').forEach(el => {
-        el.style.display = (lang === 'ru' || lang === 'both') ? '' : 'none';
-      });
-
-      document.querySelectorAll('.lang-kz').forEach(el => {
-        el.style.display = (lang === 'kz' || lang === 'both') ? '' : 'none';
-      });
-    }
-
-    function onLanguageChange() {
-      updateLanguageVisibility();
-      scheduleAutosave();
-    }
-
-    // ===== Шаблон =====
-    function onTemplateChange(select) {
-      const newTemplate = select.value;
-
-      if (hasFilledTexts() && !confirm('Сменить шаблон? Текущие тексты могут быть заменены примерами.')) {
-        select.value = currentTemplateBeforeChange;
-        return;
-      }
-
-      currentTemplateBeforeChange = newTemplate;
-      applyTemplateExamples(newTemplate);
-      scheduleAutosave();
-    }
-
-    function hasFilledTexts() {
-      return ['f-text-ru', 'f-signature-ru', 'f-text-kz', 'f-signature-kz']
-        .some(id => document.getElementById(id).value.trim() !== '');
-    }
-
-    function applyTemplateExamples(templateId) {
-      const example = TEMPLATE_EXAMPLES[templateId] || TEMPLATE_EXAMPLES['01'];
-
-      document.getElementById('f-text-ru').value = example.ru.text;
-      document.getElementById('f-signature-ru').value = example.ru.signature;
-      document.getElementById('f-text-kz').value = example.kz.text;
-      document.getElementById('f-signature-kz').value = example.kz.signature;
-    }
-
-    // ===== Хештег =====
-    function normalizeHashtag(value) {
-      let v = (value || '').trim();
-      if (!v) return '';
-
-      v = v.replace(/#/g, '').replace(/\s+/g, '');
-      return '#' + v;
-    }
-
-    // ===== Сбор данных =====
-    function collectFormData() {
-      const current = Storage.getById(currentId) || {};
-
-      const program = Array.from(document.querySelectorAll('#program-items .program-item')).map(item => {
-        return {
-          time: item.querySelector('.p-time').value || '',
-          titleRu: item.querySelector('.p-title-ru').value || '',
-          descRu: item.querySelector('.p-desc-ru').value || '',
-          titleKz: item.querySelector('.p-title-kz').value || '',
-          descKz: item.querySelector('.p-desc-kz').value || ''
-        };
-      }).filter(item => {
-        return item.time || item.titleRu || item.descRu || item.titleKz || item.descKz;
-      });
-
-      const names = document.getElementById('f-names').value.trim();
-      const title = document.getElementById('f-title').value.trim() || names || 'Новое приглашение';
-
-      return {
-        title,
-        template: document.getElementById('f-template').value,
-        language: getLanguage(),
-
-        names,
-        bigNumber: document.getElementById('f-big-number').value.trim(),
-        date: document.getElementById('f-date').value,
-        startTime: document.getElementById('f-start-time').value,
-        endTime: document.getElementById('f-end-time').value,
-        timezone: 'Asia/Almaty',
-
-        venueName: document.getElementById('f-venue-name').value.trim(),
-        address: document.getElementById('f-address').value.trim(),
-        mapUrl: document.getElementById('f-map-url').value.trim(),
-
-        textRu: document.getElementById('f-text-ru').value,
-        signatureRu: document.getElementById('f-signature-ru').value.trim(),
-        textKz: document.getElementById('f-text-kz').value,
-        signatureKz: document.getElementById('f-signature-kz').value.trim(),
-        hashtag: normalizeHashtag(document.getElementById('f-hashtag').value),
-
-        program,
-
-        photoUrl: document.getElementById('f-photo-url').value.trim(),
-        web3formsKey: document.getElementById('f-web3forms-key').value.trim(),
-
-        status: current.status || 'draft',
-        createdAt: current.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        fullUrl: current.fullUrl || '',
-        shortUrl: current.shortUrl || ''
-      };
-    }
-
-    // ===== Автосохранение =====
-    function setStatus(text) {
-      const el = document.getElementById('autosave-status');
-      if (el) el.textContent = text;
-    }
-
-    function scheduleAutosave() {
-      if (!currentId) return;
-
-      setStatus('Сохранение...');
-      clearTimeout(autosaveTimer);
-
-      autosaveTimer = setTimeout(() => {
-        saveNow(false);
-      }, 800);
-    }
-
-    function saveNow(showAlert = false) {
-      if (!currentId) return;
-
-      const data = collectFormData();
-      Storage.update(currentId, data);
-
-      const updated = Storage.getById(currentId);
-      currentTemplateBeforeChange = updated.template;
-
-      updateEditorDates(updated);
-      setStatus(`Сохранено: ${new Date().toLocaleTimeString('ru-RU')}`);
-
-      if (showAlert) {
-        alert('Сохранено');
-      }
-    }
-
-    function saveAndExit() {
-      saveNow(false);
-      currentId = null;
-      showScreen('list');
-    }
-
-    // Автосохранение при вводе
-    document.addEventListener('input', (e) => {
-      const editorScreen = document.getElementById('screen-editor');
-      if (
-        editorScreen &&
-        editorScreen.classList.contains('active') &&
-        editorScreen.contains(e.target)
-      ) {
-        scheduleAutosave();
-      }
-    });
-
-    document.addEventListener('change', (e) => {
-      const editorScreen = document.getElementById('screen-editor');
-      if (
-        editorScreen &&
-        editorScreen.classList.contains('active') &&
-        editorScreen.contains(e.target)
-      ) {
-        scheduleAutosave();
-      }
-    });
-
-    // ===== Список =====
-    function renderInviteList() {
-      const list = Storage.getAll();
-      const container = document.getElementById('invite-list');
-
-      if (list.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <p>У вас пока нет приглашений</p>
-            <p style="font-size: 14px;">Нажмите «+ Новое приглашение», чтобы создать первое</p>
-          </div>
-        `;
-        return;
-      }
-
-      list.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-      container.innerHTML = list.map(invite => {
-        const statusBadge = invite.status === 'ready' ? '✅ Готово' : '📝 Черновик';
-        const eventDateStr = invite.date
-          ? formatDateReadable(invite.date + 'T00:00:00')
-          : 'не указана';
-
-        return `
-          <div class="invite-card">
-            <div class="invite-card-header">
-              <div>
-                <div class="invite-card-title">${escapeHtml(invite.title || invite.names || 'Без названия')}</div>
-                <div class="invite-card-meta">
-                  Шаблон ${escapeHtml(invite.template || '01')} · ${statusBadge}
-                </div>
-              </div>
-            </div>
-
-            <div class="invite-card-dates">
-              <span class="date-event">📅 Дата события: ${escapeHtml(eventDateStr)}</span>
-              <span>🕐 Создано: ${escapeHtml(formatDate(invite.createdAt))}</span>
-              <span>✏️ Обновлено: ${escapeHtml(formatDate(invite.updatedAt))}</span>
-            </div>
-
-            <div class="invite-card-actions">
-              <button class="btn btn-primary btn-small" onclick="editInvite('${invite.id}')">Редактировать</button>
-              ${invite.status === 'ready' ? `
-                <button class="btn btn-secondary btn-small" onclick="openInvite('${invite.id}')">Открыть</button>
-                <button class="btn btn-secondary btn-small" onclick="copyInviteLink('${invite.id}')">Копировать ссылку</button>
-              ` : ''}
-              <button class="btn btn-danger btn-small" onclick="deleteInvite('${invite.id}')">Удалить</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text || '';
-      return div.innerHTML;
-    }
-
-    async function openInvite(id) {
-      const link = buildInviteLinkById(id, true);
-      if (link) {
-        window.open(link, '_blank');
-      }
-    }
-
-    async function copyInviteLink(id) {
-      const link = buildInviteLinkById(id, true);
-      if (!link) return;
-
-      const ok = await copyText(link);
-      alert(ok ? 'Ссылка скопирована' : 'Не удалось скопировать автоматически');
-    }
-
-    function deleteInvite(id) {
-      if (confirm('Удалить это приглашение? Это действие нельзя отменить.')) {
-        if (currentId === id) {
-          currentId = null;
-        }
-
-        Storage.remove(id);
-        renderInviteList();
-      }
-    }
-
-    // ===== Создание ссылки =====
-    function encodePayload(obj) {
-      try {
-        const json = JSON.stringify(obj);
-        const percent = encodeURIComponent(json);
-        const base64 = btoa(percent);
-
-        return base64
-          .replace(/\+/g, '-')
-          .replace(/\//g, '_')
-          .replace(/=+$/, '');
-      } catch (e) {
-        console.error(e);
-        return '';
-      }
-    }
-
-    function getInviteBaseUrl() {
-      const saved = localStorage.getItem(Storage.BASE_URL_KEY);
-      if (saved && saved.trim()) {
-        return saved.trim();
-      }
-
-      try {
-        const url = new URL(location.href);
-        url.hash = '';
-        url.search = '';
-
-        if (url.pathname.endsWith('admin.html')) {
-          url.pathname = url.pathname.replace(/admin\.html$/, 'invite.html');
-        } else {
-          if (!url.pathname.endsWith('/')) {
-            url.pathname += '/';
-          }
-          url.pathname += 'invite.html';
-        }
-
-        return url.toString();
-      } catch (e) {
-        return location.href.replace(/admin\.html.*$/, 'invite.html');
-      }
-    }
-
-    function saveInviteBaseUrl(value) {
-      const v = (value || '').trim();
-
-      if (v) {
-        localStorage.setItem(Storage.BASE_URL_KEY, v);
-      } else {
-        localStorage.removeItem(Storage.BASE_URL_KEY);
-      }
-    }
-
-    function getPublicInvite(invite) {
-      return {
-        template: invite.template || '01',
-        language: invite.language || 'ru',
-
-        names: invite.names || '',
-        bigNumber: invite.bigNumber || '',
-        date: invite.date || '',
-        startTime: invite.startTime || '',
-        endTime: invite.endTime || '',
-        timezone: invite.timezone || 'Asia/Almaty',
-
-        venueName: invite.venueName || '',
-        address: invite.address || '',
-        mapUrl: invite.mapUrl || '',
-
-        textRu: invite.textRu || '',
-        signatureRu: invite.signatureRu || '',
-        textKz: invite.textKz || '',
-        signatureKz: invite.signatureKz || '',
-        hashtag: invite.hashtag || '',
-
-        program: Array.isArray(invite.program) ? invite.program : [],
-
-        photoUrl: invite.photoUrl || '',
-        web3formsKey: invite.web3formsKey || ''
-      };
-    }
-
-    function validateInvite(invite) {
-      const errors = [];
-
-      if (!invite.names || !invite.names.trim()) {
-        errors.push('Имена');
-      }
-
-      if (!invite.date) {
-        errors.push('Дата');
-      }
-
-      if (!invite.startTime) {
-        errors.push('Начало');
-      }
-
-      if (!invite.endTime) {
-        errors.push('Окончание');
-      }
-
-      if (invite.language === 'ru' || invite.language === 'both') {
-        if (!invite.textRu || !invite.textRu.trim()) {
-          errors.push('Русский текст приглашения');
-        }
-      }
-
-      if (invite.language === 'kz' || invite.language === 'both') {
-        if (!invite.textKz || !invite.textKz.trim()) {
-          errors.push('Казахский текст приглашения');
-        }
-      }
-
-      if (invite.photoUrl && !/^https:\/\//i.test(invite.photoUrl)) {
-        errors.push('Фото должно быть по ссылке с https://');
-      }
-
-      if (invite.mapUrl && !/^https?:\/\//i.test(invite.mapUrl)) {
-        errors.push('Ссылка 2ГИС должна начинаться с http:// или https://');
-      }
-
-      return errors;
-    }
-
-    function getBuildResult(id) {
-      const invite = Storage.getById(id);
-
-      if (!invite) {
-        return { errors: ['Приглашение не найдено'] };
-      }
-
-      const errors = validateInvite(invite);
-
-      if (errors.length) {
-        return { errors };
-      }
-
-      const payload = encodePayload(getPublicInvite(invite));
-
-      if (!payload) {
-        return { errors: ['Не удалось упаковать данные приглашения'] };
-      }
-
-      const baseUrl = getInviteBaseUrl();
-      const link = baseUrl + '#d=' + payload;
-
-      return { link };
-    }
-
-    function buildInviteLinkById(id, showErrors = false) {
-      const result = getBuildResult(id);
-
-      if (result.errors) {
-        if (showErrors) {
-          alert('Проверьте поля:\n\n' + result.errors.join('\n'));
-        }
-
-        return null;
-      }
-
-      Storage.update(id, {
-        status: 'ready',
-        fullUrl: result.link
-      });
-
-      return result.link;
-    }
-
-    // ===== Экран Готово =====
-    function goToDone() {
-      saveNow(false);
-      showDoneForCurrent();
-    }
-
-    function showDoneForCurrent() {
-      if (!currentId) {
-        showScreen('list');
-        return;
-      }
-
-      const invite = Storage.getById(currentId);
-
-      document.getElementById('invite-base-url').value = getInviteBaseUrl();
-      hideDoneError();
-      setDoneStatus('', false);
-
-      if (invite && invite.fullUrl) {
-        document.getElementById('invite-link').value = invite.fullUrl;
-        document.getElementById('done-result').hidden = false;
-        document.getElementById('short-link-block').hidden = true;
-      } else {
-        document.getElementById('done-result').hidden = true;
-      }
-
-      showScreen('done');
-    }
-
-    function createCurrentLink() {
-      if (!currentId) return;
-
-      saveInviteBaseUrl(document.getElementById('invite-base-url').value);
-      saveNow(false);
-
-      const result = getBuildResult(currentId);
-
-      if (result.errors) {
-        showDoneError(result.errors);
-        return;
-      }
-
-      Storage.update(currentId, {
-        status: 'ready',
-        fullUrl: result.link
-      });
-
-      document.getElementById('invite-link').value = result.link;
-      document.getElementById('done-result').hidden = false;
-      document.getElementById('short-link-block').hidden = true;
-
-      hideDoneError();
-      setDoneStatus('Ссылка создана', true);
-    }
-
-    function showDoneError(errors) {
-      const box = document.getElementById('done-error');
-
-      box.innerHTML = '<strong>Проверьте поля:</strong><br>' +
-        errors.map(err => `• ${escapeHtml(err)}`).join('<br>');
-
-      box.hidden = false;
-    }
-
-    function hideDoneError() {
-      const box = document.getElementById('done-error');
-      box.hidden = true;
-      box.innerHTML = '';
-    }
-
-    function setDoneStatus(text, isSuccess) {
-      const el = document.getElementById('done-status');
-      el.textContent = text || '';
-      el.className = 'form-note' + (text ? (isSuccess ? ' success' : ' error') : '');
-    }
-
-    function backToEditorFromDone() {
-      if (currentId) {
-        showScreen('editor');
-      } else {
-        showScreen('list');
-      }
-    }
-
-    // ===== Копирование =====
-    async function copyText(text) {
-      try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-          return true;
-        }
-
-        return fallbackCopy(text);
-      } catch (e) {
-        return fallbackCopy(text);
-      }
-    }
-
-    function fallbackCopy(text) {
-      const textarea = document.createElement('textarea');
-      textarea.value = text;
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      textarea.style.left = '-9999px';
-
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-
-      let ok = false;
-
-      try {
-        ok = document.execCommand('copy');
-      } catch (e) {
-        ok = false;
-      }
-
-      textarea.remove();
-      return ok;
-    }
-
-    async function copyCurrentLink() {
-      const link = document.getElementById('invite-link').value;
-
-      if (!link) {
-        setDoneStatus('Сначала создайте ссылку', false);
-        return;
-      }
-
-      const ok = await copyText(link);
-      setDoneStatus(ok ? 'Ссылка скопирована' : 'Не удалось скопировать автоматически', ok);
-    }
-
-    async function copyShortLink() {
-      const link = document.getElementById('short-link').value;
-
-      if (!link) {
-        setDoneStatus('Сначала сократите ссылку', false);
-        return;
-      }
-
-      const ok = await copyText(link);
-      setDoneStatus(ok ? 'Короткая ссылка скопирована' : 'Не удалось скопировать автоматически', ok);
-    }
-
-    function openCurrentLink() {
-      const link = document.getElementById('invite-link').value;
-
-      if (!link) {
-        setDoneStatus('Сначала создайте ссылку', false);
-        return;
-      }
-
-      window.open(link, '_blank');
-    }
-
-    function sendWhatsApp() {
-      const invite = Storage.getById(currentId);
-      const link = document.getElementById('invite-link').value;
-
-      if (!link) {
-        setDoneStatus('Сначала создайте ссылку', false);
-        return;
-      }
-
-      const dateText = invite && invite.date
-        ? formatDateReadable(invite.date + 'T00:00:00')
-        : '';
-
-      const message = [
-        invite && invite.names ? invite.names : '',
-        dateText,
-        link
-      ].filter(Boolean).join('\n');
-
-      const whatsappUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
-      window.open(whatsappUrl, '_blank');
-    }
-
-    async function shortenCurrentLink() {
-      const longUrl = document.getElementById('invite-link').value;
-
-      if (!longUrl) {
-        setDoneStatus('Сначала создайте ссылку', false);
-        return;
-      }
-
-      setDoneStatus('Сокращаем ссылку...', false);
-
-      try {
-        const apiUrl = 'https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl);
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-
-        if (data.shorturl) {
-          document.getElementById('short-link').value = data.shorturl;
-          document.getElementById('open-short-link').href = data.shorturl;
-          document.getElementById('short-link-block').hidden = false;
-
-          if (currentId) {
-            Storage.update(currentId, { shortUrl: data.shorturl });
-          }
-
-          setDoneStatus('Короткая ссылка готова', true);
-        } else {
-          setDoneStatus(data.errormessage || 'Не удалось сократить ссылку', false);
-        }
-      } catch (e) {
-        console.error(e);
-        setDoneStatus('Не удалось сократить автоматически. Используйте длинную ссылку.', false);
-      }
-    }
-
-    // ===== Старт =====
-    window.addEventListener('DOMContentLoaded', () => {
-      if (Storage.isLoggedIn()) {
-        showScreen('list');
-      } else {
-        showScreen('login');
-      }
-    });
-  </script>
+  });
+}
+function showText(){
+  var two=lang==="both";
+  $("#txt").innerHTML=act().map(function(k){
+    return'<div class="lblock">'+(two?'<p class="lh">'+(k==="ru"?"Русский":"Қазақша")+'</p>':'')+
+      '<label for="ti_'+k+'">Заголовок</label><input id="ti_'+k+'" type="text" maxlength="80" autocomplete="off" value="'+esc(st[k].ti)+'">'+
+      '<label for="le_'+k+'">Текст приглашения</label><textarea id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
+      '<label for="sg_'+k+'">Подпись</label><input id="sg_'+k+'" type="text" maxlength="160" autocomplete="off" value="'+esc(st[k].sg)+'"></div>';}).join("");
+  $("#prog").innerHTML=st.rows.map(function(r,i){
+    return'<div class="prow" data-i="'+i+'"><button class="del" type="button" aria-label="Удалить">✕</button>'+
+      '<input class="tm" type="time" value="'+esc(r[0])+'" aria-label="Время">'+
+      act().map(function(k){
+        var off=k==="ru"?0:2;
+        return(two?'<span class="ptag">'+(k==="ru"?"RU":"ҚАЗ")+'</span>':'')+
+          '<input class="t1_'+k+'" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
+          '<input class="t2_'+k+'" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'">';}).join("")+'</div>';}).join("");
+}
+/* если у языка пусто — подставляем заготовку шаблона, чтобы текст не «пропадал» */
+function ensure(k){
+  var p=PRE[$("#tpl").value],i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
+  if(!clean(st[k].ti)&&!clean(st[k].le)&&!clean(st[k].sg)){st[k]={ti:p.ti[i],le:p.le[i],sg:p.sg[i]};filled=true;}
+  if(!st.rows.length)st.rows=p.pr.map(function(r){return r.slice();});
+  else st.rows.forEach(function(r,j){if(!clean(r[1+off])&&!clean(r[2+off])&&p.pr[j]){r[1+off]=p.pr[j][1+off];r[2+off]=p.pr[j][2+off];}});
+  return filled;
+}
+function setLang(l){
+  grabText();lang=l;
+  document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===l);});
+  var filled=act().filter(ensure);
+  showText();
+  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на этом языке подставлены из шаблона — замените их переводом вашего текста");
+}
+function applyPreset(k){
+  var p=PRE[k];if(!p)return;
+  st.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0]};st.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1]};
+  st.rows=p.pr.map(function(r){return r.slice();});
+  $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
+  $("#bigWrap").hidden=(k!=="editorial");
+  showText();
+}
+
+/* ---------- кодирование ссылки ---------- */
+function b64u(bytes){var s="";for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+async function encode(obj){
+  var raw=new TextEncoder().encode(JSON.stringify(obj));
+  if(typeof CompressionStream!=="undefined"){
+    try{
+      var cs=new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+      var buf=new Uint8Array(await new Response(cs).arrayBuffer());
+      return"z"+b64u(buf);
+    }catch(_){}
+  }
+  return"j"+b64u(raw);
+}
+async function decodeHash(h){
+  h=String(h||"").replace(/^#/,"");
+  if(h.length<2)throw new Error("empty");
+  var mode=h[0],bytes=unb64u(h.slice(1));
+  if(mode==="z"){
+    if(typeof DecompressionStream==="undefined")throw new Error("compression-unsupported");
+    var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
+    bytes=new Uint8Array(await r.arrayBuffer());
+  }else if(mode!=="j"){throw new Error("unknown-format");}
+  var o=JSON.parse(new TextDecoder().decode(bytes));
+  if(!o||typeof o!=="object"||Array.isArray(o))throw new Error("invalid-data");
+  return o;
+}
+
+/* ---------- сборка данных ---------- */
+function clean(s){return String(s||"").trim();}
+function langBlock(i){
+  var off=i===0?0:2,k=i===0?"ru":"kz";
+  var pr=st.rows.filter(function(r){return r[0]&&clean(r[1+off]);}).map(function(r){
+    var a=[r[0],clean(r[1+off])],d=clean(r[2+off]);if(d)a.push(d);return a;});
+  return{ti:clean(st[k].ti),le:clean(st[k].le),pr:pr,sg:clean(st[k].sg)};
+}
+function collect(){
+  grabText();
+  var o={t:$("#tpl").value,l:lang,n:clean($("#n").value),d:$("#d").value,s:$("#s").value,e:$("#e").value,
+    ve:clean($("#ve").value),ad:clean($("#ad").value),g:clean($("#g").value),h:clean($("#h").value),p:clean($("#p").value),
+    k:clean($("#k").value),rsvp:$("#rsvp").checked};
+  if(o.t==="editorial")o.b=clean($("#b").value);
+  if(lang==="ru"||lang==="both")o.ru=langBlock(0);
+  if(lang==="kz"||lang==="both")o.kz=langBlock(1);
+  return o;
+}
+function validate(o){
+  if(!o.n)return"Впишите имена.";
+  if(!o.d)return"Выберите дату.";
+  if(!o.s)return"Укажите время начала.";
+  if(!o.e)return"Укажите время окончания.";
+  if(o.s===o.e)return"Время окончания не может совпадать со временем начала.";
+  var dateObj=new Date(o.d+"T12:00:00");
+  if(!Number.isFinite(dateObj.getTime())||dateObj.toISOString().slice(0,10)!==o.d)return"Укажите корректную дату.";
+  var need=act().filter(function(k){return !clean(st[k].le);});
+  if(need.length)return"Впишите текст приглашения: "+need.map(function(k){return k==="ru"?"русский":"казахский";}).join(" и ")+".";
+  if(o.g&&!/^https:\/\//i.test(o.g))return"Ссылка 2ГИС должна начинаться с https://";
+  if(o.p&&!/^https:\/\//i.test(o.p))return"Ссылка на фото должна начинаться с https://";
+  if(o.rsvp&&!o.k)return"Для включённого RSVP укажите ключ Web3Forms клиента.";
+  if(o.k&&!/^[0-9a-f-]{20,}$/i.test(o.k))return"Ключ Web3Forms выглядит неверно — проверьте его.";
+  return"";
+}
+
+/* ---------- черновик ---------- */
+function save(){try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value}));}catch(_){}}
+function fillFrom(o){
+  $("#tpl").value=PRE[o.t]?o.t:"luxury";
+  $("#bigWrap").hidden=($("#tpl").value!=="editorial");
+  $("#n").value=o.n||"";$("#d").value=o.d||"";$("#s").value=o.s||"";$("#e").value=o.e||"";
+  $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
+  $("#p").value=o.p||"";$("#k").value=o.k||"";$("#b").value=o.b||"";
+  $("#rsvp").checked=o.rsvp!==false;
+  function fromBlock(b){return{ti:(b&&b.ti)||"",le:(b&&b.le)||"",sg:(b&&b.sg)||""};}
+  st.ru=fromBlock(o.ru);st.kz=fromBlock(o.kz);
+  var a=(o.ru&&o.ru.pr)||[],b=(o.kz&&o.kz.pr)||[],n=Math.max(a.length,b.length);st.rows=[];
+  for(var i=0;i<n;i++){var x=a[i]||[],y=b[i]||[];st.rows.push([x[0]||y[0]||"",x[1]||"",x[2]||"",y[1]||"",y[2]||""]);}
+  lang=(o.l==="kz"||o.l==="both")?o.l:"ru";
+  document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===lang);});
+  showText();
+}
+
+/* ---------- события ---------- */
+$("#tpl").addEventListener("change",function(){
+  if(!$("#n").value.trim()||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
+  else{$("#bigWrap").hidden=(this.value!=="editorial");}
+  save();
+});
+document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
+$("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();var ins=document.querySelectorAll(".prow .tm");if(ins.length)ins[ins.length-1].focus();});
+$("#prog").addEventListener("click",function(e){
+  var d=e.target.closest(".del");if(!d)return;
+  grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();
+});
+document.addEventListener("input",function(e){
+  if(e.target.closest("main")&&e.target.id!=="old"){
+    save();
+    if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Создайте ссылку заново, чтобы обновить приглашение.";
+  }
+});
+
+try{$("#base").value=new URL("invite.html",location.href).href;}catch(_){$("#base").value="";}
+
+function waLink(link){
+  var pre=lang==="kz"?"Сізді тойға шақырамыз ✦ ":lang==="both"?"Приглашаем вас на праздник ✦ Сізді тойға шақырамыз ✦ ":"Приглашаем вас на праздник ✦ ";
+  return"https://wa.me/?text="+encodeURIComponent(pre+clean($("#n").value)+"\n"+link);
+}
+$("#make").addEventListener("click",async function(){
+  var err=$("#mkErr");err.hidden=true;
+  var o=collect(),msg=validate(o);
+  if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
+  var base=clean($("#base").value);
+  if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
+  var url=base.replace(/#.*$/,"")+"#"+await encode(o);
+  $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
+  $("#open").href=url;$("#wa").href=waLink(url);
+  $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
+  save();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+});
+async function copyFrom(sel){
+  var el=$(sel);
+  try{await navigator.clipboard.writeText(el.value);toast("Ссылка скопирована");}
+  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
+}
+$("#copy").addEventListener("click",function(){copyFrom("#out");});
+$("#shCopy").addEventListener("click",function(){copyFrom("#shOut");});
+
+/* сокращение ссылки через is.gd (JSONP — без проблем с CORS) */
+function jsonp(url,ms){return new Promise(function(res,rej){
+  var cb="sq"+Date.now(),s=document.createElement("script");
+  var to=setTimeout(function(){cl();rej(new Error("timeout"));},ms);
+  function cl(){clearTimeout(to);try{delete window[cb];}catch(_){window[cb]=undefined;}s.remove();}
+  window[cb]=function(j){cl();res(j);};
+  s.onerror=function(){cl();rej(new Error("net"));};
+  s.src=url+"&callback="+cb;document.head.appendChild(s);});}
+$("#sh").addEventListener("click",async function(){
+  var er=$("#shErr"),btn=this,long=$("#out").value;er.hidden=true;if(!long)return;
+  btn.disabled=true;var old=btn.textContent;btn.textContent="Сокращаю…";
+  try{
+    var j=await jsonp("https://is.gd/create.php?format=json&url="+encodeURIComponent(long),10000);
+    if(!j||!j.shorturl)throw new Error("bad");
+    $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl);
+    toast("Короткая ссылка готова — откройте её и проверьте");
+  }catch(_){
+    er.textContent="Не удалось сократить: сервис недоступен или заблокирован. Отправьте обычную ссылку или сократите её вручную на is.gd / tinyurl.com.";er.hidden=false;
+  }
+  btn.disabled=false;btn.textContent=old;
+});
+$("#loadOld").addEventListener("click",async function(){
+  var er=$("#oldErr");er.hidden=true;
+  var v=clean($("#old").value),i=v.indexOf("#");
+  try{
+    if(i<0)throw 0;
+    var o=await decodeHash(v.slice(i));
+    if(!o||typeof o!=="object")throw 0;
+    fillFrom(o);$("#base").value=v.slice(0,i);save();toast("Данные загружены — поправьте и создайте новую ссылку");
+    $("#tpl").scrollIntoView({behavior:"smooth"});
+  }catch(_){er.textContent="Не удалось прочитать ссылку. Нужна полная длинная ссылка (с частью после «#»), короткая is.gd не подойдёт.";er.hidden=false;}
+});
+
+/* ---------- вход по паролю ---------- */
+/* Это защита от случайных людей, а не настоящая безопасность: сайт статический. */
+var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
+async function pwHash(pw){
+  var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
+  var b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(PW_SALT),iterations:PW_ITER},k,256);
+  return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");
+}
+function unlock(){$("#gate").hidden=true;document.querySelector("main").hidden=false;}
+var helper=(location.hash==="#newpw");
+if(helper){$("#gateHint").textContent="Режим смены пароля: введите новый пароль — получите строку для вставки в файл.";$("#gateBtn").textContent="Получить код";}
+$("#gateForm").addEventListener("submit",async function(e){
+  e.preventDefault();var er=$("#gateErr");er.textContent="";
+  if(!(window.crypto&&crypto.subtle)){er.textContent="Откройте страницу по адресу https://";return;}
+  var pw=$("#gatePw").value;if(!pw)return;
+  var h=await pwHash(pw);
+  if(helper){$("#gateOut").value='PW_HASH="'+h+'"';$("#gateOut").hidden=false;return;}
+  if(h===PW_HASH){try{localStorage.setItem(OK_KEY,PW_HASH);}catch(_){}unlock();}
+  else{er.textContent="Неверный пароль";$("#gatePw").select();}
+});
+var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
+if(remembered&&remembered===PW_HASH&&!helper)unlock();
+
+/* ---------- старт ---------- */
+var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
+if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
+else{applyPreset("luxury");}
+})();
+</script>
 </body>
 </html>
