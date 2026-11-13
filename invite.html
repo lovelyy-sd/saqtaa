@@ -183,8 +183,9 @@ async function decode(h){
   var mode=h[0],bytes=unb64u(h.slice(1));
   if(mode==="z"){
     if(typeof DecompressionStream==="undefined")throw new Error("no-ds");
-    var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
-    bytes=new Uint8Array(await r.arrayBuffer());
+    var rdr=new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")).getReader(),chunks=[],total=0;
+    for(;;){var step=await rdr.read();if(step.done)break;total+=step.value.byteLength;if(total>200000){try{rdr.cancel();}catch(_){}throw new Error("too-large");}chunks.push(step.value);}
+    bytes=new Uint8Array(total);var off=0;for(var c of chunks){bytes.set(c,off);off+=c.byteLength;}
   }else if(mode!=="j"){throw new Error("unknown-format");}
   var data=JSON.parse(new TextDecoder().decode(bytes));
   if(!data||typeof data!=="object"||Array.isArray(data))throw new Error("invalid-data");
@@ -302,7 +303,8 @@ function render(){
   }
   var big=(T.big&&D.b)?'<div class="ed-big fx" style="--d:.04s">'+esc(D.b)+'</div>':"";
   var sw=langs.length>1?'<button class="langsw" data-sw type="button">'+t("sw")+'</button>':"";
-  var by=fill(t("by"),{date:dDot(addDays(D.d,-RSVP_DAYS))});
+  var todayKz=new Date(Date.now()+5*36e5).toISOString().slice(0,10),rawBy=addDays(D.d,-RSVP_DAYS);
+  var by=fill(t("by"),{date:dDot(rawBy<todayKz?(todayKz<D.d?todayKz:D.d):rawBy)});
   var venueLine=[D.ve,D.ad].filter(Boolean).join(", ");
   var rsvpHTML=D.rsvp===false?'':'<section class="iv-sec fx" style="--d:.44s"><p class="iv-eyebrow">'+t("rh")+'</p><h3 class="rs-h">'+t("rt")+'</h3><p class="rs-sub">'+t("rs")+'</p>'+
     '<form class="rs-form" novalidate><div class="rs-grid">'+
@@ -394,8 +396,8 @@ function screen(h,p){document.body.style.background="#0F4A38";app.innerHTML='<di
      !Number.isFinite(dateCheck.getTime())||dateCheck.toISOString().slice(0,10)!==dateText){
     screen("Ссылка не открылась ✦","<p>Похоже, ссылка повреждена или скопирована не полностью. Попросите отправить её ещё раз.</p><p>Сілтеме қате немесе толық көшірілмеген. Қайта жіберуді сұраңыз.</p>");return;
   }
-  D.s=/^\d{1,2}:\d{2}$/.test(String(D.s||""))?String(D.s).padStart(5,"0"):"18:00";
-  D.e=/^\d{1,2}:\d{2}$/.test(String(D.e||""))?String(D.e).padStart(5,"0"):"23:30";
+  D.s=/^([01]?\d|2[0-3]):[0-5]\d$/.test(String(D.s||""))?String(D.s).padStart(5,"0"):"18:00";
+  D.e=/^([01]?\d|2[0-3]):[0-5]\d$/.test(String(D.e||""))?String(D.e).padStart(5,"0"):"23:30";
   D.n=String(D.n||"").slice(0,120);
   D.t=TPL[D.t]?D.t:"luxury";
   D.ve=String(D.ve||"").slice(0,120);D.ad=String(D.ad||"").slice(0,160);

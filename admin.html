@@ -315,8 +315,19 @@ function setLang(l){
   showText();
   if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на этом языке подставлены из шаблона — замените их переводом вашего текста");
 }
+function isPresetUnchanged(k){
+  var p=PRE[k];if(!p)return false;
+  grabText();
+  if(st.ru.ti!==p.ti[0]||st.ru.le!==p.le[0]||st.ru.sg!==p.sg[0])return false;
+  if(st.kz.ti!==p.ti[1]||st.kz.le!==p.le[1]||st.kz.sg!==p.sg[1])return false;
+  if(st.rows.length!==p.pr.length)return false;
+  for(var i=0;i<p.pr.length;i++){for(var j=0;j<5;j++)if((st.rows[i][j]||"")!==(p.pr[i][j]||""))return false;}
+  return true;
+}
+var lastTpl="luxury";
 function applyPreset(k){
   var p=PRE[k];if(!p)return;
+  lastTpl=k;
   st.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0]};st.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1]};
   st.rows=p.pr.map(function(r){return r.slice();});
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
@@ -376,8 +387,12 @@ function validate(o){
   if(!o.s)return"Укажите время начала.";
   if(!o.e)return"Укажите время окончания.";
   if(o.s===o.e)return"Время окончания не может совпадать со временем начала.";
-  var dateObj=new Date(o.d+"T12:00:00");
+  var dateObj=new Date(o.d+"T12:00:00Z");
   if(!Number.isFinite(dateObj.getTime())||dateObj.toISOString().slice(0,10)!==o.d)return"Укажите корректную дату.";
+  var endDay=o.d;
+  if(o.e<=o.s){var nextD=new Date(o.d+"T12:00:00Z");nextD.setUTCDate(nextD.getUTCDate()+1);endDay=nextD.toISOString().slice(0,10);}
+  var expMs=Math.max(new Date(endDay+"T"+o.e+":00+05:00").getTime(),new Date(o.d+"T23:59:59+05:00").getTime());
+  if(Date.now()>expMs)return"Дата мероприятия уже прошла. Укажите будущую дату.";
   var need=act().filter(function(k){return !clean(st[k].le);});
   if(need.length)return"Впишите текст приглашения: "+need.map(function(k){return k==="ru"?"русский":"казахский";}).join(" и ")+".";
   if(o.g&&!/^https:\/\//i.test(o.g))return"Ссылка 2ГИС должна начинаться с https://";
@@ -391,6 +406,7 @@ function validate(o){
 function save(){try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));var ss=$("#saveState");if(ss)ss.textContent="Черновик сохранён на этом устройстве · "+new Date().toLocaleTimeString();}catch(_){var ss=$("#saveState");if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";}schedulePreview();}
 function fillFrom(o){
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
+  lastTpl=$("#tpl").value;
   $("#bigWrap").hidden=($("#tpl").value!=="editorial");
   $("#n").value=o.n||"";$("#d").value=o.d||"";$("#s").value=o.s||"";$("#e").value=o.e||"";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
@@ -409,14 +425,15 @@ function fillFrom(o){
 function setTemplateCards(){document.querySelectorAll("[data-template]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.template===$("#tpl").value));});}
 document.querySelectorAll("[data-template]").forEach(function(b){b.addEventListener("click",function(){$("#tpl").value=b.dataset.template;$("#tpl").dispatchEvent(new Event("change"));setTemplateCards();});});
 function renderHistory(){var box=$("#historyList");if(!historyItems.length){box.innerHTML='<p class="hint">История пока пуста.</p>';return;}box.innerHTML=historyItems.slice().reverse().map(function(x,ri){var idx=historyItems.length-1-ri;return'<div class="history-item" data-hi="'+idx+'"><strong>'+esc(x.name||"Без названия")+'</strong><small>'+esc(x.template||"")+' · '+esc(x.date||"")+' · '+new Date(x.at).toLocaleString()+'</small><div class="history-actions"><button type="button" data-hload="'+idx+'">Открыть / клонировать</button><button type="button" data-hcopy="'+idx+'">Копировать ссылку</button><button type="button" data-hdel="'+idx+'">Удалить</button></div></div>';}).join("");}
-async function storeHistory(o,url){var entry={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),name:o.n,template:o.t,date:o.d,at:Date.now(),data:o,url:url};historyItems=historyItems.filter(function(x){return x.url!==url;});historyItems.push(entry);historyItems=historyItems.slice(-50);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);}catch(_){}renderHistory();}
-$("#historyList").addEventListener("click",async function(e){var b=e.target.closest("button");if(!b)return;var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hdel),x=historyItems[i];if(!x)return;if(b.hasAttribute("data-hload")){fillFrom(x.data);setCurrentPhoto(await getPhoto(x.id));save();schedulePreview();toast("Приглашение загружено. Измените данные и создайте новую ссылку.");window.scrollTo({top:0,behavior:"smooth"});}else if(b.hasAttribute("data-hcopy")){try{await navigator.clipboard.writeText(x.url);toast("Ссылка скопирована");}catch(_){toast("Не удалось скопировать ссылку");}}else if(b.hasAttribute("data-hdel")){historyItems.splice(i,1);localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));renderHistory();}});
+async function storeHistory(o,url){var entry={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),name:o.n,template:o.t,date:o.d,at:Date.now(),data:o,url:url};var removed=historyItems.filter(function(x){return x.url===url;});historyItems=historyItems.filter(function(x){return x.url!==url;});historyItems.push(entry);if(historyItems.length>50){removed=removed.concat(historyItems.slice(0,historyItems.length-50));historyItems=historyItems.slice(-50);}try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);for(var i=0;i<removed.length;i++)if(removed[i]&&removed[i].id)await delPhoto(removed[i].id).catch(function(){});}catch(_){toast("Внимание: не удалось сохранить запись в историю (память браузера заполнена).");}renderHistory();}
+$("#historyList").addEventListener("click",async function(e){var b=e.target.closest("button");if(!b)return;var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hdel),x=historyItems[i];if(!x)return;if(b.hasAttribute("data-hload")){if(!x.data||typeof x.data!=="object"){toast("Запись истории повреждена");return;}fillFrom(x.data);setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));save();schedulePreview();toast("Приглашение загружено. Измените данные и создайте новую ссылку.");window.scrollTo({top:0,behavior:"smooth"});}else if(b.hasAttribute("data-hcopy")){try{await navigator.clipboard.writeText(x.url);toast("Ссылка скопирована");}catch(_){toast("Не удалось скопировать ссылку");}}else if(b.hasAttribute("data-hdel")){historyItems.splice(i,1);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}if(x.id)delPhoto(x.id).catch(function(){});renderHistory();}});
 function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,500);}
-async function updatePreview(){var frame=$("#livePreview");if(!frame||!document.querySelector("main")||document.querySelector("main").hidden)return;try{var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;if(!o.n)o.n="Ваши имена";if(!o.d){var d=new Date();d.setDate(d.getDate()+7);o.d=d.toISOString().slice(0,10);}if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";var p=PRE[o.t]||PRE.luxury;if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le){o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}}if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le){o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}}var base=clean($("#base").value)||new URL("invite.html",location.href).href;var url=base.replace(/#.*$/,"#")+await encode(o);if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}}catch(e){}}
+async function updatePreview(){var frame=$("#livePreview");if(!frame||!document.querySelector("main")||document.querySelector("main").hidden)return;try{var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;if(!o.n)o.n="Ваши имена";if(!o.d){var d=new Date();d.setDate(d.getDate()+7);o.d=d.toISOString().slice(0,10);}if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";var p=PRE[o.t]||PRE.luxury;if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le){o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}}if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le){o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}}var base=clean($("#base").value)||new URL("invite.html",location.href).href;var url=base.replace(/#.*$/,"")+"#"+await encode(o);if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}}catch(e){}}
 function fileToWebp(file){return new Promise(function(resolve,reject){if(!file||!/^image\/(jpeg|png|webp)$/.test(file.type)){reject(new Error("Выберите JPG, PNG или WebP."));return;}var img=new Image(),u=URL.createObjectURL(file);img.onload=function(){var max=1500,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);var ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(blob){if(!blob){reject(new Error("Не удалось обработать фото."));return;}resolve(blob);},"image/webp",.78);};img.onerror=function(){URL.revokeObjectURL(u);reject(new Error("Не удалось прочитать изображение."));};img.src=u;});}
 function openPhotoDB(){if(!window.indexedDB)return Promise.reject(new Error("Браузер не поддерживает локальное хранилище фотографий."));if(!photoDBPromise)photoDBPromise=new Promise(function(resolve,reject){var req=indexedDB.open("saqtaa-local-media",1);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains("photos"))db.createObjectStore("photos",{keyPath:"id"});};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error||new Error("Не удалось открыть хранилище фото."));};});return photoDBPromise;}
 async function putPhoto(id,blob){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").put({id:id,blob:blob,type:blob.type||"image/webp"});tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error||new Error("Не удалось сохранить фото."));};});}
 async function getPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").get(id);req.onsuccess=function(){resolve(req.result?req.result.blob:null);};req.onerror=function(){reject(req.error);};});}
+async function delPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete(id);tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error);};});}
 async function allPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").getAll();req.onsuccess=function(){resolve(req.result||[]);};req.onerror=function(){reject(req.error);};});}
 async function clearPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").clear();tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});}
 function setCurrentPhoto(blob){currentPhotoBlob=blob||null;if(currentPhotoUrl)URL.revokeObjectURL(currentPhotoUrl);currentPhotoUrl=blob?URL.createObjectURL(blob):"";var img=$("#photoPreview");if(currentPhotoUrl){img.src=currentPhotoUrl;img.style.display="block";$("#photoStatus").textContent="Локальное фото сохранено · "+Math.round(blob.size/1024)+" КБ. Оно видно в предпросмотре, но ещё не включено в публичную ссылку.";}else{img.removeAttribute("src");img.style.display="none";$("#photoStatus").textContent="Локальное фото не выбрано. Для публичной ссылки используйте HTTPS-ссылку на размещённое изображение.";}schedulePreview();}
@@ -426,12 +443,12 @@ $("#p").addEventListener("input",function(){schedulePreview();});
 async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
 function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректный файл фотографии в резервной копии.");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
 $("#exportBackup").addEventListener("click",async function(){var status=$("#backupStatus");try{var photos=await allPhotos(),packed=[];for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});var payload={format:"SAQTAA_BACKUP",version:1,exportedAt:new Date().toISOString(),draft:localStorage.getItem(KEY),history:historyItems,photos:packed};var blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);status.textContent="Резервная копия создана. Храните файл в безопасном месте.";}catch(e){status.textContent="Ошибка экспорта: "+e.message;}});
-$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var i=0;i<(payload.photos||[]).length;i++)await putPhoto(payload.photos[i].id,dataUrlToBlob(payload.photos[i].data));if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=Array.isArray(payload.history)?payload.history.slice(-50):[];localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));var saved=payload.draft?JSON.parse(payload.draft):null;if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
+$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(!payload||payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");var parsedDraft=null;if(payload.draft){parsedDraft=JSON.parse(payload.draft);if(!parsedDraft||typeof parsedDraft!=="object")throw new Error("Повреждён черновик в резервной копии.");}var parsedPhotos=[];for(var i=0;i<(payload.photos||[]).length;i++){var ph=payload.photos[i];if(!ph||!ph.id)throw new Error("Повреждена запись фотографии в резервной копии.");parsedPhotos.push({id:String(ph.id),blob:dataUrlToBlob(ph.data)});}var validHistory=Array.isArray(payload.history)?payload.history.filter(function(x){return x&&typeof x==="object"&&x.data&&typeof x.data==="object";}).slice(-50):[];if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var j=0;j<parsedPhotos.length;j++)await putPhoto(parsedPhotos[j].id,parsedPhotos[j].blob);if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=validHistory;localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(parsedDraft&&parsedDraft.o){fillFrom(parsedDraft.o);if(parsedDraft.base)$("#base").value=parsedDraft.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
 
 /* ---------- события ---------- */
 $("#tpl").addEventListener("change",function(){
-  if(!$("#n").value.trim()||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
-  else{$("#bigWrap").hidden=(this.value!=="editorial");}
+  if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
+  else{lastTpl=this.value;$("#bigWrap").hidden=(this.value!=="editorial");}
   setTemplateCards();save();
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
@@ -456,16 +473,20 @@ function waLink(link){
 }
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
-  var o=collect(),msg=validate(o);
-  if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали локальное фото, но оно не попадёт в публичную ссылку. Сначала загрузите фото на хостинг и вставьте HTTPS-ссылку в поле выше либо уберите локальное фото.";
-  if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
-  var base=clean($("#base").value);
-  if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
-  var url=base.replace(/#.*$/,"")+"#"+await encode(o);
-  $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
-  $("#open").href=url;$("#wa").href=waLink(url);
-  $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
-  save();await storeHistory(o,url);schedulePreview();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+  try{
+    var o=collect(),msg=validate(o);
+    if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали локальное фото, но оно не попадёт в публичную ссылку. Сначала загрузите фото на хостинг и вставьте HTTPS-ссылку в поле выше либо уберите локальное фото.";
+    if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
+    var base=clean($("#base").value);
+    if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
+    var url=base.replace(/#.*$/,"")+"#"+await encode(o);
+    $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
+    $("#open").href=url;$("#wa").href=waLink(url);
+    $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
+    save();await storeHistory(o,url);schedulePreview();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){
+    err.textContent="Не удалось создать ссылку: "+(e&&e.message?e.message:"ошибка браузера");err.hidden=false;
+  }
 });
 async function copyFrom(sel){
   var el=$(sel);
