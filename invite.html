@@ -503,7 +503,33 @@ function tick(){
 }
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
-/* ---------- отправка ответа на почту (Web3Forms) ---------- */
+/* ---------- отправка ответа гостя (Google Таблица / Web3Forms) ---------- */
+async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
+  if(!D.sheet)return false;
+  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  var label=labels[val]||labels.yes;
+  var guestsCount=val==="yes"?1:0;
+  try{
+    var query="?action=rsvp"+
+      "&name="+encodeURIComponent(cleanNm)+
+      "&fam="+encodeURIComponent(cleanFm)+
+      "&att="+encodeURIComponent(label)+
+      "&guests="+encodeURIComponent(guestsCount)+
+      "&id="+encodeURIComponent(rsvpId)+
+      "&title="+encodeURIComponent(names())+(isUpdate?"&isUpdate=1":"");
+    await fetch(D.sheet+query,{method:"GET",mode:"no-cors"});
+    return true;
+  }catch(_){
+    try{
+      await fetch(D.sheet,{
+        method:"POST",
+        mode:"no-cors",
+        body:JSON.stringify({action:"rsvp",name:cleanNm,fam:cleanFm,att:label,guests:guestsCount,id:rsvpId,title:names()})
+      });
+      return true;
+    }catch(_e){return false;}
+  }
+}
 async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId,prevGuestInfo,botChecked){
   if(!D.k||botChecked)return false;
   var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
@@ -586,7 +612,14 @@ app.addEventListener("submit",async function(e){
 
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
-  var ok=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked));
+  var ok=true;
+  if(D.sheet){
+    ok=await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId);
+  }
+  if(D.k){
+    var okW=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked));
+    if(!D.sheet)ok=okW;
+  }
   isSubmitting=false;
   btn.disabled=false;btn.textContent=t("send");
   if(!ok){
