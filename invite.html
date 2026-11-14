@@ -503,32 +503,72 @@ function tick(){
 }
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
-/* ---------- отправка ответа гостя (Google Таблица / Web3Forms) ---------- */
+/* ---------- отправка ответа гостя (SAQTAA Server + MailApp / EmailJS / Web3Forms) ---------- */
 async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
-  if(!D.sheet)return false;
+  var srv=D.srv||D.sheet;
+  if(!srv)return false;
   var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
   var label=labels[val]||labels.yes;
   var guestsCount=val==="yes"?1:0;
+  var oid=D.oid||"default";
+  var toEmail=D.em||"";
+  var dateHuman=dDot(D.d)+(D.s?" "+D.s:"");
   try{
     var query="?action=rsvp"+
+      "&oid="+encodeURIComponent(oid)+
+      "&id="+encodeURIComponent(rsvpId)+
       "&name="+encodeURIComponent(cleanNm)+
       "&fam="+encodeURIComponent(cleanFm)+
+      "&att_code="+encodeURIComponent(val)+
       "&att="+encodeURIComponent(label)+
       "&guests="+encodeURIComponent(guestsCount)+
-      "&id="+encodeURIComponent(rsvpId)+
-      "&title="+encodeURIComponent(names())+(isUpdate?"&isUpdate=1":"");
-    await fetch(D.sheet+query,{method:"GET",mode:"no-cors"});
+      "&title="+encodeURIComponent(names())+
+      "&date="+encodeURIComponent(dateHuman)+
+      (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
+      (isUpdate?"&isUpdate=1":"");
+    await fetch(srv+query,{method:"GET",mode:"no-cors"});
     return true;
   }catch(_){
     try{
-      await fetch(D.sheet,{
+      await fetch(srv,{
         method:"POST",
         mode:"no-cors",
-        body:JSON.stringify({action:"rsvp",name:cleanNm,fam:cleanFm,att:label,guests:guestsCount,id:rsvpId,title:names()})
+        body:JSON.stringify({
+          action:"rsvp",oid:oid,id:rsvpId,name:cleanNm,fam:cleanFm,
+          att_code:val,att:label,guests:guestsCount,title:names(),
+          date:dateHuman,to_email:toEmail,isUpdate:isUpdate?1:0
+        })
       });
       return true;
     }catch(_e){return false;}
   }
+}
+async function postEmailJS(full,val,isUpdate,rsvpId){
+  if(!D.ejs||!D.ejs.s||!D.ejs.t||!D.ejs.u)return false;
+  var labels={yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"};
+  var label=labels[val]||labels.yes;
+  try{
+    var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        service_id:D.ejs.s,
+        template_id:D.ejs.t,
+        user_id:D.ejs.u,
+        template_params:{
+          to_email:D.em||"",
+          guest_name:full,
+          event_title:names(),
+          event_date:dDot(D.d)+(D.s?" "+D.s:""),
+          attendance:label,
+          guests_count:val==="yes"?1:0,
+          status_type:isUpdate?"Изменение ответа":"Новый ответ",
+          rsvp_id:rsvpId
+        }
+      })
+    });
+    return r.ok;
+  }catch(_){return false;}
 }
 async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId,prevGuestInfo,botChecked){
   if(!D.k||botChecked)return false;
@@ -586,14 +626,14 @@ app.addEventListener("submit",async function(e){
   var full=cleanNm+" "+cleanFm;
   var sec=f.closest(".iv-sec");
 
-  /* Если гость нажал «Изменить ответ», но ничего не менял — не отправляем дубликат в Web3Forms */
+  /* Если гость нажал «Изменить ответ», но ничего не менял — не отправляем дубликат */
   if(rsvpState&&rsvpState.sent&&rsvpState.sentNm===cleanNm&&rsvpState.sentFm===cleanFm&&rsvpState.sentAtt===val){
     rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;rsvpState.editing=false;
     saveRsvpState();
     showDoneCard(sec,full,val,true);
     return;
   }
-  /* Защита от слишком частой повторной отправки (клиентский cooldown 30 секунд) */
+  /* Защита от слишком частой повторной отправки (cooldown) */
   if(rsvpState&&rsvpState.lastSentAt&&(Date.now()-rsvpState.lastSentAt)<RSVP_COOLDOWN_MS){
     err.textContent=t("e_wait");
     return;
@@ -612,14 +652,17 @@ app.addEventListener("submit",async function(e){
 
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
-  var ok=true;
-  if(D.sheet){
-    ok=await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId);
+  var results=[];
+  if(D.srv||D.sheet){
+    results.push(await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId));
+  }
+  if(D.ejs&&D.ejs.s){
+    results.push(await postEmailJS(full,val,isUpdate,rsvpId));
   }
   if(D.k){
-    var okW=await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked));
-    if(!D.sheet)ok=okW;
+    results.push(await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked)));
   }
+  var ok=results.length===0?true:results.some(Boolean);
   isSubmitting=false;
   btn.disabled=false;btn.textContent=t("send");
   if(!ok){

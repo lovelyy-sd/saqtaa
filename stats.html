@@ -327,16 +327,17 @@ function updateStats(rows){
   renderList();
 }
 
+var orderId="";
 async function loadData(){
   if(!sheetUrl){
     $("#loading").hidden=true;
-    $("#errBox").textContent="Для этого приглашения не указана ссылка на Google Таблицу ответов.";
+    $("#errBox").textContent="Для этого приглашения не указана ссылка на сервер статистики SAQTAA.";
     $("#errBox").hidden=false;
     return;
   }
   try{
     $("#errBox").hidden=true;
-    var fetchUrl=sheetUrl+(sheetUrl.indexOf("?")===-1?"?":"&")+"action=stats&_t="+Date.now();
+    var fetchUrl=sheetUrl+(sheetUrl.indexOf("?")===-1?"?":"&")+"action=stats"+(orderId?"&oid="+encodeURIComponent(orderId):"")+"&_t="+Date.now();
     var res=await fetch(fetchUrl);
     var data=await res.json();
     if(data&&data.ok&&Array.isArray(data.rows)){
@@ -344,12 +345,12 @@ async function loadData(){
       $("#content").hidden=false;
       updateStats(data.rows);
     }else{
-      throw new Error(data.error||"Не удалось прочитать строки таблицы");
+      throw new Error(data.error||"Не удалось прочитать ответы гостей");
     }
   }catch(err){
     $("#loading").hidden=true;
     $("#content").hidden=false;
-    $("#errBox").textContent="Не удалось получить ответы из Google Таблицы. Проверьте подключение или доступ веб-приложения.";
+    $("#errBox").textContent="Не удалось получить ответы с сервера. Проверьте интернет или настройки сервера SAQTAA.";
     $("#errBox").hidden=false;
   }
 }
@@ -369,13 +370,15 @@ async function init(){
         dateStr=D.d||"";
         timeStr=D.s?(D.s+(D.e?" – "+D.e:"")):"";
         venueStr=[D.ve,D.ad].filter(Boolean).join(", ");
-        if(D.sheet)sheetUrl=D.sheet;
+        if(D.srv||D.sheet)sheetUrl=D.srv||D.sheet;
+        if(D.oid)orderId=D.oid;
         inviteUrl="invite.html"+hash;
       }
     }catch(_){}
   }
 
   if(params.get("sheet"))sheetUrl=params.get("sheet");
+  if(params.get("oid"))orderId=params.get("oid");
   if(params.get("title"))title=params.get("title");
   if(params.get("date"))dateStr=params.get("date");
 
