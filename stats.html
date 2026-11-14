@@ -139,6 +139,26 @@ main{max-width:760px;margin:0 auto;padding:18px 16px}
     </div>
 
     <div class="box">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+        <strong style="font-size:.88rem;color:var(--em)">Список ответивших гостей</strong>
+        <button class="chip active" id="toggleAddGuestBtn" type="button" style="min-height:34px;font-size:.78rem">➕ Добавить гостя</button>
+      </div>
+
+      <form id="addGuestForm" style="background:#F7FAF8;border:1px dashed var(--hair);border-radius:12px;padding:12px;margin-bottom:12px" hidden>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <input type="text" id="agName" class="search-input" placeholder="Имя гостя" style="margin:0;min-height:42px" required>
+          <input type="text" id="agFam" class="search-input" placeholder="Фамилия" style="margin:0;min-height:42px" required>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+          <select id="agAtt" class="search-input" style="margin:0;min-height:42px">
+            <option value="yes">✅ Придёт</option>
+            <option value="no">❌ Не придёт</option>
+            <option value="maybe">⏳ Пока не знает</option>
+          </select>
+          <button class="btn btn-main" type="submit" style="min-height:42px;padding:0 18px;font-size:.84rem">Сохранить</button>
+        </div>
+      </form>
+
       <input type="search" id="search" class="search-input" placeholder="🔍 Поиск по имени или фамилии...">
       <div class="chips">
         <button class="chip active" type="button" data-filter="all">Все (<span id="fAll">0</span>)</button>
@@ -147,22 +167,27 @@ main{max-width:760px;margin:0 auto;padding:18px 16px}
         <button class="chip" type="button" data-filter="maybe">Думают (<span id="fMaybe">0</span>)</button>
       </div>
       <div class="guest-list" id="guestList"></div>
-      <div id="noMatch" class="empty" hidden>Никого не найдено по этому запросу.</div>
+      <div id="noMatch" class="empty" hidden>Пока нет гостей в этой категории. Нажмите «➕ Добавить гостя» или отправьте ответ через приглашение.</div>
     </div>
 
     <div class="actions">
       <button class="btn btn-main" id="btnRefresh" type="button">🔄 Обновить данные</button>
+      <button class="btn btn-line" id="btnCopyWaReport" type="button" style="background:#E8F7EE;border-color:#B8E4C9;color:#115C33">📲 Скопировать список для WhatsApp</button>
+      <button class="btn btn-line" id="btnExportCsv" type="button" style="background:#FFFDF6">📥 Скачать таблицу гостей (Excel / CSV)</button>
       <a class="btn btn-line" id="btnInvite" target="_blank" rel="noopener" hidden>🔗 Открыть само приглашение</a>
       <a class="btn btn-line" id="btnSheet" target="_blank" rel="noopener" hidden>📊 Открыть в Google Таблице</a>
     </div>
   </div>
 </main>
+<div id="toast" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#182720;color:#F5EFE2;padding:11px 20px;border-radius:999px;font-size:.84rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99;max-width:90vw;text-align:center"></div>
 
 <script>
 (function(){
 "use strict";
 var $=function(s){return document.querySelector(s);};
 var allGuests=[];var curFilter="all";var sheetUrl="";var inviteUrl="";
+var toastTimer=null;
+function toast(m){var t=$("#toast");if(!t)return;t.textContent=m;t.style.opacity="1";clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.style.opacity="0";},2600);}
 
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
@@ -312,7 +337,7 @@ function updateStats(rows){
     }
   });
 
-  allGuests=rows.slice().reverse(); // свежие сверху
+  allGuests=rows.slice().reverse();
   $("#cntTotal").textContent=total;
   $("#cntYes").textContent=yesGuests;
   $("#cntNo").textContent=noCount;
@@ -328,32 +353,128 @@ function updateStats(rows){
 }
 
 var orderId="";
+var currentTitle="Приглашение";
+function getLocalRows(){
+  try{
+    var r=JSON.parse(localStorage.getItem("saqtaa-rsvp-rows-"+(orderId||"default"))||"[]");
+    return Array.isArray(r)?r:[];
+  }catch(_){return[];}
+}
+function saveLocalRow(row){
+  try{
+    var key="saqtaa-rsvp-rows-"+(orderId||"default");
+    var rows=getLocalRows();
+    var found=false;
+    for(var i=0;i<rows.length;i++){
+      if(rows[i].id===row.id||(String(rows[i].name||"").toLowerCase()===String(row.name||"").toLowerCase()&&String(rows[i].fam||"").toLowerCase()===String(row.fam||"").toLowerCase())){
+        rows[i]=row;found=true;break;
+      }
+    }
+    if(!found)rows.push(row);
+    localStorage.setItem(key,JSON.stringify(rows));
+  }catch(_){}
+}
+function mergeRows(cloudRows,localRows){
+  var map={},out=[];
+  cloudRows.forEach(function(r){
+    var k=r.id||((String(r.name||"")+"_"+String(r.fam||"")).toLowerCase());
+    map[k]=r;out.push(r);
+  });
+  localRows.forEach(function(r){
+    var k=r.id||((String(r.name||"")+"_"+String(r.fam||"")).toLowerCase());
+    if(!map[k]){map[k]=r;out.push(r);}
+  });
+  return out;
+}
+
 async function loadData(){
+  $("#loading").hidden=true;
+  $("#content").hidden=false;
+  $("#errBox").hidden=true;
+  var localRows=getLocalRows();
   if(!sheetUrl){
-    $("#loading").hidden=true;
-    $("#errBox").textContent="Для этого приглашения не указана ссылка на сервер статистики SAQTAA.";
-    $("#errBox").hidden=false;
+    updateStats(localRows);
     return;
   }
   try{
-    $("#errBox").hidden=true;
     var fetchUrl=sheetUrl+(sheetUrl.indexOf("?")===-1?"?":"&")+"action=stats"+(orderId?"&oid="+encodeURIComponent(orderId):"")+"&_t="+Date.now();
     var res=await fetch(fetchUrl);
     var data=await res.json();
     if(data&&data.ok&&Array.isArray(data.rows)){
-      $("#loading").hidden=true;
-      $("#content").hidden=false;
-      updateStats(data.rows);
+      updateStats(mergeRows(data.rows,localRows));
     }else{
-      throw new Error(data.error||"Не удалось прочитать ответы гостей");
+      updateStats(localRows);
     }
-  }catch(err){
-    $("#loading").hidden=true;
-    $("#content").hidden=false;
-    $("#errBox").textContent="Не удалось получить ответы с сервера. Проверьте интернет или настройки сервера SAQTAA.";
-    $("#errBox").hidden=false;
+  }catch(_){
+    updateStats(localRows);
   }
 }
+
+$("#toggleAddGuestBtn").addEventListener("click",function(){
+  var f=$("#addGuestForm");
+  f.hidden=!f.hidden;
+  if(!f.hidden)$("#agName").focus();
+});
+
+$("#addGuestForm").addEventListener("submit",async function(e){
+  e.preventDefault();
+  var nm=String($("#agName").value||"").trim();
+  var fm=String($("#agFam").value||"").trim();
+  var att=$("#agAtt").value||"yes";
+  if(!nm||!fm)return;
+  var pad=function(n){return String(n).padStart(2,"0");};
+  var now=new Date();
+  var tStr=pad(now.getDate())+"."+pad(now.getMonth()+1)+"."+now.getFullYear()+" "+pad(now.getHours())+":"+pad(now.getMinutes());
+  var gid="manual_"+Date.now().toString(36);
+  var row={oid:orderId||"default",id:gid,time:tStr,name:nm,fam:fm,att:att,guests:att==="yes"?1:0,title:currentTitle};
+  saveLocalRow(row);
+  $("#agName").value="";$("#agFam").value="";$("#addGuestForm").hidden=true;
+  await loadData();
+  toast("✅ Гость добавлен в статистику");
+  if(sheetUrl){
+    var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||"Придёт")+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle);
+    fetch(sheetUrl+q,{method:"GET",mode:"no-cors"}).catch(function(){});
+  }
+});
+
+$("#btnCopyWaReport").addEventListener("click",async function(){
+  var yes=[],no=[],maybe=[];
+  allGuests.slice().reverse().forEach(function(g){
+    var full=(g.name+" "+g.fam).trim();
+    if(g.normAtt==="yes")yes.push(full);
+    else if(g.normAtt==="no")no.push(full);
+    else maybe.push(full);
+  });
+  var lines=["📊 *Статистика ответов: "+currentTitle+"*",""];
+  lines.push("✅ *Придут ("+yes.length+"):*");
+  if(yes.length)yes.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— пока нет");
+  lines.push("");
+  lines.push("⏳ *Пока не знают ("+maybe.length+"):*");
+  if(maybe.length)maybe.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— нет");
+  lines.push("");
+  lines.push("❌ *Не придут ("+no.length+"):*");
+  if(no.length)no.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— нет");
+  var txt=lines.join("\n");
+  try{await navigator.clipboard.writeText(txt);toast("📲 Отчёт скопирован для WhatsApp!");}
+  catch(_){toast("Не удалось скопировать отчёт");}
+});
+
+$("#btnExportCsv").addEventListener("click",function(){
+  if(!allGuests.length){toast("Список гостей пока пуст");return;}
+  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  var csv="\uFEFF№;Имя;Фамилия;Статус;Количество;Время ответа\r\n";
+  allGuests.slice().reverse().forEach(function(g,idx){
+    var st=labels[g.normAtt]||"Придёт";
+    var escCsv=function(s){return'"'+String(s||"").replace(/"/g,'""')+'"';};
+    csv+=(idx+1)+";"+escCsv(g.name)+";"+escCsv(g.fam)+";"+escCsv(st)+";"+(g.normAtt==="yes"?1:0)+";"+escCsv(g.time)+"\r\n";
+  });
+  var blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download="saqtaa-guests-"+new Date().toISOString().slice(0,10)+".csv";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},1500);
+  toast("📥 Таблица скачана");
+});
 
 async function init(){
   var hash=location.hash;
@@ -381,6 +502,8 @@ async function init(){
   if(params.get("oid"))orderId=params.get("oid");
   if(params.get("title"))title=params.get("title");
   if(params.get("date"))dateStr=params.get("date");
+  if(!sheetUrl){try{sheetUrl=localStorage.getItem("saqtaa-server-url-v1")||"";}catch(_){}}
+  currentTitle=title;
 
   $("#eventTitle").textContent=title;
   var sub=[];
@@ -399,14 +522,12 @@ async function init(){
   }
   if(sheetUrl){
     var bs=$("#btnSheet");
-    // если sheetUrl - apps script, можно открыть саму таблицу если передана
     if(params.get("doc")){bs.href=params.get("doc");bs.hidden=false;}
   }
 
-  // Фильтры
-  document.querySelectorAll(".chip").forEach(function(b){
+  document.querySelectorAll(".chip[data-filter]").forEach(function(b){
     b.addEventListener("click",function(){
-      document.querySelectorAll(".chip").forEach(function(c){c.classList.remove("active");});
+      document.querySelectorAll(".chip[data-filter]").forEach(function(c){c.classList.remove("active");});
       b.classList.add("active");
       curFilter=b.dataset.filter;
       renderList();
@@ -414,11 +535,10 @@ async function init(){
   });
 
   $("#search").addEventListener("input",renderList);
-  $("#btnRefresh").addEventListener("click",loadData);
+  $("#btnRefresh").addEventListener("click",function(){loadData();toast("🔄 Данные обновлены");});
 
   await loadData();
-  // Автообновление каждые 30 секунд
-  setInterval(loadData,30000);
+  setInterval(loadData,20000);
 }
 
 window.addEventListener("DOMContentLoaded",init);
