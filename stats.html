@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0F4A38">
+<title>SAQTAA · Статистика ответов гостей</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gold-soft:#D9BC7F;
+  --paper:#F5EFE2;--paper2:#EFE6D2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;
+  --hair:rgba(24,39,32,.14);--fd:"Playfair Display",Georgia,serif;--fb:"Manrope",system-ui,sans-serif;
+  --green:#237A4B;--green-bg:#E9F5EE;--red:#9E2B3A;--red-bg:#FDF0F2;--yellow:#9E7318;--yellow-bg:#FFF8E7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  font-family:var(--fb);background:var(--paper);color:var(--ink);
+  line-height:1.5;min-height:100vh;min-height:100dvh;padding-bottom:60px;-webkit-font-smoothing:antialiased;
+}
+header{
+  background:var(--em2);color:#F2EBDA;padding:24px 20px 20px;
+  position:sticky;top:0;z-index:20;box-shadow:0 6px 20px rgba(10,35,27,.18);
+}
+.head-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-size:.78rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-soft)}
+.status-pill{
+  font-size:.72rem;font-weight:700;padding:5px 12px;border-radius:999px;
+  background:rgba(217,188,127,.18);color:var(--gold-soft);border:1px solid rgba(217,188,127,.35);
+  display:inline-flex;align-items:center;gap:6px;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#38D976;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.head-title{font-family:var(--fd);font-size:clamp(1.4rem,5.5vw,1.9rem);font-weight:700;margin-top:10px;line-height:1.2}
+.head-sub{font-size:.84rem;opacity:.8;margin-top:4px}
+
+main{max-width:760px;margin:0 auto;padding:18px 16px}
+
+/* Карточки счётчиков */
+.grid-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+.stat-card{
+  background:var(--card);border:1px solid var(--hair);border-radius:16px;
+  padding:16px 14px;display:flex;flex-direction:column;gap:4px;
+}
+.stat-card.yes{border-color:rgba(35,122,75,.3);background:var(--green-bg)}
+.stat-card.no{border-color:rgba(158,43,58,.25);background:var(--red-bg)}
+.stat-card.maybe{border-color:rgba(158,115,24,.3);background:var(--yellow-bg)}
+.stat-label{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--ink2)}
+.stat-card.yes .stat-label{color:var(--green)}
+.stat-card.no .stat-label{color:var(--red)}
+.stat-card.maybe .stat-label{color:var(--yellow)}
+.stat-val{font-family:var(--fd);font-size:clamp(1.8rem,7vw,2.4rem);font-weight:700;line-height:1}
+
+/* Панель поиска и фильтра */
+.box{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:16px;margin-bottom:14px}
+.search-input{
+  width:100%;min-height:50px;border:1px solid var(--hair);border-radius:12px;
+  padding:10px 14px;font:inherit;font-size:16px;background:#fff;color:var(--ink);
+  transition:border-color .2s;margin-bottom:12px;
+}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.chip{
+  flex:0 0 auto;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--hair);
+  background:#fff;font:inherit;font-size:.82rem;font-weight:700;cursor:pointer;color:var(--ink2);
+}
+.chip.active{background:var(--em);color:#F6F1E4;border-color:var(--em)}
+
+/* Список гостей */
+.guest-list{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.guest-card{
+  background:#fff;border:1px solid var(--hair);border-radius:12px;
+  padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.guest-info strong{display:block;font-size:1rem;color:var(--ink);word-break:break-word}
+.guest-info small{font-size:.76rem;color:var(--ink2)}
+.badge{
+  flex:0 0 auto;font-size:.74rem;font-weight:800;padding:6px 12px;border-radius:999px;
+  text-align:center;white-space:nowrap;
+}
+.badge.yes{background:var(--green-bg);color:var(--green);border:1px solid rgba(35,122,75,.3)}
+.badge.no{background:var(--red-bg);color:var(--red);border:1px solid rgba(158,43,58,.3)}
+.badge.maybe{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(158,115,24,.3)}
+
+/* Кнопки действий */
+.actions{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:52px;padding:10px 20px;border-radius:999px;font:inherit;font-weight:800;
+  font-size:.9rem;border:0;cursor:pointer;text-decoration:none;transition:transform .2s;
+}
+.btn:active{transform:scale(.98)}
+.btn-main{background:var(--em);color:#F6F1E4}
+.btn-line{background:none;border:1px solid var(--hair);color:var(--ink)}
+
+.empty{text-align:center;padding:32px 14px;color:var(--ink2);font-size:.9rem}
+.loading-box{text-align:center;padding:48px 16px;color:var(--ink2)}
+.spin{display:inline-block;width:32px;height:32px;border:3px solid var(--hair);border-top-color:var(--gold);border-radius:50%;animation:sp 1s linear infinite;margin-bottom:12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err-box{background:var(--red-bg);border:1px solid rgba(158,43,58,.3);color:var(--red);padding:14px;border-radius:12px;margin-bottom:14px;font-size:.88rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-top">
+    <span class="brand">SAQTAA · ОНЛАЙН-ОТВЕТЫ</span>
+    <span class="status-pill"><span class="dot"></span><span id="updateTime">Обновляется</span></span>
+  </div>
+  <h1 class="head-title" id="eventTitle">Загрузка...</h1>
+  <p class="head-sub" id="eventSub"></p>
+</header>
+
+<main>
+  <div id="loading" class="loading-box"><div class="spin"></div><p>Загрузка статистики ответов...</p></div>
+  <div id="errBox" class="err-box" hidden></div>
+
+  <div id="content" hidden>
+    <div class="grid-stats">
+      <div class="stat-card">
+        <span class="stat-label">Всего ответов</span>
+        <span class="stat-val" id="cntTotal">0</span>
+      </div>
+      <div class="stat-card yes">
+        <span class="stat-label">Придут (гостей)</span>
+        <span class="stat-val" id="cntYes">0</span>
+      </div>
+      <div class="stat-card no">
+        <span class="stat-label">Не придут</span>
+        <span class="stat-val" id="cntNo">0</span>
+      </div>
+      <div class="stat-card maybe">
+        <span class="stat-label">Пока не знают</span>
+        <span class="stat-val" id="cntMaybe">0</span>
+      </div>
+    </div>
+
+    <div class="box">
+      <input type="search" id="search" class="search-input" placeholder="🔍 Поиск по имени или фамилии...">
+      <div class="chips">
+        <button class="chip active" type="button" data-filter="all">Все (<span id="fAll">0</span>)</button>
+        <button class="chip" type="button" data-filter="yes">Придут (<span id="fYes">0</span>)</button>
+        <button class="chip" type="button" data-filter="no">Не придут (<span id="fNo">0</span>)</button>
+        <button class="chip" type="button" data-filter="maybe">Думают (<span id="fMaybe">0</span>)</button>
+      </div>
+      <div class="guest-list" id="guestList"></div>
+      <div id="noMatch" class="empty" hidden>Никого не найдено по этому запросу.</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-main" id="btnRefresh" type="button">🔄 Обновить данные</button>
+      <a class="btn btn-line" id="btnInvite" target="_blank" rel="noopener" hidden>🔗 Открыть само приглашение</a>
+      <a class="btn btn-line" id="btnSheet" target="_blank" rel="noopener" hidden>📊 Открыть в Google Таблице</a>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+"use strict";
+var $=function(s){return document.querySelector(s);};
+var allGuests=[];var curFilter="all";var sheetUrl="";var inviteUrl="";
+
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
+
+function rawInflate(src,maxOut){
+  var pos=0,bitBuf=0,bitCnt=0,limit=maxOut||200000;
+  var out=new Uint8Array(Math.min(limit,Math.max(1024,src.length*4))),outPos=0;
+  function writeByte(b){if(outPos>=limit)throw new Error("overflow");if(outPos>=out.length){var n=new Uint8Array(Math.min(limit,out.length*2));n.set(out);out=n;}out[outPos++]=b;}
+  function bits(n){while(bitCnt<n){if(pos>=src.length)throw new Error("eof");bitBuf|=src[pos++]<<bitCnt;bitCnt+=8;}var v=bitBuf&((1<<n)-1);bitBuf>>>=n;bitCnt-=n;return v;}
+  function buildTree(lens){
+    var c=new Int32Array(16),nc=new Int32Array(16),mb=0;
+    for(var i=0;i<lens.length;i++)if(lens[i]){c[lens[i]]++;if(lens[i]>mb)mb=lens[i];}
+    var code=0;for(var b=1;b<=15;b++){code=(code+c[b-1])<<1;nc[b]=code;}
+    var map=new Int32Array(1<<(mb+1)).fill(-1);
+    for(var s=0;s<lens.length;s++){var l=lens[s];if(l)map[(1<<l)|(nc[l]++)]=s;}
+    return{map:map,max:mb};
+  }
+  function sym(tree){
+    var code=0,len=0;
+    while(len<tree.max){code=(code<<1)|bits(1);len++;var v=tree.map[(1<<len)|code];if(v>=0)return v;}
+    throw new Error("bad tree");
+  }
+  var fixedLit=null,fixedDist=null;
+  function getFixed(){
+    if(!fixedLit){
+      var l=new Uint8Array(288);
+      for(var i=0;i<=143;i++)l[i]=8;for(i=144;i<=255;i++)l[i]=9;
+      for(i=256;i<=279;i++)l[i]=7;for(i=280;i<=287;i++)l[i]=8;
+      fixedLit=buildTree(l);var d=new Uint8Array(32);for(i=0;i<32;i++)d[i]=5;fixedDist=buildTree(d);
+    }
+    return{l:fixedLit,d:fixedDist};
+  }
+  var LB=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+  var LE=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  var DB=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+  var DE=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+  var CLO=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+
+  var final=0;
+  while(!final){
+    final=bits(1);var type=bits(2);
+    if(type===0){
+      bitBuf=0;bitCnt=0;
+      if(pos+4>src.length)throw new Error("len");
+      var len=src[pos]|(src[pos+1]<<8);pos+=4;
+      for(var i=0;i<len;i++)writeByte(src[pos++]);
+    }else if(type===1||type===2){
+      var tL,tD;
+      if(type===1){var f=getFixed();tL=f.l;tD=f.d;}
+      else{
+        var hlit=bits(5)+257,hdist=bits(5)+1,hclen=bits(4)+4;
+        var clen=new Uint8Array(19);for(var i=0;i<hclen;i++)clen[CLO[i]]=bits(3);
+        var tC=buildTree(clen);var ll=[];
+        while(ll.length<hlit+hdist){
+          var s=sym(tC);
+          if(s<=15)ll.push(s);
+          else if(s===16){var r=bits(2)+3,pv=ll[ll.length-1];while(r--)ll.push(pv);}
+          else if(s===17){var r2=bits(3)+3;while(r2--)ll.push(0);}
+          else{var r3=bits(7)+11;while(r3--)ll.push(0);}
+        }
+        tL=buildTree(ll.slice(0,hlit));tD=buildTree(ll.slice(hlit));
+      }
+      for(;;){
+        var c=sym(tL);
+        if(c===256)break;
+        if(c<256)writeByte(c);
+        else{
+          var li=c-257,ln=LB[li]+bits(LE[li]),di=sym(tD),ds=DB[di]+bits(DE[di]);
+          for(i=0;i<ln;i++)writeByte(out[outPos-ds]);
+        }
+      }
+    }else throw new Error("block");
+  }
+  return out.slice(0,outPos);
+}
+
+async function decodeHash(h){
+  h=String(h||"").replace(/^#/,"");
+  if(!h)return null;
+  var mode=h[0],bytes=unb64u(h.slice(1));
+  if(mode==="z"){
+    if(typeof DecompressionStream!=="undefined"){
+      var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
+      bytes=new Uint8Array(await r.arrayBuffer());
+    }else{
+      bytes=rawInflate(bytes,200000);
+    }
+  }else if(mode!=="j"){return null;}
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+function parseAtt(val){
+  val=String(val||"").toLowerCase();
+  if(val==="yes"||val.indexOf("прид")!==-1||val.indexOf("келед")!==-1)return"yes";
+  if(val==="no"||val.indexOf("не прид")!==-1||val.indexOf("келмей")!==-1)return"no";
+  return"maybe";
+}
+
+function renderList(){
+  var q=$("#search").value.toLowerCase().trim();
+  var filtered=allGuests.filter(function(g){
+    var att=g.normAtt;
+    if(curFilter!=="all"&&att!==curFilter)return false;
+    if(q){
+      var full=(g.name+" "+g.fam).toLowerCase();
+      if(full.indexOf(q)===-1)return false;
+    }
+    return true;
+  });
+
+  var list=$("#guestList");
+  var noMatch=$("#noMatch");
+  if(!filtered.length){
+    list.innerHTML="";
+    noMatch.hidden=false;
+    return;
+  }
+  noMatch.hidden=true;
+
+  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  list.innerHTML=filtered.map(function(g){
+    var att=g.normAtt;
+    var badgeLabel=labels[att]||labels.maybe;
+    if(att==="yes"&&g.guests>1)badgeLabel="Придут ("+g.guests+")";
+    var timeStr=g.time?esc(g.time):"Только что";
+    var fullName=esc((g.name+" "+g.fam).trim()||"Гость без имени");
+    return '<div class="guest-card">'+
+      '<div class="guest-info"><strong>'+fullName+'</strong><small>'+timeStr+'</small></div>'+
+      '<span class="badge '+att+'">'+badgeLabel+'</span>'+
+    '</div>';
+  }).join("");
+}
+
+function updateStats(rows){
+  var total=rows.length,yesGuests=0,noCount=0,maybeCount=0;
+  var yesCount=0;
+  rows.forEach(function(r){
+    var norm=parseAtt(r.att);
+    r.normAtt=norm;
+    if(norm==="yes"){
+      yesCount++;
+      yesGuests+=(Number(r.guests)||1);
+    }else if(norm==="no"){
+      noCount++;
+    }else{
+      maybeCount++;
+    }
+  });
+
+  allGuests=rows.slice().reverse(); // свежие сверху
+  $("#cntTotal").textContent=total;
+  $("#cntYes").textContent=yesGuests;
+  $("#cntNo").textContent=noCount;
+  $("#cntMaybe").textContent=maybeCount;
+
+  $("#fAll").textContent=total;
+  $("#fYes").textContent=yesCount;
+  $("#fNo").textContent=noCount;
+  $("#fMaybe").textContent=maybeCount;
+
+  $("#updateTime").textContent=new Date().toLocaleTimeString().slice(0,5);
+  renderList();
+}
+
+async function loadData(){
+  if(!sheetUrl){
+    $("#loading").hidden=true;
+    $("#errBox").textContent="Для этого приглашения не указана ссылка на Google Таблицу ответов.";
+    $("#errBox").hidden=false;
+    return;
+  }
+  try{
+    $("#errBox").hidden=true;
+    var fetchUrl=sheetUrl+(sheetUrl.indexOf("?")===-1?"?":"&")+"action=stats&_t="+Date.now();
+    var res=await fetch(fetchUrl);
+    var data=await res.json();
+    if(data&&data.ok&&Array.isArray(data.rows)){
+      $("#loading").hidden=true;
+      $("#content").hidden=false;
+      updateStats(data.rows);
+    }else{
+      throw new Error(data.error||"Не удалось прочитать строки таблицы");
+    }
+  }catch(err){
+    $("#loading").hidden=true;
+    $("#content").hidden=false;
+    $("#errBox").textContent="Не удалось получить ответы из Google Таблицы. Проверьте подключение или доступ веб-приложения.";
+    $("#errBox").hidden=false;
+  }
+}
+
+async function init(){
+  var hash=location.hash;
+  var params=new URLSearchParams(location.search);
+  var title="Статистика ответов";
+  var dateStr="",timeStr="";
+
+  var venueStr="";
+  if(hash){
+    try{
+      var D=await decodeHash(hash);
+      if(D){
+        title=D.n||"Приглашение";
+        dateStr=D.d||"";
+        timeStr=D.s?(D.s+(D.e?" – "+D.e:"")):"";
+        venueStr=[D.ve,D.ad].filter(Boolean).join(", ");
+        if(D.sheet)sheetUrl=D.sheet;
+        inviteUrl="invite.html"+hash;
+      }
+    }catch(_){}
+  }
+
+  if(params.get("sheet"))sheetUrl=params.get("sheet");
+  if(params.get("title"))title=params.get("title");
+  if(params.get("date"))dateStr=params.get("date");
+
+  $("#eventTitle").textContent=title;
+  var sub=[];
+  if(dateStr){
+    var dotD=dateStr.split("-").reverse().join(".");
+    sub.push("📅 "+dotD);
+  }
+  if(timeStr)sub.push("⏰ "+timeStr);
+  if(venueStr)sub.push("📍 "+venueStr);
+  $("#eventSub").textContent=sub.join(" · ");
+
+  if(inviteUrl){
+    var bi=$("#btnInvite");
+    bi.href=inviteUrl;
+    bi.hidden=false;
+  }
+  if(sheetUrl){
+    var bs=$("#btnSheet");
+    // если sheetUrl - apps script, можно открыть саму таблицу если передана
+    if(params.get("doc")){bs.href=params.get("doc");bs.hidden=false;}
+  }
+
+  // Фильтры
+  document.querySelectorAll(".chip").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll(".chip").forEach(function(c){c.classList.remove("active");});
+      b.classList.add("active");
+      curFilter=b.dataset.filter;
+      renderList();
+    });
+  });
+
+  $("#search").addEventListener("input",renderList);
+  $("#btnRefresh").addEventListener("click",loadData);
+
+  await loadData();
+  // Автообновление каждые 30 секунд
+  setInterval(loadData,30000);
+}
+
+window.addEventListener("DOMContentLoaded",init);
+})();
+</script>
+</body>
+</html>

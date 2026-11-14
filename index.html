@@ -537,6 +537,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
 .rd-gcal:hover{opacity:1}
 .rd-title:focus{outline:none} /* заголовок получает фокус только для экранного диктора */
 .price-card{display:grid;gap:28px;background:var(--em);color:#F2EBDA;border-radius:calc(var(--r) + 6px);padding:clamp(26px,6vw,52px)}
+.price-card>*{min-width:0}
 .price-card .eyebrow{color:var(--gold-soft)}
 .pc-h{font-size:clamp(1.7rem,6vw,2.6rem);color:#FFF7E4;margin-top:10px}
 .pc-sum{font-family:var(--fd);font-weight:700;font-size:clamp(2.8rem,12vw,4.4rem);line-height:1;color:var(--gold-soft);margin:14px 0 10px}
@@ -563,7 +564,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
 .foot-contacts a:hover b{color:var(--gold-soft)}
 @media(min-width:720px){.foot-contacts{grid-auto-flow:column;gap:28px;text-align:right}.foot-contacts a{align-items:flex-end}}
 .invite .names{font-size:clamp(1.55rem,6.4vw,2.4rem);letter-spacing:.02em;line-height:1.15;overflow-wrap:break-word}
-@media(max-width:420px){.hero-txt h1{font-size:clamp(2rem,8.6vw,2.6rem)}}
+@media(max-width:420px){.hero-txt h1{font-size:clamp(2rem,8.6vw,2.6rem)}.btn{max-width:100%;white-space:normal;text-align:center;padding:.8em 1.2em}}
 </style>
 </head>
 <body>
@@ -1432,8 +1433,41 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     });
   }
   function renderSlides(){
+    const savedRsvp={};
+    qsa(".demo-slide").forEach(sl=>{
+      const idx=sl.dataset.i,f=sl.querySelector(".rs-form"),done=sl.querySelector(".rs-done");
+      if(!f)return;
+      const [nm,fm]=f.querySelectorAll("input[type=text]");
+      const chk=f.querySelector("input[type=radio]:checked");
+      savedRsvp[idx]={
+        name:nm?nm.value:"",
+        fam:fm?fm.value:"",
+        att:chk?chk.value:"yes",
+        submitted:Boolean(done&&!done.hidden),
+        fullName:done&&done.querySelector(".rd-name")?done.querySelector(".rd-name").textContent:""
+      };
+    });
     track.innerHTML=DEMOS.map(slideHTML).join("");
     dots.innerHTML=DEMOS.map((d,i)=>`<button data-i="${i}" aria-label="${t("dot_tpl")} ${i+1}">✦</button>`).join("");
+    qsa(".demo-slide").forEach(sl=>{
+      const st=savedRsvp[sl.dataset.i];
+      if(!st)return;
+      const f=sl.querySelector(".rs-form"),done=sl.querySelector(".rs-done");
+      if(f){
+        const [nm,fm]=f.querySelectorAll("input[type=text]");
+        if(nm)nm.value=st.name;
+        if(fm)fm.value=st.fam;
+        const rad=f.querySelector(`input[type=radio][value="${st.att}"]`);
+        if(rad)rad.checked=true;
+      }
+      if(st.submitted&&done&&f){
+        done.querySelector(".rd-name").textContent=st.fullName||(st.name.trim()+" "+st.fam.trim()).trim();
+        done.querySelector(".rd-msg").textContent=t("ok_"+st.att);
+        done.querySelector(".rd-cals").hidden=st.att==="no";
+        f.hidden=true;
+        done.hidden=false;
+      }
+    });
     qsa(".rs-form").forEach(syncOpts);
     applyPhotos();setSlide(cur,true);tick();
   }
@@ -1469,7 +1503,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     view.classList.add("open");view.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
     lastFocus=document.activeElement;pageInert(true);focusClose(30);
-    updCta();
+    tick();updCta();
   }
   function closeViewer(){
     view.classList.remove("open");view.setAttribute("aria-hidden","true");
@@ -1684,8 +1718,9 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
   function pad(n){return String(n).padStart(2,"0");}
   /* у каждого блока отсчёта своё событие: data-ev → EVENTS */
   function tick(){
-    const now=Date.now();
+    const now=Date.now(),viewerOpen=view.classList.contains("open");
     qsa(".cd[data-ev]").forEach(cd=>{
+      if(!viewerOpen&&cd!==heroCd)return;
       const d=Math.max(0,evStart(+cd.dataset.ev)-now);
       const v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};
       for(const k in v){

@@ -70,7 +70,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 </style>
 </head>
 <body>
-<header><h1>SAQTAA · Создать приглашение</h1><p>Автосохранение · предпросмотр · история · резервная копия</p></header>
+<header>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <div>
+      <h1>SAQTAA · Создать приглашение</h1>
+      <p>Автосохранение · предпросмотр · история · резервная копия</p>
+    </div>
+    <button class="btn line" id="mobPreviewBtn" type="button" style="width:auto;min-height:38px;padding:6px 14px;font-size:.8rem;color:var(--gs);border-color:var(--gs);margin:0;white-space:nowrap">👁️ Просмотр</button>
+  </div>
+</header>
 <section class="gate" id="gate">
   <form id="gateForm" autocomplete="off">
     <h2>Вход</h2>
@@ -168,18 +176,38 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   <label for="photoFile">Загрузить фото с телефона или компьютера</label>
   <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp">
   <img id="photoPreview" class="photo-preview" alt="Предпросмотр выбранного фото">
-  <p class="hint" id="photoStatus">Фото сохраняется в браузере для черновика и предпросмотра. Для публичной ссылки загрузите его на хостинг и вставьте HTTPS-ссылку ниже.</p>
+  <p class="hint" id="photoStatus">Фото сохраняется в браузере для черновика и предпросмотра. Для публичной ссылки вставьте HTTPS-ссылку на фото ниже.</p>
   <button class="btn line" id="clearPhoto" type="button">Убрать локальное фото</button>
-  <label for="p">Или вставить ссылку на фото</label>
+  <label for="p">Или вставить ссылку на фото (Google Диск, Imgur, Telegram и др.)</label>
   <input id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
   <p class="hint">Если фото не добавлено, приглашение останется без фотографии.</p>
-  <label style="display:flex;align-items:center;gap:10px;margin-top:14px">
-    <input id="rsvp" type="checkbox" checked style="width:20px;min-height:20px;margin:0">
-    Включить RSVP (ответы гостей)
-  </label>
-  <label for="k">Ключ Web3Forms клиента</label>
-  <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
-  <p class="hint">Ключ создаётся в Web3Forms на почту клиента. При включённом RSVP он обязателен.</p>
+
+  <label style="margin-top:14px">Куда собирать ответы гостей (RSVP)?</label>
+  <div class="seg" id="rsvpSeg">
+    <button type="button" data-r="sheet" class="on">Google Таблица (онлайн-статистика)</button>
+    <button type="button" data-r="w3f">На почту (Web3Forms)</button>
+    <button type="button" data-r="none">Без ответов</button>
+  </div>
+
+  <div id="rsvpSheetWrap" style="margin-top:12px">
+    <label for="sheet">Ссылка веб-приложения Google Таблицы (URL Apps Script)</label>
+    <input id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+    <button class="btn line" id="copyAppScript" type="button" style="margin-top:8px">📋 Скопировать готовый код для Google Таблицы</button>
+    <div class="hint" style="margin-top:8px;background:#fbf8f1;padding:12px;border-radius:10px;border:1px solid var(--hair);line-height:1.5">
+      <strong>Инструкция для Google Таблицы (за 1 минуту):</strong><br>
+      1. Создайте пустую Google Таблицу на <a href="https://sheets.new" target="_blank" rel="noopener" style="color:var(--em);font-weight:700;text-decoration:underline">sheets.new</a>.<br>
+      2. В меню нажмите <em>«Расширения» → «Apps Script»</em>, сотрите весь текст и нажмите кнопку «Скопировать готовый код» выше.<br>
+      3. Нажмите синюю кнопку <em>«Развернуть» → «Новое развертывание»</em> → шестеренка слева «Тип: Веб-приложение» → У кого есть доступ: <strong>«Все» (Anyone)</strong> → нажмите «Развернуть».<br>
+      4. Скопируйте полученную ссылку на веб-приложение и вставьте её сюда.<br>
+      ✦ <em>Клиенту можно будет отправить готовую ссылку онлайн-статистики, которая сама обновляется при каждом ответе гостя!</em>
+    </div>
+  </div>
+
+  <div id="rsvpW3fWrap" style="margin-top:12px" hidden>
+    <label for="k">Ключ Web3Forms клиента</label>
+    <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+    <p class="hint">Ключ создаётся на web3forms.com на почту клиента. Ответы гостей будут приходить письмами на указанную почту.</p>
+  </div>
 </div>
 
 <div class="box">
@@ -190,10 +218,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   <button class="btn main" id="make" type="button">Создать ссылку</button>
   <p class="err" id="mkErr" hidden></p>
   <div id="result" hidden>
-    <label for="out">Ссылка приглашения</label>
+    <label for="out">🔗 Ссылка приглашения (для отправки гостям)</label>
     <textarea id="out" class="out" readonly></textarea>
     <p class="ok" id="len"></p>
-    <button class="btn gold" id="copy" type="button">Скопировать ссылку</button>
+    <button class="btn gold" id="copy" type="button">Скопировать ссылку приглашения</button>
     <button class="btn line" id="sh" type="button">Сократить ссылку (is.gd)</button>
     <p class="hint">Сокращатель is.gd увидит содержимое ссылки. Проверьте короткую ссылку перед отправкой.</p>
     <p class="err" id="shErr" hidden></p>
@@ -202,14 +230,24 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
       <input id="shOut" type="text" readonly>
       <button class="btn gold" id="shCopy" type="button">Скопировать короткую</button>
     </div>
+
+    <div id="statsBox" style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--hair)" hidden>
+      <label for="statsOut">📊 Ссылка статистики для клиента (обновляется в реальном времени)</label>
+      <textarea id="statsOut" class="out" readonly style="min-height:75px"></textarea>
+      <button class="btn gold" id="copyStats" type="button">Скопировать ссылку статистики для клиента</button>
+      <a class="btn line" id="openStats" target="_blank" rel="noopener">Открыть страницу статистики</a>
+    </div>
+
     <a class="btn main" id="open" target="_blank" rel="noopener">Предпросмотр приглашения</a>
-    <a class="btn line" id="wa" target="_blank" rel="noopener">Отправить в WhatsApp</a>
+    <a class="btn line" id="wa" target="_blank" rel="noopener">Отправить клиенту в WhatsApp</a>
   </div>
 </div>
 
 <div class="box">
   <h2>8. История приглашений</h2>
-  <p class="hint">Созданные приглашения сохраняются на этом устройстве. Можно открыть, клонировать или удалить запись.</p>
+  <p class="hint">Созданные приглашения сохраняются на этом устройстве. Поиск по названию мероприятия, дате или времени.</p>
+  <label for="histSearch">Поиск по сохранённым заказам</label>
+  <input id="histSearch" type="search" placeholder="🔍 Начните вводить имя, дату (напр. 2027-02-14) или время..." autocomplete="off">
   <div id="historyList"><p class="hint">История пока пуста.</p></div>
 </div>
 <div class="box">
@@ -220,8 +258,15 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
   <input id="importBackup" type="file" accept="application/json,.json">
   <p class="hint" id="backupStatus" aria-live="polite">Рекомендуется делать копию после каждого важного заказа.</p>
 </div>
+<div class="box preview-box">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+    <h2 style="margin:0">Живой предпросмотр</h2>
+    <button class="btn line" id="mobBackBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">⬆️ К редактированию</button>
+  </div>
+  <div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div>
+  <p class="preview-note">Обновляется автоматически при изменении полей. Локальное фото видно только в этом браузере; для гостей нужна публичная HTTPS-ссылка.</p>
+  <p class="save-state" id="saveState">Черновик ещё не сохранён.</p>
 </div>
-<div class="box preview-box"><h2>Живой предпросмотр</h2><div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div><p class="preview-note">Обновляется автоматически при изменении полей. Локальное фото видно только в этом браузере; для гостей нужна публичная HTTPS-ссылка.</p><p class="save-state" id="saveState">Черновик ещё не сохранён.</p></div>
 </div>
 </main>
 <div class="toast" id="toast" role="status"></div>
@@ -232,6 +277,68 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 var $=function(s){return document.querySelector(s);};
 var KEY="saqtaa-admin-v2", HIST_KEY="saqtaa-history-v1";
 var historyItems=[];var previewTimer=null;var photoDBPromise=null;var currentPhotoBlob=null;var currentPhotoUrl="";
+var currentRsvpMode="sheet";
+
+var APPS_SCRIPT_CODE = [
+'function setup(){',
+'  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();',
+'  if(sheet.getLastRow() === 0){',
+'    sheet.appendRow(["Дата и время", "Имя", "Фамилия", "Ответ", "Гостей", "ID", "Мероприятие"]);',
+'    sheet.getRange(1, 1, 1, 7).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#FFFFFF");',
+'  }',
+'}',
+'function doGet(e){ return handleRequest(e ? e.parameter : {}); }',
+'function doPost(e){',
+'  var p = {};',
+'  try{ if(e && e.postData && e.postData.contents) p = JSON.parse(e.postData.contents); }catch(_){}',
+'  if(!p.action && e && e.parameter){ for(var k in e.parameter) p[k] = e.parameter[k]; }',
+'  return handleRequest(p);',
+'}',
+'function handleRequest(p){',
+'  var lock = LockService.getScriptLock();',
+'  lock.tryLock(10000);',
+'  try{',
+'    var ss = SpreadsheetApp.getActiveSpreadsheet();',
+'    var sheet = ss.getActiveSheet();',
+'    setup();',
+'    var action = p.action || "rsvp";',
+'    if(action === "stats" || action === "get"){',
+'      var data = sheet.getDataRange().getValues();',
+'      var rows = [];',
+'      for(var i = 1; i < data.length; i++){',
+'        var r = data[i];',
+'        if(r[1] || r[2]){',
+'          rows.push({ time: r[0], name: String(r[1]||""), fam: String(r[2]||""), att: String(r[3]||""), guests: Number(r[4]||0), id: String(r[5]||""), title: String(r[6]||"") });',
+'        }',
+'      }',
+'      return ContentService.createTextOutput(JSON.stringify({ ok: true, rows: rows })).setMimeType(ContentService.MimeType.JSON);',
+'    }',
+'    if(action === "rsvp"){',
+'      var name = String(p.name || "").trim();',
+'      var fam = String(p.fam || "").trim();',
+'      var att = String(p.att || "yes").trim();',
+'      var id = String(p.id || "").trim();',
+'      var guests = Number(p.guests != null ? p.guests : (att === "yes" || att.indexOf("прид")!==-1 ? 1 : 0));',
+'      var title = String(p.title || "").trim();',
+'      var now = Utilities.formatDate(new Date(), "Asia/Almaty", "dd.MM.yyyy HH:mm");',
+'      var data = sheet.getDataRange().getValues();',
+'      var foundRow = -1;',
+'      if(id){ for(var j = 1; j < data.length; j++){ if(String(data[j][5]) === id){ foundRow = j + 1; break; } } }',
+'      if(foundRow > 0){',
+'        sheet.getRange(foundRow, 1, 1, 7).setValues([[now, name, fam, att, guests, id, title]]);',
+'      } else {',
+'        sheet.appendRow([now, name, fam, att, guests, id, title]);',
+'      }',
+'      return ContentService.createTextOutput(JSON.stringify({ ok: true, id: id })).setMimeType(ContentService.MimeType.JSON);',
+'    }',
+'    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: "unknown_action" })).setMimeType(ContentService.MimeType.JSON);',
+'  }catch(err){',
+'    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) })).setMimeType(ContentService.MimeType.JSON);',
+'  }finally{',
+'    lock.releaseLock();',
+'  }',
+'}'
+].join('\n');
 
 /* ---------- заготовки шаблонов: [время, название RU, описание RU, название KZ, описание KZ] ---------- */
 var PRE={
@@ -315,8 +422,19 @@ function setLang(l){
   showText();
   if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на этом языке подставлены из шаблона — замените их переводом вашего текста");
 }
+function isPresetUnchanged(k){
+  var p=PRE[k];if(!p)return false;
+  grabText();
+  if(st.ru.ti!==p.ti[0]||st.ru.le!==p.le[0]||st.ru.sg!==p.sg[0])return false;
+  if(st.kz.ti!==p.ti[1]||st.kz.le!==p.le[1]||st.kz.sg!==p.sg[1])return false;
+  if(st.rows.length!==p.pr.length)return false;
+  for(var i=0;i<p.pr.length;i++){for(var j=0;j<5;j++)if((st.rows[i][j]||"")!==(p.pr[i][j]||""))return false;}
+  return true;
+}
+var lastTpl="luxury";
 function applyPreset(k){
   var p=PRE[k];if(!p)return;
+  lastTpl=k;
   st.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0]};st.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1]};
   st.rows=p.pr.map(function(r){return r.slice();});
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
@@ -338,14 +456,84 @@ async function encode(obj){
   }
   return"j"+b64u(raw);
 }
+function rawInflate(src,maxOut){
+  var p=0,b=0,n=0,out=[];
+  function bits(k){while(n<k){if(p>=src.length)throw new Error("eof");b|=src[p++]<<n;n+=8;}var v=b&((1<<k)-1);b>>>=k;n-=k;return v;}
+  function build(lens){
+    var max=0,cnt=[],next=[],tbl={},i;
+    for(i=0;i<lens.length;i++)if(lens[i]>max)max=lens[i];
+    if(!max)return{tbl:tbl,max:0};
+    for(i=0;i<=max;i++)cnt[i]=0;
+    for(i=0;i<lens.length;i++)if(lens[i])cnt[lens[i]]++;
+    var code=0;cnt[0]=0;
+    for(i=1;i<=max;i++){code=(code+cnt[i-1])<<1;next[i]=code;}
+    for(i=0;i<lens.length;i++){var l=lens[i];if(l){tbl[(l<<16)|next[l]]=i;next[l]++;}}
+    return{tbl:tbl,max:max};
+  }
+  function sym(h){
+    var code=0;
+    for(var l=1;l<=h.max;l++){code=(code<<1)|bits(1);var k=(l<<16)|code;if(k in h.tbl)return h.tbl[k];}
+    throw new Error("huff");
+  }
+  var FL=[],FD=[],i;
+  for(i=0;i<=143;i++)FL[i]=8;for(;i<=255;i++)FL[i]=9;for(;i<=279;i++)FL[i]=7;for(;i<=287;i++)FL[i]=8;
+  for(i=0;i<32;i++)FD[i]=5;
+  var fixL=build(FL),fixD=build(FD);
+  var LB=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258];
+  var LE=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0];
+  var DB=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577];
+  var DE=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13];
+  var CO=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];
+  var last=0;
+  while(!last){
+    last=bits(1);var t=bits(2);
+    if(t===0){
+      b=0;n=0;if(p+4>src.length)throw new Error("eof");
+      var len=src[p]|(src[p+1]<<8),nlen=src[p+2]|(src[p+3]<<8);p+=4;
+      if((len^nlen)!==0xffff)throw new Error("len");
+      if(p+len>src.length||out.length+len>maxOut)throw new Error("overflow");
+      for(i=0;i<len;i++)out.push(src[p++]);
+    }else if(t===1||t===2){
+      var hL=fixL,hD=fixD;
+      if(t===2){
+        var hlit=bits(5)+257,hdist=bits(5)+1,hclen=bits(4)+4,cl=[];
+        for(i=0;i<19;i++)cl[i]=0;
+        for(i=0;i<hclen;i++)cl[CO[i]]=bits(3);
+        var hC=build(cl),ll=[];
+        while(ll.length<hlit+hdist){
+          var s=sym(hC);
+          if(s<16)ll.push(s);
+          else if(s===16){var r=bits(2)+3,pv=ll[ll.length-1]||0;while(r--)ll.push(pv);}
+          else if(s===17){var r2=bits(3)+3;while(r2--)ll.push(0);}
+          else{var r3=bits(7)+11;while(r3--)ll.push(0);}
+        }
+        hL=build(ll.slice(0,hlit));hD=build(ll.slice(hlit));
+      }
+      for(;;){
+        var c=sym(hL);
+        if(c===256)break;
+        if(c<256){out.push(c);if(out.length>maxOut)throw new Error("overflow");}
+        else{
+          var li=c-257,ln=LB[li]+bits(LE[li]),di=sym(hD),ds=DB[di]+bits(DE[di]);
+          if(ds>out.length||out.length+ln>maxOut)throw new Error("dist");
+          for(i=0;i<ln;i++)out.push(out[out.length-ds]);
+        }
+      }
+    }else throw new Error("block");
+  }
+  return new Uint8Array(out);
+}
 async function decodeHash(h){
   h=String(h||"").replace(/^#/,"");
   if(h.length<2)throw new Error("empty");
   var mode=h[0],bytes=unb64u(h.slice(1));
   if(mode==="z"){
-    if(typeof DecompressionStream==="undefined")throw new Error("compression-unsupported");
-    var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
-    bytes=new Uint8Array(await r.arrayBuffer());
+    if(typeof DecompressionStream!=="undefined"){
+      var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
+      bytes=new Uint8Array(await r.arrayBuffer());
+    }else{
+      bytes=rawInflate(bytes,200000);
+    }
   }else if(mode!=="j"){throw new Error("unknown-format");}
   var o=JSON.parse(new TextDecoder().decode(bytes));
   if(!o||typeof o!=="object"||Array.isArray(o))throw new Error("invalid-data");
@@ -364,7 +552,9 @@ function collect(){
   grabText();
   var o={t:$("#tpl").value,l:lang,n:clean($("#n").value),d:$("#d").value,s:$("#s").value,e:$("#e").value,
     ve:clean($("#ve").value),ad:clean($("#ad").value),g:clean($("#g").value),h:clean($("#h").value),p:clean($("#p").value),
-    k:clean($("#k").value),rsvp:$("#rsvp").checked};
+    rsvp:currentRsvpMode!=="none"};
+  if(currentRsvpMode==="sheet")o.sheet=clean($("#sheet").value);
+  if(currentRsvpMode==="w3f")o.k=clean($("#k").value);
   if(o.t==="editorial")o.b=clean($("#b").value);
   if(lang==="ru"||lang==="both")o.ru=langBlock(0);
   if(lang==="kz"||lang==="both")o.kz=langBlock(1);
@@ -376,26 +566,54 @@ function validate(o){
   if(!o.s)return"Укажите время начала.";
   if(!o.e)return"Укажите время окончания.";
   if(o.s===o.e)return"Время окончания не может совпадать со временем начала.";
-  var dateObj=new Date(o.d+"T12:00:00");
+  var dateObj=new Date(o.d+"T12:00:00Z");
   if(!Number.isFinite(dateObj.getTime())||dateObj.toISOString().slice(0,10)!==o.d)return"Укажите корректную дату.";
+  var endDay=o.d;
+  if(o.e<=o.s){var nextD=new Date(o.d+"T12:00:00Z");nextD.setUTCDate(nextD.getUTCDate()+1);endDay=nextD.toISOString().slice(0,10);}
+  var expMs=Math.max(new Date(endDay+"T"+o.e+":00+05:00").getTime(),new Date(o.d+"T23:59:59+05:00").getTime());
+  if(Date.now()>expMs)return"Дата мероприятия уже прошла. Укажите будущую дату.";
   var need=act().filter(function(k){return !clean(st[k].le);});
   if(need.length)return"Впишите текст приглашения: "+need.map(function(k){return k==="ru"?"русский":"казахский";}).join(" и ")+".";
   if(o.g&&!/^https:\/\//i.test(o.g))return"Ссылка 2ГИС должна начинаться с https://";
   if(o.p&&!/^https:\/\//i.test(o.p))return"Ссылка на фото должна начинаться с https://";
-  if(o.rsvp&&!o.k)return"Для включённого RSVP укажите ключ Web3Forms клиента.";
-  if(o.k&&!/^[0-9a-f-]{20,}$/i.test(o.k))return"Ключ Web3Forms выглядит неверно — проверьте его.";
+  if(o.rsvp){
+    if(currentRsvpMode==="sheet"){
+      if(!o.sheet)return"Укажите ссылку веб-приложения Google Таблицы (или выберите «Без ответов»).";
+      if(!/^https:\/\/script\.google\.com\//i.test(o.sheet))return"Ссылка Google Таблицы должна начинаться с https://script.google.com/";
+    }else if(currentRsvpMode==="w3f"){
+      if(!o.k)return"Для сбора на почту укажите ключ Web3Forms клиента.";
+      if(!/^[0-9a-f-]{20,}$/i.test(o.k))return"Ключ Web3Forms выглядит неверно — проверьте его.";
+    }
+  }
   return"";
 }
 
 /* ---------- черновик ---------- */
-function save(){try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));var ss=$("#saveState");if(ss)ss.textContent="Черновик сохранён на этом устройстве · "+new Date().toLocaleTimeString();}catch(_){var ss=$("#saveState");if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";}schedulePreview();}
+var saveTimer=null;
+function save(){clearTimeout(saveTimer);try{localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));var ss=$("#saveState");if(ss)ss.textContent="Черновик сохранён на этом устройстве · "+new Date().toLocaleTimeString();}catch(_){var ss=$("#saveState");if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";}schedulePreview();}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,220);schedulePreview();}
+function setRsvpMode(mode){
+  currentRsvpMode=mode;
+  document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.r===mode);});
+  $("#rsvpSheetWrap").hidden=(mode!=="sheet");
+  $("#rsvpW3fWrap").hidden=(mode!=="w3f");
+}
 function fillFrom(o){
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
+  lastTpl=$("#tpl").value;
   $("#bigWrap").hidden=($("#tpl").value!=="editorial");
   $("#n").value=o.n||"";$("#d").value=o.d||"";$("#s").value=o.s||"";$("#e").value=o.e||"";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
-  $("#p").value=o.p||"";$("#k").value=o.k||"";$("#b").value=o.b||"";
-  $("#rsvp").checked=o.rsvp!==false;
+  $("#p").value=o.p||"";$("#b").value=o.b||"";
+  if(o.sheet){
+    setRsvpMode("sheet");$("#sheet").value=o.sheet;$("#k").value="";
+  }else if(o.k){
+    setRsvpMode("w3f");$("#k").value=o.k;$("#sheet").value="";
+  }else if(o.rsvp===false){
+    setRsvpMode("none");$("#sheet").value="";$("#k").value="";
+  }else{
+    setRsvpMode("sheet");
+  }
   function fromBlock(b){return{ti:(b&&b.ti)||"",le:(b&&b.le)||"",sg:(b&&b.sg)||""};}
   st.ru=fromBlock(o.ru);st.kz=fromBlock(o.kz);
   var a=(o.ru&&o.ru.pr)||[],b=(o.kz&&o.kz.pr)||[],n=Math.max(a.length,b.length);st.rows=[];
@@ -408,15 +626,78 @@ function fillFrom(o){
 /* ---------- SAQTAA v2: история, фото, предпросмотр, облако ---------- */
 function setTemplateCards(){document.querySelectorAll("[data-template]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.template===$("#tpl").value));});}
 document.querySelectorAll("[data-template]").forEach(function(b){b.addEventListener("click",function(){$("#tpl").value=b.dataset.template;$("#tpl").dispatchEvent(new Event("change"));setTemplateCards();});});
-function renderHistory(){var box=$("#historyList");if(!historyItems.length){box.innerHTML='<p class="hint">История пока пуста.</p>';return;}box.innerHTML=historyItems.slice().reverse().map(function(x,ri){var idx=historyItems.length-1-ri;return'<div class="history-item" data-hi="'+idx+'"><strong>'+esc(x.name||"Без названия")+'</strong><small>'+esc(x.template||"")+' · '+esc(x.date||"")+' · '+new Date(x.at).toLocaleString()+'</small><div class="history-actions"><button type="button" data-hload="'+idx+'">Открыть / клонировать</button><button type="button" data-hcopy="'+idx+'">Копировать ссылку</button><button type="button" data-hdel="'+idx+'">Удалить</button></div></div>';}).join("");}
-async function storeHistory(o,url){var entry={id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),name:o.n,template:o.t,date:o.d,at:Date.now(),data:o,url:url};historyItems=historyItems.filter(function(x){return x.url!==url;});historyItems.push(entry);historyItems=historyItems.slice(-50);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);}catch(_){}renderHistory();}
-$("#historyList").addEventListener("click",async function(e){var b=e.target.closest("button");if(!b)return;var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hdel),x=historyItems[i];if(!x)return;if(b.hasAttribute("data-hload")){fillFrom(x.data);setCurrentPhoto(await getPhoto(x.id));save();schedulePreview();toast("Приглашение загружено. Измените данные и создайте новую ссылку.");window.scrollTo({top:0,behavior:"smooth"});}else if(b.hasAttribute("data-hcopy")){try{await navigator.clipboard.writeText(x.url);toast("Ссылка скопирована");}catch(_){toast("Не удалось скопировать ссылку");}}else if(b.hasAttribute("data-hdel")){historyItems.splice(i,1);localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));renderHistory();}});
+function renderHistory(){
+  var box=$("#historyList");if(!historyItems.length){box.innerHTML='<p class="hint">История пока пуста.</p>';return;}
+  var q=clean($("#histSearch").value).toLowerCase();
+  var filtered=historyItems.slice().reverse().filter(function(x){
+    if(!q)return true;
+    var dotDate=x.date?x.date.split("-").reverse().join("."):"";
+    var str=((x.name||"")+" "+(x.template||"")+" "+(x.date||"")+" "+dotDate+" "+(x.time||"")).toLowerCase();
+    return str.indexOf(q)!==-1;
+  });
+  if(!filtered.length){
+    box.innerHTML='<p class="hint">Ничего не найдено по запросу «'+esc(q)+'».</p>';
+    return;
+  }
+  box.innerHTML=filtered.map(function(x){
+    var idx=historyItems.indexOf(x);
+    var dotDate=x.date?x.date.split("-").reverse().join("."):"";
+    var dateStr=x.date?("📅 "+esc(dotDate)+" ("+esc(x.date)+")"):"";
+    var timeStr=x.time?(" · ⏰ "+esc(x.time)):"";
+    var tplStr=x.template?(" · 🎨 "+esc(x.template)):"";
+    var meta=[dateStr+timeStr+tplStr,"🕒 Сохранено: "+new Date(x.at).toLocaleString()].filter(Boolean).join("<br>");
+    var statsBtn=x.stats_url?'<button type="button" data-hstats="'+idx+'">📊 Ссылка статистики</button>':'';
+    return '<div class="history-item" data-hi="'+idx+'">'+
+      '<strong>'+esc(x.name||"Без названия")+'</strong>'+
+      '<small style="display:block;margin:4px 0 8px;line-height:1.4">'+meta+'</small>'+
+      '<div class="history-actions" style="flex-wrap:wrap">'+
+        '<button type="button" data-hload="'+idx+'">✏️ Открыть в редакторе</button>'+
+        '<button type="button" data-hcopy="'+idx+'">🔗 Приглашение</button>'+
+        statsBtn+
+        '<button type="button" data-hdel="'+idx+'" style="color:#7C2230">🗑️ Удалить</button>'+
+      '</div></div>';
+  }).join("");
+}
+async function storeHistory(o,url,statsUrl){
+  var entry={
+    id:(crypto.randomUUID?crypto.randomUUID():String(Date.now())),
+    name:o.n,
+    template:o.t,
+    date:o.d,
+    time:o.s?(o.s+(o.e?" – "+o.e:"")):"",
+    at:Date.now(),
+    data:o,
+    url:url,
+    stats_url:statsUrl||""
+  };
+  var removed=historyItems.filter(function(x){return x.url===url;});
+  historyItems=historyItems.filter(function(x){return x.url!==url;});
+  historyItems.push(entry);
+  if(historyItems.length>50){removed=removed.concat(historyItems.slice(0,historyItems.length-50));historyItems=historyItems.slice(-50);}
+  try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);for(var i=0;i<removed.length;i++)if(removed[i]&&removed[i].id)await delPhoto(removed[i].id).catch(function(){});}catch(_){toast("Внимание: не удалось сохранить запись в историю (память браузера заполнена).");}
+  renderHistory();
+}
+$("#historyList").addEventListener("click",async function(e){
+  var b=e.target.closest("button");if(!b)return;
+  var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hstats||b.dataset.hdel),x=historyItems[i];if(!x)return;
+  if(b.hasAttribute("data-hload")){
+    if(!x.data||typeof x.data!=="object"){toast("Запись истории повреждена");return;}
+    fillFrom(x.data);setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));save();schedulePreview();toast("Приглашение загружено. Измените данные и создайте новую ссылку.");window.scrollTo({top:0,behavior:"smooth"});
+  }else if(b.hasAttribute("data-hcopy")){
+    try{await navigator.clipboard.writeText(x.url);toast("Ссылка приглашения скопирована");}catch(_){toast("Не удалось скопировать ссылку");}
+  }else if(b.hasAttribute("data-hstats")){
+    if(x.stats_url){try{await navigator.clipboard.writeText(x.stats_url);toast("Ссылка статистики для клиента скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
+  }else if(b.hasAttribute("data-hdel")){
+    historyItems.splice(i,1);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}if(x.id)delPhoto(x.id).catch(function(){});renderHistory();
+  }
+});
 function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,500);}
-async function updatePreview(){var frame=$("#livePreview");if(!frame||!document.querySelector("main")||document.querySelector("main").hidden)return;try{var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;if(!o.n)o.n="Ваши имена";if(!o.d){var d=new Date();d.setDate(d.getDate()+7);o.d=d.toISOString().slice(0,10);}if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";var p=PRE[o.t]||PRE.luxury;if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le){o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}}if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le){o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}}var base=clean($("#base").value)||new URL("invite.html",location.href).href;var url=base.replace(/#.*$/,"#")+await encode(o);if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}}catch(e){}}
+async function updatePreview(){var frame=$("#livePreview");if(!frame||!document.querySelector("main")||document.querySelector("main").hidden)return;try{var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;if(!o.n)o.n="Ваши имена";if(!o.d){var d=new Date();d.setDate(d.getDate()+7);o.d=d.toISOString().slice(0,10);}if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";var p=PRE[o.t]||PRE.luxury;if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le){o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}}if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le){o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}}var base=clean($("#base").value)||new URL("invite.html",location.href).href;var url=base.replace(/#.*$/,"")+"#"+await encode(o);if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}}catch(e){}}
 function fileToWebp(file){return new Promise(function(resolve,reject){if(!file||!/^image\/(jpeg|png|webp)$/.test(file.type)){reject(new Error("Выберите JPG, PNG или WebP."));return;}var img=new Image(),u=URL.createObjectURL(file);img.onload=function(){var max=1500,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);var ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(blob){if(!blob){reject(new Error("Не удалось обработать фото."));return;}resolve(blob);},"image/webp",.78);};img.onerror=function(){URL.revokeObjectURL(u);reject(new Error("Не удалось прочитать изображение."));};img.src=u;});}
 function openPhotoDB(){if(!window.indexedDB)return Promise.reject(new Error("Браузер не поддерживает локальное хранилище фотографий."));if(!photoDBPromise)photoDBPromise=new Promise(function(resolve,reject){var req=indexedDB.open("saqtaa-local-media",1);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains("photos"))db.createObjectStore("photos",{keyPath:"id"});};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error||new Error("Не удалось открыть хранилище фото."));};});return photoDBPromise;}
 async function putPhoto(id,blob){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").put({id:id,blob:blob,type:blob.type||"image/webp"});tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error||new Error("Не удалось сохранить фото."));};});}
 async function getPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").get(id);req.onsuccess=function(){resolve(req.result?req.result.blob:null);};req.onerror=function(){reject(req.error);};});}
+async function delPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete(id);tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error);};});}
 async function allPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").getAll();req.onsuccess=function(){resolve(req.result||[]);};req.onerror=function(){reject(req.error);};});}
 async function clearPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").clear();tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});}
 function setCurrentPhoto(blob){currentPhotoBlob=blob||null;if(currentPhotoUrl)URL.revokeObjectURL(currentPhotoUrl);currentPhotoUrl=blob?URL.createObjectURL(blob):"";var img=$("#photoPreview");if(currentPhotoUrl){img.src=currentPhotoUrl;img.style.display="block";$("#photoStatus").textContent="Локальное фото сохранено · "+Math.round(blob.size/1024)+" КБ. Оно видно в предпросмотре, но ещё не включено в публичную ссылку.";}else{img.removeAttribute("src");img.style.display="none";$("#photoStatus").textContent="Локальное фото не выбрано. Для публичной ссылки используйте HTTPS-ссылку на размещённое изображение.";}schedulePreview();}
@@ -426,12 +707,12 @@ $("#p").addEventListener("input",function(){schedulePreview();});
 async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
 function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректный файл фотографии в резервной копии.");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
 $("#exportBackup").addEventListener("click",async function(){var status=$("#backupStatus");try{var photos=await allPhotos(),packed=[];for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});var payload={format:"SAQTAA_BACKUP",version:1,exportedAt:new Date().toISOString(),draft:localStorage.getItem(KEY),history:historyItems,photos:packed};var blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);status.textContent="Резервная копия создана. Храните файл в безопасном месте.";}catch(e){status.textContent="Ошибка экспорта: "+e.message;}});
-$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var i=0;i<(payload.photos||[]).length;i++)await putPhoto(payload.photos[i].id,dataUrlToBlob(payload.photos[i].data));if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=Array.isArray(payload.history)?payload.history.slice(-50):[];localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));var saved=payload.draft?JSON.parse(payload.draft):null;if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
+$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(!payload||payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");var parsedDraft=null;if(payload.draft){parsedDraft=JSON.parse(payload.draft);if(!parsedDraft||typeof parsedDraft!=="object")throw new Error("Повреждён черновик в резервной копии.");}var parsedPhotos=[];for(var i=0;i<(payload.photos||[]).length;i++){var ph=payload.photos[i];if(!ph||!ph.id)throw new Error("Повреждена запись фотографии в резервной копии.");parsedPhotos.push({id:String(ph.id),blob:dataUrlToBlob(ph.data)});}var validHistory=Array.isArray(payload.history)?payload.history.filter(function(x){return x&&typeof x==="object"&&x.data&&typeof x.data==="object";}).slice(-50):[];if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var j=0;j<parsedPhotos.length;j++)await putPhoto(parsedPhotos[j].id,parsedPhotos[j].blob);if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=validHistory;localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(parsedDraft&&parsedDraft.o){fillFrom(parsedDraft.o);if(parsedDraft.base)$("#base").value=parsedDraft.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
 
 /* ---------- события ---------- */
 $("#tpl").addEventListener("change",function(){
-  if(!$("#n").value.trim()||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
-  else{$("#bigWrap").hidden=(this.value!=="editorial");}
+  if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
+  else{lastTpl=this.value;$("#bigWrap").hidden=(this.value!=="editorial");}
   setTemplateCards();save();
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
@@ -440,32 +721,52 @@ $("#prog").addEventListener("click",function(e){
   var d=e.target.closest(".del");if(!d)return;
   grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();
 });
-document.addEventListener("change",function(e){if(e.target.closest("main")&&e.target.id!=="old")schedulePreview();});
+document.addEventListener("change",function(e){if(e.target.closest("main")&&e.target.id!=="old")save();});
 document.addEventListener("input",function(e){
   if(e.target.closest("main")&&e.target.id!=="old"){
-    save();
+    scheduleSave();
     if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Создайте ссылку заново, чтобы обновить приглашение.";
   }
 });
+window.addEventListener("beforeunload",function(){if(saveTimer)save();});
 
 try{$("#base").value=new URL("invite.html",location.href).href;}catch(_){$("#base").value="";}
 
-function waLink(link){
+function waLink(link, statsLink){
   var pre=lang==="kz"?"Сізді тойға шақырамыз ✦ ":lang==="both"?"Приглашаем вас на праздник ✦ Сізді тойға шақырамыз ✦ ":"Приглашаем вас на праздник ✦ ";
-  return"https://wa.me/?text="+encodeURIComponent(pre+clean($("#n").value)+"\n"+link);
+  var text=pre+clean($("#n").value)+"\n\n🔗 Приглашение для гостей:\n"+link;
+  if(statsLink){
+    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+statsLink;
+  }
+  return"https://wa.me/?text="+encodeURIComponent(text);
 }
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
-  var o=collect(),msg=validate(o);
-  if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали локальное фото, но оно не попадёт в публичную ссылку. Сначала загрузите фото на хостинг и вставьте HTTPS-ссылку в поле выше либо уберите локальное фото.";
-  if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
-  var base=clean($("#base").value);
-  if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
-  var url=base.replace(/#.*$/,"")+"#"+await encode(o);
-  $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
-  $("#open").href=url;$("#wa").href=waLink(url);
-  $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
-  save();await storeHistory(o,url);schedulePreview();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+  try{
+    var o=collect(),msg=validate(o);
+    if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали локальное фото, но оно не попадёт в публичную ссылку. Вставьте HTTPS-ссылку на фото в поле выше либо уберите локальное фото.";
+    if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
+    var base=clean($("#base").value);
+    if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
+    var encodedHash=await encode(o);
+    var url=base.replace(/#.*$/,"")+"#"+encodedHash;
+    var statsUrl="";
+    if(o.sheet){
+      var statsBase=new URL("stats.html",base).href;
+      statsUrl=statsBase.replace(/#.*$/,"")+"#"+encodedHash;
+      $("#statsOut").value=statsUrl;
+      $("#openStats").href=statsUrl;
+      $("#statsBox").hidden=false;
+    }else{
+      $("#statsBox").hidden=true;
+    }
+    $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
+    $("#open").href=url;$("#wa").href=waLink(url,statsUrl);
+    $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
+    save();await storeHistory(o,url,statsUrl);schedulePreview();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(e){
+    err.textContent="Не удалось создать ссылку: "+(e&&e.message?e.message:"ошибка браузера");err.hidden=false;
+  }
 });
 async function copyFrom(sel){
   var el=$(sel);
@@ -473,7 +774,16 @@ async function copyFrom(sel){
   catch(_){el.focus();el.select();try{document.execCommand("copy");toast("Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
 }
 $("#copy").addEventListener("click",function(){copyFrom("#out");});
+$("#copyStats").addEventListener("click",function(){copyFrom("#statsOut");});
 $("#shCopy").addEventListener("click",function(){copyFrom("#shOut");});
+$("#copyAppScript").addEventListener("click",async function(){
+  try{await navigator.clipboard.writeText(APPS_SCRIPT_CODE);toast("Код для Google Таблицы скопирован! Вставьте его в Расширения → Apps Script");}
+  catch(_){toast("Не удалось скопировать. Разрешите доступ к буферу обмена.");}
+});
+$("#histSearch").addEventListener("input",renderHistory);
+document.querySelectorAll("#rsvpSeg button").forEach(function(b){
+  b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});
+});
 
 /* сокращение ссылки через is.gd (JSONP — без проблем с CORS) */
 function jsonp(url,ms){return new Promise(function(res,rej){
@@ -489,7 +799,8 @@ $("#sh").addEventListener("click",async function(){
   try{
     var j=await jsonp("https://is.gd/create.php?format=json&url="+encodeURIComponent(long),10000);
     if(!j||!j.shorturl)throw new Error("bad");
-    $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl);
+    var curStats=($("#statsBox")&&!$("#statsBox").hidden)?$("#statsOut").value:"";
+    $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl,curStats);
     toast("Короткая ссылка готова — откройте её и проверьте");
   }catch(_){
     er.textContent="Не удалось сократить: сервис недоступен или заблокирован. Отправьте обычную ссылку или сократите её вручную на is.gd / tinyurl.com.";er.hidden=false;
@@ -538,6 +849,9 @@ renderHistory();
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
 else{applyPreset("luxury");}
 setTemplateCards();schedulePreview();
+var mobPrev=$("#mobPreviewBtn"),mobBack=$("#mobBackBtn");
+if(mobPrev)mobPrev.addEventListener("click",function(){var p=document.querySelector(".preview-box");if(p)p.scrollIntoView({behavior:"smooth"});});
+if(mobBack)mobBack.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
 getPhoto("current").then(setCurrentPhoto).catch(function(e){$("#photoStatus").textContent="Локальное хранилище фото недоступно: "+e.message;});
 })();
 </script>
