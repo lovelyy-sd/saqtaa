@@ -8,301 +8,438 @@
 <title>SAQTAA · Создать приглашение</title>
 <meta name="referrer" content="no-referrer">
 <style>
-:root{--em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gs:#D9BC7F;--paper:#F5EFE2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;--hair:rgba(24,39,32,.18)}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--paper);color:var(--ink);line-height:1.45;padding-bottom:40px;-webkit-font-smoothing:antialiased}
-header{background:var(--em2);color:#F2EBDA;padding:16px 16px 14px;position:sticky;top:0;z-index:10}
-header h1{font-size:1.15rem;letter-spacing:.08em}
-header p{font-size:.78rem;opacity:.75;margin-top:2px}
-main{max-width:980px;margin:0 auto;padding:14px 14px 0}
-.box{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:14px;margin-bottom:14px}
-.box h2{font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:#7F5D22;margin-bottom:10px}
+:root{--em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gs:#D9BC7F;--paper:#F5EFE2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;--hair:rgba(24,39,32,.16)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--paper);color:var(--ink);line-height:1.45;padding-bottom:92px;-webkit-font-smoothing:antialiased}
+header{background:var(--em2);color:#F2EBDA;padding:12px 16px;position:sticky;top:0;z-index:30;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.hdr-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+header h1{font-size:1.05rem;letter-spacing:.1em;font-weight:800}
+header p{font-size:.73rem;opacity:.78;margin-top:1px}
+.hdr-actions{display:flex;align-items:center;gap:8px}
+.hdr-btn{min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid rgba(217,188,127,.45);background:rgba(255,255,255,.08);color:#F6F1E4;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.hdr-btn.gold{background:var(--gold);color:#1E1505;border-color:var(--gold)}
+.hdr-btn:active{transform:scale(.97)}
+
+/* Top desktop nav & Bottom mobile app bar */
+.app-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:40;box-shadow:0 -4px 18px rgba(0,0,0,.07)}
+.app-nav button{border:0;background:none;padding:6px 4px;border-radius:12px;font:inherit;color:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;transition:background .15s,color .15s}
+.app-nav button .nav-ico{font-size:1.2rem;line-height:1}
+.app-nav button .nav-lbl{font-size:.7rem;font-weight:700}
+.app-nav button.on{background:rgba(15,74,56,.11);color:var(--em)}
+.nav-badge{position:absolute;top:3px;right:calc(50% - 22px);background:var(--gold);color:#1E1505;font-size:.62rem;font-weight:800;padding:1px 6px;border-radius:999px;min-width:18px;text-align:center}
+
+main{max-width:1040px;margin:0 auto;padding:14px 14px 0}
+.box{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(24,39,32,.03)}
+.box h2{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#7F5D22;margin-bottom:10px;font-weight:800}
 label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);margin:10px 0 4px}
 label:first-of-type{margin-top:0}
-input,select,textarea{width:100%;min-height:48px;border:1px solid var(--hair);border-radius:10px;padding:10px 12px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
-textarea{min-height:110px;resize:vertical}
+input,select,textarea{width:100%;min-height:48px;border:1px solid var(--hair);border-radius:11px;padding:10px 12px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+textarea{min-height:105px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.hint{font-size:.74rem;color:var(--ink2);margin-top:4px}
+@media(max-width:540px){.row3{grid-template-columns:1fr}}
+.hint{font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.45}
 .tabs{display:flex;gap:8px;margin-bottom:10px}
-.tabs button,.seg button{flex:1;min-height:44px;border:1px solid var(--hair);border-radius:999px;background:#fff;font:inherit;font-weight:700;font-size:.9rem;cursor:pointer}
+.tabs button,.seg button{flex:1;min-height:44px;border:1px solid var(--hair);border-radius:999px;background:#fff;font:inherit;font-weight:700;font-size:.86rem;cursor:pointer;padding:6px 10px}
 .tabs button.on,.seg button.on{background:var(--em);color:#F6F1E4;border-color:var(--em)}
 .seg{display:flex;gap:8px}
-.prow{border:1px dashed var(--hair);border-radius:10px;padding:10px;margin-bottom:10px;position:relative}
+.prow{border:1px dashed var(--hair);border-radius:11px;padding:10px;margin-bottom:10px;position:relative;background:#FCFBF7}
 .prow .del{position:absolute;top:6px;right:6px;width:36px;height:36px;border:0;background:none;font-size:1.1rem;color:#7C2230;cursor:pointer}
 .prow input{margin-bottom:6px;min-height:44px}
 .prow .tm{max-width:120px}
-.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:54px;border:0;border-radius:999px;font:inherit;font-weight:800;font-size:.95rem;cursor:pointer;text-decoration:none;margin-top:10px}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:52px;border:0;border-radius:999px;font:inherit;font-weight:800;font-size:.93rem;cursor:pointer;text-decoration:none;margin-top:10px;padding:10px 16px;text-align:center}
 .btn.main{background:var(--em);color:#F6F1E4}
 .btn.gold{background:var(--gold);color:#241A08}
-.btn.line{background:none;border:1px solid var(--em);color:var(--em)}
+.btn.line{background:#fff;border:1px solid var(--em);color:var(--em)}
+.btn.danger{background:#fff;border:1px solid #9E2B3A;color:#9E2B3A}
 .btn:active{transform:scale(.98)}
-.out{width:100%;min-height:90px;font-size:.78rem;word-break:break-all}
+.out{width:100%;min-height:82px;font-size:.78rem;word-break:break-all}
 .err{color:#7C2230;font-weight:700;font-size:.85rem;margin-top:8px}
 .ok{color:var(--em);font-weight:700;font-size:.85rem;margin-top:8px}
-.toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;max-width:88vw;text-align:center}
+.toast{position:fixed;left:50%;bottom:88px;translate:-50% 0;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.22)}
 .toast.show{opacity:1}
 [hidden]{display:none!important}
 .gate{max-width:420px;margin:0 auto;padding:40px 18px}
-.gate form{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:22px 18px}
-.gate h2{font-size:1.2rem;margin-bottom:6px;color:var(--em)}
-.gate p{font-size:.88rem;color:var(--ink2);margin-bottom:12px}
+.gate form{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:24px 18px;box-shadow:0 8px 28px rgba(0,0,0,.06)}
+.gate h2{font-size:1.25rem;margin-bottom:6px;color:var(--em)}
+.gate p{font-size:.88rem;color:var(--ink2);margin-bottom:14px}
 .lh{font-weight:800;color:var(--em);margin:4px 0 0;font-size:.95rem}
 .lblock+.lblock{border-top:1px dashed var(--hair);margin-top:16px;padding-top:14px}
 .ptag{display:inline-block;font-size:.7rem;font-weight:800;color:#7F5D22;margin:2px 0}
 
-/* SAQTAA v2 workspace */
+/* Templates & Preview */
 .tpl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
 .tpl-card{border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px;text-align:left;cursor:pointer;min-width:0;color:var(--ink)}
 .tpl-card[aria-pressed="true"]{outline:2px solid var(--em);border-color:var(--em);background:#f4f8f4}
-.tpl-art{height:82px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;overflow:hidden;margin-bottom:7px;border:1px solid rgba(0,0,0,.08)}
-.tpl-art b{font-family:Georgia,serif;font-size:1.05rem;font-weight:500}.tpl-art i{font-size:.56rem;letter-spacing:.16em;font-style:normal}
-.tpl-card small{display:block;font-size:.7rem;color:var(--ink2);margin-top:2px}
+.tpl-art{height:78px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;overflow:hidden;margin-bottom:6px;border:1px solid rgba(0,0,0,.08)}
+.tpl-art b{font-family:Georgia,serif;font-size:1.02rem;font-weight:500}.tpl-art i{font-size:.55rem;letter-spacing:.15em;font-style:normal}
+.tpl-card small{display:block;font-size:.69rem;color:var(--ink2);margin-top:2px}
 .tpl-luxury .tpl-art{background:#171614;color:#d8bd83}.tpl-floral .tpl-art{background:#f6e9e8;color:#8c5c69}.tpl-qazaq .tpl-art{background:#f3e8d1;color:#8c6328}.tpl-editorial .tpl-art{background:#f0eee8;color:#20231e}.tpl-emerald .tpl-art{background:#0f4a38;color:#d8bd83}.tpl-tusau .tpl-art{background:#e9d9bf;color:#805a31}
-.admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:14px;align-items:start}
-.preview-box{position:sticky;top:82px}.preview-frame{width:100%;height:min(78vh,850px);border:1px solid var(--hair);border-radius:14px;background:#fff;overflow:hidden}.preview-frame iframe{width:100%;height:100%;border:0;pointer-events:none;background:#fff}
+.admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.88fr);gap:16px;align-items:start}
+.preview-box{position:sticky;top:74px}.preview-frame{width:100%;height:min(76vh,820px);border:1px solid var(--hair);border-radius:14px;background:#fff;overflow:hidden}.preview-frame iframe{width:100%;height:100%;border:0;background:#fff}
 .preview-note{font-size:.74rem;color:var(--ink2);margin-top:7px}.save-state{font-size:.75rem;color:var(--em);font-weight:700;margin-top:5px}
 .photo-preview{display:none;max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:10px;border:1px solid var(--hair)}
-.history-item{border:1px solid var(--hair);border-radius:10px;padding:10px;margin:8px 0;background:#fff}.history-item strong{display:block}.history-item small{color:var(--ink2)}.history-actions{display:flex;gap:7px;margin-top:8px}.history-actions button{flex:1;min-height:40px;border:1px solid var(--hair);border-radius:8px;background:#fff;font:inherit;font-size:.8rem;font-weight:700}
+
+/* Orders Screen */
+.orders-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.ostat-card{background:#fff;border:1px solid var(--hair);border-radius:12px;padding:10px;text-align:center}
+.ostat-card b{display:block;font-size:1.35rem;color:var(--em);line-height:1.1}
+.ostat-card span{font-size:.7rem;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.history-item{border:1px solid var(--hair);border-radius:14px;padding:14px;margin:10px 0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.02)}
+.order-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.order-head strong{font-size:1.05rem;color:var(--ink)}
+.order-badge{font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.order-badge.upcoming{background:#E5F4EC;color:#145A36}
+.order-badge.past{background:#F2ECE1;color:#6E6555}
+.order-meta{font-size:.8rem;color:var(--ink2);line-height:1.5;margin-bottom:10px}
+.history-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.history-actions button,.history-actions a{min-height:42px;border:1px solid var(--hair);border-radius:10px;background:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:var(--ink);padding:6px 8px}
+.history-actions .act-primary{background:var(--em);color:#F6F1E4;border-color:var(--em)}
+.history-actions .act-wa{background:#E8F7EE;color:#115C33;border-color:#B8E4C9}
+.history-actions .act-stats{background:#FDF6E7;color:#7A5616;border-color:#E7CFA0}
 .btn:disabled{opacity:.55;cursor:wait}
-@media(max-width:760px){.admin-grid{grid-template-columns:1fr}.preview-box{position:static}.preview-frame{height:70vh}.tpl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:820px){
+  .admin-grid{grid-template-columns:1fr}
+  .preview-box.mobile-hidden{display:none}
+  .preview-box{position:static}
+  .preview-frame{height:72vh}
+  .tpl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 </head>
 <body>
 <header>
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+  <div class="hdr-inner">
     <div>
-      <h1>SAQTAA · Создать приглашение</h1>
-      <p>Автосохранение · предпросмотр · история · резервная копия</p>
+      <h1>SAQTAA · Панель заказов</h1>
+      <p id="hdrSub">Конструктор приглашений и база клиентов</p>
     </div>
-    <button class="btn line" id="mobPreviewBtn" type="button" style="width:auto;min-height:38px;padding:6px 14px;font-size:.8rem;color:var(--gs);border-color:var(--gs);margin:0;white-space:nowrap">👁️ Просмотр</button>
+    <div class="hdr-actions" id="hdrActions" hidden>
+      <button class="hdr-btn gold" id="newOrderBtn" type="button">➕ Новый заказ</button>
+      <button class="hdr-btn" id="mobPreviewBtn" type="button">👁️ Просмотр</button>
+    </div>
   </div>
 </header>
+
 <section class="gate" id="gate">
   <form id="gateForm" autocomplete="off">
     <h2>Вход в SAQTAA</h2>
-    <p id="gateHint">Введите пароль администратора для создания приглашений.</p>
-    <input id="gatePw" type="password" placeholder="Пароль" autocomplete="current-password" required>
-    <button class="btn main" id="gateBtn" type="submit">Войти</button>
+    <p id="gateHint">Введите пароль администратора для входа в приложение.</p>
+    <input id="gatePw" type="password" placeholder="Пароль администратора" autocomplete="current-password" required>
+    <button class="btn main" id="gateBtn" type="submit">Войти в панель</button>
     <p class="err" id="gateErr" role="alert"></p>
     <textarea id="gateOut" class="out" readonly hidden></textarea>
   </form>
 </section>
+
 <main hidden>
-<div class="admin-grid"><div class="editor-column">
-
-<div class="box" style="border-color:rgba(15,74,56,.35);background:#F9FBF9">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <h2 style="margin:0;color:var(--em)">⚙️ Сервер SAQTAA (Почта Gmail + Фото + База)</h2>
-    <button class="btn line" id="toggleServerSetup" type="button" style="width:auto;min-height:32px;padding:4px 12px;font-size:.75rem;margin:0">Настроить / Код сервера</button>
+  <!-- Переключатель разделов сверху для удобства на ПК и телефоне -->
+  <div class="seg" id="topTabSeg" style="margin-bottom:14px;background:var(--card);padding:5px;border-radius:999px;border:1px solid var(--hair)">
+    <button type="button" data-nav="editor" class="on">✏️ Конструктор</button>
+    <button type="button" data-nav="orders">📋 Заказы <span id="topOrdersCount" style="opacity:.85">(0)</span></button>
+    <button type="button" data-nav="settings">⚙️ Настройки и пароль</button>
   </div>
-  <p class="hint" id="srvStatusText" style="margin-top:6px">Подключите единый скрипт Google-аккаунта SAQTAA один раз — и для каждого клиента достаточно просто вписать его Email.</p>
-  <div id="serverSetupWrap" style="margin-top:10px" hidden>
-    <label for="srvUrl">URL вашего сервера SAQTAA (Google Apps Script Web App)</label>
-    <input id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-      <button class="btn main" id="saveSrvBtn" type="button" style="flex:1;margin:0;min-height:44px;font-size:.85rem">💾 Сохранить и проверить сервер</button>
-      <button class="btn line" id="copyAppScript" type="button" style="flex:1;margin:0;min-height:44px;font-size:.85rem">📋 Скопировать код сервера SAQTAA</button>
+
+  <!-- ================= ЭКРАН 1: КОНСТРУКТОР ЗАКАЗА ================= -->
+  <section id="screenEditor">
+    <div class="admin-grid">
+      <div class="editor-column" id="editorCol">
+
+        <!-- Быстрая панель текущего заказа -->
+        <div class="box" style="background:#F7FAF8;border-color:rgba(15,74,56,.28);padding:12px 14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+            <div>
+              <strong id="activeOrderBadge" style="font-size:.88rem;color:var(--em)">✨ Создание нового приглашения</strong>
+              <p class="save-state" id="saveState" style="margin-top:2px">Автосохранение включено</p>
+            </div>
+            <button class="btn line" id="toggleLoadOldBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">🔗 Открыть по ссылке</button>
+          </div>
+          <div id="loadOldWrap" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--hair)" hidden>
+            <label for="old">Вставьте готовую ссылку приглашения для редактирования</label>
+            <input id="old" type="url" placeholder="https://…/invite.html#…" inputmode="url" autocomplete="off">
+            <button class="btn line" id="loadOld" type="button" style="min-height:42px">Загрузить данные из ссылки</button>
+            <p class="err" id="oldErr" hidden></p>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>1. Шаблон и язык</h2>
+          <label for="tpl">Выберите дизайн (1-в-1 как на витрине)</label>
+          <select id="tpl">
+            <option value="luxury">№ 01 Luxury · свадьба</option>
+            <option value="floral">№ 02 Floral · свадьба</option>
+            <option value="qazaq">№ 03 Qazaq · той</option>
+            <option value="editorial">№ 04 Editorial · юбилей</option>
+            <option value="emerald">№ 05 Emerald · день рождения</option>
+            <option value="tusau">№ 06 Tusau · тұсау кесер</option>
+          </select>
+          <div class="tpl-grid" id="tplGrid" aria-label="Визуальный выбор шаблона">
+            <button class="tpl-card tpl-luxury" type="button" data-template="luxury" aria-pressed="true"><span class="tpl-art"><i>THE WEDDING</i><b>Names</b><i>EST. 2026</i></span><strong>Luxury</strong><small>Свадьба · классика</small></button>
+            <button class="tpl-card tpl-floral" type="button" data-template="floral" aria-pressed="false"><span class="tpl-art"><i>OUR DAY</i><b>Names</b><i>WITH LOVE</i></span><strong>Floral</strong><small>Свадьба · нежный</small></button>
+            <button class="tpl-card tpl-qazaq" type="button" data-template="qazaq" aria-pressed="false"><span class="tpl-art"><i>ҚҰРМЕТТІ ҚОНАҚ</i><b>Той</b><i>ШАҚЫРУ</i></span><strong>Qazaq</strong><small>Той · национальный</small></button>
+            <button class="tpl-card tpl-editorial" type="button" data-template="editorial" aria-pressed="false"><span class="tpl-art"><i>AN EVENING FOR</i><b>50</b><i>THE CELEBRATION</i></span><strong>Editorial</strong><small>Юбилей · журнал</small></button>
+            <button class="tpl-card tpl-emerald" type="button" data-template="emerald" aria-pressed="false"><span class="tpl-art"><i>YOU ARE INVITED</i><b>Birthday</b><i>CELEBRATE</i></span><strong>Emerald</strong><small>День рождения</small></button>
+            <button class="tpl-card tpl-tusau" type="button" data-template="tusau" aria-pressed="false"><span class="tpl-art"><i>АЛҒАШҚЫ ҚАДАМ</i><b>Тұсау кесер</b><i>2026</i></span><strong>Tusau</strong><small>Тұсау кесер</small></button>
+          </div>
+          <label style="margin-top:12px">Язык приглашения</label>
+          <div class="seg" id="langSeg">
+            <button type="button" data-l="ru" class="on">Русский</button>
+            <button type="button" data-l="kz">Қазақша</button>
+            <button type="button" data-l="both">Оба языка</button>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>2. Виновники торжества и дата</h2>
+          <label for="n">Имена на обложке</label>
+          <input id="n" type="text" maxlength="120" placeholder="Ерасыл & Аяулым" autocomplete="off">
+          <div id="bigWrap" hidden>
+            <label for="b">Крупное число на обложке (возраст юбиляра)</label>
+            <input id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
+          </div>
+          <label for="d">Дата мероприятия</label>
+          <input id="d" type="date">
+          <div class="row2">
+            <div><label for="s">Начало</label><input id="s" type="time"></div>
+            <div><label for="e">Окончание</label><input id="e" type="time"></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>3. Место проведения</h2>
+          <label for="ve">Название ресторана / зала</label>
+          <input id="ve" type="text" maxlength="120" placeholder="Grand Ballroom «Astana»" autocomplete="off">
+          <label for="ad">Город и адрес</label>
+          <input id="ad" type="text" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off">
+          <label for="g">Ссылка 2ГИС (необязательно)</label>
+          <input id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
+        </div>
+
+        <div class="box">
+          <h2>4. Тексты и программа</h2>
+          <div id="txt"></div>
+          <p class="hint">Подсказка: пишите <code>{names}</code> в тексте, чтобы имена с обложки подставились сами.</p>
+          <label for="h">Хештег (необязательно)</label>
+          <input id="h" type="text" maxlength="60" placeholder="#ЕрасылАяулым" autocomplete="off">
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--hair)">
+            <label style="margin-top:0">Программа вечера по часам</label>
+            <div id="prog"></div>
+            <button class="btn line" id="addRow" type="button" style="min-height:44px">+ Добавить пункт программы</button>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>5. Фото и ответы гостей (RSVP)</h2>
+          <label for="photoFile">📸 Фотография с телефона (загружается автоматически)</label>
+          <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp">
+          <img id="photoPreview" class="photo-preview" alt="Предпросмотр выбранного фото">
+          <p class="hint" id="photoStatus">Выберите фото — оно сожмётся и автоматически загрузится на сервер SAQTAA.</p>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <button class="btn line" id="clearPhoto" type="button" style="margin:0;min-height:40px;font-size:.82rem">🗑️ Убрать фото</button>
+          </div>
+          <label for="p">Прямая ссылка на фото (подставляется сама)</label>
+          <input id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
+
+          <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--hair)">
+            <label style="margin-top:0">Куда присылать ответы гостей (RSVP)?</label>
+            <div class="seg" id="rsvpSeg" style="flex-wrap:wrap">
+              <button type="button" data-r="saqtaa" class="on" style="flex:1 1 45%">📧 Почта клиента + Статистика</button>
+              <button type="button" data-r="ejs" style="flex:1 1 45%">📨 EmailJS</button>
+              <button type="button" data-r="w3f" style="flex:1 1 45%">🔑 Web3Forms</button>
+              <button type="button" data-r="none" style="flex:1 1 45%">🚫 Без ответов</button>
+            </div>
+
+            <div id="rsvpEmailCommon" style="margin-top:12px">
+              <label for="clientEmail">📧 Email клиента (куда приходят ответы гостей)</label>
+              <input id="clientEmail" type="email" placeholder="client@gmail.com (без регистраций и подтверждений)" inputmode="email" autocomplete="off">
+              <p class="hint">Когда гость ответит, ваш сервер SAQTAA сразу отправит клиенту красивое письмо с именем гостя, мероприятием и ответом!</p>
+            </div>
+
+            <div id="rsvpSaqtaaWrap" style="margin-top:10px">
+              <label for="sheet">URL сервера SAQTAA (подставляется сам из Настроек)</label>
+              <input id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+            </div>
+
+            <div id="rsvpEjsWrap" style="margin-top:12px" hidden>
+              <div class="row3">
+                <div><label for="ejsService">Service ID</label><input id="ejsService" type="text" placeholder="service_xxx" autocomplete="off"></div>
+                <div><label for="ejsTemplate">Template ID</label><input id="ejsTemplate" type="text" placeholder="template_xxx" autocomplete="off"></div>
+                <div><label for="ejsKey">Public Key</label><input id="ejsKey" type="text" placeholder="Public Key" autocomplete="off"></div>
+              </div>
+              <p class="hint">Ключи EmailJS запоминаются автоматически. Переменные шаблона: <code>{{to_email}}</code>, <code>{{guest_name}}</code>, <code>{{event_title}}</code>, <code>{{attendance}}</code>.</p>
+            </div>
+
+            <div id="rsvpW3fWrap" style="margin-top:12px" hidden>
+              <label for="k">Ключ Web3Forms клиента</label>
+              <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+            </div>
+          </div>
+        </div>
+
+        <div class="box" style="border:2px solid var(--em);background:#F7FAF8">
+          <h2>6. Создание ссылок для клиента</h2>
+          <div style="display:none"><input id="base" type="url" inputmode="url" autocomplete="off"></div>
+          <button class="btn main" id="make" type="button" style="min-height:56px;font-size:1rem">✨ Создать приглашение и статистику</button>
+          <p class="err" id="mkErr" hidden></p>
+
+          <div id="result" style="margin-top:14px" hidden>
+            <div style="background:#fff;border:1px solid var(--hair);border-radius:12px;padding:12px;margin-bottom:10px">
+              <label for="out" style="margin-top:0;color:var(--em)">🔗 1. Ссылка приглашения (для гостей)</label>
+              <textarea id="out" class="out" readonly style="min-height:68px"></textarea>
+              <p class="ok" id="len" style="margin-top:4px;font-size:.78rem"></p>
+              <div class="row2" style="margin-top:8px">
+                <button class="btn gold" id="copy" type="button" style="margin:0;min-height:44px;font-size:.84rem">📋 Скопировать</button>
+                <a class="btn line" id="open" target="_blank" rel="noopener" style="margin:0;min-height:44px;font-size:.84rem">👁️ Открыть</a>
+              </div>
+              <button class="btn line" id="sh" type="button" style="min-height:40px;font-size:.8rem;margin-top:8px">✂️ Сократить ссылку через is.gd</button>
+              <p class="err" id="shErr" hidden></p>
+              <div id="shBox" style="margin-top:8px" hidden>
+                <label for="shOut">Короткая ссылка приглашения</label>
+                <input id="shOut" type="text" readonly>
+                <button class="btn gold" id="shCopy" type="button" style="min-height:42px">Скопировать короткую</button>
+              </div>
+            </div>
+
+            <div id="statsBox" style="background:#fff;border:1px solid var(--hair);border-radius:12px;padding:12px;margin-bottom:10px" hidden>
+              <label for="statsOut" style="margin-top:0;color:#7F5D22">📊 2. Онлайн-статистика для клиента (Real-Time)</label>
+              <textarea id="statsOut" class="out" readonly style="min-height:68px"></textarea>
+              <div class="row2" style="margin-top:8px">
+                <button class="btn gold" id="copyStats" type="button" style="margin:0;min-height:44px;font-size:.84rem">📋 Скопировать</button>
+                <a class="btn line" id="openStats" target="_blank" rel="noopener" style="margin:0;min-height:44px;font-size:.84rem">📊 Открыть</a>
+              </div>
+            </div>
+
+            <a class="btn main" id="wa" target="_blank" rel="noopener" style="background:#166E3D">📲 Отправить клиенту в WhatsApp (обе ссылки)</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ЖИВОЙ ПРЕДПРОСМОТР (справа на ПК или по вкладке «Просмотр» на телефоне) -->
+      <div class="box preview-box mobile-hidden" id="previewBox">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <h2 style="margin:0">👁️ Живой предпросмотр</h2>
+          <button class="btn line" id="mobBackBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">✏️ К конструктору</button>
+        </div>
+        <div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div>
+        <p class="preview-note">Все изменения отображаются сразу в реальном времени.</p>
+      </div>
     </div>
-    <div class="hint" style="margin-top:10px;background:#fff;padding:12px;border-radius:10px;border:1px solid var(--hair);line-height:1.5">
-      <strong>Настройка аккаунта SAQTAA (делается 1 раз навсегда):</strong><br>
-      1. Зайдите в Google-аккаунт SAQTAA и откройте новую таблицу <a href="https://sheets.new" target="_blank" rel="noopener" style="color:var(--em);font-weight:700;text-decoration:underline">sheets.new</a>.<br>
-      2. Нажмите <em>«Расширения» → «Apps Script»</em>, вставьте скопированный выше код сервера.<br>
-      3. Нажмите <em>«Развернуть» → «Новое развертывание» → Тип: Веб-приложение</em>.<br>
-      4. В поле «Запуск от имени» оставьте <strong>«Меня» (Me)</strong>, а «У кого есть доступ» выберите <strong>«Все» (Anyone)</strong> → нажмите «Развернуть» и подтвердите разрешения (Gmail, Google Диск, Таблицы).<br>
-      5. Вставьте полученную ссылку в поле выше и нажмите «Сохранить». Теперь фото с телефона грузятся на Диск автоматически, а письма клиентам уходят с вашего Gmail без всяких регистраций!
-    </div>
-  </div>
-</div>
+  </section>
 
-<div class="box">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
-    <h2 style="margin:0">0. Новый заказ или правка старого</h2>
-    <button class="btn line" id="newOrderBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.78rem;margin:0;color:var(--em);border-color:var(--em)">➕ Новый заказ</button>
-  </div>
-  <label for="old">Или вставьте старую ссылку приглашения, чтобы поправить её</label>
-  <input id="old" type="url" placeholder="https://…/invite.html#…" inputmode="url" autocomplete="off">
-  <button class="btn line" id="loadOld" type="button">Загрузить из ссылки</button>
-  <p class="err" id="oldErr" hidden></p>
-</div>
-
-<div class="box">
-  <h2>1. Шаблон и язык</h2>
-  <label for="tpl">Шаблон</label>
-  <select id="tpl">
-    <option value="luxury">№ 01 Luxury · свадьба</option>
-    <option value="floral">№ 02 Floral · свадьба</option>
-    <option value="qazaq">№ 03 Qazaq · той</option>
-    <option value="editorial">№ 04 Editorial · юбилей</option>
-    <option value="emerald">№ 05 Emerald · день рождения</option>
-    <option value="tusau">№ 06 Tusau · тұсау кесер</option>
-  </select>
-  <div class="tpl-grid" id="tplGrid" aria-label="Визуальный выбор шаблона">
-    <button class="tpl-card tpl-luxury" type="button" data-template="luxury" aria-pressed="true"><span class="tpl-art"><i>THE WEDDING</i><b>Names</b><i>EST. 2026</i></span><strong>Luxury</strong><small>Свадьба · тёмная классика</small></button>
-    <button class="tpl-card tpl-floral" type="button" data-template="floral" aria-pressed="false"><span class="tpl-art"><i>OUR DAY</i><b>Names</b><i>WITH LOVE</i></span><strong>Floral</strong><small>Свадьба · нежная эстетика</small></button>
-    <button class="tpl-card tpl-qazaq" type="button" data-template="qazaq" aria-pressed="false"><span class="tpl-art"><i>ҚҰРМЕТТІ ҚОНАҚ</i><b>Той</b><i>ШАҚЫРУ</i></span><strong>Qazaq</strong><small>Семейный той · национальный стиль</small></button>
-    <button class="tpl-card tpl-editorial" type="button" data-template="editorial" aria-pressed="false"><span class="tpl-art"><i>AN EVENING FOR</i><b>50</b><i>THE CELEBRATION</i></span><strong>Editorial</strong><small>Юбилей · журнальная подача</small></button>
-    <button class="tpl-card tpl-emerald" type="button" data-template="emerald" aria-pressed="false"><span class="tpl-art"><i>YOU ARE INVITED</i><b>Birthday</b><i>CELEBRATE</i></span><strong>Emerald</strong><small>День рождения · изумрудный</small></button>
-    <button class="tpl-card tpl-tusau" type="button" data-template="tusau" aria-pressed="false"><span class="tpl-art"><i>АЛҒАШҚЫ ҚАДАМ</i><b>Тұсау кесер</b><i>2026</i></span><strong>Tusau</strong><small>Тұсау кесер · тёплая палитра</small></button>
-  </div>
-  <p class="hint">Все шаблоны 1-в-1 повторяют дизайны показательной витрины.</p>
-  <label>Язык приглашения</label>
-  <div class="seg" id="langSeg">
-    <button type="button" data-l="ru" class="on">Русский</button>
-    <button type="button" data-l="kz">Қазақша</button>
-    <button type="button" data-l="both">Оба</button>
-  </div>
-</div>
-
-<div class="box">
-  <h2>2. Главное</h2>
-  <label for="n">Имена (как на обложке)</label>
-  <input id="n" type="text" maxlength="120" placeholder="Ерасыл & Аяулым" autocomplete="off">
-  <div id="bigWrap" hidden>
-    <label for="b">Крупное число на обложке (возраст юбиляра)</label>
-    <input id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
-  </div>
-  <label for="d">Дата</label>
-  <input id="d" type="date">
-  <div class="row2">
-    <div><label for="s">Начало</label><input id="s" type="time"></div>
-    <div><label for="e">Окончание</label><input id="e" type="time"></div>
-  </div>
-  <p class="hint">Время по Казахстану (UTC+5). Окончание нужно для календаря гостя. Ссылка перестаёт открываться после конца дня мероприятия.</p>
-</div>
-
-<div class="box">
-  <h2>3. Место</h2>
-  <label for="ve">Название зала / ресторана</label>
-  <input id="ve" type="text" maxlength="120" autocomplete="off">
-  <label for="ad">Адрес</label>
-  <input id="ad" type="text" maxlength="160" autocomplete="off">
-  <label for="g">Ссылка 2ГИС (необязательно)</label>
-  <input id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
-  <p class="hint">Если пусто — откроется поиск 2ГИС по адресу. Точная ссылка лучше: в 2ГИС откройте место → «Поделиться» → скопировать.</p>
-</div>
-
-<div class="box">
-  <h2>4. Тексты</h2>
-  <div id="txt"></div>
-  <p class="hint">В тексте и подписи можно писать {names} — подставятся имена с обложки.</p>
-  <label for="h">Хештег (необязательно)</label>
-  <input id="h" type="text" maxlength="60" placeholder="#ЕрасылАяулым" autocomplete="off">
-</div>
-
-<div class="box">
-  <h2>5. Программа дня</h2>
-  <div id="prog"></div>
-  <button class="btn line" id="addRow" type="button">+ Добавить пункт</button>
-  <p class="hint">Время общее, названия и описания — отдельно для каждого языка.</p>
-</div>
-
-<div class="box">
-  <h2>6. Фото и ответы гостей (RSVP)</h2>
-  <label for="photoFile">📸 Выбрать фото с телефона (загрузится автоматически)</label>
-  <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp">
-  <img id="photoPreview" class="photo-preview" alt="Предпросмотр выбранного фото">
-  <p class="hint" id="photoStatus">При выборе фото оно сжимается и автоматически загружается на сервер SAQTAA, подставляя готовую публичную ссылку ниже.</p>
-  <button class="btn line" id="clearPhoto" type="button">Убрать фото</button>
-  <label for="p">Прямая ссылка на фото (подставляется сама или вручную)</label>
-  <input id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
-
-  <label style="margin-top:16px">Куда отправлять ответы гостей (RSVP)?</label>
-  <div class="seg" id="rsvpSeg" style="flex-wrap:wrap">
-    <button type="button" data-r="saqtaa" class="on" style="flex:1 1 45%">📧 Почта клиента + Статистика (SAQTAA)</button>
-    <button type="button" data-r="ejs" style="flex:1 1 45%">📨 EmailJS</button>
-    <button type="button" data-r="w3f" style="flex:1 1 45%">🔑 Web3Forms</button>
-    <button type="button" data-r="none" style="flex:1 1 45%">🚫 Без ответов</button>
-  </div>
-
-  <div id="rsvpEmailCommon" style="margin-top:12px">
-    <label for="clientEmail">Email клиента (куда присылать ответы гостей)</label>
-    <input id="clientEmail" type="email" placeholder="client@gmail.com (необязательно, если нужна только ссылка статистики)" inputmode="email" autocomplete="off">
-    <p class="hint">Клиенту не нужно нигде регистрироваться — письма с именем гостя, мероприятием и ответом будут приходить автоматически с аккаунта SAQTAA!</p>
-  </div>
-
-  <div id="rsvpSaqtaaWrap" style="margin-top:10px">
-    <label for="sheet">URL сервера SAQTAA / Google Таблицы</label>
-    <input id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
-    <p class="hint">Подставляется автоматически из настроек сервера SAQTAA сверху.</p>
-  </div>
-
-  <div id="rsvpEjsWrap" style="margin-top:12px" hidden>
-    <div class="row3">
-      <div><label for="ejsService">Service ID</label><input id="ejsService" type="text" placeholder="service_xxx" autocomplete="off"></div>
-      <div><label for="ejsTemplate">Template ID</label><input id="ejsTemplate" type="text" placeholder="template_xxx" autocomplete="off"></div>
-      <div><label for="ejsKey">Public Key</label><input id="ejsKey" type="text" placeholder="Public Key" autocomplete="off"></div>
-    </div>
-    <p class="hint">Настройки EmailJS сохраняются в памяти устройства. В шаблоне EmailJS используйте переменные: <code>{{to_email}}</code>, <code>{{guest_name}}</code>, <code>{{event_title}}</code>, <code>{{attendance}}</code>.</p>
-  </div>
-
-  <div id="rsvpW3fWrap" style="margin-top:12px" hidden>
-    <label for="k">Ключ Web3Forms клиента</label>
-    <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
-    <p class="hint">Ключ создаётся на web3forms.com на почту клиента.</p>
-  </div>
-</div>
-
-<div class="box">
-  <h2>7. Готово</h2>
-  <label for="base">Адрес страницы invite.html</label>
-  <input id="base" type="url" inputmode="url" autocomplete="off">
-  <button class="btn main" id="make" type="button">✨ Создать приглашение и ссылку статистики</button>
-  <p class="err" id="mkErr" hidden></p>
-  <div id="result" hidden>
-    <label for="out">🔗 Ссылка приглашения (для отправки гостям)</label>
-    <textarea id="out" class="out" readonly></textarea>
-    <p class="ok" id="len"></p>
-    <button class="btn gold" id="copy" type="button">Скопировать ссылку приглашения</button>
-    <button class="btn line" id="sh" type="button">Сократить ссылку (is.gd)</button>
-    <p class="err" id="shErr" hidden></p>
-    <div id="shBox" hidden>
-      <label for="shOut">Короткая ссылка</label>
-      <input id="shOut" type="text" readonly>
-      <button class="btn gold" id="shCopy" type="button">Скопировать короткую</button>
+  <!-- ================= ЭКРАН 2: БАЗА ВСЕХ ЗАКАЗОВ ================= -->
+  <section id="screenOrders" hidden>
+    <div class="orders-stats">
+      <div class="ostat-card"><b id="statTotalOrders">0</b><span>Всего заказов</span></div>
+      <div class="ostat-card"><b id="statUpcomingOrders">0</b><span>Предстоящие</span></div>
+      <div class="ostat-card"><b id="statPastOrders">0</b><span>Прошедшие</span></div>
     </div>
 
-    <div id="statsBox" style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--hair)" hidden>
-      <label for="statsOut">📊 Ссылка статистики для клиента (обновляется в реальном времени)</label>
-      <textarea id="statsOut" class="out" readonly style="min-height:75px"></textarea>
-      <button class="btn gold" id="copyStats" type="button">Скопировать ссылку статистики для клиента</button>
-      <a class="btn line" id="openStats" target="_blank" rel="noopener">Открыть страницу статистики</a>
+    <div class="box">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <h2 style="margin:0">📋 Управление заказами</h2>
+        <div style="display:flex;gap:6px">
+          <button class="btn line" id="syncCloudHist" type="button" style="width:auto;min-height:36px;padding:6px 12px;font-size:.78rem;margin:0">☁️ С сервера</button>
+          <button class="btn main" id="newOrderFromListBtn" type="button" style="width:auto;min-height:36px;padding:6px 12px;font-size:.78rem;margin:0">➕ Новый заказ</button>
+        </div>
+      </div>
+
+      <input id="histSearch" type="search" placeholder="🔍 Поиск по имени, дате (14.02.2027), времени или почте…" autocomplete="off">
+
+      <div class="seg" id="orderFilterSeg" style="margin-top:10px">
+        <button type="button" data-of="all" class="on">Все</button>
+        <button type="button" data-of="upcoming">Предстоящие</button>
+        <button type="button" data-of="past">Прошедшие</button>
+      </div>
+
+      <div id="historyList" style="margin-top:12px"><p class="hint">Заказов пока нет.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= ЭКРАН 3: НАСТРОЙКИ И ПАРОЛЬ ================= -->
+  <section id="screenSettings" hidden>
+
+    <!-- Блок 1: Смена пароля администратора -->
+    <div class="box">
+      <h2>🔐 Безопасность и смена пароля</h2>
+      <p class="hint" style="margin-bottom:10px">Вы можете в любой момент поменять пароль входа в админ-панель. Если подключён сервер SAQTAA, пароль обновится и на сервере.</p>
+      <label for="oldPwInput">Текущий пароль</label>
+      <input id="oldPwInput" type="password" placeholder="Введите текущий пароль" autocomplete="off">
+      <div class="row2">
+        <div>
+          <label for="newPwInput">Новый пароль</label>
+          <input id="newPwInput" type="password" placeholder="Минимум 4 символа" autocomplete="off">
+        </div>
+        <div>
+          <label for="newPwConfirm">Повторите новый пароль</label>
+          <input id="newPwConfirm" type="password" placeholder="Повторите пароль" autocomplete="off">
+        </div>
+      </div>
+      <button class="btn main" id="changePwBtn" type="button" style="min-height:48px">🔑 Сохранить новый пароль</button>
+      <p id="changePwMsg" class="hint" style="font-weight:700;margin-top:8px" hidden></p>
+      <button class="btn danger" id="logoutBtn" type="button" style="min-height:44px;margin-top:14px">🚪 Выйти из админ-панели (заблокировать)</button>
     </div>
 
-    <a class="btn main" id="open" target="_blank" rel="noopener">Предпросмотр приглашения</a>
-    <a class="btn line" id="wa" target="_blank" rel="noopener">📲 Отправить клиенту в WhatsApp (обе ссылки)</a>
-  </div>
-</div>
+    <!-- Блок 2: Настройка единого сервера SAQTAA -->
+    <div class="box" style="border-color:rgba(15,74,56,.35);background:#F9FBF9">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <h2 style="margin:0;color:var(--em)">☁️ Сервер SAQTAA (Gmail + Фото + База заказов)</h2>
+        <button class="btn line" id="toggleServerSetup" type="button" style="width:auto;min-height:32px;padding:4px 10px;font-size:.74rem;margin:0">Инструкция</button>
+      </div>
+      <p class="hint" id="srvStatusText" style="margin-top:6px">Подключите единый скрипт Google-аккаунта SAQTAA один раз — и для каждого клиента достаточно просто вписать его Email.</p>
+      <label for="srvUrl">URL вашего сервера SAQTAA (Google Apps Script Web App)</label>
+      <input id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+      <div class="row2" style="margin-top:10px">
+        <button class="btn main" id="saveSrvBtn" type="button" style="margin:0;min-height:46px;font-size:.84rem">💾 Сохранить и проверить</button>
+        <button class="btn line" id="copyAppScript" type="button" style="margin:0;min-height:46px;font-size:.84rem">📋 Скопировать код сервера</button>
+      </div>
+      <div id="serverSetupWrap" style="margin-top:10px" hidden>
+        <div class="hint" style="background:#fff;padding:12px;border-radius:10px;border:1px solid var(--hair);line-height:1.55">
+          <strong>Как подключить аккаунт SAQTAA за 2 минуты (1 раз навсегда):</strong><br>
+          1. Зайдите в Google-аккаунт SAQTAA и откройте новую таблицу <a href="https://sheets.new" target="_blank" rel="noopener" style="color:var(--em);font-weight:700;text-decoration:underline">sheets.new</a>.<br>
+          2. Нажмите <em>«Расширения» → «Apps Script»</em>, вставьте скопированный выше код.<br>
+          3. Нажмите <em>«Развернуть» → «Новое развертывание» → Тип: Веб-приложение</em>.<br>
+          4. «Запуск от имени»: <strong>Меня (Me)</strong>, «У кого есть доступ»: <strong>Все (Anyone)</strong> → нажмите «Развернуть» и дайте разрешения.<br>
+          5. Вставьте полученную ссылку в поле выше и нажмите «Сохранить и проверить».
+        </div>
+      </div>
+    </div>
 
-<div class="box">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
-    <h2 style="margin:0">8. История заказов (поиск по имени и дате)</h2>
-    <button class="btn line" id="syncCloudHist" type="button" style="width:auto;min-height:32px;padding:4px 10px;font-size:.74rem;margin:0">☁️ Обновить с сервера</button>
-  </div>
-  <p class="hint">Все заказы сохраняются на устройстве и на сервере SAQTAA. Ищите по именам, дате (напр. 14.02.2027), времени или почте клиента.</p>
-  <input id="histSearch" type="search" placeholder="🔍 Поиск: имя, дата (14.02.2027 или 2027-02-14), время..." autocomplete="off" style="margin-top:8px">
-  <div id="historyList"><p class="hint">История пока пуста.</p></div>
-</div>
-<div class="box">
-  <h2>9. Резервная копия</h2>
-  <p class="hint">Сохраните все черновики, историю и локальные фотографии в один JSON-файл. На другом устройстве откройте админ-панель и импортируйте этот файл. Автоматической синхронизации между устройствами нет.</p>
-  <button class="btn main" id="exportBackup" type="button">Экспортировать резервную копию</button>
-  <label for="importBackup">Восстановить из резервной копии</label>
-  <input id="importBackup" type="file" accept="application/json,.json">
-  <p class="hint" id="backupStatus" aria-live="polite">Рекомендуется делать копию после каждого важного заказа.</p>
-</div>
-<div class="box preview-box">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-    <h2 style="margin:0">Живой предпросмотр</h2>
-    <button class="btn line" id="mobBackBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">⬆️ К редактированию</button>
-  </div>
-  <div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div>
-  <p class="preview-note">Обновляется автоматически при изменении полей. Локальное фото видно только в этом браузере; для гостей нужна публичная HTTPS-ссылка.</p>
-  <p class="save-state" id="saveState">Черновик ещё не сохранён.</p>
-</div>
-</div>
+    <!-- Блок 3: Резервная копия -->
+    <div class="box">
+      <h2>📦 Резервная копия всех данных</h2>
+      <p class="hint">Вы можете сохранить все заказы, черновики и фотографии в один файл на телефон или компьютер.</p>
+      <button class="btn line" id="exportBackup" type="button" style="min-height:46px">📥 Скачать резервную копию (.json)</button>
+      <label for="importBackup" style="margin-top:12px">📤 Восстановить из файла резервной копии</label>
+      <input id="importBackup" type="file" accept="application/json,.json">
+      <p class="hint" id="backupStatus" aria-live="polite"></p>
+    </div>
+  </section>
+
 </main>
+
+<!-- Нижняя панель навигации как в мобильном приложении -->
+<nav class="app-nav" id="bottomAppNav" aria-label="Навигация приложения" hidden>
+  <button type="button" data-nav="editor" class="on">
+    <span class="nav-ico">✏️</span>
+    <span class="nav-lbl">Конструктор</span>
+  </button>
+  <button type="button" data-nav="orders">
+    <span class="nav-ico">📋</span>
+    <span class="nav-lbl">Все заказы</span>
+    <span class="nav-badge" id="navOrdersBadge" hidden>0</span>
+  </button>
+  <button type="button" data-nav="preview">
+    <span class="nav-ico">👁️</span>
+    <span class="nav-lbl">Просмотр</span>
+  </button>
+  <button type="button" data-nav="settings">
+    <span class="nav-ico">⚙️</span>
+    <span class="nav-lbl">Настройки</span>
+  </button>
+</nav>
+
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -311,9 +448,11 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 var $=function(s){return document.querySelector(s);};
 var KEY="saqtaa-admin-v2", HIST_KEY="saqtaa-history-v1";
 var historyItems=[];var previewTimer=null;var photoDBPromise=null;var currentPhotoBlob=null;var currentPhotoUrl="";
-var SRV_KEY="saqtaa-server-url-v1", PIN_KEY="saqtaa-server-pin-v1", EJS_KEY="saqtaa-ejs-cfg-v1";
+var SRV_KEY="saqtaa-server-url-v1", PIN_KEY="saqtaa-server-pin-v1", EJS_KEY="saqtaa-ejs-cfg-v1", CUSTOM_HASH_KEY="saqtaa-custom-pw-hash-v1";
 var currentRsvpMode="saqtaa";
 var currentOrderId="";
+var currentOrderFilter="all";
+var activeScreen="editor";
 
 var APPS_SCRIPT_CODE = [
 'var DEFAULT_ADMIN_PIN = "saqtaa2026";',
@@ -772,6 +911,40 @@ function fillFrom(o){
   showText();
 }
 
+/* ---------- Навигация между экранами приложения ---------- */
+function switchScreen(sc){
+  activeScreen=sc;
+  var isPrev=(sc==="preview");
+  $("#screenEditor").hidden=(sc!=="editor"&&!isPrev);
+  $("#screenOrders").hidden=(sc!=="orders");
+  $("#screenSettings").hidden=(sc!=="settings");
+  var edCol=$("#editorCol"),prBox=$("#previewBox");
+  if(isPrev){
+    if(window.innerWidth<=820)edCol.hidden=true;
+    prBox.classList.remove("mobile-hidden");
+    schedulePreview();
+  }else if(sc==="editor"){
+    edCol.hidden=false;
+    prBox.classList.add("mobile-hidden");
+    schedulePreview();
+  }
+  document.querySelectorAll("[data-nav]").forEach(function(b){
+    b.classList.toggle("on",b.dataset.nav===sc);
+  });
+  var sub=$("#hdrSub");
+  if(sub){
+    sub.textContent=sc==="orders"?"Все созданные заказы и статистика клиентов":sc==="settings"?"Безопасность, смена пароля и сервер SAQTAA":sc==="preview"?"Живой предпросмотр приглашения":"Конструктор приглашений и сбор ответов";
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-nav]").forEach(function(b){
+  b.addEventListener("click",function(){switchScreen(b.dataset.nav);});
+});
+$("#toggleLoadOldBtn").addEventListener("click",function(){
+  var w=$("#loadOldWrap");
+  w.hidden=!w.hidden;
+});
+
 /* ---------- Настройка сервера SAQTAA ---------- */
 function updateSrvStatusBanner(){
   var url="";try{url=localStorage.getItem(SRV_KEY)||"";}catch(_){}
@@ -821,13 +994,44 @@ $("#saveSrvBtn").addEventListener("click",async function(){
   save();
 });
 
-/* ---------- SAQTAA v3: история, фото, предпросмотр, облако ---------- */
+/* ---------- SAQTAA v3: База заказов, фильтры, фото, предпросмотр, облако ---------- */
 function setTemplateCards(){document.querySelectorAll("[data-template]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.template===$("#tpl").value));});}
 document.querySelectorAll("[data-template]").forEach(function(b){b.addEventListener("click",function(){$("#tpl").value=b.dataset.template;$("#tpl").dispatchEvent(new Event("change"));setTemplateCards();});});
+
+function isOrderUpcoming(x){
+  if(!x||!x.date)return true;
+  var today=new Date().toISOString().slice(0,10);
+  return x.date>=today;
+}
+function updateOrderCounters(){
+  var total=historyItems.length,up=0,past=0;
+  historyItems.forEach(function(x){if(isOrderUpcoming(x))up++;else past++;});
+  if($("#statTotalOrders"))$("#statTotalOrders").textContent=String(total);
+  if($("#statUpcomingOrders"))$("#statUpcomingOrders").textContent=String(up);
+  if($("#statPastOrders"))$("#statPastOrders").textContent=String(past);
+  if($("#topOrdersCount"))$("#topOrdersCount").textContent="("+total+")";
+  var nb=$("#navOrdersBadge");
+  if(nb){nb.textContent=String(total);nb.hidden=(total===0);}
+}
+document.querySelectorAll("#orderFilterSeg button").forEach(function(b){
+  b.addEventListener("click",function(){
+    currentOrderFilter=b.dataset.of||"all";
+    document.querySelectorAll("#orderFilterSeg button").forEach(function(x){x.classList.toggle("on",x===b);});
+    renderHistory();
+  });
+});
+
 function renderHistory(){
-  var box=$("#historyList");if(!historyItems.length){box.innerHTML='<p class="hint">История пока пуста.</p>';return;}
+  updateOrderCounters();
+  var box=$("#historyList");
+  if(!historyItems.length){
+    box.innerHTML='<p class="hint" style="text-align:center;padding:20px 10px">В базе пока нет заказов. Создайте первое приглашение во вкладке «✏️ Конструктор» или нажмите «☁️ С сервера».</p>';
+    return;
+  }
   var q=clean($("#histSearch").value).toLowerCase();
   var filtered=historyItems.slice().reverse().filter(function(x){
+    if(currentOrderFilter==="upcoming"&&!isOrderUpcoming(x))return false;
+    if(currentOrderFilter==="past"&&isOrderUpcoming(x))return false;
     if(!q)return true;
     var dotDate=x.date?x.date.split("-").reverse().join("."):"";
     var em=(x.email||(x.data&&x.data.em)||"");
@@ -835,27 +1039,36 @@ function renderHistory(){
     return str.indexOf(q)!==-1;
   });
   if(!filtered.length){
-    box.innerHTML='<p class="hint">Ничего не найдено по запросу «'+esc(q)+'».</p>';
+    box.innerHTML='<p class="hint" style="text-align:center;padding:18px 10px">Ничего не найдено по вашему фильтру или запросу.</p>';
     return;
   }
   box.innerHTML=filtered.map(function(x){
     var idx=historyItems.indexOf(x);
+    var upcoming=isOrderUpcoming(x);
     var dotDate=x.date?x.date.split("-").reverse().join("."):"";
-    var dateStr=x.date?("📅 "+esc(dotDate)+" ("+esc(x.date)+")"):"";
+    var dateStr=x.date?("📅 <strong>"+esc(dotDate)+"</strong>"):"📅 Без даты";
     var timeStr=x.time?(" · ⏰ "+esc(x.time)):"";
     var tplStr=x.template?(" · 🎨 "+esc(x.template)):"";
     var em=x.email||(x.data&&x.data.em)||"";
-    var emStr=em?(" · 📧 "+esc(em)):"";
-    var meta=[dateStr+timeStr+tplStr+emStr,"🕒 Сохранено: "+new Date(x.at||Date.now()).toLocaleString()].filter(Boolean).join("<br>");
-    var statsBtn=x.stats_url?'<button type="button" data-hstats="'+idx+'">📊 Ссылка статистики</button>':'';
+    var emStr=em?("<br>📧 Клиент: <strong>"+esc(em)+"</strong>"):"";
+    var savedStr="<br><span style='opacity:.75;font-size:.73rem'>🕒 Сохранено: "+new Date(x.at||Date.now()).toLocaleString()+"</span>";
+    var waHref=waOrderLink(x);
+    var statsBtns=x.stats_url
+      ?'<button type="button" class="act-stats" data-hstats="'+idx+'">📊 Копировать статистику</button><a class="act-stats" href="'+esc(x.stats_url)+'" target="_blank" rel="noopener">📈 Открыть статистику</a>'
+      :'';
     return '<div class="history-item" data-hi="'+idx+'">'+
-      '<strong>'+esc(x.name||"Без названия")+'</strong>'+
-      '<small style="display:block;margin:4px 0 8px;line-height:1.4">'+meta+'</small>'+
-      '<div class="history-actions" style="flex-wrap:wrap">'+
-        '<button type="button" data-hload="'+idx+'">✏️ Открыть в редакторе</button>'+
-        '<button type="button" data-hcopy="'+idx+'">🔗 Приглашение</button>'+
-        statsBtn+
-        '<button type="button" data-hdel="'+idx+'" style="color:#7C2230">🗑️ Удалить</button>'+
+      '<div class="order-head">'+
+        '<strong>'+esc(x.name||"Без названия")+'</strong>'+
+        '<span class="order-badge '+(upcoming?"upcoming":"past")+'">'+(upcoming?"Предстоит":"Прошло")+'</span>'+
+      '</div>'+
+      '<div class="order-meta">'+dateStr+timeStr+tplStr+emStr+savedStr+'</div>'+
+      '<div class="history-actions">'+
+        '<button type="button" class="act-primary" data-hload="'+idx+'">✏️ Редактировать</button>'+
+        '<a class="act-wa" href="'+esc(waHref)+'" target="_blank" rel="noopener">📲 В WhatsApp</a>'+
+        '<button type="button" data-hcopy="'+idx+'">🔗 Ссылка гостей</button>'+
+        '<a href="'+esc(x.url||"#")+'" target="_blank" rel="noopener">👁️ Открыть</a>'+
+        statsBtns+
+        '<button type="button" data-hdel="'+idx+'" style="color:#9E2B3A;grid-column:1/-1">🗑️ Удалить заказ</button>'+
       '</div></div>';
   }).join("");
 }
@@ -884,7 +1097,7 @@ async function syncOrderToServer(entry){
 }
 $("#syncCloudHist").addEventListener("click",async function(){
   var srv=getSrvUrl();
-  if(!srv){toast("Сначала укажите URL сервера SAQTAA вверху страницы");$("#serverSetupWrap").hidden=false;return;}
+  if(!srv){toast("Сначала укажите URL сервера SAQTAA во вкладке «Настройки»");switchScreen("settings");return;}
   var btn=this,old=btn.textContent;
   btn.disabled=true;btn.textContent="⏳ Загрузка…";
   try{
@@ -947,17 +1160,24 @@ $("#historyList").addEventListener("click",async function(e){
   var b=e.target.closest("button");if(!b)return;
   var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hstats||b.dataset.hdel),x=historyItems[i];if(!x)return;
   if(b.hasAttribute("data-hload")){
-    if(!x.data||typeof x.data!=="object"){toast("Запись истории повреждена");return;}
-    fillFrom(x.data);setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));save();schedulePreview();toast("Заказ открыт в редакторе");window.scrollTo({top:0,behavior:"smooth"});
+    if(!x.data||typeof x.data!=="object"){toast("Запись заказа повреждена");return;}
+    fillFrom(x.data);
+    if($("#activeOrderBadge"))$("#activeOrderBadge").textContent="✏️ Редактирование заказа: "+(x.name||"Без имени");
+    setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));
+    save();
+    switchScreen("editor");
+    toast("✏️ Заказ открыт в конструкторе");
   }else if(b.hasAttribute("data-hcopy")){
-    try{await navigator.clipboard.writeText(x.url);toast("Ссылка приглашения скопирована");}catch(_){toast("Не удалось скопировать ссылку");}
+    try{await navigator.clipboard.writeText(x.url);toast("🔗 Ссылка приглашения скопирована");}catch(_){toast("Не удалось скопировать ссылку");}
   }else if(b.hasAttribute("data-hstats")){
-    if(x.stats_url){try{await navigator.clipboard.writeText(x.stats_url);toast("Ссылка статистики для клиента скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
+    if(x.stats_url){try{await navigator.clipboard.writeText(x.stats_url);toast("📊 Ссылка статистики скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
   }else if(b.hasAttribute("data-hdel")){
+    if(!confirm("Удалить заказ «"+(x.name||"Без названия")+"»?"))return;
     var delId=x.id;
     historyItems.splice(i,1);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}if(delId)delPhoto(delId).catch(function(){});renderHistory();
     var srv=getSrvUrl();
     if(srv&&delId){fetch(srv,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"delete_order",pin:getAdminPin(),id:delId})}).catch(function(){});}
+    toast("🗑️ Заказ удалён");
   }
 });
 function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,500);}
@@ -979,11 +1199,11 @@ function setCurrentPhoto(blob){
     if(clean($("#p").value)){
       $("#photoStatus").textContent="✅ Фото готово ("+Math.round(blob.size/1024)+" КБ) и прикреплено публичной ссылкой.";
     }else{
-      $("#photoStatus").textContent="Фото сжато ("+Math.round(blob.size/1024)+" КБ). Подключите сервер SAQTAA сверху для автозагрузки или вставьте ссылку на фото ниже.";
+      $("#photoStatus").textContent="Фото сжато ("+Math.round(blob.size/1024)+" КБ). Подключите сервер SAQTAA в Настройках для автозагрузки или вставьте ссылку на фото ниже.";
     }
   }else{
     img.removeAttribute("src");img.style.display="none";
-    $("#photoStatus").textContent="При выборе фото оно сжимается и автоматически загружается на сервер SAQTAA, подставляя готовую публичную ссылку ниже.";
+    $("#photoStatus").textContent="Выберите фото — оно сожмётся и автоматически загрузится на сервер SAQTAA.";
   }
   schedulePreview();
 }
@@ -1019,7 +1239,7 @@ $("#photoFile").addEventListener("change",async function(){
         status.textContent="⚠️ Фото сохранено локально, но сервер вернул ошибку: "+((j&&j.error)||"проверьте доступ Apps Script");
       }
     }else{
-      toast("Фото сжато. Для автозагрузки в интернет подключите сервер SAQTAA вверху.");
+      toast("Фото сжато. Для автозагрузки в интернет подключите сервер SAQTAA в Настройках.");
     }
     save();
   }catch(e){
@@ -1031,10 +1251,10 @@ $("#clearPhoto").addEventListener("click",async function(){try{var db=await open
 $("#p").addEventListener("input",function(){schedulePreview();});
 async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
 function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректный файл фотографии в резервной копии.");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
-$("#exportBackup").addEventListener("click",async function(){var status=$("#backupStatus");try{var photos=await allPhotos(),packed=[];for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});var payload={format:"SAQTAA_BACKUP",version:1,exportedAt:new Date().toISOString(),draft:localStorage.getItem(KEY),history:historyItems,photos:packed};var blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);status.textContent="Резервная копия создана. Храните файл в безопасном месте.";}catch(e){status.textContent="Ошибка экспорта: "+e.message;}});
-$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(!payload||payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");var parsedDraft=null;if(payload.draft){parsedDraft=JSON.parse(payload.draft);if(!parsedDraft||typeof parsedDraft!=="object")throw new Error("Повреждён черновик в резервной копии.");}var parsedPhotos=[];for(var i=0;i<(payload.photos||[]).length;i++){var ph=payload.photos[i];if(!ph||!ph.id)throw new Error("Повреждена запись фотографии в резервной копии.");parsedPhotos.push({id:String(ph.id),blob:dataUrlToBlob(ph.data)});}var validHistory=Array.isArray(payload.history)?payload.history.filter(function(x){return x&&typeof x==="object"&&x.data&&typeof x.data==="object";}).slice(-50):[];if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var j=0;j<parsedPhotos.length;j++)await putPhoto(parsedPhotos[j].id,parsedPhotos[j].blob);if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=validHistory;localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(parsedDraft&&parsedDraft.o){fillFrom(parsedDraft.o);if(parsedDraft.base)$("#base").value=parsedDraft.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
+$("#exportBackup").addEventListener("click",async function(){var status=$("#backupStatus");try{var photos=await allPhotos(),packed=[];for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});var payload={format:"SAQTAA_BACKUP",version:1,exportedAt:new Date().toISOString(),draft:localStorage.getItem(KEY),history:historyItems,photos:packed};var blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);status.textContent="✅ Резервная копия скачана.";}catch(e){status.textContent="Ошибка экспорта: "+e.message;}});
+$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(!payload||payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");var parsedDraft=null;if(payload.draft){parsedDraft=JSON.parse(payload.draft);if(!parsedDraft||typeof parsedDraft!=="object")throw new Error("Повреждён черновик в резервной копии.");}var parsedPhotos=[];for(var i=0;i<(payload.photos||[]).length;i++){var ph=payload.photos[i];if(!ph||!ph.id)throw new Error("Повреждена запись фотографии в резервной копии.");parsedPhotos.push({id:String(ph.id),blob:dataUrlToBlob(ph.data)});}var validHistory=Array.isArray(payload.history)?payload.history.filter(function(x){return x&&typeof x==="object"&&x.data&&typeof x.data==="object";}).slice(-50):[];if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var j=0;j<parsedPhotos.length;j++)await putPhoto(parsedPhotos[j].id,parsedPhotos[j].blob);if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=validHistory;localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(parsedDraft&&parsedDraft.o){fillFrom(parsedDraft.o);if(parsedDraft.base)$("#base").value=parsedDraft.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="✅ Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
 
-/* ---------- события ---------- */
+/* ---------- события конструктора ---------- */
 $("#tpl").addEventListener("change",function(){
   if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
   else{lastTpl=this.value;$("#bigWrap").hidden=(this.value!=="editorial");}
@@ -1050,7 +1270,7 @@ document.addEventListener("change",function(e){if(e.target.closest("main")&&e.ta
 document.addEventListener("input",function(e){
   if(e.target.closest("main")&&e.target.id!=="old"){
     scheduleSave();
-    if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Создайте ссылку заново, чтобы обновить приглашение.";
+    if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Нажмите «Создать приглашение» заново, чтобы обновить ссылку.";
   }
 });
 window.addEventListener("beforeunload",function(){if(saveTimer)save();});
@@ -1065,14 +1285,20 @@ function waLink(link, statsLink){
   }
   return"https://wa.me/?text="+encodeURIComponent(text);
 }
+function waOrderLink(x){
+  var text="Приглашаем вас на праздник ✦ "+(x.name||"")+"\n\n🔗 Приглашение для гостей:\n"+(x.url||"");
+  if(x.stats_url){
+    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+x.stats_url;
+  }
+  return"https://wa.me/?text="+encodeURIComponent(text);
+}
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
   try{
     var o=collect(),msg=validate(o);
-    if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали фото с телефона, но оно ещё не загружено на сервер. Подключите сервер SAQTAA вверху (чтобы фото загружалось автоматически) или вставьте прямую HTTPS-ссылку на фото.";
+    if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали фото с телефона, но оно ещё не загружено на сервер. Подключите сервер SAQTAA во вкладке «Настройки» (для автозагрузки) или вставьте прямую HTTPS-ссылку на фото.";
     if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
-    var base=clean($("#base").value);
-    if(!/^https?:\/\//i.test(base)){err.textContent="Укажите адрес страницы invite.html (в разделе 7).";err.hidden=false;return;}
+    var base=clean($("#base").value)||new URL("invite.html",location.href).href;
     var encodedHash=await encode(o);
     var url=base.replace(/#.*$/,"")+"#"+encodedHash;
     var statsUrl="";
@@ -1087,16 +1313,18 @@ $("#make").addEventListener("click",async function(){
     }
     $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
     $("#open").href=url;$("#wa").href=waLink(url,statsUrl);
-    $("#len").textContent="Длина ссылки: "+url.length+" символов"+(url.length>2000?" — длинновата, лучше сократить текст или программу.":" — всё в порядке.");
-    save();await storeHistory(o,url,statsUrl);schedulePreview();$("#result").scrollIntoView({behavior:"smooth",block:"start"});
+    $("#len").textContent="Длина ссылки: "+url.length+" символов — готово к отправке!";
+    save();await storeHistory(o,url,statsUrl);schedulePreview();
+    toast("✅ Заказ сохранён в базу и ссылки готовы!");
+    $("#result").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(e){
     err.textContent="Не удалось создать ссылку: "+(e&&e.message?e.message:"ошибка браузера");err.hidden=false;
   }
 });
 async function copyFrom(sel){
   var el=$(sel);
-  try{await navigator.clipboard.writeText(el.value);toast("Ссылка скопирована");}
-  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
+  try{await navigator.clipboard.writeText(el.value);toast("📋 Ссылка скопирована");}
+  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("📋 Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
 }
 $("#copy").addEventListener("click",function(){copyFrom("#out");});
 $("#copyStats").addEventListener("click",function(){copyFrom("#statsOut");});
@@ -1110,7 +1338,7 @@ document.querySelectorAll("#rsvpSeg button").forEach(function(b){
   b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});
 });
 
-/* сокращение ссылки через is.gd (JSONP — без проблем с CORS) */
+/* сокращение ссылки через is.gd (JSONP) */
 function jsonp(url,ms){return new Promise(function(res,rej){
   var cb="sq"+Date.now(),s=document.createElement("script");
   var to=setTimeout(function(){cl();rej(new Error("timeout"));},ms);
@@ -1126,9 +1354,9 @@ $("#sh").addEventListener("click",async function(){
     if(!j||!j.shorturl)throw new Error("bad");
     var curStats=($("#statsBox")&&!$("#statsBox").hidden)?$("#statsOut").value:"";
     $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl,curStats);
-    toast("Короткая ссылка готова — откройте её и проверьте");
+    toast("Короткая ссылка готова");
   }catch(_){
-    er.textContent="Не удалось сократить: сервис недоступен или заблокирован. Отправьте обычную ссылку или сократите её вручную на is.gd / tinyurl.com.";er.hidden=false;
+    er.textContent="Не удалось сократить: сервис недоступен. Отправьте обычную ссылку.";er.hidden=false;
   }
   btn.disabled=false;btn.textContent=old;
 });
@@ -1139,41 +1367,68 @@ $("#loadOld").addEventListener("click",async function(){
     if(i<0)throw 0;
     var o=await decodeHash(v.slice(i));
     if(!o||typeof o!=="object")throw 0;
-    fillFrom(o);$("#base").value=v.slice(0,i);save();toast("Данные загружены — поправьте и создайте новую ссылку");
-    $("#tpl").scrollIntoView({behavior:"smooth"});
-  }catch(_){er.textContent="Не удалось прочитать ссылку. Нужна полная длинная ссылка (с частью после «#»), короткая is.gd не подойдёт.";er.hidden=false;}
+    fillFrom(o);$("#base").value=v.slice(0,i);save();
+    $("#loadOldWrap").hidden=true;
+    toast("Данные загружены из ссылки");
+  }catch(_){er.textContent="Не удалось прочитать ссылку. Нужна полная длинная ссылка (с «#»).";er.hidden=false;}
 });
-$("#newOrderBtn").addEventListener("click",async function(){
+async function startNewOrder(){
   currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
   $("#n").value="";$("#d").value="";$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
   $("#p").value="";$("#clientEmail").value="";$("#old").value="";
+  if($("#activeOrderBadge"))$("#activeOrderBadge").textContent="✨ Создание нового приглашения";
   $("#result").hidden=true;$("#mkErr").hidden=true;
   try{var db=await openPhotoDB();var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete("current");}catch(_){}
   setCurrentPhoto(null);$("#photoFile").value="";
   applyPreset($("#tpl").value||"luxury");
   updateSrvStatusBanner();
   save();
+  switchScreen("editor");
   toast("✨ Форма очищена для нового заказа");
-});
+}
+$("#newOrderBtn").addEventListener("click",startNewOrder);
+$("#newOrderFromListBtn").addEventListener("click",startNewOrder);
 
-/* ---------- вход по паролю / серверная защита ---------- */
+/* ---------- Вход по паролю, смена пароля и выход ---------- */
 var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
+function getActivePwHash(){
+  try{return localStorage.getItem(CUSTOM_HASH_KEY)||PW_HASH;}catch(_){return PW_HASH;}
+}
 async function pwHash(pw){
   var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
   var b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(PW_SALT),iterations:PW_ITER},k,256);
   return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");
 }
-function unlock(){$("#gate").hidden=true;document.querySelector("main").hidden=false;schedulePreview();}
+function unlock(){
+  $("#gate").hidden=true;
+  document.querySelector("main").hidden=false;
+  $("#bottomAppNav").hidden=false;
+  $("#hdrActions").hidden=false;
+  schedulePreview();
+}
+function lockPanel(){
+  try{localStorage.removeItem(OK_KEY);}catch(_){}
+  $("#gatePw").value="";
+  document.querySelector("main").hidden=true;
+  $("#bottomAppNav").hidden=true;
+  $("#hdrActions").hidden=true;
+  $("#gate").hidden=false;
+  toast("🔒 Панель заблокирована");
+}
+$("#logoutBtn").addEventListener("click",lockPanel);
+
 var helper=(location.hash==="#newpw");
 if(helper){$("#gateHint").textContent="Режим смены пароля: введите новый пароль — получите строку для вставки в файл.";$("#gateBtn").textContent="Получить код";}
 $("#gateForm").addEventListener("submit",async function(e){
   e.preventDefault();var er=$("#gateErr");er.textContent="";
   var pw=$("#gatePw").value;if(!pw)return;
+  var activeHash=getActivePwHash();
   if(window.crypto&&crypto.subtle){
     var h=await pwHash(pw);
     if(helper){$("#gateOut").value='PW_HASH="'+h+'"';$("#gateOut").hidden=false;return;}
-    if(h===PW_HASH||pw==="saqtaa2026"){
-      try{localStorage.setItem(OK_KEY,PW_HASH);localStorage.setItem(PIN_KEY,pw);}catch(_){}
+    var customSet=false;try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
+    if(h===activeHash||(!customSet&&pw==="saqtaa2026")){
+      try{localStorage.setItem(OK_KEY,activeHash);localStorage.setItem(PIN_KEY,pw);}catch(_){}
       unlock();return;
     }
   }
@@ -1183,15 +1438,65 @@ $("#gateForm").addEventListener("submit",async function(e){
       var r=await fetch(srv+"?action=auth&pin="+encodeURIComponent(pw));
       var j=await r.json();
       if(j&&j.ok){
-        try{localStorage.setItem(OK_KEY,PW_HASH);localStorage.setItem(PIN_KEY,pw);}catch(_){}
+        if(window.crypto&&crypto.subtle){
+          var nh=await pwHash(pw);
+          try{localStorage.setItem(CUSTOM_HASH_KEY,nh);localStorage.setItem(OK_KEY,nh);localStorage.setItem(PIN_KEY,pw);}catch(_){}
+        }
         unlock();return;
       }
     }catch(_){}
   }
   er.textContent="Неверный пароль";$("#gatePw").select();
 });
+
+$("#changePwBtn").addEventListener("click",async function(){
+  var msg=$("#changePwMsg");msg.hidden=true;
+  var oldPw=$("#oldPwInput").value;
+  var newPw=$("#newPwInput").value;
+  var confPw=$("#newPwConfirm").value;
+  if(!oldPw){msg.style.color="#9E2B3A";msg.textContent="Введите текущий пароль.";msg.hidden=false;return;}
+  if(!newPw||newPw.length<4){msg.style.color="#9E2B3A";msg.textContent="Новый пароль должен быть не короче 4 символов.";msg.hidden=false;return;}
+  if(newPw!==confPw){msg.style.color="#9E2B3A";msg.textContent="Новый пароль и повтор не совпадают.";msg.hidden=false;return;}
+  var btn=this,oldTxt=btn.textContent;
+  btn.disabled=true;btn.textContent="⏳ Сохраняю пароль…";
+  try{
+    var activeHash=getActivePwHash();
+    var oldH=await pwHash(oldPw);
+    var customSet=false;try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
+    var validLocal=(oldH===activeHash)||(!customSet&&oldPw==="saqtaa2026")||(oldPw===getAdminPin());
+    if(!validLocal){
+      msg.style.color="#9E2B3A";msg.textContent="Текущий пароль введён неверно.";msg.hidden=false;
+      btn.disabled=false;btn.textContent=oldTxt;return;
+    }
+    var newH=await pwHash(newPw);
+    localStorage.setItem(CUSTOM_HASH_KEY,newH);
+    localStorage.setItem(OK_KEY,newH);
+    var srv=getSrvUrl();
+    if(srv){
+      try{
+        await fetch(srv,{
+          method:"POST",
+          headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body:JSON.stringify({action:"change_pin",pin:oldPw,new_pin:newPw})
+        });
+      }catch(_){}
+    }
+    localStorage.setItem(PIN_KEY,newPw);
+    $("#oldPwInput").value="";$("#newPwInput").value="";$("#newPwConfirm").value="";
+    msg.style.color="var(--em)";
+    msg.textContent="✅ Пароль успешно изменён! Теперь используйте новый пароль при входе.";
+    msg.hidden=false;
+    toast("🔑 Новый пароль сохранён!");
+  }catch(e){
+    msg.style.color="#9E2B3A";
+    msg.textContent="Ошибка при смене пароля: "+(e&&e.message?e.message:"ошибка браузера");
+    msg.hidden=false;
+  }
+  btn.disabled=false;btn.textContent=oldTxt;
+});
+
 var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
-if(remembered&&remembered===PW_HASH&&!helper)unlock();
+if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
 
 /* ---------- старт ---------- */
 updateSrvStatusBanner();
@@ -1211,8 +1516,8 @@ else{applyPreset("luxury");setRsvpMode("saqtaa");}
 updateSrvStatusBanner();
 setTemplateCards();schedulePreview();
 var mobPrev=$("#mobPreviewBtn"),mobBack=$("#mobBackBtn");
-if(mobPrev)mobPrev.addEventListener("click",function(){var p=document.querySelector(".preview-box");if(p)p.scrollIntoView({behavior:"smooth"});});
-if(mobBack)mobBack.addEventListener("click",function(){window.scrollTo({top:0,behavior:"smooth"});});
+if(mobPrev)mobPrev.addEventListener("click",function(){switchScreen(activeScreen==="preview"?"editor":"preview");});
+if(mobBack)mobBack.addEventListener("click",function(){switchScreen("editor");});
 getPhoto("current").then(setCurrentPhoto).catch(function(e){$("#photoStatus").textContent="Локальное хранилище фото недоступно: "+e.message;});
 })();
 </script>
