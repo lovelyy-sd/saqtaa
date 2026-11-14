@@ -602,6 +602,61 @@ async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId,prevGuestInfo,botCh
     return r.ok&&j.success!==false;
   }catch(_){return false;}
 }
+function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
+  try{
+    var key="saqtaa-rsvp-rows-"+(D.oid||"default");
+    var rows=JSON.parse(localStorage.getItem(key)||"[]");
+    if(!Array.isArray(rows))rows=[];
+    var now=new Date();
+    var timeStr=pad(now.getDate())+"."+pad(now.getMonth()+1)+"."+now.getFullYear()+" "+pad(now.getHours())+":"+pad(now.getMinutes());
+    var row={
+      oid:D.oid||"default",
+      id:rsvpId,
+      time:timeStr,
+      name:cleanNm,
+      fam:cleanFm,
+      att:val,
+      guests:val==="yes"?1:0,
+      title:names()
+    };
+    var found=false;
+    for(var i=0;i<rows.length;i++){
+      if(rows[i].id===rsvpId||(String(rows[i].name||"").toLowerCase()===cleanNm.toLowerCase()&&String(rows[i].fam||"").toLowerCase()===cleanFm.toLowerCase())){
+        rows[i]=row;found=true;break;
+      }
+    }
+    if(!found)rows.push(row);
+    localStorage.setItem(key,JSON.stringify(rows));
+  }catch(_){}
+}
+function loadLocalDevicePhoto(oid){
+  return new Promise(function(resolve){
+    if(!window.indexedDB){resolve("");return;}
+    try{
+      var req=indexedDB.open("saqtaa-local-media",1);
+      req.onsuccess=function(){
+        var db=req.result;
+        if(!db.objectStoreNames.contains("photos")){resolve("");return;}
+        var tx=db.transaction("photos","readonly"),st=tx.objectStore("photos");
+        var r1=oid?st.get(oid):null;
+        if(r1){
+          r1.onsuccess=function(){
+            if(r1.result&&r1.result.blob){resolve(URL.createObjectURL(r1.result.blob));return;}
+            var r2=st.get("current");
+            r2.onsuccess=function(){resolve(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
+            r2.onerror=function(){resolve("");};
+          };
+          r1.onerror=function(){resolve("");};
+        }else{
+          var r2=st.get("current");
+          r2.onsuccess=function(){resolve(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
+          r2.onerror=function(){resolve("");};
+        }
+      };
+      req.onerror=function(){resolve("");};
+    }catch(_){resolve("");}
+  });
+}
 function showDoneCard(sec,full,val,scroll){
   var f=sec.querySelector(".rs-form"),done=sec.querySelector(".rs-done"),cals=done.querySelector(".rd-cals");
   done.querySelector(".rd-name").textContent=full;
@@ -652,6 +707,7 @@ app.addEventListener("submit",async function(e){
 
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
+  saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
   var results=[];
   if(D.srv||D.sheet){
     results.push(await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId));
@@ -744,6 +800,10 @@ async function init(){
   D.t=TPL[D.t]?D.t:"luxury";
   D.ve=String(D.ve||"").slice(0,120);D.ad=String(D.ad||"").slice(0,160);
   D.g=safeUrl(D.g);D.p=safeUrl(D.p);D.h=String(D.h||"").slice(0,60);D.k=String(D.k||"").slice(0,80);
+  if(!D.p){
+    var locPh=await loadLocalDevicePhoto(D.oid);
+    if(locPh)D.p=locPh;
+  }
   ["ru","kz"].forEach(function(k){
     var b=D[k]&&typeof D[k]==="object"?D[k]:{};
     D[k]={ti:String(b.ti||"").slice(0,80),le:String(b.le||"").slice(0,700),sg:String(b.sg||"").slice(0,160),

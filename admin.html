@@ -153,7 +153,10 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
               <strong id="activeOrderBadge" style="font-size:.88rem;color:var(--em)">✨ Создание нового приглашения</strong>
               <p class="save-state" id="saveState" style="margin-top:2px">Автосохранение включено</p>
             </div>
-            <button class="btn line" id="toggleLoadOldBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">🔗 Открыть по ссылке</button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn gold" id="fillDemoBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">⚡ Заполнить пример</button>
+              <button class="btn line" id="toggleLoadOldBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">🔗 Открыть по ссылке</button>
+            </div>
           </div>
           <div id="loadOldWrap" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--hair)" hidden>
             <label for="old">Вставьте готовую ссылку приглашения для редактирования</label>
@@ -673,11 +676,16 @@ function isPresetUnchanged(k){
   return true;
 }
 var lastTpl="luxury";
+function defaultFutureDate(days){
+  var dt=new Date(Date.now()+(days||14)*86400000);
+  return dt.toISOString().slice(0,10);
+}
 function applyPreset(k){
   var p=PRE[k];if(!p)return;
   lastTpl=k;
   st.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0]};st.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1]};
   st.rows=p.pr.map(function(r){return r.slice();});
+  if(!$("#d").value)$("#d").value=defaultFutureDate(14);
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
   $("#bigWrap").hidden=(k!=="editorial");
   showText();
@@ -836,8 +844,7 @@ function validate(o){
   if(o.em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.em))return"Проверьте правильность Email клиента.";
   if(o.rsvp){
     if(currentRsvpMode==="saqtaa"){
-      if(!o.srv)return"Укажите URL сервера SAQTAA / Google Таблицы (или выберите другой способ сбора ответов).";
-      if(!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера SAQTAA должен начинаться с https://script.google.com/";
+      if(o.srv&&!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера SAQTAA должен начинаться с https://script.google.com/";
     }else if(currentRsvpMode==="ejs"){
       if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Для EmailJS укажите Service ID, Template ID и Public Key.";
       if(!o.em)return"Для отправки через EmailJS укажите Email клиента.";
@@ -1021,6 +1028,29 @@ document.querySelectorAll("#orderFilterSeg button").forEach(function(b){
   });
 });
 
+function getOrderStatsUrl(x){
+  if(x&&x.stats_url)return x.stats_url;
+  if(x&&x.url&&x.url.indexOf("#")!==-1)return x.url.replace(/invite\.html/i,"stats.html");
+  return"";
+}
+function getLocalOrderRsvpSummary(x){
+  var oid=(x&&x.id)||(x&&x.data&&x.data.oid)||"";
+  if(!oid)return null;
+  try{
+    var rows=JSON.parse(localStorage.getItem("saqtaa-rsvp-rows-"+oid)||"[]");
+    if(!Array.isArray(rows)||!rows.length)return null;
+    var yesGuests=0,noCount=0,maybeCount=0;
+    rows.forEach(function(r){
+      var st=String(r.status||"").toLowerCase();
+      var g=Math.max(1,parseInt(r.guests,10)||1);
+      if(st.indexOf("приду, вдво")!==-1)yesGuests+=2;
+      else if(st.indexOf("приду")!==-1&&st.indexOf("не приду")===-1)yesGuests+=g;
+      else if(st.indexOf("не смогу")!==-1||st.indexOf("не приду")!==-1)noCount++;
+      else maybeCount++;
+    });
+    return{total:rows.length,yesGuests:yesGuests,noCount:noCount,maybeCount:maybeCount};
+  }catch(_){return null;}
+}
 function renderHistory(){
   updateOrderCounters();
   var box=$("#historyList");
@@ -1051,17 +1081,22 @@ function renderHistory(){
     var tplStr=x.template?(" · 🎨 "+esc(x.template)):"";
     var em=x.email||(x.data&&x.data.em)||"";
     var emStr=em?("<br>📧 Клиент: <strong>"+esc(em)+"</strong>"):"";
+    var rsvpSum=getLocalOrderRsvpSummary(x);
+    var rsvpStr=rsvpSum
+      ?("<br><span style='display:inline-block;margin-top:4px;padding:3px 9px;border-radius:999px;background:#E8F5EE;color:#0F4A38;font-weight:700;font-size:.75rem'>👥 Ответов: "+rsvpSum.total+" · Придут: "+rsvpSum.yesGuests+" гост."+(rsvpSum.noCount?" · Отказов: "+rsvpSum.noCount:"")+"</span>")
+      :"";
     var savedStr="<br><span style='opacity:.75;font-size:.73rem'>🕒 Сохранено: "+new Date(x.at||Date.now()).toLocaleString()+"</span>";
-    var waHref=waOrderLink(x);
-    var statsBtns=x.stats_url
-      ?'<button type="button" class="act-stats" data-hstats="'+idx+'">📊 Копировать статистику</button><a class="act-stats" href="'+esc(x.stats_url)+'" target="_blank" rel="noopener">📈 Открыть статистику</a>'
+    var stUrl=getOrderStatsUrl(x);
+    var waHref=waOrderLink(x,stUrl);
+    var statsBtns=stUrl
+      ?'<button type="button" class="act-stats" data-hstats="'+idx+'">📊 Копировать статистику</button><a class="act-stats" href="'+esc(stUrl)+'" target="_blank" rel="noopener">📈 Открыть статистику</a>'
       :'';
     return '<div class="history-item" data-hi="'+idx+'">'+
       '<div class="order-head">'+
         '<strong>'+esc(x.name||"Без названия")+'</strong>'+
         '<span class="order-badge '+(upcoming?"upcoming":"past")+'">'+(upcoming?"Предстоит":"Прошло")+'</span>'+
       '</div>'+
-      '<div class="order-meta">'+dateStr+timeStr+tplStr+emStr+savedStr+'</div>'+
+      '<div class="order-meta">'+dateStr+timeStr+tplStr+emStr+rsvpStr+savedStr+'</div>'+
       '<div class="history-actions">'+
         '<button type="button" class="act-primary" data-hload="'+idx+'">✏️ Редактировать</button>'+
         '<a class="act-wa" href="'+esc(waHref)+'" target="_blank" rel="noopener">📲 В WhatsApp</a>'+
@@ -1072,6 +1107,9 @@ function renderHistory(){
       '</div></div>';
   }).join("");
 }
+window.addEventListener("storage",function(e){
+  if(e&&e.key&&e.key.indexOf("saqtaa-rsvp-rows-")===0)renderHistory();
+});
 async function syncOrderToServer(entry){
   var srv=getSrvUrl();
   if(!srv)return;
@@ -1170,7 +1208,8 @@ $("#historyList").addEventListener("click",async function(e){
   }else if(b.hasAttribute("data-hcopy")){
     try{await navigator.clipboard.writeText(x.url);toast("🔗 Ссылка приглашения скопирована");}catch(_){toast("Не удалось скопировать ссылку");}
   }else if(b.hasAttribute("data-hstats")){
-    if(x.stats_url){try{await navigator.clipboard.writeText(x.stats_url);toast("📊 Ссылка статистики скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
+    var stUrl=getOrderStatsUrl(x);
+    if(stUrl){try{await navigator.clipboard.writeText(stUrl);toast("📊 Ссылка статистики скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
   }else if(b.hasAttribute("data-hdel")){
     if(!confirm("Удалить заказ «"+(x.name||"Без названия")+"»?"))return;
     var delId=x.id;
@@ -1199,11 +1238,11 @@ function setCurrentPhoto(blob){
     if(clean($("#p").value)){
       $("#photoStatus").textContent="✅ Фото готово ("+Math.round(blob.size/1024)+" КБ) и прикреплено публичной ссылкой.";
     }else{
-      $("#photoStatus").textContent="Фото сжато ("+Math.round(blob.size/1024)+" КБ). Подключите сервер SAQTAA в Настройках для автозагрузки или вставьте ссылку на фото ниже.";
+      $("#photoStatus").textContent="✅ Фото сжато ("+Math.round(blob.size/1024)+" КБ) и прикреплено к заказу.";
     }
   }else{
     img.removeAttribute("src");img.style.display="none";
-    $("#photoStatus").textContent="Выберите фото — оно сожмётся и автоматически загрузится на сервер SAQTAA.";
+    $("#photoStatus").textContent="Выберите фото с телефона — оно сожмётся и сразу появится в приглашении.";
   }
   schedulePreview();
 }
@@ -1214,6 +1253,7 @@ $("#photoFile").addEventListener("change",async function(){
   try{
     var blob=await fileToWebp(f);
     await putPhoto("current",blob);
+    if(currentOrderId)await putPhoto(currentOrderId,blob);
     setCurrentPhoto(blob);
     var srv=getSrvUrl();
     if(srv){
@@ -1236,10 +1276,10 @@ $("#photoFile").addEventListener("change",async function(){
         status.textContent="✅ Фото загружено на сервер SAQTAA и прикреплено к приглашению!";
         toast("✅ Фото загружено на сервер SAQTAA!");
       }else{
-        status.textContent="⚠️ Фото сохранено локально, но сервер вернул ошибку: "+((j&&j.error)||"проверьте доступ Apps Script");
+        status.textContent="✅ Фото прикреплено локально (облако: "+((j&&j.error)||"проверьте доступ Apps Script")+")";
       }
     }else{
-      toast("Фото сжато. Для автозагрузки в интернет подключите сервер SAQTAA в Настройках.");
+      toast("✅ Фото сжато и прикреплено к приглашению!");
     }
     save();
   }catch(e){
@@ -1247,7 +1287,7 @@ $("#photoFile").addEventListener("change",async function(){
     this.value="";
   }
 });
-$("#clearPhoto").addEventListener("click",async function(){try{var db=await openPhotoDB();await new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete("current");tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});setCurrentPhoto(null);$("#photoFile").value="";$("#p").value="";save();}catch(e){toast("Не удалось удалить локальное фото");}});
+$("#clearPhoto").addEventListener("click",async function(){try{var db=await openPhotoDB();await new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete("current");if(currentOrderId)tx.objectStore("photos").delete(currentOrderId);tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});setCurrentPhoto(null);$("#photoFile").value="";$("#p").value="";save();}catch(e){toast("Не удалось удалить локальное фото");}});
 $("#p").addEventListener("input",function(){schedulePreview();});
 async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
 function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректный файл фотографии в резервной копии.");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
@@ -1285,10 +1325,11 @@ function waLink(link, statsLink){
   }
   return"https://wa.me/?text="+encodeURIComponent(text);
 }
-function waOrderLink(x){
+function waOrderLink(x, stUrl){
+  var sLink=stUrl||getOrderStatsUrl(x);
   var text="Приглашаем вас на праздник ✦ "+(x.name||"")+"\n\n🔗 Приглашение для гостей:\n"+(x.url||"");
-  if(x.stats_url){
-    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+x.stats_url;
+  if(sLink){
+    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+sLink;
   }
   return"https://wa.me/?text="+encodeURIComponent(text);
 }
@@ -1296,13 +1337,15 @@ $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
   try{
     var o=collect(),msg=validate(o);
-    if(!msg&&currentPhotoBlob&&!o.p)msg="Вы выбрали фото с телефона, но оно ещё не загружено на сервер. Подключите сервер SAQTAA во вкладке «Настройки» (для автозагрузки) или вставьте прямую HTTPS-ссылку на фото.";
     if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
+    if(currentPhotoBlob&&o.oid){
+      try{await putPhoto(o.oid,currentPhotoBlob);await putPhoto("current",currentPhotoBlob);}catch(_){}
+    }
     var base=clean($("#base").value)||new URL("invite.html",location.href).href;
     var encodedHash=await encode(o);
     var url=base.replace(/#.*$/,"")+"#"+encodedHash;
     var statsUrl="";
-    if(o.srv||o.sheet){
+    if(o.rsvp!==false){
       var statsBase=new URL("stats.html",base).href;
       statsUrl=statsBase.replace(/#.*$/,"")+"#"+encodedHash;
       $("#statsOut").value=statsUrl;
@@ -1374,7 +1417,7 @@ $("#loadOld").addEventListener("click",async function(){
 });
 async function startNewOrder(){
   currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
-  $("#n").value="";$("#d").value="";$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
+  $("#n").value="";$("#d").value=defaultFutureDate(14);$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
   $("#p").value="";$("#clientEmail").value="";$("#old").value="";
   if($("#activeOrderBadge"))$("#activeOrderBadge").textContent="✨ Создание нового приглашения";
   $("#result").hidden=true;$("#mkErr").hidden=true;
@@ -1388,6 +1431,27 @@ async function startNewOrder(){
 }
 $("#newOrderBtn").addEventListener("click",startNewOrder);
 $("#newOrderFromListBtn").addEventListener("click",startNewOrder);
+$("#fillDemoBtn").addEventListener("click",function(){
+  var curTpl=$("#tpl").value||"luxury";
+  applyPreset(curTpl);
+  var demoNames={
+    luxury:"Ерасыл & Аяулым",
+    floral:"Алихан & Дария",
+    qazaq:"Арман мен Аружан",
+    editorial:"Аскар Серикович",
+    emerald:"Айлин",
+    tusau:"Альтаир"
+  };
+  $("#n").value=demoNames[curTpl]||"Ерасыл & Аяулым";
+  $("#d").value=defaultFutureDate(21);
+  $("#ve").value="Grand Ballroom «Ritz-Carlton»";
+  $("#ad").value="г. Алматы, пр. Аль-Фараби, 77/7";
+  $("#g").value="https://go.2gis.com/almaty";
+  $("#h").value="#SAQTAA2026";
+  if(!clean($("#clientEmail").value))$("#clientEmail").value="client@example.com";
+  save();
+  toast("⚡ Пример заполнен — нажмите «Создать приглашение и статистику»!");
+});
 
 /* ---------- Вход по паролю, смена пароля и выход ---------- */
 var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
