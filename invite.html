@@ -393,48 +393,6 @@ function blk(){
 }
 function sub(s){return String(s||"").replace(/\{names\}/g,names());}
 
-/* ---------- календарь ---------- */
-var TZ_NUM=TZO.replace(":","");
-function icsDT(date,time){return date.replace(/-/g,"")+"T"+time.replace(":","")+"00";}
-function icsEsc(s){return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");}
-function icsFold(line){var enc=new TextEncoder(),out=[],cur="",bytes=0;for(var ch of line){var b=enc.encode(ch).length;if(bytes+b>74&&cur){out.push(cur);cur=" "+ch;bytes=1+b;}else{cur+=ch;bytes+=b;}}if(cur)out.push(cur);return out.join("\r\n");}
-function evCfg(){
-  var c=blk(),pr=c.pr||[];
-  var loc=[D.ve,D.ad].filter(Boolean).join(", ");
-  return{
-    uid:"saqtaa-"+D.d.replace(/-/g,"")+"-"+Math.abs(hash(names()+D.d))+"@saqtaa",
-    summary:names()+(c.ti?" — "+c.ti:""),
-    start:icsDT(D.d,D.s),end:icsDT(endDate(),D.e),location:loc,
-    desc:[pr.length?(t("cdesc")+pr.map(function(p){return p[0]+" — "+p[1];}).join("; ")):"",D.ve,D.ad].filter(Boolean).join("\n"),
-    alarm:fill(t("alarm"),{title:c.ti||names(),time:D.s})
-  };
-}
-function gcalURL(){
-  var c=evCfg();
-  return"https://calendar.google.com/calendar/render?action=TEMPLATE"+
-    "&text="+encodeURIComponent(c.summary)+
-    "&dates="+c.start+"/"+c.end+
-    "&ctz="+encodeURIComponent(TZ)+
-    "&details="+encodeURIComponent(c.desc)+
-    "&location="+encodeURIComponent(c.location);
-}
-function buildICS(c){
-  var stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z/,"Z");
-  return["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
-   "BEGIN:VTIMEZONE","TZID:"+TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:"+TZ_NUM,"TZOFFSETTO:"+TZ_NUM,"TZNAME:"+TZ_NUM.slice(0,3),"END:STANDARD","END:VTIMEZONE",
-   "BEGIN:VEVENT","UID:"+c.uid,"DTSTAMP:"+stamp,"DTSTART;TZID="+TZ+":"+c.start,"DTEND;TZID="+TZ+":"+c.end,
-   icsFold("SUMMARY:"+icsEsc(c.summary)),icsFold("LOCATION:"+icsEsc(c.location)),icsFold("DESCRIPTION:"+icsEsc(c.desc)),"STATUS:CONFIRMED",
-   "BEGIN:VALARM","ACTION:DISPLAY",icsFold("DESCRIPTION:"+icsEsc(c.alarm)),"TRIGGER:-P1D","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n")+"\r\n";
-}
-function downloadICS(){
-  try{
-    var blob=new Blob([buildICS(evCfg())],{type:"text/calendar;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
-    a.href=url;a.download="SAQTAA-"+D.d+".ics";document.body.appendChild(a);a.click();a.remove();
-    setTimeout(function(){URL.revokeObjectURL(url);},2000);toast(t("cdone"));
-  }catch(_){
-    window.open(gcalURL(),"_blank","noopener");
-  }
-}
 var toastT;
 function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove("show");},2800);}
 
@@ -749,7 +707,6 @@ app.addEventListener("input",function(e){
   }
 });
 app.addEventListener("click",function(e){
-  if(e.target.closest("[data-cal]")){downloadICS();return;}
   if(e.target.closest("[data-sw]")){
     captureFormToState();
     lang=lang==="ru"?"kz":"ru";

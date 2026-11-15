@@ -542,9 +542,9 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
           </div>
         </div>
 
-        <!-- Раскрывающийся блок: RSVP и Email клиента -->
+        <!-- Раскрывающийся блок: Ответы гостей и Email клиента -->
         <button type="button" class="acc-btn" id="accRsvpBtn">
-          <span>✉️ Ответы гостей (RSVP) и почта клиента</span>
+          <span>✉️ Ответы гостей и почта клиента</span>
           <span id="accRsvpChev">▾</span>
         </button>
         <div class="card acc-body" id="accRsvpWrap" hidden>
@@ -553,7 +553,7 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
             <button type="button" data-r="saqtaa" class="on">Gmail SAQTAA + Таблица</button>
             <button type="button" data-r="ejs">EmailJS</button>
             <button type="button" data-r="w3f">Web3Forms</button>
-            <button type="button" data-r="none">Без RSVP</button>
+            <button type="button" data-r="none">Без ответов</button>
           </div>
 
           <div id="rsvpEmailCommon">
@@ -655,7 +655,7 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
     <div class="card">
       <div class="donut-card">
         <div class="donut-left">
-          <h3>Ответы RSVP</h3>
+          <h3>Ответы гостей</h3>
           <div class="donut-total" id="stTotal">0</div>
           <div class="donut-sub">всего</div>
         </div>
@@ -1755,7 +1755,7 @@ async function updatePreview(){
     if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le)o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}
     if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le)o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}
     var base=clean($("#base").value)||new URL("invite.html",location.href).href;
-    var url=base.replace(/#.*$/,"")+"#"+await encode(o);
+    var url=base.replace(/#.*$/,"")+"?v=6#"+await encode(o);
     if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}
   }catch(_){}
 }
