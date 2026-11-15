@@ -654,9 +654,8 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       <li data-reveal style="--d:.15s"><span class="f-no">№ 04</span><div><h3 data-i18n="f4t">Два языка</h3><p data-i18n="f4d">Русский и казахский — переключение в один клик.</p></div></li>
       <li data-reveal style="--d:.2s"><span class="f-no">№ 05</span><div><h3 data-i18n="f5t">Адаптивная вёрстка</h3><p data-i18n="f5d">Красиво и на телефоне, и на компьютере.</p></div></li>
       <li data-reveal style="--d:.25s"><span class="f-no">№ 06</span><div><h3 data-i18n="f6t">Персональный ответ</h3><p data-i18n="f6d">После ответа приглашение благодарит гостя по имени и напоминает дату и место.</p></div></li>
-      <li data-reveal style="--d:.3s"><span class="f-no">№ 07</span><div><h3 data-i18n="f7t">Добавить в календарь</h3><p data-i18n="f7d">После ответа гость в один клик добавляет событие в свой календарь — с напоминанием за сутки.</p></div></li>
-      <li data-reveal style="--d:.35s"><span class="f-no">№ 08</span><div><h3 data-i18n="f8t">Ответы на почту</h3><p data-i18n="f8d">Каждый ответ гостя приходит организатору на электронную почту.</p></div></li>
-      <li data-reveal style="--d:.4s"><span class="f-no">№ 09</span><div><h3 data-i18n="f9t">Фото на обложке</h3><p data-i18n="f9d">Арочная рамка для фото пары или героя праздника — в режиме «С фото».</p></div></li>
+      <li data-reveal style="--d:.3s"><span class="f-no">№ 07</span><div><h3 data-i18n="f8t">Ответы на почту</h3><p data-i18n="f8d">Каждый ответ гостя приходит организатору на электронную почту.</p></div></li>
+      <li data-reveal style="--d:.35s"><span class="f-no">№ 08</span><div><h3 data-i18n="f9t">Фото на обложке</h3><p data-i18n="f9d">Арочная рамка для фото пары или героя праздника — в режиме «С фото».</p></div></li>
     </ol>
   </div>
 </section>
@@ -1007,7 +1006,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       p3t:"Получите ссылку",p3d:"Готовое приглашение, которым удобно делиться с гостями.",p3c:"ссылка · 1 клик",
       pr_eyebrow:"Стоимость",pr_h:"Одна цена за любой шаблон",pr_lead:"Все возможности — в каждом приглашении.",
       pr_i1:"Имена, дата, место, цвета и тексты — под вас",pr_i2:"Любой праздник: свадьба, юбилей, день рождения, тұсау кесер",
-      pr_i3:"Русский и казахский языки",pr_i4:"Обратный отсчёт, кнопка 2ГИС и добавление в календарь",
+      pr_i3:"Русский и казахский языки",pr_i4:"Обратный отсчёт и кнопка 2ГИС",
       pr_i5:"Ответы гостей — на вашу почту",pr_i6:"Готовая ссылка, которой удобно делиться",
       pr_note:"для первых 15 клиентов",
       tm_h:"Условия заказа",tm1t:"Готово за 1 день",tm1d:"После получения всех данных и предоплаты.",
@@ -1115,7 +1114,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       p3t:"Сілтеме алыңыз",p3d:"Қонақтармен бөлісуге ыңғайлы дайын шақыру.",p3c:"сілтеме · 1 басу",
       pr_eyebrow:"Бағасы",pr_h:"Кез келген үлгі — бір баға",pr_lead:"Барлық мүмкіндіктер — әр шақыруда.",
       pr_i1:"Есімдер, күн, орын, түстер мен мәтіндер — сізге қарай",pr_i2:"Кез келген мереке: үйлену тойы, мерейтой, туған күн, тұсау кесер",
-      pr_i3:"Орыс және қазақ тілдері",pr_i4:"Кері санақ, 2ГИС батырмасы және күнтізбеге қосу",
+      pr_i3:"Орыс және қазақ тілдері",pr_i4:"Кері санақ және 2ГИС батырмасы",
       pr_i5:"Қонақтардың жауаптары — сіздің поштаңызға",pr_i6:"Бөлісуге ыңғайлы дайын сілтеме",
       pr_note:"алғашқы 15 клиентке",
       tm_h:"Тапсырыс шарттары",tm1t:"1 күнде дайын",tm1d:"Барлық мәліметтер мен алдын ала төлем түскеннен кейін.",
@@ -1651,7 +1650,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     const done=sec.querySelector(".rs-done");
     done.querySelector(".rd-name").textContent=full;
     done.querySelector(".rd-msg").textContent=t("ok_"+val);
-    done.querySelector(".rd-cals").hidden=val==="no";   /* «не смогу прийти» — календарь не предлагаем */
     f.hidden=true;
     done.hidden=false;
     const ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});

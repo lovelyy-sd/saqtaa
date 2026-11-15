@@ -87,6 +87,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .rs-opts{display:flex;flex-direction:column;gap:10px}
 .rs-opt{display:flex;align-items:center;gap:14px;border:1px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,transparent);border-radius:12px;padding:14px 16px;cursor:pointer;text-align:left;font-size:.95rem;transition:border-color .2s,background .2s;position:relative}
+.rs-hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 .rs-opt input{position:absolute;opacity:0;pointer-events:none}
 .rs-opt i{flex:0 0 26px;width:26px;height:26px;border-radius:50%;border:2px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 55%,transparent);position:relative;transition:border-color .2s}
 .rs-opt i::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--acc);transform:scale(0);transition:transform .25s cubic-bezier(.2,1.4,.4,1)}
@@ -658,10 +659,9 @@ function loadLocalDevicePhoto(oid){
   });
 }
 function showDoneCard(sec,full,val,scroll){
-  var f=sec.querySelector(".rs-form"),done=sec.querySelector(".rs-done"),cals=done.querySelector(".rd-cals");
+  var f=sec.querySelector(".rs-form"),done=sec.querySelector(".rs-done");
   done.querySelector(".rd-name").textContent=full;
   done.querySelector(".rd-msg").textContent=t("ok_"+val);
-  if(cals)cals.hidden=(val==="no");
   f.hidden=true;done.hidden=false;
   var ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});
   if(scroll)done.scrollIntoView({behavior:"smooth",block:"center"});
