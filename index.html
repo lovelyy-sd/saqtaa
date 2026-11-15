@@ -491,7 +491,6 @@ body.menu-open{overflow:hidden}
 
 /* ============ ПЛАНШЕТ / ДЕСКТОП ============ */
 @media (min-width:900px){
-  .head{position:sticky;top:0}
   .head-nav{display:flex}
   .burger{display:none}
   .mmenu{display:none}
@@ -510,6 +509,9 @@ body.menu-open{overflow:hidden}
   .foot .wrap{grid-template-columns:1.2fr 1fr;align-items:start}
   .foot-cta{align-items:flex-end}
   .demo-stage{cursor:grab}
+}
+@media (min-width:900px) and (hover:hover) and (pointer:fine){
+  .head{position:sticky;top:0}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
