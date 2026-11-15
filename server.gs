@@ -98,6 +98,26 @@ function handle(p) {
     return jsonOut({ ok: true });
   }
 
+  // Тест отправки письма через MailApp (из Настроек админ-панели)
+  if (action === "test_email") {
+    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный пароль администратора" });
+    var toAddr = String(p.to || "").trim();
+    if (!toAddr || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(toAddr)) {
+      return jsonOut({ ok: false, error: "Укажите корректный Email получателя" });
+    }
+    try {
+      MailApp.sendEmail({
+        to: toAddr,
+        subject: "✦ Тест почты SAQTAA",
+        name: BRAND_NAME,
+        htmlBody: '<div style="font-family:Georgia,serif;padding:20px;background:#F5EFE2;border-radius:12px;border:1px solid #D9BC7F;color:#182720"><h3 style="margin:0 0 8px;color:#0F4A38">SAQTAA · Тест отправки</h3><p style="margin:0">Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.</p></div>'
+      });
+      return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });
+    } catch (testErr) {
+      return jsonOut({ ok: false, error: String(testErr && testErr.message ? testErr.message : testErr) });
+    }
+  }
+
   // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA
   if (action === "upload_photo") {
     if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Доступ запрещён (неверный пароль)" });
@@ -286,13 +306,13 @@ function handle(p) {
       }
 
       // Отправка письма с аккаунта SAQTAA на Email клиента через MailApp (только если не выбран EmailJS)
-      var emailSent = false;
+      var emailSent = false, mailError = "";
       if (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
         try {
           var fullName = name + " " + fam;
           var subjPrefix = isUpdate
-            ? (isKz ? "🔄 Жауап өзгертілді: " : "🔄 Изменение ответа: ")
-            : (isKz ? "✦ Қонақтың жаңа жауабы: " : "✦ Новый ответ гостя: ");
+            ? (isKz ? "Жауап өзгертілді: " : "Изменение ответа: ")
+            : (isKz ? "Жаңа жауап: " : "Новый ответ гостя: ");
           var subject = subjPrefix + fullName + " — " + eventTitle;
           var badgeColor = attCode === "yes" ? "#1E6F43" : (attCode === "no" ? "#9E2B3A" : "#9E7318");
           var txt = isKz ? {
@@ -304,6 +324,7 @@ function handle(p) {
             upd: " (жаңартылған жауап)",
             stTitle: "Шақыру бойынша ағымдағы статистика",
             stLine: "Келеді: <b>" + totalYes + "</b> &nbsp;·&nbsp; Келмейді: <b>" + totalNo + "</b> &nbsp;·&nbsp; Ойлануда: <b>" + totalMaybe + "</b>",
+            stPlain: "Келеді: " + totalYes + " · Келмейді: " + totalNo + " · Ойлануда: " + totalMaybe,
             brand: "SAQTAA · Цифрлық шақырулар"
           } : {
             hdr: "SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ",
@@ -314,8 +335,16 @@ function handle(p) {
             upd: " (обновлённый ответ)",
             stTitle: "Текущая статистика по вашему приглашению",
             stLine: "Придут: <b>" + totalYes + "</b> &nbsp;·&nbsp; Не придут: <b>" + totalNo + "</b> &nbsp;·&nbsp; Думают: <b>" + totalMaybe + "</b>",
+            stPlain: "Придут: " + totalYes + " · Не придут: " + totalNo + " · Думают: " + totalMaybe,
             brand: BRAND_NAME
           };
+          var plainBody = [
+            eventTitle + (eventDate ? " (" + eventDate + ")" : ""),
+            txt.guest + " " + fullName,
+            txt.ans + " " + attLabel,
+            txt.time + now + (isUpdate ? txt.upd : ""),
+            txt.stPlain
+          ].join("\n");
           var htmlBody = [
             '<div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;background:#F5EFE2;padding:24px;border-radius:14px;color:#182720;border:1px solid #D9BC7F">',
             '  <div style="text-align:center;border-bottom:1px solid rgba(24,39,32,0.15);padding-bottom:14px;margin-bottom:18px">',
@@ -339,15 +368,16 @@ function handle(p) {
             to: clientEmail,
             subject: subject,
             name: txt.brand,
+            body: plainBody,
             htmlBody: htmlBody
           });
           emailSent = true;
         } catch (mailErr) {
-          // Даже если лимит писем исчерпан, ответ уже надёжно сохранён в таблице
+          mailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);
         }
       }
 
-      return jsonOut({ ok: true, id: rsvpId, updated: isUpdate, email_sent: emailSent });
+      return jsonOut({ ok: true, id: rsvpId, updated: isUpdate, email_sent: emailSent, mail_error: mailError });
     }
 
     // 7. ПОЛУЧЕНИЕ ЖИВОЙ СТАТИСТИКИ ДЛЯ КЛИЕНТА (stats.html)
