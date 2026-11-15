@@ -331,6 +331,23 @@ function deadline(){return Math.max(endMs(),new Date(D.d+"T23:59:59"+TZO).getTim
 function names(){return D.n||"";}
 function validAtt(v){return(v==="yes"||v==="no"||v==="maybe")?v:"yes";}
 function normName(s){return String(s||"").replace(/\s+/g," ").trim().slice(0,NAME_MAX);}
+function capName(s){return normName(s).replace(/(^|[\s-])([a-zа-яёәғқңөұүһі])/gi,function(_,p,c){return p+c.toUpperCase();});}
+function isValidNamePart(s){
+  var v=normName(s);
+  if(!v)return false;
+  if(!/^[a-zа-яёәғқңөұүһі'’\-\s]+$/i.test(v))return false;
+  var letters=v.replace(/[^a-zа-яёәғқңөұүһі]/gi,"");
+  if(letters.length<2)return false;
+  if(/(.)\1{2,}/i.test(letters))return false;
+  if(/^(.{1,2})\1{2,}$/i.test(letters))return false;
+  if(!/[аеёиоуыэюяәөүұіaeiouy]/i.test(letters))return false;
+  if(/[бвгджзйклмнпрстфхцчшщғқңһbcdfghjklmnpqrstvwxz]{5,}/i.test(letters))return false;
+  var low=letters.toLowerCase();
+  if(/(йцук|фыва|олдж|ячсм|qwert|asdf|zxcv|абвг|abcd)/.test(low))return false;
+  var bad=["тест","test","аноним","гость","имя","фамилия","никто","незнаю","лол","кек","привет","hello","admin","user","name","surname","none","null"];
+  for(var i=0;i<bad.length;i++){if(low===bad[i]||(low.indexOf(bad[i])===0&&low.length<=bad[i].length+2))return false;}
+  return true;
+}
 function makeId(){return(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("rsvp-"+Date.now()+"-"+Math.random().toString(36).slice(2,10));}
 function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
 function invKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
@@ -630,10 +647,12 @@ app.addEventListener("submit",async function(e){
   if(hp&&hp.checked)return;
   var inputs=f.querySelectorAll("input[type=text]"),nm=inputs[0],fm=inputs[1],err=f.querySelector(".rs-err");
   function bad(el,key){err.textContent=t(key);el.classList.remove("err");void el.offsetWidth;el.classList.add("err");el.focus();}
-  var cleanNm=normName(nm.value),cleanFm=normName(fm.value);
+  var cleanNm=capName(nm.value),cleanFm=capName(fm.value);
   nm.value=cleanNm;fm.value=cleanFm;
   if(!cleanNm){bad(nm,"e_name");return;}
+  if(!isValidNamePart(cleanNm)){bad(nm,"e_name_bad");return;}
   if(!cleanFm){bad(fm,"e_fam");return;}
+  if(!isValidNamePart(cleanFm)){bad(fm,"e_fam_bad");return;}
   err.textContent="";
   var val=validAtt((f.querySelector("input[type=radio]:checked")||{value:"yes"}).value);
   var full=cleanNm+" "+cleanFm;
