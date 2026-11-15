@@ -97,7 +97,8 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 /* ============ ШАПКА ============ */
 .head{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--pad);transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
 .head.scrolled{background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-color:var(--hair)}
-.head.scrolled::before{content:"";position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top,0px) + 2px);background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:-1;pointer-events:none}
+.top-safe{position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top,0px) + 1px);z-index:79;pointer-events:none;transition:background .3s}
+.top-safe.scrolled{background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .logo{font-family:var(--fd);font-weight:800;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:.3em;min-height:44px}
 .logo i{font-style:normal;color:var(--gold)}
 .head-nav{display:none;gap:28px;font-size:.9rem;font-weight:600}
@@ -569,6 +570,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
 
 <div class="marquee" aria-hidden="true"><div class="marquee-track"><span id="mq1"></span><span id="mq2"></span></div></div>
 
+<div class="top-safe" id="topSafe" aria-hidden="true"></div>
 <header class="head" id="head">
   <a class="logo" href="#top">SAQTAA<i>.</i></a>
   <nav class="head-nav">
@@ -1612,8 +1614,8 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
   heroDots();heroEvent(0);heroStart();
 
   /* ---------- шапка / меню ---------- */
-  const head=qs("#head");
-  addEventListener("scroll",()=>head.classList.toggle("scrolled",scrollY>8),{passive:true});
+  const head=qs("#head"),topSafe=qs("#topSafe");
+  addEventListener("scroll",()=>{const sc=scrollY>8;head.classList.toggle("scrolled",sc);if(topSafe)topSafe.classList.toggle("scrolled",sc);},{passive:true});
   const burger=qs("#burger");
   function setMenu(open){
     document.body.classList.toggle("menu-open",open);
