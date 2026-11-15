@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="google-site-verification" content="Wrnn_4pPbrVC_tguBwXllFqYHXZgqEoawdOGQjGN-y4" />
 <script>
 /* Анимации появления включаются только при работающем JavaScript.
@@ -89,7 +89,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 .btn-gold:hover{background:var(--gold-soft)}
 
 /* ============ БЕГУЩАЯ СТРОКА ============ */
-.marquee{background:var(--em-deep);color:var(--gold-soft);overflow:hidden;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600}
+.marquee{background:var(--em-deep);color:var(--gold-soft);overflow:hidden;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;font-weight:600;padding-top:env(safe-area-inset-top)}
 .marquee-track{display:flex;width:max-content;animation:mq 30s linear infinite}
 .marquee-track span{padding:.7em 0;white-space:nowrap}
 @keyframes mq{to{transform:translateX(-50%)}}
@@ -97,6 +97,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 /* ============ ШАПКА ============ */
 .head{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--pad);transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
 .head.scrolled{background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-color:var(--hair)}
+.head.scrolled::before{content:"";position:fixed;top:0;left:0;right:0;height:calc(env(safe-area-inset-top,0px) + 2px);background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);z-index:-1;pointer-events:none}
 .logo{font-family:var(--fd);font-weight:800;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:.3em;min-height:44px}
 .logo i{font-style:normal;color:var(--gold)}
 .head-nav{display:none;gap:28px;font-size:.9rem;font-weight:600}
