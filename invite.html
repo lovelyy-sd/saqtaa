@@ -480,9 +480,11 @@ function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classLi
 async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
   var srv=D.srv||D.sheet;
   if(!srv)return false;
+  var emailLang=(D.l==="both")?"both":lang;
   var labelsRu={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
   var labelsKz={yes:"Келеді",no:"Келе алмайды",maybe:"Әзірге білмейді"};
-  var label=(lang==="kz"?labelsKz:labelsRu)[val]||labelsRu.yes;
+  var labelsBoth={yes:"Келеді / Придёт",no:"Келе алмайды / Не придёт",maybe:"Әзірге білмейді / Пока не знает"};
+  var label=(emailLang==="both"?labelsBoth:(emailLang==="kz"?labelsKz:labelsRu))[val]||labelsRu.yes;
   var guestsCount=val==="yes"?1:0;
   var oid=D.oid||"default";
   var toEmail=D.em||"";
@@ -498,7 +500,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
       "&guests="+encodeURIComponent(guestsCount)+
       "&title="+encodeURIComponent(names())+
       "&date="+encodeURIComponent(dateHuman)+
-      "&lang="+encodeURIComponent(lang)+
+      "&lang="+encodeURIComponent(emailLang)+
       (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
       (noEmail?"&no_email=1":"")+
       (isUpdate?"&isUpdate=1":"");
@@ -512,7 +514,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
         body:JSON.stringify({
           action:"rsvp",oid:oid,id:rsvpId,name:cleanNm,fam:cleanFm,
           att_code:val,att:label,guests:guestsCount,title:names(),
-          date:dateHuman,lang:lang,to_email:toEmail,no_email:noEmail?1:0,isUpdate:isUpdate?1:0
+          date:dateHuman,lang:emailLang,to_email:toEmail,no_email:noEmail?1:0,isUpdate:isUpdate?1:0
         })
       });
       return true;
@@ -521,14 +523,19 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
 }
 async function postEmailJS(full,val,isUpdate,rsvpId){
   if(!D.ejs||!D.ejs.s||!D.ejs.t||!D.ejs.u)return false;
-  var isKz=(lang==="kz");
-  var labels=isKz
-    ?{yes:"Келеді (Расталды)",no:"Келе алмайды (Бас тартты)",maybe:"Әзірге білмейді (Ойлануда)"}
-    :{yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"};
+  var isBoth=(D.l==="both"),isKz=(!isBoth&&lang==="kz");
+  var labels=isBoth
+    ?{yes:"Келеді (Расталды) / Придёт (Подтверждено)",no:"Келе алмайды (Бас тартты) / Не придёт (Отказ)",maybe:"Әзірге білмейді / Пока не знает"}
+    :(isKz
+      ?{yes:"Келеді (Расталды)",no:"Келе алмайды (Бас тартты)",maybe:"Әзірге білмейді (Ойлануда)"}
+      :{yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"});
   var label=labels[val]||labels.yes;
   var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
   var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
-  var subject=(isUpdate?(isKz?"🔄 Жауап өзгертілді: ":"🔄 Изменение ответа: "):(isKz?"✦ Қонақтың жаңа жауабы: ":"✦ Новый ответ гостя: "))+full+" — "+names();
+  var subjPrefix=isBoth
+    ?(isUpdate?"Жауап өзгертілді / Изменение ответа: ":"Жаңа жауап / Новый ответ гостя: ")
+    :(isUpdate?(isKz?"Жауап өзгертілді: ":"Изменение ответа: "):(isKz?"Жаңа жауап: ":"Новый ответ гостя: "));
+  var subject=subjPrefix+full+" — "+names();
   try{
     var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
       method:"POST",
@@ -539,13 +546,13 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
         user_id:D.ejs.u,
         template_params:{
           to_email:D.em||"",
-          lang:lang,
+          lang:isBoth?"both":lang,
           subject:subject,
-          header_label:isKz?"SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА":"SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ",
-          guest_label:isKz?"Қонақ:":"Гость:",
-          answer_label:isKz?"Жауабы:":"Ответ:",
-          time_label:isKz?"Жауап уақыты:":"Время ответа:",
-          date_label:isKz?"Күні:":"Дата:",
+          header_label:isBoth?"SAQTAA · ҚОНАҚ ЖАУАБЫ / УВЕДОМЛЕНИЕ О ГОСТЕ":(isKz?"SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА":"SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ"),
+          guest_label:isBoth?"Қонақ / Гость:":(isKz?"Қонақ:":"Гость:"),
+          answer_label:isBoth?"Жауабы / Ответ:":(isKz?"Жауабы:":"Ответ:"),
+          time_label:isBoth?"Уақыты / Время:":(isKz?"Жауап уақыты:":"Время ответа:"),
+          date_label:isBoth?"Күні / Дата:":(isKz?"Күні:":"Дата:"),
           guest_name:full,
           event_title:names(),
           event_date:dDot(D.d)+(D.s?" "+D.s:""),
@@ -553,8 +560,8 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
           att_color:val==="yes"?"#1E6F43":(val==="no"?"#9E2B3A":"#9E7318"),
           guests_count:val==="yes"?1:0,
           reply_time:replyTime,
-          status_type:isUpdate?(isKz?"Жауапты өзгерту":"Изменение ответа"):(isKz?"Жаңа жауап":"Новый ответ"),
-          brand_footer:isKz?"SAQTAA · Цифрлық шақырулар":"SAQTAA · Цифровые приглашения",
+          status_type:isBoth?(isUpdate?"Жауапты өзгерту / Изменение ответа":"Жаңа жауап / Новый ответ"):(isUpdate?(isKz?"Жауапты өзгерту":"Изменение ответа"):(isKz?"Жаңа жауап":"Новый ответ")),
+          brand_footer:isBoth?"SAQTAA · Цифрлық шақырулар / Цифровые приглашения":(isKz?"SAQTAA · Цифрлық шақырулар":"SAQTAA · Цифровые приглашения"),
           rsvp_id:rsvpId
         }
       })
