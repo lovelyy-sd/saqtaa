@@ -13,7 +13,7 @@ document.documentElement.classList.add("js");
 <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 <title>SAQTAA — цифровые приглашения на той</title>
 <meta name="description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
-<meta name="theme-color" content="#0F4A38">
+<meta name="theme-color" content="#F5EFE2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F4A38'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23D9BC7F' font-family='Georgia,serif'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SAQTAA — цифровые приглашения на той">
@@ -51,17 +51,18 @@ document.documentElement.classList.add("js");
 }
 *{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth;scroll-padding-top:86px}
+html{scroll-behavior:smooth;scroll-padding-top:86px;overflow-x:clip}
 body{
   font-family:var(--fb);color:var(--ink);background:var(--paper);
   background-image:radial-gradient(rgba(24,39,32,.05) 1px,transparent 1px);
   background-size:22px 22px;-webkit-font-smoothing:antialiased;line-height:1.55;
+  overflow-x:clip;
 }
 body::after{content:"";position:fixed;inset:0;z-index:95;pointer-events:none;opacity:.05;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.55'/></svg>")}
 img{max-width:100%;display:block}
-a{color:inherit;text-decoration:none}
-button{font-family:inherit;cursor:pointer;background:none;border:0;color:inherit}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;cursor:pointer;background:none;border:0;color:inherit;-webkit-tap-highlight-color:transparent}
 ul,ol{list-style:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
 ::selection{background:var(--gold-soft);color:var(--em-deep)}
@@ -94,8 +95,8 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 @keyframes mq{to{transform:translateX(-50%)}}
 
 /* ============ ШАПКА ============ */
-.head{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px var(--pad);transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
-.head.scrolled{background:rgba(245,239,226,.94);backdrop-filter:blur(8px);border-color:var(--hair)}
+.head{position:sticky;top:0;z-index:80;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(12px + env(safe-area-inset-top)) var(--pad) 12px;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+.head.scrolled{background:rgba(245,239,226,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-color:var(--hair)}
 .logo{font-family:var(--fd);font-weight:800;font-size:1.3rem;letter-spacing:.14em;display:flex;align-items:center;gap:.3em;min-height:44px}
 .logo i{font-style:normal;color:var(--gold)}
 .head-nav{display:none;gap:28px;font-size:.9rem;font-weight:600}
@@ -114,7 +115,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08;letter-spacing:-
 body.menu-open .burger span::before{top:5px;transform:rotate(45deg)}
 body.menu-open .burger span::after{top:5px;transform:rotate(-45deg)}
 
-.mmenu{position:fixed;inset:0;z-index:90;background:var(--em-deep);color:#F2EBDA;display:flex;flex-direction:column;padding:96px var(--pad) 40px;transform:translateY(-102%);transition:transform .5s cubic-bezier(.22,.8,.24,1);
+.mmenu{position:fixed;inset:0;z-index:90;background:var(--em-deep);color:#F2EBDA;display:flex;flex-direction:column;padding:calc(96px + env(safe-area-inset-top)) var(--pad) calc(40px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(-102%);transition:transform .5s cubic-bezier(.22,.8,.24,1);
  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='44'><path d='M80 38 C80 22 62 24 62 14 a7 7 0 1 1 14 2 M80 38 C80 22 98 24 98 14 a7 7 0 1 0 -14 2' fill='none' stroke='%23D9BC7F' stroke-opacity='.08' stroke-width='1.5' stroke-linecap='round'/></svg>")}
 body.menu-open .mmenu{transform:none}
 .mmenu nav{display:flex;flex-direction:column;gap:4px;margin:auto 0}
@@ -287,9 +288,9 @@ body.menu-open{overflow:hidden}
 .foot-bottom .up:hover{background:var(--gold);color:#241A08}
 
 /* ============ ЛИПКИЙ CTA ============ */
-.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(10,53,39,.96);backdrop-filter:blur(6px);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .4s cubic-bezier(.22,.8,.24,1);border-top:1px solid rgba(217,188,127,.3)}
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;justify-content:center;padding:0 var(--pad) calc(12px + env(safe-area-inset-bottom));pointer-events:none;transform:translateY(130%);transition:transform .4s cubic-bezier(.22,.8,.24,1)}
 .sticky-cta.show{transform:none}
-.sticky-cta .btn{width:100%}
+.sticky-cta .btn{width:100%;max-width:340px;pointer-events:auto;box-shadow:0 12px 28px -6px rgba(10,53,39,.45),0 0 0 1px rgba(255,253,246,.3)}
 
 /* тост */
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));translate:-50% 16px;z-index:300;background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,translate .3s;max-width:86vw;text-align:center}
@@ -298,14 +299,14 @@ body.menu-open{overflow:hidden}
 /* ============================================================
    ПРОСМОТР ШАБЛОНОВ
    ============================================================ */
-.demo-view{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;background:var(--em-deep);visibility:hidden;opacity:0;transition:opacity .35s,visibility .35s}
+.demo-view{position:fixed;inset:0;height:100vh;height:100dvh;z-index:200;display:flex;flex-direction:column;background:var(--em-deep);visibility:hidden;opacity:0;transition:opacity .35s,visibility .35s}
 .demo-view.open{visibility:visible;opacity:1}
 .demo-top{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px var(--pad);padding-top:calc(8px + env(safe-area-inset-top));background:rgba(10,35,27,.95);color:#F2EBDA;border-bottom:1px solid rgba(217,188,127,.25)}
 .dt-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--gold-soft);font-weight:700;font-size:.85rem;white-space:nowrap}
 .dt-name{font-family:var(--fd);font-style:italic;color:var(--gold-soft);font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
 .dt-close{width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(217,188,127,.35);border-radius:50%;color:#F2EBDA;display:grid;place-items:center;transition:all .25s}
 .dt-close:hover{background:var(--gold);color:#241A08}
-.demo-stage{flex:1;position:relative;overflow:hidden;touch-action:pan-y}
+.demo-stage{flex:1;min-height:0;position:relative;overflow:hidden;touch-action:pan-y}
 .demo-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.22,.8,.24,1)}
 .demo-track.drag{transition:none}
 .demo-slide{flex:0 0 100%;height:100%;overflow-y:auto;overscroll-behavior:contain;position:relative;-webkit-overflow-scrolling:touch}
