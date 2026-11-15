@@ -751,6 +751,8 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
         <button class="btn primary" id="saveSrvBtn" type="button">💾 Проверить</button>
         <button class="btn secondary" id="copyAppScript" type="button">📋 Код скрипта</button>
       </div>
+      <button class="btn secondary" id="testSrvEmailBtn" type="button" style="margin-top:8px">✉️ Тест отправки письма</button>
+      <p class="hint" id="testSrvEmailMsg" hidden style="margin-top:8px"></p>
     </div>
 
     <!-- Панель: Уведомления (EmailJS) -->
@@ -842,93 +844,7 @@ var activeScreen="home";
 var currentStatsOrder=null;
 var currentStatsRows=[];
 
-var APPS_SCRIPT_CODE = [
-'var DEFAULT_ADMIN_PIN = "saqtaa2026";',
-'var BRAND_NAME = "SAQTAA · Цифровые приглашения";',
-'var TIMEZONE = "Asia/Almaty";',
-'function getAdminPin(){ return PropertiesService.getScriptProperties().getProperty("ADMIN_PIN") || DEFAULT_ADMIN_PIN; }',
-'function verifyPin(pin){ return String(pin || "").trim() === getAdminPin(); }',
-'function jsonOut(obj){ return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON); }',
-'function ensureSheets(){',
-'  var ss = SpreadsheetApp.getActiveSpreadsheet();',
-'  var orders = ss.getSheetByName("ORDERS");',
-'  if(!orders){',
-'    orders = ss.insertSheet("ORDERS");',
-'    orders.appendRow(["ID заказа", "Создано", "Имена", "Дата тоя", "Время", "Шаблон", "Email клиента", "Ссылка приглашения", "Ссылка статистики", "JSON данных"]);',
-'    orders.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");',
-'    orders.setFrozenRows(1);',
-'  }',
-'  var rsvps = ss.getSheetByName("RSVPS");',
-'  if(!rsvps){',
-'    rsvps = ss.insertSheet("RSVPS");',
-'    rsvps.appendRow(["Order ID", "RSVP ID", "Дата и время", "Имя", "Фамилия", "Статус (yes/no/maybe)", "Ответ текстом", "Гостей", "Мероприятие", "Email клиента"]);',
-'    rsvps.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");',
-'    rsvps.setFrozenRows(1);',
-'  }',
-'  return { ss: ss, orders: orders, rsvps: rsvps };',
-'}',
-'function doGet(e){ return handle(e ? e.parameter : {}); }',
-'function doPost(e){',
-'  var p = {};',
-'  try{ if(e && e.postData && e.postData.contents) p = JSON.parse(e.postData.contents); }catch(_){}',
-'  if(e && e.parameter){ for(var k in e.parameter){ if(p[k] === undefined) p[k] = e.parameter[k]; } }',
-'  return handle(p);',
-'}',
-'function handle(p){',
-'  var action = String(p.action || "ping").trim();',
-'  if(action === "auth"){',
-'    if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный серверный пароль" });',
-'    ensureSheets(); return jsonOut({ ok: true });',
-'  }',
-'  if(action === "upload_photo"){',
-'    if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный пароль сервера" });',
-'    try{',
-'      var b64 = String(p.base64 || "");',
-'      var bytes = Utilities.base64Decode(b64);',
-'      var blob = Utilities.newBlob(bytes, String(p.mime || "image/jpeg"), "saqtaa_" + new Date().getTime() + ".jpg");',
-'      var folders = DriveApp.getFoldersByName("SAQTAA_PHOTOS");',
-'      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("SAQTAA_PHOTOS");',
-'      var file = folder.createFile(blob);',
-'      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);',
-'      return jsonOut({ ok: true, id: file.getId(), url: "https://lh3.googleusercontent.com/d/" + file.getId() + "=w1600" });',
-'    }catch(err){ return jsonOut({ ok: false, error: String(err) }); }',
-'  }',
-'  var lock = LockService.getScriptLock(); lock.tryLock(10000);',
-'  try{',
-'    var db = ensureSheets();',
-'    if(action === "save_order"){',
-'      if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Доступ запрещён" });',
-'      var oid = String(p.id || ("ord_" + new Date().getTime())).trim();',
-'      var nowStr = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");',
-'      var rowVals = [oid, nowStr, String(p.names||""), String(p.date||""), String(p.time||""), String(p.tpl||"luxury"), String(p.email||""), String(p.invite_url||""), String(p.stats_url||""), typeof p.data==="string"?p.data:JSON.stringify(p.data||{})];',
-'      var rows = db.orders.getDataRange().getValues(), fRow = -1;',
-'      for(var i = 1; i < rows.length; i++){ if(String(rows[i][0]) === oid){ fRow = i + 1; break; } }',
-'      if(fRow > 0) db.orders.getRange(fRow, 1, 1, 10).setValues([rowVals]); else db.orders.appendRow(rowVals);',
-'      return jsonOut({ ok: true, id: oid });',
-'    }',
-'    if(action === "list_orders"){',
-'      if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Доступ запрещён" });',
-'      var rows = db.orders.getDataRange().getValues(), list = [];',
-'      for(var i = 1; i < rows.length; i++){',
-'        var r = rows[i]; if(!r[0]) continue;',
-'        list.push({ id: String(r[0]), created: String(r[1]||""), names: String(r[2]||""), date: String(r[3]||""), time: String(r[4]||""), tpl: String(r[5]||""), email: String(r[6]||""), invite_url: String(r[7]||""), stats_url: String(r[8]||""), data: String(r[9]||"{}") });',
-'      }',
-'      return jsonOut({ ok: true, orders: list.reverse() });',
-'    }',
-'    if(action === "stats" || action === "get"){',
-'      var fOid = String(p.oid || p.order_id || "").trim(), rRows = db.rsvps.getDataRange().getValues(), outRows = [];',
-'      for(var i = 1; i < rRows.length; i++){',
-'        var r = rRows[i]; if(!r[3] && !r[4]) continue;',
-'        if(fOid && String(r[0]) !== fOid) continue;',
-'        var tVal = r[2] instanceof Date ? Utilities.formatDate(r[2], TIMEZONE, "dd.MM.yyyy HH:mm") : String(r[2] || "");',
-'        outRows.push({ oid: String(r[0]||""), id: String(r[1]||""), time: tVal, name: String(r[3]||""), fam: String(r[4]||""), att: String(r[5]||"yes"), guests: Number(r[7]||0), title: String(r[8]||"") });',
-'      }',
-'      return jsonOut({ ok: true, rows: outRows });',
-'    }',
-'    return jsonOut({ ok: true, status: "SAQTAA Server Active" });',
-'  }catch(err){ return jsonOut({ ok: false, error: String(err) }); }finally{ lock.releaseLock(); }',
-'}'
-].join('\n');
+var APPS_SCRIPT_CODE="/**\n * SAQTAA BACKEND v3.0 (Google Apps Script)\n * Единый сервер для:\n * 1) Защиты админ-панели паролем на сервере\n * 2) Загрузки фотографий с телефона (сохраняются на Google Диск SAQTAA и отдаются по прямой ссылке)\n * 3) Сохранения и поиска всех заказов с любого телефона/компьютера (по имени, дате и времени)\n * 4) Приёма ответов гостей (RSVP) с защитой от спама и дублей\n * 5) Автоматической отправки красивых HTML-писем на Email клиента через MailApp (без регистрации клиента!)\n * 6) Живой онлайн-статистики ответов для клиента (stats.html)\n */\n\n// ================= НАСТРОЙКИ =================\n// При первом входе из админ-панели вы сможете задать свой пароль, либо укажите его здесь:\nvar DEFAULT_ADMIN_PIN = \"saqtaa2026\";\nvar BRAND_NAME = \"SAQTAA · Цифровые приглашения\";\nvar TIMEZONE = \"Asia/Almaty\";\n// =============================================\n\nfunction getAdminPin() {\n  var saved = PropertiesService.getScriptProperties().getProperty(\"ADMIN_PIN\");\n  return saved || DEFAULT_ADMIN_PIN;\n}\n\nfunction verifyPin(pin) {\n  return String(pin || \"\").trim() === getAdminPin();\n}\n\nfunction jsonOut(obj) {\n  return ContentService.createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\n/**\n * Автоматически создаёт листы ORDERS и RSVPS в текущей Google Таблице\n */\nfunction ensureSheets() {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var orders = ss.getSheetByName(\"ORDERS\");\n  if (!orders) {\n    orders = ss.insertSheet(\"ORDERS\");\n    orders.appendRow([\n      \"ID заказа\", \"Создано\", \"Имена\", \"Дата тоя\", \"Время\", \"Шаблон\",\n      \"Email клиента\", \"Ссылка приглашения\", \"Ссылка статистики\", \"JSON данных\"\n    ]);\n    orders.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n    orders.setFrozenRows(1);\n  }\n  var rsvps = ss.getSheetByName(\"RSVPS\");\n  if (!rsvps) {\n    rsvps = ss.insertSheet(\"RSVPS\");\n    rsvps.appendRow([\n      \"Order ID\", \"RSVP ID\", \"Дата и время\", \"Имя\", \"Фамилия\",\n      \"Статус (yes/no/maybe)\", \"Ответ текстом\", \"Гостей\", \"Мероприятие\", \"Email клиента\"\n    ]);\n    rsvps.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n    rsvps.setFrozenRows(1);\n  }\n  return { ss: ss, orders: orders, rsvps: rsvps };\n}\n\nfunction doGet(e) {\n  return handle(e ? e.parameter : {});\n}\n\nfunction doPost(e) {\n  var p = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      p = JSON.parse(e.postData.contents);\n    }\n  } catch (_) {}\n  if (e && e.parameter) {\n    for (var k in e.parameter) {\n      if (p[k] === undefined) p[k] = e.parameter[k];\n    }\n  }\n  return handle(p);\n}\n\nfunction handle(p) {\n  var action = String(p.action || \"ping\").trim();\n\n  // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ\n  if (action === \"auth\") {\n    if (!verifyPin(p.pin)) {\n      return jsonOut({ ok: false, error: \"Неверный серверный пароль администратора\" });\n    }\n    ensureSheets();\n    return jsonOut({ ok: true, message: \"Авторизация успешна\" });\n  }\n\n  // Смена пароля администратора\n  if (action === \"change_pin\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный текущий пароль\" });\n    var newPin = String(p.new_pin || \"\").trim();\n    if (newPin.length < 4) return jsonOut({ ok: false, error: \"Новый пароль слишком короткий\" });\n    PropertiesService.getScriptProperties().setProperty(\"ADMIN_PIN\", newPin);\n    return jsonOut({ ok: true });\n  }\n\n  // Тест отправки письма через MailApp (из Настроек админ-панели)\n  if (action === \"test_email\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный пароль администратора\" });\n    var toAddr = String(p.to || \"\").trim();\n    if (!toAddr || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(toAddr)) {\n      return jsonOut({ ok: false, error: \"Укажите корректный Email получателя\" });\n    }\n    try {\n      MailApp.sendEmail({\n        to: toAddr,\n        subject: \"✦ Тест почты SAQTAA\",\n        name: BRAND_NAME,\n        htmlBody: '<div style=\"font-family:Georgia,serif;padding:20px;background:#F5EFE2;border-radius:12px;border:1px solid #D9BC7F;color:#182720\"><h3 style=\"margin:0 0 8px;color:#0F4A38\">SAQTAA · Тест отправки<\/h3><p style=\"margin:0\">Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.<\/p><\/div>'\n      });\n      return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });\n    } catch (testErr) {\n      return jsonOut({ ok: false, error: String(testErr && testErr.message ? testErr.message : testErr) });\n    }\n  }\n\n  // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA\n  if (action === \"upload_photo\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён (неверный пароль)\" });\n    try {\n      var b64 = String(p.base64 || \"\");\n      var mime = String(p.mime || \"image/jpeg\");\n      var name = \"saqtaa_\" + new Date().getTime() + \".jpg\";\n      if (!b64) return jsonOut({ ok: false, error: \"Пустой файл фото\" });\n      var bytes = Utilities.base64Decode(b64);\n      var blob = Utilities.newBlob(bytes, mime, name);\n\n      var folders = DriveApp.getFoldersByName(\"SAQTAA_PHOTOS\");\n      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(\"SAQTAA_PHOTOS\");\n      var file = folder.createFile(blob);\n      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);\n      var fileId = file.getId();\n      var directUrl = \"https://lh3.googleusercontent.com/d/\" + fileId + \"=w1600\";\n      return jsonOut({\n        ok: true,\n        id: fileId,\n        url: directUrl,\n        fallback_url: \"https://drive.google.com/uc?export=view&id=\" + fileId\n      });\n    } catch (err) {\n      return jsonOut({ ok: false, error: \"Ошибка сохранения фото на Google Диск: \" + String(err) });\n    }\n  }\n\n  var lock = LockService.getScriptLock();\n  lock.tryLock(10000);\n  try {\n    var db = ensureSheets();\n\n    // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ\n    if (action === \"save_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var orderId = String(p.id || (\"ord_\" + new Date().getTime())).trim();\n      var nowStr = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var names = String(p.names || \"\").trim();\n      var dateStr = String(p.date || \"\").trim();\n      var timeStr = String(p.time || \"\").trim();\n      var tpl = String(p.tpl || \"luxury\").trim();\n      var email = String(p.email || \"\").trim();\n      var inviteUrl = String(p.invite_url || \"\").trim();\n      var statsUrl = String(p.stats_url || \"\").trim();\n      var jsonStr = typeof p.data === \"string\" ? p.data : JSON.stringify(p.data || {});\n\n      var rows = db.orders.getDataRange().getValues();\n      var foundRow = -1;\n      for (var i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]) === orderId) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n      var rowVals = [orderId, nowStr, names, dateStr, timeStr, tpl, email, inviteUrl, statsUrl, jsonStr];\n      if (foundRow > 0) {\n        db.orders.getRange(foundRow, 1, 1, 10).setValues([rowVals]);\n      } else {\n        db.orders.appendRow(rowVals);\n      }\n      return jsonOut({ ok: true, id: orderId, saved_at: nowStr });\n    }\n\n    // 4. СПИСОК И ПОИСК ЗАКАЗОВ ДЛЯ АДМИНКИ\n    if (action === \"list_orders\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var rows = db.orders.getDataRange().getValues();\n      var list = [];\n      for (var i = 1; i < rows.length; i++) {\n        var r = rows[i];\n        if (!r[0]) continue;\n        var dVal = r[3] instanceof Date ? Utilities.formatDate(r[3], TIMEZONE, \"yyyy-MM-dd\") : String(r[3] || \"\");\n        var cVal = r[1] instanceof Date ? Utilities.formatDate(r[1], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[1] || \"\");\n        list.push({\n          id: String(r[0]),\n          created: cVal,\n          names: String(r[2] || \"\"),\n          date: dVal,\n          time: String(r[4] || \"\"),\n          tpl: String(r[5] || \"\"),\n          email: String(r[6] || \"\"),\n          invite_url: String(r[7] || \"\"),\n          stats_url: String(r[8] || \"\"),\n          data: String(r[9] || \"{}\")\n        });\n      }\n      return jsonOut({ ok: true, orders: list.reverse() });\n    }\n\n    // 5. УДАЛЕНИЕ ЗАКАЗА\n    if (action === \"delete_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var targetId = String(p.id || \"\").trim();\n      var rows = db.orders.getDataRange().getValues();\n      for (var i = rows.length - 1; i >= 1; i--) {\n        if (String(rows[i][0]) === targetId) {\n          db.orders.deleteRow(i + 1);\n          return jsonOut({ ok: true });\n        }\n      }\n      return jsonOut({ ok: false, error: \"Заказ не найден\" });\n    }\n\n    // 6. ПРИЁМ ОТВЕТА ГОСТЯ (RSVP) + ОТПРАВКА ПИСЬМА НА ПОЧТУ КЛИЕНТА ЧЕРЕЗ GMAIL SAQTAA\n    if (action === \"rsvp\") {\n      if (p.botcheck) return jsonOut({ ok: true }); // Honeypot от ботов\n\n      var name = String(p.name || \"\").trim().slice(0, 50);\n      var fam = String(p.fam || \"\").trim().slice(0, 50);\n      if (!name || !fam) return jsonOut({ ok: false, error: \"Укажите имя и фамилию\" });\n\n      var attCode = String(p.att_code || p.att || \"yes\").toLowerCase();\n      if (attCode.indexOf(\"не\") !== -1 || attCode === \"no\") attCode = \"no\";\n      else if (attCode.indexOf(\"пока\") !== -1 || attCode.indexOf(\"maybe\") !== -1) attCode = \"maybe\";\n      else attCode = \"yes\";\n\n      var lang = String(p.lang || \"ru\").toLowerCase() === \"kz\" ? \"kz\" : \"ru\";\n      var isKz = (lang === \"kz\");\n      var labels = isKz ? {\n        yes: \"Келеді (Расталды)\",\n        no: \"Келе алмайды (Бас тартты)\",\n        maybe: \"Әзірге білмейді (Ойлануда)\"\n      } : {\n        yes: \"Придёт (Подтверждено)\",\n        no: \"Не придёт (Отказ)\",\n        maybe: \"Пока не знает (Под вопросом)\"\n      };\n      var attLabel = labels[attCode];\n      var guests = attCode === \"yes\" ? (Number(p.guests) || 1) : 0;\n\n      var orderId = String(p.oid || p.order_id || \"default\").trim();\n      var rsvpId = String(p.id || (\"g_\" + new Date().getTime())).trim();\n      var eventTitle = String(p.title || (isKz ? \"Мерекелік шара\" : \"Праздничное торжество\")).trim();\n      var eventDate = String(p.date || \"\").trim();\n      var clientEmail = String(p.to_email || \"\").trim();\n      var noEmail = String(p.no_email || \"\") === \"1\";\n\n      // Антиспам: защита от частых кликов с одного rsvpId (не чаще 1 раза в 10 сек)\n      var cache = CacheService.getScriptCache();\n      var rateKey = \"rate_\" + rsvpId;\n      if (cache.get(rateKey)) {\n        return jsonOut({ ok: true, cached: true });\n      }\n      cache.put(rateKey, \"1\", 10);\n\n      // Если email клиента не передан в запросе — ищем его в таблице ORDERS по orderId\n      if (!clientEmail && orderId && orderId !== \"default\") {\n        var oRows = db.orders.getDataRange().getValues();\n        for (var k = 1; k < oRows.length; k++) {\n          if (String(oRows[k][0]) === orderId) {\n            clientEmail = String(oRows[k][6] || \"\").trim();\n            break;\n          }\n        }\n      }\n\n      var now = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var rRows = db.rsvps.getDataRange().getValues();\n      var foundRsvpRow = -1;\n      for (var j = 1; j < rRows.length; j++) {\n        if (String(rRows[j][0]) === orderId && String(rRows[j][1]) === rsvpId) {\n          foundRsvpRow = j + 1;\n          break;\n        }\n      }\n\n      var isUpdate = foundRsvpRow > 0;\n      var rowData = [orderId, rsvpId, now, name, fam, attCode, attLabel, guests, eventTitle, clientEmail];\n      if (isUpdate) {\n        db.rsvps.getRange(foundRsvpRow, 1, 1, 10).setValues([rowData]);\n      } else {\n        db.rsvps.appendRow(rowData);\n      }\n\n      // Считаем текущую сводку по мероприятию для письма клиенту\n      var allRsvps = db.rsvps.getDataRange().getValues();\n      var totalYes = 0, totalNo = 0, totalMaybe = 0;\n      for (var m = 1; m < allRsvps.length; m++) {\n        if (String(allRsvps[m][0]) === orderId) {\n          var st = String(allRsvps[m][5]);\n          if (st === \"yes\") totalYes += (Number(allRsvps[m][7]) || 1);\n          else if (st === \"no\") totalNo++;\n          else totalMaybe++;\n        }\n      }\n\n      // Отправка письма с аккаунта SAQTAA на Email клиента через MailApp (только если не выбран EmailJS)\n      var emailSent = false, mailError = \"\";\n      if (!noEmail && clientEmail && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(clientEmail)) {\n        try {\n          var fullName = name + \" \" + fam;\n          var subjPrefix = isUpdate\n            ? (isKz ? \"Жауап өзгертілді: \" : \"Изменение ответа: \")\n            : (isKz ? \"Жаңа жауап: \" : \"Новый ответ гостя: \");\n          var subject = subjPrefix + fullName + \" — \" + eventTitle;\n          var badgeColor = attCode === \"yes\" ? \"#1E6F43\" : (attCode === \"no\" ? \"#9E2B3A\" : \"#9E7318\");\n          var txt = isKz ? {\n            hdr: \"SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА\",\n            date: \"Күні: \",\n            guest: \"Қонақ:\",\n            ans: \"Жауабы:\",\n            time: \"Жауап уақыты: \",\n            upd: \" (жаңартылған жауап)\",\n            stTitle: \"Шақыру бойынша ағымдағы статистика\",\n            stLine: \"Келеді: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Келеді: \" + totalYes + \" · Келмейді: \" + totalNo + \" · Ойлануда: \" + totalMaybe,\n            brand: \"SAQTAA · Цифрлық шақырулар\"\n          } : {\n            hdr: \"SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ\",\n            date: \"Дата: \",\n            guest: \"Гость:\",\n            ans: \"Ответ:\",\n            time: \"Время ответа: \",\n            upd: \" (обновлённый ответ)\",\n            stTitle: \"Текущая статистика по вашему приглашению\",\n            stLine: \"Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Думают: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Придут: \" + totalYes + \" · Не придут: \" + totalNo + \" · Думают: \" + totalMaybe,\n            brand: BRAND_NAME\n          };\n          var plainBody = [\n            eventTitle + (eventDate ? \" (\" + eventDate + \")\" : \"\"),\n            txt.guest + \" \" + fullName,\n            txt.ans + \" \" + attLabel,\n            txt.time + now + (isUpdate ? txt.upd : \"\"),\n            txt.stPlain\n          ].join(\"\\n\");\n          var htmlBody = [\n            '<div style=\"font-family:Georgia,serif;max-width:520px;margin:0 auto;background:#F5EFE2;padding:24px;border-radius:14px;color:#182720;border:1px solid #D9BC7F\">',\n            '  <div style=\"text-align:center;border-bottom:1px solid rgba(24,39,32,0.15);padding-bottom:14px;margin-bottom:18px\">',\n            '    <div style=\"font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#B98E45;font-weight:bold\">' + txt.hdr + '<\/div>',\n            '    <h2 style=\"margin:6px 0 2px;font-size:22px;color:#0F4A38\">' + eventTitle + '<\/h2>',\n            (eventDate ? '<div style=\"font-size:13px;color:#46584D\">' + txt.date + eventDate + '<\/div>' : ''),\n            '  <\/div>',\n            '  <div style=\"background:#FFFDF6;padding:18px;border-radius:10px;border:1px solid rgba(24,39,32,0.12);margin-bottom:18px\">',\n            '    <p style=\"margin:0 0 10px;font-size:15px\"><strong>' + txt.guest + '<\/strong> ' + fullName + '<\/p>',\n            '    <p style=\"margin:0 0 10px;font-size:15px\"><strong>' + txt.ans + '<\/strong> <span style=\"color:' + badgeColor + ';font-weight:bold\">' + attLabel + '<\/span><\/p>',\n            '    <p style=\"margin:0;font-size:12px;color:#46584D\">' + txt.time + now + (isUpdate ? txt.upd : '') + '<\/p>',\n            '  <\/div>',\n            '  <div style=\"background:#0F4A38;color:#F6F1E4;padding:14px 16px;border-radius:10px;font-size:13px;text-align:center\">',\n            '    <div style=\"color:#D9BC7F;font-weight:bold;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px\">' + txt.stTitle + '<\/div>',\n            '    ' + txt.stLine,\n            '  <\/div>',\n            '<\/div>'\n          ].join(\"\\n\");\n\n          MailApp.sendEmail({\n            to: clientEmail,\n            subject: subject,\n            name: txt.brand,\n            body: plainBody,\n            htmlBody: htmlBody\n          });\n          emailSent = true;\n        } catch (mailErr) {\n          mailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);\n        }\n      }\n\n      return jsonOut({ ok: true, id: rsvpId, updated: isUpdate, email_sent: emailSent, mail_error: mailError });\n    }\n\n    // 7. ПОЛУЧЕНИЕ ЖИВОЙ СТАТИСТИКИ ДЛЯ КЛИЕНТА (stats.html)\n    if (action === \"stats\" || action === \"get\") {\n      var filterOrderId = String(p.oid || p.order_id || \"\").trim();\n      var rRows = db.rsvps.getDataRange().getValues();\n      var outRows = [];\n      for (var i = 1; i < rRows.length; i++) {\n        var r = rRows[i];\n        if (!r[3] && !r[4]) continue;\n        if (filterOrderId && String(r[0]) !== filterOrderId) continue;\n        var tVal = r[2] instanceof Date ? Utilities.formatDate(r[2], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[2] || \"\");\n        outRows.push({\n          oid: String(r[0] || \"\"),\n          id: String(r[1] || \"\"),\n          time: tVal,\n          name: String(r[3] || \"\"),\n          fam: String(r[4] || \"\"),\n          att: String(r[5] || \"yes\"),\n          att_label: String(r[6] || \"\"),\n          guests: Number(r[7] || 0),\n          title: String(r[8] || \"\")\n        });\n      }\n      return jsonOut({ ok: true, rows: outRows });\n    }\n\n    return jsonOut({ ok: true, status: \"SAQTAA Server Active\" });\n  } catch (err) {\n    return jsonOut({ ok: false, error: String(err) });\n  } finally {\n    lock.releaseLock();\n  }\n}\n";
 
 var PRE={
 luxury:{ti:["Свадебное торжество","Үйлену тойы"],
@@ -1913,6 +1829,31 @@ document.querySelectorAll("[data-setpanel]").forEach(function(b){
 });
 $("#copyAppScript").addEventListener("click",async function(){
   try{await navigator.clipboard.writeText(APPS_SCRIPT_CODE);toast("📋 Код скрипта скопирован");}catch(_){toast("Не удалось скопировать");}
+});
+$("#testSrvEmailBtn").addEventListener("click",async function(){
+  var url=getSrvUrl(),msg=$("#testSrvEmailMsg");
+  if(!url){toast("Сначала укажите URL сервера");return;}
+  var defEmail=clean($("#clientEmail").value)||"";
+  var to=clean(prompt("На какой Email отправить тестовое письмо?",defEmail));
+  if(!to)return;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)){toast("Неверный формат Email");return;}
+  var btn=this;btn.disabled=true;msg.hidden=false;msg.style.color="var(--ink2)";msg.textContent="⏳ Отправляем тестовое письмо…";
+  try{
+    var r=await fetch(url+"?action=test_email&pin="+encodeURIComponent(getAdminPin())+"&to="+encodeURIComponent(to));
+    var j=await r.json();
+    if(j&&j.ok&&j.email_sent){
+      msg.style.color="var(--green-ink)";
+      msg.textContent="✅ Письмо отправлено на "+to+" (осталось квоты: "+(j.remaining_quota!=null?j.remaining_quota:"—")+")";
+      toast("✅ Тестовое письмо отправлено!");
+    }else{
+      msg.style.color="var(--red-ink)";
+      msg.textContent="❌ Ошибка: "+(j&&j.error?j.error:"обновите код скрипта в Google Apps Script (кнопка «Код скрипта») и переразверните");
+    }
+  }catch(e){
+    msg.style.color="var(--red-ink)";
+    msg.textContent="❌ Не удалось связаться со скриптом: "+e.message;
+  }
+  btn.disabled=false;
 });
 $("#saveSrvBtn").addEventListener("click",async function(){
   var url=clean($("#srvUrl").value);
