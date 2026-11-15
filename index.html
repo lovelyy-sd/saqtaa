@@ -533,9 +533,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
 .rs-field input[aria-invalid="true"]{border-color:var(--acc)}
 .rs-err{font-size:.82rem;font-weight:700;color:var(--acc)}
 .rs-err:empty{display:none}
-.rd-cals{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:2px}
-.rd-gcal{display:inline-flex;align-items:center;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7;transition:opacity .2s}
-.rd-gcal:hover{opacity:1}
 .rd-title:focus{outline:none} /* заголовок получает фокус только для экранного диктора */
 .price-card{display:grid;gap:28px;background:var(--em);color:#F2EBDA;border-radius:calc(var(--r) + 6px);padding:clamp(26px,6vw,52px)}
 .price-card>*{min-width:0}
@@ -842,8 +839,8 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
         <li data-i18n="pr_i1">Имена, дата, место, цвета и тексты — под вас</li>
         <li data-i18n="pr_i2">Любой праздник: свадьба, юбилей, день рождения, тұсау кесер</li>
         <li data-i18n="pr_i3">Русский и казахский языки</li>
-        <li data-i18n="pr_i4">Обратный отсчёт, кнопка 2ГИС и добавление в календарь</li>
-        <li data-i18n="pr_i5">Ответы гостей — на вашу почту</li>
+        <li data-i18n="pr_i4">Обратный отсчёт и кнопка 2ГИС</li>
+        <li data-i18n="pr_i5">Ответы гостей — на почту и в онлайн-таблицу</li>
         <li data-i18n="pr_i6">Готовая ссылка, которой удобно делиться</li>
       </ul>
     </div>
@@ -1009,7 +1006,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       pr_eyebrow:"Стоимость",pr_h:"Одна цена за любой шаблон",pr_lead:"Все возможности — в каждом приглашении.",
       pr_i1:"Имена, дата, место, цвета и тексты — под вас",pr_i2:"Любой праздник: свадьба, юбилей, день рождения, тұсау кесер",
       pr_i3:"Русский и казахский языки",pr_i4:"Обратный отсчёт и кнопка 2ГИС",
-      pr_i5:"Ответы гостей — на вашу почту",pr_i6:"Готовая ссылка, которой удобно делиться",
+      pr_i5:"Ответы гостей — на почту и в онлайн-таблицу",pr_i6:"Готовая ссылка, которой удобно делиться",
       pr_note:"для первых 15 клиентов",
       tm_h:"Условия заказа",tm1t:"Готово за 1 день",tm1d:"После получения всех данных и предоплаты.",
       tm2t:"2 правки бесплатно",tm2d:"Каждая следующая — 500 ₸. Одна правка — все изменения, присланные одним сообщением.",
@@ -1037,11 +1034,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       demo_note:"Демо-режим: ответ никуда не отправляется. В настоящем приглашении ответы гостей приходят организатору на почту.",
       err_name:"Укажите имя",err_fam:"Укажите фамилию",
       rsvp_by:"Просим подтвердить присутствие до {date}",
-      cal_btn:"Добавить в календарь",
-      cal_alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",
-      cal_desc:"Цифровое приглашение SAQTAA. Программа: ",
-      cal_done:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
-      gcal_btn:"Добавить в Google Календарь",
       mq:"SAQTAA ✦ Свадьба ✦ Юбилей ✦ День рождения ✦ Тұсау кесер ✦ Цифровые приглашения ✦ Два языка ✦ ",
       site_title:"SAQTAA — цифровые приглашения на той",
       dot_st:"Стиль",dot_tpl:"Шаблон",
@@ -1117,7 +1109,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       pr_eyebrow:"Бағасы",pr_h:"Кез келген үлгі — бір баға",pr_lead:"Барлық мүмкіндіктер — әр шақыруда.",
       pr_i1:"Есімдер, күн, орын, түстер мен мәтіндер — сізге қарай",pr_i2:"Кез келген мереке: үйлену тойы, мерейтой, туған күн, тұсау кесер",
       pr_i3:"Орыс және қазақ тілдері",pr_i4:"Кері санақ және 2ГИС батырмасы",
-      pr_i5:"Қонақтардың жауаптары — сіздің поштаңызға",pr_i6:"Бөлісуге ыңғайлы дайын сілтеме",
+      pr_i5:"Қонақтардың жауаптары — поштаға және онлайн-кестеге",pr_i6:"Бөлісуге ыңғайлы дайын сілтеме",
       pr_note:"алғашқы 15 клиентке",
       tm_h:"Тапсырыс шарттары",tm1t:"1 күнде дайын",tm1d:"Барлық мәліметтер мен алдын ала төлем түскеннен кейін.",
       tm2t:"2 түзету тегін",tm2d:"Әр келесі түзету — 500 ₸. Бір түзету — бір хабарламамен жіберілген барлық өзгерістер.",
@@ -1145,11 +1137,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       demo_note:"Демо-режим: жауап ешқайда жіберілмейді. Нақты шақыруда қонақтардың жауаптары ұйымдастырушының поштасына келеді.",
       err_name:"Атыңызды жазыңыз",err_fam:"Тегіңізді жазыңыз",
       rsvp_by:"Қатысатыныңызды {date} дейін растауды сұраймыз",
-      cal_btn:"Күнтізбеге қосу",
-      cal_alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",
-      cal_desc:"SAQTAA цифрлық шақыруы. Бағдарлама: ",
-      cal_done:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
-      gcal_btn:"Google Күнтізбеге қосу",
       mq:"SAQTAA ✦ Той ✦ Мерейтой ✦ Туған күн ✦ Тұсау кесер ✦ Цифрлық шақырулар ✦ Екі тіл ✦ ",
       site_title:"SAQTAA — тойға цифрлық шақырулар",
       dot_st:"Стиль",dot_tpl:"Үлгі",
@@ -1248,75 +1235,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     });
   }
 
-  /* ---------- календарь: файл .ics и ссылка Google ---------- */
-  const TZO=CONFIG.TZ_OFFSET.replace(":","");                                   /* "+0500" */
-  const icsDT=(date,time)=>date.replace(/-/g,"")+"T"+time.replace(":","")+"00"; /* 20270214T173000 */
-  const EVENT_CFG=i=>{
-    const c=invC(i),d=DEMOS[i],ev=EVENTS[i];
-    const endDate=ev.end<=ev.times[0]?addDays(ev.date,1):ev.date;   /* окончание после полуночи — следующий день */
-    return{
-      uid:"saqtaa-"+KEYS[i]+"-"+ev.date.replace(/-/g,"")+"@saqtaa",
-      summary:d.names+" — "+c.title,
-      start:icsDT(ev.date,ev.times[0]),
-      end:icsDT(endDate,ev.end),
-      location:c.venue+", "+c.addr,
-      desc:t("cal_desc")+c.prog.map((p,k)=>ev.times[k]+" — "+p[0]).join("; ")+".",
-      alarm:fill(t("cal_alarm"),{title:c.title,time:ev.times[0]})
-    };
-  };
-  /* запасной вариант для встроенных браузеров (Instagram, WhatsApp), где файл не скачивается */
-  function gcalURL(i){
-    const c=EVENT_CFG(i);
-    return "https://calendar.google.com/calendar/render?action=TEMPLATE"
-      +"&text="+encodeURIComponent(c.summary)
-      +"&dates="+c.start+"/"+c.end
-      +"&ctz="+encodeURIComponent(CONFIG.TZ)
-      +"&details="+encodeURIComponent(c.desc)
-      +"&location="+encodeURIComponent(c.location);
-  }
-  const icsEsc=s=>String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
-  function icsFold(line){
-    const enc=new TextEncoder();const out=[];let cur="",bytes=0;
-    for(const ch of line){
-      const b=enc.encode(ch).length;
-      if(bytes+b>74&&cur){out.push(cur);cur=" "+ch;bytes=1+b;}
-      else{cur+=ch;bytes+=b;}
-    }
-    if(cur)out.push(cur);
-    return out.join("\r\n");
-  }
-  function buildICS(cfg){
-    const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z/,"Z");
-    const L=[
-      "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//SAQTAA//Digital Invitation//RU","CALSCALE:GREGORIAN","METHOD:PUBLISH",
-      "BEGIN:VTIMEZONE","TZID:"+CONFIG.TZ,"BEGIN:STANDARD","DTSTART:19700101T000000","TZOFFSETFROM:"+TZO,"TZOFFSETTO:"+TZO,"TZNAME:"+TZO.slice(0,3),"END:STANDARD","END:VTIMEZONE",
-      "BEGIN:VEVENT",
-      "UID:"+cfg.uid,
-      "DTSTAMP:"+stamp,
-      "DTSTART;TZID="+CONFIG.TZ+":"+cfg.start,
-      "DTEND;TZID="+CONFIG.TZ+":"+cfg.end,
-      icsFold("SUMMARY:"+icsEsc(cfg.summary)),
-      icsFold("LOCATION:"+icsEsc(cfg.location)),
-      icsFold("DESCRIPTION:"+icsEsc(cfg.desc)),
-      "STATUS:CONFIRMED",
-      "BEGIN:VALARM","ACTION:DISPLAY",
-      icsFold("DESCRIPTION:"+icsEsc(cfg.alarm)),
-      "TRIGGER:-P1D",
-      "END:VALARM",
-      "END:VEVENT","END:VCALENDAR"
-    ];
-    return L.join("\r\n")+"\r\n";
-  }
-  function downloadICS(i){
-    const blob=new Blob([buildICS(EVENT_CFG(i))],{type:"text/calendar;charset=utf-8"});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;a.download="saqtaa-"+KEYS[i]+"-"+EVENTS[i].date+".ics";
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),2000);
-    showToast(t("cal_done"));
-  }
-
   /* RSVP в демо-шаблоне: ответ гостя никуда не отправляется — показывается только карточка «Спасибо». */
 
   /* тост */
@@ -1403,10 +1321,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
                 <span class="rd-div"></span>
                 <p class="rd-date">${dHuman(ev.date)} · ${ev.times[0]}</p>
                 <p class="rd-venue">${c.venue}, ${c.addr}</p>
-                <div class="rd-cals">
-                  <button class="rs-send rd-cal" type="button" data-cal="${i}">${CAL_ICON}<span>${t("cal_btn")}</span></button>
-                  <a class="rd-gcal" href="${gcalURL(i).replace(/&/g,"&amp;")}" target="_blank" rel="noopener">${t("gcal_btn")}</a>
-                </div>
                 <button class="rd-edit" type="button">${t("rd_edit")}</button>
               </div>
             </div>
@@ -1626,8 +1540,6 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     if(err)err.textContent="";
   });
   track.addEventListener("click",e=>{
-    const cal=e.target.closest("[data-cal]");
-    if(cal){downloadICS(+cal.dataset.cal);return;}
     const ed=e.target.closest(".rd-edit");
     if(ed){
       const sec=ed.closest(".iv-sec");
