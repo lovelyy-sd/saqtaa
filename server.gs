@@ -237,9 +237,14 @@ function handle(p) {
 
       var rawLang = String(p.lang || "").toLowerCase().trim();
       var rawAttText = String(p.att || "").toLowerCase();
-      var isKz = (rawLang === "kz" || rawLang === "kk" || (!rawLang && (rawAttText.indexOf("келед") !== -1 || rawAttText.indexOf("келмей") !== -1 || rawAttText.indexOf("білмей") !== -1)));
-      var lang = isKz ? "kz" : "ru";
-      var labels = isKz ? {
+      var isBoth = (rawLang === "both");
+      var isKz = (!isBoth && (rawLang === "kz" || rawLang === "kk" || (!rawLang && (rawAttText.indexOf("келед") !== -1 || rawAttText.indexOf("келмей") !== -1 || rawAttText.indexOf("білмей") !== -1))));
+      var lang = isBoth ? "both" : (isKz ? "kz" : "ru");
+      var labels = isBoth ? {
+        yes: "Келеді (Расталды) / Придёт (Подтверждено)",
+        no: "Келе алмайды (Бас тартты) / Не придёт (Отказ)",
+        maybe: "Әзірге білмейді / Пока не знает"
+      } : (isKz ? {
         yes: "Келеді (Расталды)",
         no: "Келе алмайды (Бас тартты)",
         maybe: "Әзірге білмейді (Ойлануда)"
@@ -247,13 +252,13 @@ function handle(p) {
         yes: "Придёт (Подтверждено)",
         no: "Не придёт (Отказ)",
         maybe: "Пока не знает (Под вопросом)"
-      };
+      });
       var attLabel = labels[attCode];
       var guests = attCode === "yes" ? (Number(p.guests) || 1) : 0;
 
       var orderId = String(p.oid || p.order_id || "default").trim();
       var rsvpId = String(p.id || ("g_" + new Date().getTime())).trim();
-      var eventTitle = String(p.title || (isKz ? "Мерекелік шара" : "Праздничное торжество")).trim();
+      var eventTitle = String(p.title || (isBoth ? "Мерекелік шара / Праздничное торжество" : (isKz ? "Мерекелік шара" : "Праздничное торжество"))).trim();
       var eventDate = String(p.date || "").trim();
       var clientEmail = String(p.to_email || "").trim();
       var noEmail = String(p.no_email || "") === "1";
@@ -312,12 +317,25 @@ function handle(p) {
       if (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
         try {
           var fullName = name + " " + fam;
-          var subjPrefix = isUpdate
-            ? (isKz ? "Жауап өзгертілді: " : "Изменение ответа: ")
-            : (isKz ? "Жаңа жауап: " : "Новый ответ гостя: ");
+          var subjPrefix = isBoth
+            ? (isUpdate ? "Жауап өзгертілді / Изменение ответа: " : "Жаңа жауап / Новый ответ гостя: ")
+            : (isUpdate
+              ? (isKz ? "Жауап өзгертілді: " : "Изменение ответа: ")
+              : (isKz ? "Жаңа жауап: " : "Новый ответ гостя: "));
           var subject = subjPrefix + fullName + " — " + eventTitle;
           var badgeColor = attCode === "yes" ? "#1E6F43" : (attCode === "no" ? "#9E2B3A" : "#9E7318");
-          var txt = isKz ? {
+          var txt = isBoth ? {
+            hdr: "SAQTAA · ҚОНАҚ ЖАУАБЫ / УВЕДОМЛЕНИЕ О ГОСТЕ",
+            date: "Күні / Дата: ",
+            guest: "Қонақ / Гость:",
+            ans: "Жауабы / Ответ:",
+            time: "Уақыты / Время: ",
+            upd: " (жаңартылды / обновлено)",
+            stTitle: "Статистика / Текущая статистика",
+            stLine: "Келеді / Придут: <b>" + totalYes + "</b> &nbsp;·&nbsp; Келмейді / Не придут: <b>" + totalNo + "</b> &nbsp;·&nbsp; Ойлануда / Думают: <b>" + totalMaybe + "</b>",
+            stPlain: "Келеді / Придут: " + totalYes + " · Келмейді / Не придут: " + totalNo + " · Ойлануда / Думают: " + totalMaybe,
+            brand: "SAQTAA · Цифрлық шақырулар / Цифровые приглашения"
+          } : (isKz ? {
             hdr: "SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА",
             date: "Күні: ",
             guest: "Қонақ:",
@@ -339,7 +357,7 @@ function handle(p) {
             stLine: "Придут: <b>" + totalYes + "</b> &nbsp;·&nbsp; Не придут: <b>" + totalNo + "</b> &nbsp;·&nbsp; Думают: <b>" + totalMaybe + "</b>",
             stPlain: "Придут: " + totalYes + " · Не придут: " + totalNo + " · Думают: " + totalMaybe,
             brand: BRAND_NAME
-          };
+          });
           var plainBody = [
             eventTitle + (eventDate ? " (" + eventDate + ")" : ""),
             txt.guest + " " + fullName,
