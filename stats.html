@@ -137,6 +137,16 @@ body{
   font-size:.76rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--hdr-acc);
 }
 .brand svg{width:16px;height:16px;flex-shrink:0}
+.hdr-right{display:inline-flex;align-items:center;gap:10px}
+.lang-sw{
+  display:inline-flex;align-items:center;padding:2px;border-radius:999px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.16);
+}
+.lang-sw button{
+  border:0;background:none;color:var(--hdr-muted);font:inherit;font-size:.7rem;font-weight:700;
+  letter-spacing:.04em;padding:4px 9px;border-radius:999px;cursor:pointer;transition:background .15s,color .15s;
+}
+.lang-sw button.active{background:var(--hdr-acc);color:#141414}
 .online-pill{
   display:inline-flex;align-items:center;gap:6px;
   font-size:.78rem;font-weight:600;color:var(--hdr-fg);opacity:.92;
@@ -298,7 +308,13 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 7c0-2 4-4 4-4s4 2 4 4-4 4-4 4-4-2-4-4zM6 14c0-1.5 6-3 6-3s6 1.5 6 3-6 3-6 3-6-1.5-6-3z"/></svg>
         SAQTAA · RSVP
       </span>
-      <span class="online-pill"><span class="dot"></span>Онлайн</span>
+      <div class="hdr-right">
+        <div class="lang-sw" id="langSw" role="group" aria-label="Язык">
+          <button type="button" data-lang="ru" class="active">RU</button>
+          <button type="button" data-lang="kz">ҚАЗ</button>
+        </div>
+        <span class="online-pill"><span class="dot"></span><span data-i18n="online">Онлайн</span></span>
+      </div>
     </div>
     <h1 class="head-title" id="eventTitle">Загрузка...</h1>
     <div class="head-meta" id="eventMeta"></div>
@@ -306,13 +322,13 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 </header>
 
 <main>
-  <div id="loading" class="loading-box"><div class="spin"></div><p>Загрузка статистики...</p></div>
+  <div id="loading" class="loading-box"><div class="spin"></div><p data-i18n="loading">Загрузка статистики...</p></div>
   <div id="errBox" class="err-box" hidden></div>
 
   <div id="content" hidden>
     <!-- Статистика ответов -->
     <div class="sec-head">
-      <h2 class="sec-title">Статистика ответов</h2>
+      <h2 class="sec-title" data-i18n="statsTitle">Статистика ответов</h2>
       <span class="sec-icon" aria-hidden="true">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="11" width="3.5" height="9" rx="1"/><rect x="10.25" y="5" width="3.5" height="15" rx="1"/><rect x="16.5" y="14" width="3.5" height="6" rx="1"/></svg>
       </span>
@@ -320,28 +336,28 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 
     <div class="card stats-card">
       <div class="stats-top">
-        <div class="stats-kicker">ВСЕГО ОТВЕТОВ</div>
+        <div class="stats-kicker" data-i18n="totalAnswers">ВСЕГО ОТВЕТОВ</div>
         <div class="stats-big" id="cntTotal">0</div>
       </div>
       <div class="stats-grid">
         <div class="stats-col">
           <span class="st-lbl yes">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
-            Придут
+            <span data-i18n="yesPlural">Придут</span>
           </span>
           <span class="st-num yes" id="cntYes">0</span>
         </div>
         <div class="stats-col">
           <span class="st-lbl no">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
-            Отказ
+            <span data-i18n="noPlural">Отказ</span>
           </span>
           <span class="st-num no" id="cntNo">0</span>
         </div>
         <div class="stats-col">
           <span class="st-lbl maybe">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .8c0 1.5-2.5 2-2.5 3.2M12 16.5h.01"/></svg>
-            Не знают
+            <span data-i18n="maybePlural">Не знают</span>
           </span>
           <span class="st-num maybe" id="cntMaybe">0</span>
         </div>
@@ -350,7 +366,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 
     <!-- Список гостей -->
     <div class="sec-head">
-      <h2 class="sec-title">Список гостей</h2>
+      <h2 class="sec-title" data-i18n="guestListTitle">Список гостей</h2>
       <span class="count-pill" id="cntGuestBadge">0 гостей</span>
     </div>
 
@@ -360,7 +376,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
     </div>
 
     <div class="filter-bar">
-      <span>Фильтр по статусу</span>
+      <span data-i18n="filterLabel">Фильтр по статусу</span>
       <button type="button" class="sort-btn" id="sortBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 15l5 5 5-5M7 9l5-5 5 5"/></svg>
         <span id="sortLabel">Сначала новые</span>
@@ -368,33 +384,33 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
     </div>
 
     <div class="chips">
-      <button type="button" class="chip active" data-filter="all">Все · <span id="fAll">0</span></button>
-      <button type="button" class="chip" data-filter="yes">Придут · <span id="fYes">0</span></button>
-      <button type="button" class="chip" data-filter="no">Отказ · <span id="fNo">0</span></button>
-      <button type="button" class="chip" data-filter="maybe">Не знают · <span id="fMaybe">0</span></button>
+      <button type="button" class="chip active" data-filter="all"><span data-i18n="all">Все</span> · <span id="fAll">0</span></button>
+      <button type="button" class="chip" data-filter="yes"><span data-i18n="yesPlural">Придут</span> · <span id="fYes">0</span></button>
+      <button type="button" class="chip" data-filter="no"><span data-i18n="noPlural">Отказ</span> · <span id="fNo">0</span></button>
+      <button type="button" class="chip" data-filter="maybe"><span data-i18n="maybePlural">Не знают</span> · <span id="fMaybe">0</span></button>
     </div>
 
     <div class="card guest-card-wrap">
       <div id="guestList"></div>
-      <div id="noMatch" class="empty" hidden>Гостей по вашему запросу пока нет</div>
+      <div id="noMatch" class="empty" hidden data-i18n="emptyMatch">Гостей по вашему запросу пока нет</div>
     </div>
 
     <!-- Форма добавления гостя -->
     <form id="addGuestForm" class="card add-box" hidden>
-      <div class="add-box-title">Добавить гостя вручную</div>
+      <div class="add-box-title" data-i18n="addBoxTitle">Добавить гостя вручную</div>
       <div class="add-grid">
         <input class="inp" id="agName" type="text" placeholder="Имя (например: Алия)" maxlength="40" required>
-        <input class="inp" id="agFam" type="text" placeholder="Фамилия (например: Сактаганова)" maxlength="40" required>
+        <input class="inp" id="agFam" type="text" placeholder="Фамилия (например: Касымова)" maxlength="40" required>
       </div>
       <select class="inp" id="agAtt" style="margin-bottom:10px">
-        <option value="yes">Придёт</option>
-        <option value="maybe">Пока не знает</option>
-        <option value="no">Не придёт</option>
+        <option value="yes" data-i18n="optYes">Придёт</option>
+        <option value="maybe" data-i18n="optMaybe">Пока не знает</option>
+        <option value="no" data-i18n="optNo">Не придёт</option>
       </select>
       <div class="add-err" id="agErr" hidden></div>
       <div class="add-actions">
-        <button type="button" class="icon-btn" id="agCancelBtn" style="width:auto;padding:0 16px;font-size:.86rem;font-weight:700">Отмена</button>
-        <button type="submit" class="btn-primary" style="height:44px;padding:0 18px;font-size:.86rem">Сохранить</button>
+        <button type="button" class="icon-btn" id="agCancelBtn" style="width:auto;padding:0 16px;font-size:.86rem;font-weight:700" data-i18n="cancel">Отмена</button>
+        <button type="submit" class="btn-primary" style="height:44px;padding:0 18px;font-size:.86rem" data-i18n="save">Сохранить</button>
       </div>
     </form>
 
@@ -402,7 +418,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
     <div class="bottom-bar">
       <button type="button" class="btn-primary" id="toggleAddGuestBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
-        Добавить гостя
+        <span data-i18n="addGuestBtn">Добавить гостя</span>
       </button>
       <div class="bar-right">
         <button type="button" class="icon-btn" id="btnExportCsv" title="Скачать таблицу (CSV)" aria-label="Скачать таблицу">
@@ -413,16 +429,16 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
         </button>
       </div>
       <div class="more-menu" id="moreMenu" hidden>
-        <button type="button" class="more-item" id="btnCopyWaReport">📲 Отчёт для WhatsApp</button>
-        <a class="more-item" id="btnInvite" href="#" target="_blank" rel="noopener" hidden>💌 Открыть приглашение</a>
-        <a class="more-item" id="btnSheet" href="#" target="_blank" rel="noopener" hidden>📊 Открыть Google Таблицу</a>
-        <button type="button" class="more-item" id="btnRefresh">🔄 Обновить данные</button>
+        <button type="button" class="more-item" id="btnCopyWaReport" data-i18n="waReport">📲 Отчёт для WhatsApp</button>
+        <a class="more-item" id="btnInvite" href="#" target="_blank" rel="noopener" hidden data-i18n="openInvite">💌 Открыть приглашение</a>
+        <a class="more-item" id="btnSheet" href="#" target="_blank" rel="noopener" hidden data-i18n="openSheet">📊 Открыть Google Таблицу</a>
+        <button type="button" class="more-item" id="btnRefresh" data-i18n="refreshData">🔄 Обновить данные</button>
       </div>
     </div>
 
     <button type="button" class="footer-upd" id="footerRefresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-      <span>Обновлено в <span id="updateTime">--:--</span></span>
+      <span><span data-i18n="updatedAt">Обновлено в</span> <span id="updateTime">--:--</span></span>
     </button>
   </div>
 </main>
@@ -433,9 +449,152 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 (function(){
 "use strict";
 var $=function(s){return document.querySelector(s);};
-var allGuests=[],rawRows=[],curFilter="all",sortMode="new",sheetUrl="",inviteUrl="",orderId="",currentTitle="Приглашение";
-var MONTHS=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+var allGuests=[],rawRows=[],curFilter="all",sortMode="new",sheetUrl="",inviteUrl="",orderId="",currentTitle="",curLang="ru",metaDateStr="",metaTimeStr="",metaVenueStr="";
+var I18N={
+  ru:{
+    docTitle:"SAQTAA · Статистика ответов",
+    online:"Онлайн",
+    loading:"Загрузка статистики...",
+    defaultTitle:"Приглашение",
+    statsTitle:"Статистика ответов",
+    totalAnswers:"ВСЕГО ОТВЕТОВ",
+    yesPlural:"Придут",
+    noPlural:"Отказ",
+    maybePlural:"Не знают",
+    guestListTitle:"Список гостей",
+    searchPh:"Поиск по имени или фамилии",
+    filterLabel:"Фильтр по статусу",
+    sortNew:"Сначала новые",
+    sortOld:"Сначала старые",
+    sortAz:"По алфавиту",
+    all:"Все",
+    emptyMatch:"Гостей по вашему запросу пока нет",
+    addBoxTitle:"Добавить гостя вручную",
+    agNamePh:"Имя (например: Алия)",
+    agFamPh:"Фамилия (например: Касымова)",
+    optYes:"Придёт",
+    optMaybe:"Пока не знает",
+    optNo:"Не придёт",
+    cancel:"Отмена",
+    save:"Сохранить",
+    addGuestBtn:"Добавить гостя",
+    waReport:"📲 Отчёт для WhatsApp",
+    openInvite:"💌 Открыть приглашение",
+    openSheet:"📊 Открыть Google Таблицу",
+    refreshData:"🔄 Обновить данные",
+    updatedAt:"Обновлено в",
+    justNow:"только что",
+    guestFallback:"Гость",
+    addedManual:"Добавлен вручную",
+    addedInvite:"Ответ через приглашение",
+    badgeYes:"Придёт",
+    badgeYesMany:"Придут",
+    badgeNo:"Не придёт",
+    badgeMaybe:"Не знает",
+    errName:"Укажите настоящее имя (без цифр и случайных букв)",
+    errFam:"Укажите настоящую фамилию (без цифр и случайных букв)",
+    toastAdded:"✅ Гость добавлен",
+    toastRefreshed:"🔄 Обновлено",
+    toastWaCopied:"📲 Отчёт скопирован для WhatsApp",
+    toastWaErr:"Не удалось скопировать отчёт",
+    toastEmptyCsv:"Список гостей пока пуст",
+    toastCsvOk:"📥 Таблица скачана",
+    waHeader:"📊 *Статистика ответов: ",
+    waYes:"✅ *Придут (",
+    waMaybe:"⏳ *Не знают (",
+    waNo:"❌ *Не придут (",
+    waNoneYet:"— пока нет",
+    waNone:"— нет",
+    csvHead:"\uFEFF№;Имя;Фамилия;Статус;Количество;Время ответа\r\n",
+    exportTitle:"Скачать таблицу (CSV)",
+    moreTitle:"Дополнительно",
+    months:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"]
+  },
+  kz:{
+    docTitle:"SAQTAA · Жауаптар статистикасы",
+    online:"Онлайн",
+    loading:"Статистика жүктелуде...",
+    defaultTitle:"Шақыру",
+    statsTitle:"Жауаптар статистикасы",
+    totalAnswers:"БАРЛЫҚ ЖАУАПТАР",
+    yesPlural:"Келеді",
+    noPlural:"Бас тартты",
+    maybePlural:"Білмейді",
+    guestListTitle:"Қонақтар тізімі",
+    searchPh:"Аты немесе тегі бойынша іздеу",
+    filterLabel:"Мәртебе бойынша сүзгі",
+    sortNew:"Алдымен жаңалары",
+    sortOld:"Алдымен ескілері",
+    sortAz:"Әліпби бойынша",
+    all:"Барлығы",
+    emptyMatch:"Сұрауыңыз бойынша қонақтар әзірге жоқ",
+    addBoxTitle:"Қонақты қолмен қосу",
+    agNamePh:"Аты (мысалы: Әлия)",
+    agFamPh:"Тегі (мысалы: Қасымова)",
+    optYes:"Келеді",
+    optMaybe:"Әзірше білмейді",
+    optNo:"Келмейді",
+    cancel:"Болдырмау",
+    save:"Сақтау",
+    addGuestBtn:"Қонақ қосу",
+    waReport:"📲 WhatsApp-қа есеп",
+    openInvite:"💌 Шақыруды ашу",
+    openSheet:"📊 Google Кестені ашу",
+    refreshData:"🔄 Деректерді жаңарту",
+    updatedAt:"Жаңартылған уақыты:",
+    justNow:"жаңа ғана",
+    guestFallback:"Қонақ",
+    addedManual:"Қолмен қосылды",
+    addedInvite:"Шақыру арқылы жауап",
+    badgeYes:"Келеді",
+    badgeYesMany:"Келеді",
+    badgeNo:"Келмейді",
+    badgeMaybe:"Білмейді",
+    errName:"Шынайы атыңызды жазыңыз (сансыз және кездейсоқ әріпсіз)",
+    errFam:"Шынайы тегіңізді жазыңыз (сансыз және кездейсоқ әріпсіз)",
+    toastAdded:"✅ Қонақ қосылды",
+    toastRefreshed:"🔄 Жаңартылды",
+    toastWaCopied:"📲 Есеп WhatsApp үшін көшірілді",
+    toastWaErr:"Есепті көшіру мүмкін болмады",
+    toastEmptyCsv:"Қонақтар тізімі бос",
+    toastCsvOk:"📥 Кесте жүктелді",
+    waHeader:"📊 *Жауаптар статистикасы: ",
+    waYes:"✅ *Келеді (",
+    waMaybe:"⏳ *Білмейді (",
+    waNo:"❌ *Келмейді (",
+    waNoneYet:"— әзірге жоқ",
+    waNone:"— жоқ",
+    csvHead:"\uFEFF№;Аты;Тегі;Мәртебе;Саны;Жауап уақыты\r\n",
+    exportTitle:"Кестені жүктеу (CSV)",
+    moreTitle:"Қосымша",
+    months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"]
+  }
+};
 var THEME_COLORS={luxury:"#1A2E23",floral:"#7B2C3E",qazaq:"#7C2230",editorial:"#141414",emerald:"#0E4D3C",tusau:"#734B18"};
+function t(k){return(I18N[curLang]&&I18N[curLang][k])||I18N.ru[k]||"";}
+function applyLang(l,savePref){
+  curLang=(l==="kz")?"kz":"ru";
+  if(savePref){try{localStorage.setItem("saqtaa-stats-lang",curLang);}catch(_){}}
+  document.documentElement.lang=(curLang==="kz")?"kk":"ru";
+  document.title=t("docTitle");
+  document.querySelectorAll("#langSw button").forEach(function(b){b.classList.toggle("active",b.dataset.lang===curLang);});
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var k=el.getAttribute("data-i18n");
+    if(k)el.textContent=t(k);
+  });
+  $("#search").placeholder=t("searchPh");
+  $("#agName").placeholder=t("agNamePh");
+  $("#agFam").placeholder=t("agFamPh");
+  $("#btnExportCsv").title=t("exportTitle");
+  $("#btnExportCsv").setAttribute("aria-label",t("exportTitle"));
+  $("#moreBtn").title=t("moreTitle");
+  $("#moreBtn").setAttribute("aria-label",t("moreTitle"));
+  $("#sortLabel").textContent=sortMode==="old"?t("sortOld"):(sortMode==="az"?t("sortAz"):t("sortNew"));
+  if(!currentTitle){$("#eventTitle").textContent=t("defaultTitle");}
+  renderMeta();
+  updateGuestBadge(rawRows.length);
+  renderList();
+}
 
 function toast(msg){
   var t=$("#toast");t.textContent=msg;t.classList.add("show");
@@ -448,6 +607,9 @@ function plural(n,one,few,many){
   if(b>1&&b<5)return few;
   if(b===1)return one;
   return many;
+}
+function updateGuestBadge(total){
+  $("#cntGuestBadge").textContent=curLang==="kz"?(total+" қонақ"):(total+" "+plural(total,"гость","гостя","гостей"));
 }
 
 /* Валидация ФИО (защита от случайных символов и спама) */
@@ -566,9 +728,9 @@ function parseAtt(val){
   return"maybe";
 }
 
-function formatTimeShort(t){
-  var s=String(t||"").trim();
-  if(!s)return"только что";
+function formatTimeShort(tm){
+  var s=String(tm||"").trim();
+  if(!s)return t("justNow");
   var m=s.match(/(\d{2}:\d{2})/);
   return m?m[1]:s;
 }
@@ -577,7 +739,7 @@ function renderList(){
   var q=$("#search").value.toLowerCase().trim();
   var base=rawRows.slice();
   if(sortMode==="new")base.reverse();
-  else if(sortMode==="az")base.sort(function(a,b){return(a.name+" "+a.fam).localeCompare(b.name+" "+b.fam,"ru");});
+  else if(sortMode==="az")base.sort(function(a,b){return(a.name+" "+a.fam).localeCompare(b.name+" "+b.fam,curLang==="kz"?"kk":"ru");});
 
   var filtered=base.filter(function(g){
     if(curFilter!=="all"&&g.normAtt!==curFilter)return false;
@@ -596,14 +758,14 @@ function renderList(){
   }
   noMatch.hidden=true;
 
-  var labels={yes:"Придёт",no:"Не придёт",maybe:"Не знает"};
+  var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("badgeMaybe")};
   list.innerHTML=filtered.map(function(g){
     var att=g.normAtt;
     var badgeLabel=labels[att]||labels.maybe;
-    if(att==="yes"&&g.guests>1)badgeLabel="Придут ("+g.guests+")";
-    var fullName=esc((g.name+" "+g.fam).trim()||"Гость");
+    if(att==="yes"&&g.guests>1)badgeLabel=t("badgeYesMany")+" ("+g.guests+")";
+    var fullName=esc((g.name+" "+g.fam).trim()||t("guestFallback"));
     var isManual=String(g.id||"").indexOf("manual_")===0;
-    var subText=(isManual?"Добавлен вручную":"Ответ через приглашение")+" · "+esc(formatTimeShort(g.time));
+    var subText=(isManual?t("addedManual"):t("addedInvite"))+" · "+esc(formatTimeShort(g.time));
     return '<div class="guest-row">'+
       '<div class="guest-info"><strong>'+fullName+'</strong><small>'+subText+'</small></div>'+
       '<span class="badge '+att+'">'+badgeLabel+'</span>'+
@@ -627,7 +789,7 @@ function updateStats(rows){
   $("#cntYes").textContent=yesGuests;
   $("#cntNo").textContent=noCount;
   $("#cntMaybe").textContent=maybeCount;
-  $("#cntGuestBadge").textContent=total+" "+plural(total,"гость","гостя","гостей");
+  updateGuestBadge(total);
 
   $("#fAll").textContent=total;
   $("#fYes").textContent=yesCount;
@@ -706,33 +868,33 @@ $("#addGuestForm").addEventListener("submit",async function(e){
   var fm=capName($("#agFam").value);
   var att=$("#agAtt").value||"yes";
   if(!isValidNamePart(nm)){
-    errEl.textContent="Укажите настоящее имя (без цифр и случайных букв)";
+    errEl.textContent=t("errName");
     errEl.hidden=false;$("#agName").focus();return;
   }
   if(!isValidNamePart(fm)){
-    errEl.textContent="Укажите настоящую фамилию (без цифр и случайных букв)";
+    errEl.textContent=t("errFam");
     errEl.hidden=false;$("#agFam").focus();return;
   }
   var pad=function(n){return String(n).padStart(2,"0");};
   var now=new Date();
   var tStr=pad(now.getDate())+"."+pad(now.getMonth()+1)+"."+now.getFullYear()+" "+pad(now.getHours())+":"+pad(now.getMinutes());
   var gid="manual_"+Date.now().toString(36);
-  var row={oid:orderId||"default",id:gid,time:tStr,name:nm,fam:fm,att:att,guests:att==="yes"?1:0,title:currentTitle};
+  var row={oid:orderId||"default",id:gid,time:tStr,name:nm,fam:fm,att:att,guests:att==="yes"?1:0,title:currentTitle||t("defaultTitle")};
   saveLocalRow(row);
   $("#agName").value="";$("#agFam").value="";$("#addGuestForm").hidden=true;
   await loadData();
-  toast("✅ Гость добавлен");
+  toast(t("toastAdded"));
   if(sheetUrl){
-    var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
-    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||"Придёт")+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle);
+    var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("optMaybe")};
+    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"));
     fetch(sheetUrl+q,{method:"GET",mode:"no-cors"}).catch(function(){});
   }
 });
 
 $("#sortBtn").addEventListener("click",function(){
-  if(sortMode==="new"){sortMode="old";$("#sortLabel").textContent="Сначала старые";}
-  else if(sortMode==="old"){sortMode="az";$("#sortLabel").textContent="По алфавиту";}
-  else{sortMode="new";$("#sortLabel").textContent="Сначала новые";}
+  if(sortMode==="new"){sortMode="old";$("#sortLabel").textContent=t("sortOld");}
+  else if(sortMode==="old"){sortMode="az";$("#sortLabel").textContent=t("sortAz");}
+  else{sortMode="new";$("#sortLabel").textContent=t("sortNew");}
   renderList();
 });
 
@@ -755,25 +917,25 @@ $("#btnCopyWaReport").addEventListener("click",async function(){
     else if(g.normAtt==="no")no.push(full);
     else maybe.push(full);
   });
-  var lines=["📊 *Статистика ответов: "+currentTitle+"*",""];
-  lines.push("✅ *Придут ("+yes.length+"):*");
-  if(yes.length)yes.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— пока нет");
+  var lines=[t("waHeader")+(currentTitle||t("defaultTitle"))+"*",""];
+  lines.push(t("waYes")+yes.length+"):*");
+  if(yes.length)yes.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push(t("waNoneYet"));
   lines.push("");
-  lines.push("⏳ *Не знают ("+maybe.length+"):*");
-  if(maybe.length)maybe.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— нет");
+  lines.push(t("waMaybe")+maybe.length+"):*");
+  if(maybe.length)maybe.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push(t("waNone"));
   lines.push("");
-  lines.push("❌ *Не придут ("+no.length+"):*");
-  if(no.length)no.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push("— нет");
-  try{await navigator.clipboard.writeText(lines.join("\n"));toast("📲 Отчёт скопирован для WhatsApp");}
-  catch(_){toast("Не удалось скопировать отчёт");}
+  lines.push(t("waNo")+no.length+"):*");
+  if(no.length)no.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push(t("waNone"));
+  try{await navigator.clipboard.writeText(lines.join("\n"));toast(t("toastWaCopied"));}
+  catch(_){toast(t("toastWaErr"));}
 });
 
 $("#btnExportCsv").addEventListener("click",function(){
-  if(!rawRows.length){toast("Список гостей пока пуст");return;}
-  var labels={yes:"Придёт",no:"Не придёт",maybe:"Не знает"};
-  var csv="\uFEFF№;Имя;Фамилия;Статус;Количество;Время ответа\r\n";
+  if(!rawRows.length){toast(t("toastEmptyCsv"));return;}
+  var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("badgeMaybe")};
+  var csv=t("csvHead");
   rawRows.forEach(function(g,idx){
-    var st=labels[g.normAtt]||"Придёт";
+    var st=labels[g.normAtt]||t("badgeYes");
     var escCsv=function(s){return'"'+String(s||"").replace(/"/g,'""')+'"';};
     csv+=(idx+1)+";"+escCsv(g.name)+";"+escCsv(g.fam)+";"+escCsv(st)+";"+(g.normAtt==="yes"?1:0)+";"+escCsv(g.time)+"\r\n";
   });
@@ -781,32 +943,48 @@ $("#btnExportCsv").addEventListener("click",function(){
   a.href=url;a.download="saqtaa-guests-"+new Date().toISOString().slice(0,10)+".csv";
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(function(){URL.revokeObjectURL(url);},1500);
-  toast("📥 Таблица скачана");
+  toast(t("toastCsvOk"));
 });
 
 function formatHumanDate(iso){
   var p=String(iso||"").split("-");
   if(p.length!==3)return iso;
-  var d=parseInt(p[2],10),m=MONTHS[parseInt(p[1],10)-1]||"";
+  var d=parseInt(p[2],10),months=t("months"),m=months[parseInt(p[1],10)-1]||"";
   return (d<10?"0"+d:d)+" "+m+" "+p[0];
+}
+function renderMeta(){
+  var metaEl=$("#eventMeta");
+  if(!metaEl)return;
+  var metaHTML="";
+  if(metaDateStr||metaTimeStr){
+    metaHTML+='<div class="meta-row">';
+    if(metaDateStr)metaHTML+='<span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'+esc(formatHumanDate(metaDateStr))+'</span>';
+    if(metaTimeStr)metaHTML+='<span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'+esc(metaTimeStr)+'</span>';
+    metaHTML+='</div>';
+  }
+  if(metaVenueStr){
+    metaHTML+='<div class="meta-row"><span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'+esc(metaVenueStr)+'</span></div>';
+  }
+  metaEl.innerHTML=metaHTML;
 }
 
 async function init(){
   var hash=location.hash;
   var params=new URLSearchParams(location.search);
-  var title="Приглашение",dateStr="",timeStr="",venueStr="",tpl="emerald";
+  var title="",dateStr="",timeStr="",venueStr="",tpl="emerald",invLang="";
 
   if(hash){
     try{
       var D=await decodeHash(hash);
       if(D){
-        title=D.n||"Приглашение";
+        title=D.n||"";
         dateStr=D.d||"";
         timeStr=D.s?(D.s+(D.e?"–"+D.e:"")):"";
         venueStr=[D.ve,D.ad].filter(Boolean).join(", ");
         if(D.t&&THEME_COLORS[D.t])tpl=D.t;
         if(D.srv||D.sheet)sheetUrl=D.srv||D.sheet;
         if(D.oid)orderId=D.oid;
+        if(D.l==="kz"||D.l==="ru")invLang=D.l;
         inviteUrl="invite.html"+hash;
       }
     }catch(_){}
@@ -824,19 +1002,18 @@ async function init(){
   if(tc)tc.setAttribute("content",THEME_COLORS[tpl]||"#0E4D3C");
 
   currentTitle=title;
-  $("#eventTitle").textContent=title;
+  metaDateStr=dateStr;
+  metaTimeStr=timeStr;
+  metaVenueStr=venueStr;
 
-  var metaHTML="";
-  if(dateStr||timeStr){
-    metaHTML+='<div class="meta-row">';
-    if(dateStr)metaHTML+='<span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>'+esc(formatHumanDate(dateStr))+'</span>';
-    if(timeStr)metaHTML+='<span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'+esc(timeStr)+'</span>';
-    metaHTML+='</div>';
-  }
-  if(venueStr){
-    metaHTML+='<div class="meta-row"><span class="meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'+esc(venueStr)+'</span></div>';
-  }
-  $("#eventMeta").innerHTML=metaHTML;
+  var savedLang="";try{savedLang=localStorage.getItem("saqtaa-stats-lang")||"";}catch(_){}
+  var initLang=params.get("lang")||savedLang||invLang||"ru";
+  applyLang(initLang,false);
+  $("#eventTitle").textContent=currentTitle||t("defaultTitle");
+
+  document.querySelectorAll("#langSw button").forEach(function(b){
+    b.addEventListener("click",function(){applyLang(b.dataset.lang,true);});
+  });
 
   if(inviteUrl){var bi=$("#btnInvite");bi.href=inviteUrl;bi.hidden=false;}
   if(params.get("doc")){var bs=$("#btnSheet");bs.href=params.get("doc");bs.hidden=false;}
@@ -851,8 +1028,8 @@ async function init(){
   });
 
   $("#search").addEventListener("input",renderList);
-  $("#btnRefresh").addEventListener("click",function(){$("#moreMenu").hidden=true;loadData();toast("🔄 Обновлено");});
-  $("#footerRefresh").addEventListener("click",function(){loadData();toast("🔄 Обновлено");});
+  $("#btnRefresh").addEventListener("click",function(){$("#moreMenu").hidden=true;loadData();toast(t("toastRefreshed"));});
+  $("#footerRefresh").addEventListener("click",function(){loadData();toast(t("toastRefreshed"));});
 
   await loadData();
   setInterval(loadData,20000);
