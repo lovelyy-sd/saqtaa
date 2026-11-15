@@ -170,7 +170,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 <script>
 (function(){
 "use strict";
-var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,W3F="https://api.web3forms.com/submit",RSVP_COOLDOWN_MS=5000;
+var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,RSVP_COOLDOWN_MS=5000;
 var $=function(s){return document.querySelector(s);},app=$("#app");
 
 /* ---------- утилиты ---------- */
@@ -477,11 +477,12 @@ function tick(){
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
 /* ---------- отправка ответа гостя (SAQTAA Server + MailApp / EmailJS / Web3Forms) ---------- */
-async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
+async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
   var srv=D.srv||D.sheet;
   if(!srv)return false;
-  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
-  var label=labels[val]||labels.yes;
+  var labelsRu={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
+  var labelsKz={yes:"Келеді",no:"Келе алмайды",maybe:"Әзірге білмейді"};
+  var label=(lang==="kz"?labelsKz:labelsRu)[val]||labelsRu.yes;
   var guestsCount=val==="yes"?1:0;
   var oid=D.oid||"default";
   var toEmail=D.em||"";
@@ -497,7 +498,9 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
       "&guests="+encodeURIComponent(guestsCount)+
       "&title="+encodeURIComponent(names())+
       "&date="+encodeURIComponent(dateHuman)+
+      "&lang="+encodeURIComponent(lang)+
       (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
+      (noEmail?"&no_email=1":"")+
       (isUpdate?"&isUpdate=1":"");
     await fetch(srv+query,{method:"GET",mode:"no-cors"});
     return true;
@@ -509,7 +512,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
         body:JSON.stringify({
           action:"rsvp",oid:oid,id:rsvpId,name:cleanNm,fam:cleanFm,
           att_code:val,att:label,guests:guestsCount,title:names(),
-          date:dateHuman,to_email:toEmail,isUpdate:isUpdate?1:0
+          date:dateHuman,lang:lang,to_email:toEmail,no_email:noEmail?1:0,isUpdate:isUpdate?1:0
         })
       });
       return true;
@@ -518,8 +521,14 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId){
 }
 async function postEmailJS(full,val,isUpdate,rsvpId){
   if(!D.ejs||!D.ejs.s||!D.ejs.t||!D.ejs.u)return false;
-  var labels={yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"};
+  var isKz=(lang==="kz");
+  var labels=isKz
+    ?{yes:"Келеді (Расталды)",no:"Келе алмайды (Бас тартты)",maybe:"Әзірге білмейді (Ойлануда)"}
+    :{yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"};
   var label=labels[val]||labels.yes;
+  var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
+  var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
+  var subject=(isUpdate?(isKz?"🔄 Жауап өзгертілді: ":"🔄 Изменение ответа: "):(isKz?"✦ Қонақтың жаңа жауабы: ":"✦ Новый ответ гостя: "))+full+" — "+names();
   try{
     var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
       method:"POST",
@@ -530,49 +539,27 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
         user_id:D.ejs.u,
         template_params:{
           to_email:D.em||"",
+          lang:lang,
+          subject:subject,
+          header_label:isKz?"SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА":"SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ",
+          guest_label:isKz?"Қонақ:":"Гость:",
+          answer_label:isKz?"Жауабы:":"Ответ:",
+          time_label:isKz?"Жауап уақыты:":"Время ответа:",
+          date_label:isKz?"Күні:":"Дата:",
           guest_name:full,
           event_title:names(),
           event_date:dDot(D.d)+(D.s?" "+D.s:""),
           attendance:label,
+          att_color:val==="yes"?"#1E6F43":(val==="no"?"#9E2B3A":"#9E7318"),
           guests_count:val==="yes"?1:0,
-          status_type:isUpdate?"Изменение ответа":"Новый ответ",
+          reply_time:replyTime,
+          status_type:isUpdate?(isKz?"Жауапты өзгерту":"Изменение ответа"):(isKz?"Жаңа жауап":"Новый ответ"),
+          brand_footer:isKz?"SAQTAA · Цифрлық шақырулар":"SAQTAA · Цифровые приглашения",
           rsvp_id:rsvpId
         }
       })
     });
     return r.ok;
-  }catch(_){return false;}
-}
-async function postRsvp(full,val,isUpdate,prevVal,rev,rsvpId,prevGuestInfo,botChecked){
-  if(!D.k||botChecked)return false;
-  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
-  var label=labels[val]||labels.yes;
-  var guestsCount=val==="yes"?1:0;
-  var maybeCount=val==="maybe"?1:0;
-  var attCategory=val==="yes"?"Подтверждено (1 гость)":(val==="maybe"?"Не определился — под вопросом (1 гость)":"Отказ (0 гостей)");
-  var subj=(isUpdate?"Изменение ответа: ":"Ответ гостя: ")+full+" — "+label;
-  var statusText=isUpdate
-    ?("Изменение ранее отправленного ответа (обновление №"+rev+", было: "+(labels[prevVal]||prevVal)+")")
-    :(prevGuestInfo?("Новый гость с этого устройства (ранее указывался: "+prevGuestInfo+")"):"Первичный ответ");
-  var payload={
-    access_key:D.k,
-    subject:subj,
-    from_name:"SAQTAA · приглашение",
-    "Приглашение":names()+" ("+dDot(D.d)+" "+D.s+")",
-    "Гость":full,
-    "Ответ":label,
-    "Статус присутствия":attCategory,
-    "Количество гостей":guestsCount,
-    "Под вопросом (пока не знают)":maybeCount,
-    "Статус записи":statusText,
-    "ID ответа":rsvpId,
-    botcheck:botChecked?"true":""
-  };
-  if(prevGuestInfo)payload["Предыдущий гость на устройстве"]=prevGuestInfo;
-  try{
-    var r=await fetch(W3F,{method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify(payload)});
-    var j=await r.json().catch(function(){return{};});
-    return r.ok&&j.success!==false;
   }catch(_){return false;}
 }
 function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
@@ -688,15 +675,12 @@ app.addEventListener("submit",async function(e){
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
   saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
-  var results=[];
+  var results=[],useEjs=Boolean(D.ejs&&D.ejs.s);
   if(D.srv||D.sheet){
-    results.push(await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId));
+    results.push(await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
   }
-  if(D.ejs&&D.ejs.s){
+  if(useEjs){
     results.push(await postEmailJS(full,val,isUpdate,rsvpId));
-  }
-  if(D.k){
-    results.push(await postRsvp(full,val,isUpdate,prevVal,nextRev,rsvpId,prevGuestInfo,Boolean(hp&&hp.checked)));
   }
   var ok=results.length===0?true:results.some(Boolean);
   isSubmitting=false;

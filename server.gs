@@ -215,7 +215,13 @@ function handle(p) {
       else if (attCode.indexOf("пока") !== -1 || attCode.indexOf("maybe") !== -1) attCode = "maybe";
       else attCode = "yes";
 
-      var labels = {
+      var lang = String(p.lang || "ru").toLowerCase() === "kz" ? "kz" : "ru";
+      var isKz = (lang === "kz");
+      var labels = isKz ? {
+        yes: "Келеді (Расталды)",
+        no: "Келе алмайды (Бас тартты)",
+        maybe: "Әзірге білмейді (Ойлануда)"
+      } : {
         yes: "Придёт (Подтверждено)",
         no: "Не придёт (Отказ)",
         maybe: "Пока не знает (Под вопросом)"
@@ -225,9 +231,10 @@ function handle(p) {
 
       var orderId = String(p.oid || p.order_id || "default").trim();
       var rsvpId = String(p.id || ("g_" + new Date().getTime())).trim();
-      var eventTitle = String(p.title || "Праздничное торжество").trim();
+      var eventTitle = String(p.title || (isKz ? "Мерекелік шара" : "Праздничное торжество")).trim();
       var eventDate = String(p.date || "").trim();
       var clientEmail = String(p.to_email || "").trim();
+      var noEmail = String(p.no_email || "") === "1";
 
       // Антиспам: защита от частых кликов с одного rsvpId (не чаще 1 раза в 10 сек)
       var cache = CacheService.getScriptCache();
@@ -278,29 +285,52 @@ function handle(p) {
         }
       }
 
-      // Отправка письма с аккаунта SAQTAA на Email клиента через MailApp
+      // Отправка письма с аккаунта SAQTAA на Email клиента через MailApp (только если не выбран EmailJS)
       var emailSent = false;
-      if (clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+      if (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
         try {
           var fullName = name + " " + fam;
-          var subjPrefix = isUpdate ? "🔄 Изменение ответа: " : "✦ Новый ответ гостя: ";
+          var subjPrefix = isUpdate
+            ? (isKz ? "🔄 Жауап өзгертілді: " : "🔄 Изменение ответа: ")
+            : (isKz ? "✦ Қонақтың жаңа жауабы: " : "✦ Новый ответ гостя: ");
           var subject = subjPrefix + fullName + " — " + eventTitle;
           var badgeColor = attCode === "yes" ? "#1E6F43" : (attCode === "no" ? "#9E2B3A" : "#9E7318");
+          var txt = isKz ? {
+            hdr: "SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА",
+            date: "Күні: ",
+            guest: "Қонақ:",
+            ans: "Жауабы:",
+            time: "Жауап уақыты: ",
+            upd: " (жаңартылған жауап)",
+            stTitle: "Шақыру бойынша ағымдағы статистика",
+            stLine: "Келеді: <b>" + totalYes + "</b> &nbsp;·&nbsp; Келмейді: <b>" + totalNo + "</b> &nbsp;·&nbsp; Ойлануда: <b>" + totalMaybe + "</b>",
+            brand: "SAQTAA · Цифрлық шақырулар"
+          } : {
+            hdr: "SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ",
+            date: "Дата: ",
+            guest: "Гость:",
+            ans: "Ответ:",
+            time: "Время ответа: ",
+            upd: " (обновлённый ответ)",
+            stTitle: "Текущая статистика по вашему приглашению",
+            stLine: "Придут: <b>" + totalYes + "</b> &nbsp;·&nbsp; Не придут: <b>" + totalNo + "</b> &nbsp;·&nbsp; Думают: <b>" + totalMaybe + "</b>",
+            brand: BRAND_NAME
+          };
           var htmlBody = [
             '<div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;background:#F5EFE2;padding:24px;border-radius:14px;color:#182720;border:1px solid #D9BC7F">',
             '  <div style="text-align:center;border-bottom:1px solid rgba(24,39,32,0.15);padding-bottom:14px;margin-bottom:18px">',
-            '    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#B98E45;font-weight:bold">SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ</div>',
+            '    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#B98E45;font-weight:bold">' + txt.hdr + '</div>',
             '    <h2 style="margin:6px 0 2px;font-size:22px;color:#0F4A38">' + eventTitle + '</h2>',
-            (eventDate ? '<div style="font-size:13px;color:#46584D">Дата: ' + eventDate + '</div>' : ''),
+            (eventDate ? '<div style="font-size:13px;color:#46584D">' + txt.date + eventDate + '</div>' : ''),
             '  </div>',
             '  <div style="background:#FFFDF6;padding:18px;border-radius:10px;border:1px solid rgba(24,39,32,0.12);margin-bottom:18px">',
-            '    <p style="margin:0 0 10px;font-size:15px"><strong>Гость:</strong> ' + fullName + '</p>',
-            '    <p style="margin:0 0 10px;font-size:15px"><strong>Ответ:</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + attLabel + '</span></p>',
-            '    <p style="margin:0;font-size:12px;color:#46584D">Время ответа: ' + now + (isUpdate ? ' (обновлённый ответ)' : '') + '</p>',
+            '    <p style="margin:0 0 10px;font-size:15px"><strong>' + txt.guest + '</strong> ' + fullName + '</p>',
+            '    <p style="margin:0 0 10px;font-size:15px"><strong>' + txt.ans + '</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + attLabel + '</span></p>',
+            '    <p style="margin:0;font-size:12px;color:#46584D">' + txt.time + now + (isUpdate ? txt.upd : '') + '</p>',
             '  </div>',
             '  <div style="background:#0F4A38;color:#F6F1E4;padding:14px 16px;border-radius:10px;font-size:13px;text-align:center">',
-            '    <div style="color:#D9BC7F;font-weight:bold;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px">Текущая статистика по вашему приглашению</div>',
-            '    Придут: <b>' + totalYes + '</b> &nbsp;·&nbsp; Не придут: <b>' + totalNo + '</b> &nbsp;·&nbsp; Думают: <b>' + totalMaybe + '</b>',
+            '    <div style="color:#D9BC7F;font-weight:bold;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px">' + txt.stTitle + '</div>',
+            '    ' + txt.stLine,
             '  </div>',
             '</div>'
           ].join("\n");
@@ -308,7 +338,7 @@ function handle(p) {
           MailApp.sendEmail({
             to: clientEmail,
             subject: subject,
-            name: BRAND_NAME,
+            name: txt.brand,
             htmlBody: htmlBody
           });
           emailSent = true;

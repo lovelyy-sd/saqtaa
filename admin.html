@@ -552,7 +552,6 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
           <div class="seg" id="rsvpSeg" style="flex-wrap:wrap">
             <button type="button" data-r="saqtaa" class="on">Gmail SAQTAA + Таблица</button>
             <button type="button" data-r="ejs">EmailJS</button>
-            <button type="button" data-r="w3f">Web3Forms</button>
             <button type="button" data-r="none">Без RSVP</button>
           </div>
 
@@ -573,11 +572,6 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
               <div><label class="lbl" for="ejsTemplate">Template ID</label><input class="inp" id="ejsTemplate" type="text" autocomplete="off"></div>
               <div><label class="lbl" for="ejsKey">Public Key</label><input class="inp" id="ejsKey" type="text" autocomplete="off"></div>
             </div>
-          </div>
-
-          <div id="rsvpW3fWrap" hidden>
-            <label class="lbl" for="k">Ключ Web3Forms</label>
-            <input class="inp" id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-…" autocomplete="off">
           </div>
 
           <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--hair2)">
@@ -1215,9 +1209,6 @@ function collect(){
   }else if(currentRsvpMode==="ejs"){
     o.ejs={s:clean($("#ejsService").value),t:clean($("#ejsTemplate").value),u:clean($("#ejsKey").value)};
     if(srv){o.srv=srv;o.sheet=srv;}
-  }else if(currentRsvpMode==="w3f"){
-    o.k=clean($("#k").value);
-    if(srv){o.srv=srv;o.sheet=srv;}
   }
   if(o.t==="editorial")o.b=clean($("#b").value);
   if(lang==="ru"||lang==="both")o.ru=langBlock(0);
@@ -1247,8 +1238,6 @@ function validate(o){
     }else if(currentRsvpMode==="ejs"){
       if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Укажите Service ID, Template ID и Public Key для EmailJS.";
       if(!o.em)return"Для EmailJS укажите Email клиента.";
-    }else if(currentRsvpMode==="w3f"){
-      if(!o.k)return"Укажите ключ Web3Forms.";
     }
   }
   return"";
@@ -1273,12 +1262,12 @@ function save(){
 }
 function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,240);schedulePreview();}
 function setRsvpMode(mode){
+  if(mode==="w3f")mode="ejs";
   currentRsvpMode=mode;
   document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.r===mode);});
   $("#rsvpEmailCommon").hidden=(mode!=="saqtaa"&&mode!=="ejs");
   $("#rsvpSaqtaaWrap").hidden=(mode!=="saqtaa");
   $("#rsvpEjsWrap").hidden=(mode!=="ejs");
-  $("#rsvpW3fWrap").hidden=(mode!=="w3f");
 }
 function fillFrom(o){
   currentOrderId=o.oid||("ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
@@ -1295,9 +1284,6 @@ function fillFrom(o){
     setRsvpMode("ejs");
     $("#ejsService").value=o.ejs.s||"";$("#ejsTemplate").value=o.ejs.t||"";$("#ejsKey").value=o.ejs.u||"";
     $("#sheet").value=o.srv||o.sheet||defSrv;
-  }else if(o.k){
-    setRsvpMode("w3f");
-    $("#k").value=o.k;$("#sheet").value=o.srv||o.sheet||defSrv;
   }else if(o.rsvp===false){
     setRsvpMode("none");
   }else{
