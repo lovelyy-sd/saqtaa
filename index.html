@@ -11,12 +11,12 @@ document.documentElement.classList.add("js");
 </script>
 <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 <title>SAQTAA — цифровые приглашения на той</title>
-<meta name="description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, ответы гостей, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta name="description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
 <meta name="theme-color" content="#0F4A38">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F4A38'/%3E%3Ctext x='32' y='45' font-size='36' text-anchor='middle' fill='%23D9BC7F' font-family='Georgia,serif'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SAQTAA — цифровые приглашения на той">
-<meta property="og:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, ответы гостей, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta property="og:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
 <meta property="og:url" content="https://lovelyy-sd.github.io/saqtaa/">
 <meta property="og:site_name" content="SAQTAA">
 <meta property="og:image" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
@@ -29,7 +29,7 @@ document.documentElement.classList.add("js");
 <meta property="og:locale:alternate" content="kk_KZ">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SAQTAA — цифровые приглашения на той">
-<meta name="twitter:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, ответы гостей, два языка. Свадьба, юбилей, тұсау кесер.">
+<meta name="twitter:description" content="Индивидуальные онлайн-приглашения: отсчёт, 2ГИС, RSVP, два языка. Свадьба, юбилей, тұсау кесер.">
 <meta name="twitter:image" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
 <link rel="canonical" href="https://lovelyy-sd.github.io/saqtaa/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -610,13 +610,13 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       <h1 data-i18n-html="hero_h">Ваш особенный день.<em>В красивой форме.</em></h1>
       <p class="hero-lead" data-i18n="hero_lead">Индивидуальные онлайн-приглашения на той — с вниманием к каждой детали. Откройте демо и выберите свой стиль.</p>
       <div class="hero-cta">
-        <a class="btn btn-solid" href="#designs"><span data-i18n="cta_designs">Выбрать дизайн</span><span class="ar">↘</span></a>
-        <button class="btn btn-line" id="heroView">▶ <span data-i18n="view_demo">Смотреть демо</span></button>
+        <a class="btn btn-solid" href="#designs"><span data-i18n="cta_designs">Выбрать дизайн</span><span class="ar" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 4.5l7 7M11.5 5.5v6h-6"/></svg></span></a>
+        <button class="btn btn-line" id="heroView"><svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true" style="flex-shrink:0"><path d="M3 1.8l7 4.2-7 4.2V1.8z"/></svg> <span data-i18n="view_demo">Смотреть демо</span></button>
       </div>
       <div class="hero-stats">
         <span><b>06</b><span data-i18n="stat_d">дизайнов</span></span>
         <span><b>02</b><span data-i18n="stat_l">языка</span></span>
-        <span><b>✦</b><span data-i18n="f_rsvp_short">Ответы</span></span>
+        <span><b>✦</b>RSVP</span>
         <span><b data-price>2&nbsp;990&nbsp;₸</b><span data-i18n="stat_p">за приглашение</span></span>
       </div>
     </div>
@@ -633,7 +633,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
           <div><b data-cd="m">00</b><span data-cdl="m">минут</span></div>
           <div><b data-cd="s">00</b><span data-cdl="s">секунд</span></div>
         </div>
-        <div class="tags"><b>✦</b> <span data-i18n="f_rsvp">Ответы гостей</span> &nbsp;·&nbsp; <b>✦</b> 2ГИС &nbsp;·&nbsp; <b>✦</b> RU / ҚАЗ</div>
+        <div class="tags"><b>✦</b> RSVP &nbsp;·&nbsp; <b>✦</b> 2ГИС &nbsp;·&nbsp; <b>✦</b> RU / ҚАЗ</div>
       </div>
       <div class="hero-dots" id="heroDots"></div>
     </div>
@@ -694,7 +694,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 01 ✦</b><span>Luxury</span></div>
             <h3 class="ci-name">Ерасыл &amp; Аяулым <em>· Luxury</em></h3>
             <p class="ci-desc" data-i18n="d1">Классическая обложка, двойная рамка и изящные засечки.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="0"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="0" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2001%20%C2%ABLuxury%20%C2%B7%20Wedding%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -714,7 +714,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 02 ✿</b><span>Floral</span></div>
             <h3 class="ci-name">Әмір &amp; Томирис <em>· Floral</em></h3>
             <p class="ci-desc" data-i18n="d2">Мягкая арка, цветочные мотивы и нежные оттенки.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="1"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="1" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2002%20%C2%ABFloral%20%C2%B7%20Wedding%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -734,7 +734,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 03 ❧</b><span>Qazaq</span></div>
             <h3 class="ci-name">Бауыржан &amp; Айым <em>· Qazaq</em></h3>
             <p class="ci-desc" data-i18n="d3">Орнаментальная панель и национальный колорит.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="2"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="2" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2003%20%C2%ABQazaq%20%C2%B7%20Toy%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -756,7 +756,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 04 ✦</b><span>Editorial</span></div>
             <h3 class="ci-name">Гүлнара · 50 <em>· Editorial</em></h3>
             <p class="ci-desc" data-i18n="d4">Журнальный блок: крупная типографика и строгая сетка.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="3"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="3" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2004%20%C2%ABJubilee%20%C2%B7%20Editorial%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -775,7 +775,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 05 ✧</b><span>Emerald</span></div>
             <h3 class="ci-name">Медина <em>· Emerald</em></h3>
             <p class="ci-desc" data-i18n="d5">Арочная фоторамка в глубоком изумрудном цвете.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="4"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="4" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2005%20%C2%ABEmerald%20%C2%B7%20Birthday%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -796,7 +796,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <div class="ci-top"><b>№ 06 ☀</b><span>Tusau</span></div>
             <h3 class="ci-name">Айсұлтан <em>· 1 жас</em></h3>
             <p class="ci-desc" data-i18n="d6">Тёплый семейный дизайн для праздника первых шагов малыша.</p>
-            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li data-i18n="f_rsvp">Ответы гостей</li></ul>
+            <ul class="ci-feats"><li data-i18n="f_cd">Отсчёт</li><li>2ГИС</li><li>RSVP</li></ul>
             <div class="ci-btns">
               <button class="btn btn-solid btn-demo" data-demo="5"><span data-i18n="open_demo">Открыть демо</span><span class="ar">→</span></button>
               <a class="btn btn-line wa-order" data-wa="5" href="https://wa.me/77788613881?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21%20%D0%A5%D0%BE%D1%87%D1%83%20%D0%B7%D0%B0%D0%BA%D0%B0%D0%B7%D0%B0%D1%82%D1%8C%20%D0%BF%D1%80%D0%B8%D0%B3%D0%BB%D0%B0%D1%88%D0%B5%D0%BD%D0%B8%D0%B5%20%E2%84%96%2006%20%C2%ABTusau%20%C2%B7%201%20%D0%B6%D0%B0%D1%81%C2%BB." target="_blank" rel="noopener" data-i18n="order">Заказать</a>
@@ -1107,7 +1107,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       d4:"Журналдық блок: ірі типографика және қатаң тор.",
       d5:"Терең көк-жасыл түстегі аркалы фоторамка.",
       d6:"Баланың алғашқы қадамы мерекесіне арналған жылы отбасылық дизайн.",
-      f_cd:"Санақ",f_rsvp:"Қонақ жауабы",f_rsvp_short:"Жауаптар",open_demo:"Демо ашу",order:"Тапсырыс",swipe:"Айналдырыңыз",
+      f_cd:"Санақ",open_demo:"Демо ашу",order:"Тапсырыс",swipe:"Айналдырыңыз",
       badge_hit:"хит",badge_new:"жаңа",
       p_eyebrow:"Қарапайым процесс",p_h:"Идеядан дайын сілтемеге",
       p1t:"Дизайн таңдаңыз",p1d:"Демо қарап, лайықты стилді таңдаңыз.",p1c:"6 стиль · демо",
