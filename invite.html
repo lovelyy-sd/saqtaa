@@ -435,7 +435,6 @@ function render(){
   var todayKz=new Date(Date.now()+5*36e5).toISOString().slice(0,10),rawBy=addDays(D.d,-RSVP_DAYS);
   var by=fill(t("by"),{date:dDot(rawBy<todayKz?(todayKz<D.d?todayKz:D.d):rawBy)});
   var venueLine=[D.ve,D.ad].filter(Boolean).join(", ");
-  var gcalHref=esc(gcalURL());
   var st=rsvpState||{nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",editing:false};
   var curAtt=validAtt(st.att),showDone=Boolean(st.sent&&!st.editing);
   var sentFull=(st.sentNm+" "+st.sentFm).trim(),sentAtt=validAtt(st.sentAtt);
@@ -452,7 +451,6 @@ function render(){
       '<p class="rs-err" role="alert"></p><button class="rs-send" type="submit">'+t("send")+'</button><p class="rs-note">'+by+'</p></form>'+
     '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><span class="rd-div"></span>'+
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
-      '<div class="rd-cals"'+(sentAtt==="no"?' hidden':'')+'><button class="rs-send rd-cal" type="button" data-cal>'+CAL_ICON+' <span>'+t("cal")+'</span></button><a class="rd-gcal" href="'+gcalHref+'" target="_blank" rel="noopener">'+t("gcal")+'</a></div>'+
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div></section>';
   app.innerHTML='<article class="inv-page '+T.cls+'">'+sw+(T.deco||"")+'<div class="inv-inner">'+
     (T.band?qband("0s"):"")+(T.orn?ORN:"")+big+head+
@@ -460,7 +458,6 @@ function render(){
     '<div class="orn-div fx" style="--d:.22s"><span>❧</span></div>'+
     '<div class="inv-date fx" style="--d:.24s">'+dSpaced(D.d)+' · '+esc(D.s)+'</div>'+
     '<div class="cd fx" style="--d:.26s"><div><b data-cd="d">00</b><span data-cdl="d"></span></div><div><b data-cd="h">00</b><span data-cdl="h"></span></div><div><b data-cd="m">00</b><span data-cdl="m"></span></div><div><b data-cd="s">00</b><span data-cdl="s"></span></div></div>'+
-    '<section class="iv-sec fx calendar-sec" style="--d:.28s"><p class="iv-eyebrow">'+t("cal")+'</p><p class="rs-note">'+t("calhint")+'</p><button class="inv-btn" type="button" data-cal>'+CAL_ICON+' '+t("cal")+'</button><a class="rd-gcal" href="'+gcalHref+'" target="_blank" rel="noopener">'+t("gcal")+'</a></section>'+
     progHTML+locHTML+rsvpHTML+
     (c.sg?'<p class="inv-sign fx" style="--d:.5s">'+esc(sub(c.sg))+'</p>':'')+
     (D.h?'<p class="inv-hash fx" style="--d:.52s">'+esc(D.h)+'</p>':'')+
@@ -607,30 +604,36 @@ function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
 }
 function loadLocalDevicePhoto(oid){
   return new Promise(function(resolve){
-    if(!window.indexedDB){resolve("");return;}
+    var settled=false;
+    function fin(v){if(!settled){settled=true;resolve(v||"");}}
+    setTimeout(function(){fin("");},500);
+    if(!window.indexedDB){fin("");return;}
     try{
       var req=indexedDB.open("saqtaa-local-media",1);
+      req.onblocked=function(){fin("");};
+      req.onerror=function(){fin("");};
       req.onsuccess=function(){
-        var db=req.result;
-        if(!db.objectStoreNames.contains("photos")){resolve("");return;}
-        var tx=db.transaction("photos","readonly"),st=tx.objectStore("photos");
-        var r1=oid?st.get(oid):null;
-        if(r1){
-          r1.onsuccess=function(){
-            if(r1.result&&r1.result.blob){resolve(URL.createObjectURL(r1.result.blob));return;}
+        try{
+          var db=req.result;
+          if(!db.objectStoreNames.contains("photos")){fin("");return;}
+          var tx=db.transaction("photos","readonly"),st=tx.objectStore("photos");
+          var r1=oid?st.get(oid):null;
+          if(r1){
+            r1.onsuccess=function(){
+              if(r1.result&&r1.result.blob){fin(URL.createObjectURL(r1.result.blob));return;}
+              var r2=st.get("current");
+              r2.onsuccess=function(){fin(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
+              r2.onerror=function(){fin("");};
+            };
+            r1.onerror=function(){fin("");};
+          }else{
             var r2=st.get("current");
-            r2.onsuccess=function(){resolve(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
-            r2.onerror=function(){resolve("");};
-          };
-          r1.onerror=function(){resolve("");};
-        }else{
-          var r2=st.get("current");
-          r2.onsuccess=function(){resolve(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
-          r2.onerror=function(){resolve("");};
-        }
+            r2.onsuccess=function(){fin(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
+            r2.onerror=function(){fin("");};
+          }
+        }catch(_){fin("");}
       };
-      req.onerror=function(){resolve("");};
-    }catch(_){resolve("");}
+    }catch(_){fin("");}
   });
 }
 function showDoneCard(sec,full,val,scroll){
@@ -793,10 +796,15 @@ async function init(){
     if(rsvpState.lang&&langs.indexOf(rsvpState.lang)>=0)lang=rsvpState.lang;
     else if(/^kk/i.test(navigator.language||""))lang="kz";
   }
-  if(Date.now()>deadline()){
-    screen("Приглашение больше недоступно ✦","<p>Мероприятие уже состоялось. Спасибо, что были с нами!</p><p>Мереке өтіп кетті. Бізбен бірге болғаныңызға рақмет!</p>");return;
+  try{
+    if(Date.now()>deadline()){
+      screen("Приглашение больше недоступно ✦","<p>Мероприятие уже состоялось. Спасибо, что были с нами!</p><p>Мереке өтіп кетті. Бізбен бірге болғаныңызға рақмет!</p>");return;
+    }
+    render();tickTimer=setInterval(tick,1000);
+  }catch(e){
+    console.error("SAQTAA_INIT_ERR",e);
+    screen("Ошибка загрузки ✦","<p>Не удалось отобразить приглашение: "+esc(e&&e.message?e.message:String(e))+"</p>");
   }
-  render();tickTimer=setInterval(tick,1000);
 }
 addEventListener("hashchange",function(){init();});
 init();
