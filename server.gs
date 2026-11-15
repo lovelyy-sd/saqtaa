@@ -235,8 +235,10 @@ function handle(p) {
       else if (attCode.indexOf("пока") !== -1 || attCode.indexOf("maybe") !== -1) attCode = "maybe";
       else attCode = "yes";
 
-      var lang = String(p.lang || "ru").toLowerCase() === "kz" ? "kz" : "ru";
-      var isKz = (lang === "kz");
+      var rawLang = String(p.lang || "").toLowerCase().trim();
+      var rawAttText = String(p.att || "").toLowerCase();
+      var isKz = (rawLang === "kz" || rawLang === "kk" || (!rawLang && (rawAttText.indexOf("келед") !== -1 || rawAttText.indexOf("келмей") !== -1 || rawAttText.indexOf("білмей") !== -1)));
+      var lang = isKz ? "kz" : "ru";
       var labels = isKz ? {
         yes: "Келеді (Расталды)",
         no: "Келе алмайды (Бас тартты)",
