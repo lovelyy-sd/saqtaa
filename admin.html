@@ -195,9 +195,21 @@ input.inp,select.inp,textarea.inp{
   width:100%;min-height:48px;border:1px solid var(--hair);border-radius:14px;
   padding:10px 14px;font:inherit;font-size:16px;background:var(--card);color:var(--ink);
 }
-textarea.inp{min-height:96px;resize:vertical}
+textarea.inp{min-height:96px;resize:vertical;line-height:1.45}
+textarea.inp.inp-wrap{min-height:52px;resize:none;overflow:hidden;overflow-wrap:anywhere}
+textarea.inp.inp-url{min-height:74px;resize:vertical;word-break:break-all;font-size:14px;line-height:1.45}
+.srv-info-box{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-top:10px;padding:10px 12px;border-radius:12px;
+  background:var(--card-soft);border:1px solid var(--hair);font-size:.78rem;color:var(--ink2);
+}
+.srv-info-box button{
+  flex-shrink:0;border:1px solid var(--hair);background:var(--card);color:var(--ink);
+  border-radius:10px;padding:6px 10px;font:inherit;font-size:.75rem;font-weight:700;cursor:pointer;
+}
 input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--accent);outline-offset:1px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:460px){.row2{grid-template-columns:1fr}}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 @media(max-width:540px){.row3{grid-template-columns:1fr}}
 .hint{font-size:.75rem;color:var(--ink2);margin-top:6px;line-height:1.45}
@@ -483,30 +495,25 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
             <input class="inp" id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
           </div>
 
+          <label class="lbl" for="d">Дата мероприятия</label>
+          <input class="inp" id="d" type="date">
+
           <div class="row2">
-            <div>
-              <label class="lbl" for="d">Дата</label>
-              <input class="inp" id="d" type="date">
-            </div>
             <div>
               <label class="lbl" for="s">Время начала</label>
               <input class="inp" id="s" type="time">
             </div>
-          </div>
-
-          <div class="row2">
             <div>
               <label class="lbl" for="e">Окончание</label>
               <input class="inp" id="e" type="time">
             </div>
-            <div>
-              <label class="lbl" for="ve">Место проведения</label>
-              <input class="inp" id="ve" type="text" maxlength="120" placeholder="Ресторан «Салтанат»" autocomplete="off">
-            </div>
           </div>
 
+          <label class="lbl" for="ve">Место проведения (зал / ресторан)</label>
+          <input class="inp" id="ve" type="text" maxlength="120" placeholder="Ресторан «Салтанат»" autocomplete="off">
+
           <label class="lbl" for="ad">Адрес (город, улица)</label>
-          <input class="inp" id="ad" type="text" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off">
+          <textarea class="inp inp-wrap" id="ad" rows="2" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off"></textarea>
         </div>
 
         <!-- Раскрывающийся блок: Фото, 2ГИС, Тексты и Программа -->
@@ -522,10 +529,10 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
           <button class="btn secondary btn-sm" id="clearPhoto" type="button" style="margin-top:8px">🗑️ Убрать фото</button>
 
           <label class="lbl" for="p">Прямая ссылка на фото (подставляется сама)</label>
-          <input class="inp" id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
+          <textarea class="inp inp-wrap" id="p" rows="2" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off"></textarea>
 
           <label class="lbl" for="g">Ссылка 2ГИС (необязательно)</label>
-          <input class="inp" id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
+          <textarea class="inp inp-wrap" id="g" rows="2" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off"></textarea>
 
           <label class="lbl" for="h">Хештег (необязательно)</label>
           <input class="inp" id="h" type="text" maxlength="60" placeholder="#SAQTAA2026" autocomplete="off">
@@ -561,25 +568,15 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
             <p class="hint">Клиенту не нужна регистрация — письма с ответами приходят автоматически.</p>
           </div>
 
-          <div id="rsvpSaqtaaWrap">
-            <label class="lbl" for="sheet">URL сервера SAQTAA (из Настроек)</label>
-            <input class="inp" id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
-          </div>
-
-          <div id="rsvpEjsWrap" hidden>
-            <div class="row3">
-              <div><label class="lbl" for="ejsService">Service ID</label><input class="inp" id="ejsService" type="text" autocomplete="off"></div>
-              <div><label class="lbl" for="ejsTemplate">Template ID</label><input class="inp" id="ejsTemplate" type="text" autocomplete="off"></div>
-              <div><label class="lbl" for="ejsKey">Public Key</label><input class="inp" id="ejsKey" type="text" autocomplete="off"></div>
-            </div>
+          <div class="srv-info-box" id="rsvpSrvInfo">
+            <span id="rsvpSrvInfoTxt">✓ Сервер SAQTAA подключён</span>
+            <button type="button" id="goToRsvpSettingsBtn">⚙️ Настройки</button>
           </div>
 
           <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--hair2)">
             <label class="lbl" for="old">Загрузить данные из старой ссылки</label>
-            <div style="display:flex;gap:8px">
-              <input class="inp" id="old" type="url" placeholder="https://…/invite.html#…" autocomplete="off">
-              <button class="btn secondary btn-sm" id="loadOld" type="button" style="min-height:48px">Загрузить</button>
-            </div>
+            <textarea class="inp inp-wrap" id="old" rows="2" placeholder="https://…/invite.html#…" autocomplete="off"></textarea>
+            <button class="btn secondary btn-sm" id="loadOld" type="button" style="min-height:42px;margin-top:8px;width:100%">Загрузить из ссылки</button>
             <p class="err" id="oldErr" hidden></p>
           </div>
         </div>
@@ -780,7 +777,7 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
       <strong style="font-size:1rem">Сервер SAQTAA (Google Apps Script)</strong>
       <p class="hint" id="srvStatusText">Подключён единый сервер: письма клиентам уходят с Gmail SAQTAA, ответы собираются в таблицу, фото сохраняются на Google Диск.</p>
       <label class="lbl" for="srvUrl">URL веб-приложения</label>
-      <input class="inp" id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+      <textarea class="inp inp-url" id="srvUrl" rows="3" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off"></textarea>
       <div class="row2" style="margin-top:10px">
         <button class="btn primary" id="saveSrvBtn" type="button">💾 Проверить</button>
         <button class="btn secondary" id="copyAppScript" type="button">📋 Код скрипта</button>
@@ -1000,7 +997,7 @@ function clean(s){return String(s||"").trim();}
 function val(sel){var el=document.querySelector(sel);return el?el.value:null;}
 function getAdminPin(){try{return localStorage.getItem(PIN_KEY)||"saqtaa2026";}catch(_){return"saqtaa2026";}}
 function getSrvUrl(){
-  var v=clean($("#srvUrl").value)||clean($("#sheet").value);
+  var v=clean($("#srvUrl").value);
   if(v)return v;
   try{return localStorage.getItem(SRV_KEY)||DEFAULT_SRV_URL;}catch(_){return DEFAULT_SRV_URL;}
 }
@@ -1052,6 +1049,15 @@ function showText(){
         return(two?'<span class="ptag">'+(k==="ru"?"RU":"ҚАЗ")+'</span>':'')+
           '<input class="inp t1_'+k+'" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
           '<input class="inp t2_'+k+'" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'">';}).join("")+'</div>';}).join("");
+  autoGrowAll();
+}
+function autoGrow(el){
+  if(!el||el.tagName!=="TEXTAREA"||!el.classList.contains("inp-wrap"))return;
+  el.style.height="auto";
+  if(el.scrollHeight>0)el.style.height=Math.max(52,el.scrollHeight)+"px";
+}
+function autoGrowAll(){
+  document.querySelectorAll("textarea.inp.inp-wrap").forEach(autoGrow);
 }
 function ensure(k){
   var p=PRE[$("#tpl").value],i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
@@ -1203,11 +1209,11 @@ function collect(){
   };
   var em=clean($("#clientEmail").value);
   if(em&&currentRsvpMode!=="none")o.em=em;
-  var srv=clean($("#sheet").value)||getSrvUrl();
+  var srv=getSrvUrl();
   if(currentRsvpMode==="saqtaa"){
     if(srv){o.srv=srv;o.sheet=srv;}
   }else if(currentRsvpMode==="ejs"){
-    o.ejs={s:clean($("#ejsService").value),t:clean($("#ejsTemplate").value),u:clean($("#ejsKey").value)};
+    o.ejs={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
     if(srv){o.srv=srv;o.sheet=srv;}
   }
   if(o.t==="editorial")o.b=clean($("#b").value);
@@ -1234,9 +1240,9 @@ function validate(o){
   if(o.em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.em))return"Проверьте правильность Email клиента.";
   if(o.rsvp){
     if(currentRsvpMode==="saqtaa"){
-      if(o.srv&&!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера должен начинаться с https://script.google.com/";
+      if(o.srv&&!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера в Настройках должен начинаться с https://script.google.com/";
     }else if(currentRsvpMode==="ejs"){
-      if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Укажите Service ID, Template ID и Public Key для EmailJS.";
+      if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Укажите Service ID, Template ID и Public Key для EmailJS в Настройках.";
       if(!o.em)return"Для EmailJS укажите Email клиента.";
     }
   }
@@ -1247,7 +1253,7 @@ function validate(o){
 var saveTimer=null;
 function saveEjsConfig(){
   try{
-    var cfg={s:clean($("#ejsService").value)||clean($("#cfgEjsService").value),t:clean($("#ejsTemplate").value)||clean($("#cfgEjsTemplate").value),u:clean($("#ejsKey").value)||clean($("#cfgEjsKey").value)};
+    var cfg={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
     if(cfg.s||cfg.t||cfg.u)localStorage.setItem(EJS_KEY,JSON.stringify(cfg));
   }catch(_){}
 }
@@ -1266,8 +1272,17 @@ function setRsvpMode(mode){
   currentRsvpMode=mode;
   document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.r===mode);});
   $("#rsvpEmailCommon").hidden=(mode!=="saqtaa"&&mode!=="ejs");
-  $("#rsvpSaqtaaWrap").hidden=(mode!=="saqtaa");
-  $("#rsvpEjsWrap").hidden=(mode!=="ejs");
+  var info=$("#rsvpSrvInfo"),txt=$("#rsvpSrvInfoTxt");
+  if(info){
+    info.hidden=(mode==="none");
+    if(txt){
+      if(mode==="saqtaa")txt.textContent=getSrvUrl()?"✓ Сервер SAQTAA подключён":"⚠️ Укажите URL сервера в Настройках";
+      else if(mode==="ejs"){
+        var okEjs=clean($("#cfgEjsService").value)&&clean($("#cfgEjsTemplate").value)&&clean($("#cfgEjsKey").value);
+        txt.textContent=okEjs?"✓ EmailJS настроен":"⚠️ Заполните ключи EmailJS в Настройках";
+      }
+    }
+  }
 }
 function fillFrom(o){
   currentOrderId=o.oid||("ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
@@ -1279,16 +1294,14 @@ function fillFrom(o){
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
   $("#p").value=o.p||"";$("#b").value=o.b||"";
   $("#clientEmail").value=o.em||"";
-  var defSrv=getSrvUrl();
+  if(o.srv||o.sheet)$("#srvUrl").value=o.srv||o.sheet;
   if(o.ejs&&o.ejs.s){
     setRsvpMode("ejs");
-    $("#ejsService").value=o.ejs.s||"";$("#ejsTemplate").value=o.ejs.t||"";$("#ejsKey").value=o.ejs.u||"";
-    $("#sheet").value=o.srv||o.sheet||defSrv;
+    $("#cfgEjsService").value=o.ejs.s||"";$("#cfgEjsTemplate").value=o.ejs.t||"";$("#cfgEjsKey").value=o.ejs.u||"";
   }else if(o.rsvp===false){
     setRsvpMode("none");
   }else{
     setRsvpMode("saqtaa");
-    $("#sheet").value=o.srv||o.sheet||defSrv;
   }
   function fromBlock(b){return{ti:(b&&b.ti)||"",le:(b&&b.le)||"",sg:(b&&b.sg)||""};}
   st.ru=fromBlock(o.ru);st.kz=fromBlock(o.kz);
@@ -1317,7 +1330,7 @@ function switchScreen(sc){
   }
   if(sc==="home")renderHome();
   if(sc==="orders")renderHistory();
-  if(sc==="editor")schedulePreview();
+  if(sc==="editor"){autoGrowAll();schedulePreview();}
   if(sc==="stats")initStatsScreen();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -1818,10 +1831,17 @@ $("#tpl").addEventListener("change",function(){
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
 document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
+$("#goToRsvpSettingsBtn").addEventListener("click",function(){
+  switchScreen("settings");
+  var pid=(currentRsvpMode==="ejs")?"setNotifPanel":"setServerPanel";
+  document.querySelectorAll(".set-panel").forEach(function(p){p.hidden=(p.id!==pid);});
+  var target=$("#"+pid);
+  if(target)target.scrollIntoView({behavior:"smooth",block:"nearest"});
+});
 $("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();});
 $("#prog").addEventListener("click",function(e){var d=e.target.closest(".del");if(!d)return;grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();});
 document.addEventListener("change",function(e){if(e.target.closest("#screenEditor")&&e.target.id!=="old")save();});
-document.addEventListener("input",function(e){if(e.target.closest("#screenEditor")&&e.target.id!=="old")scheduleSave();});
+document.addEventListener("input",function(e){autoGrow(e.target);if(e.target.closest("#screenEditor")&&e.target.id!=="old")scheduleSave();});
 
 try{$("#base").value=new URL("invite.html",location.href).href;}catch(_){$("#base").value="";}
 function waLink(link,statsLink){
@@ -1930,11 +1950,12 @@ $("#copyAppScript").addEventListener("click",async function(){
 });
 $("#saveSrvBtn").addEventListener("click",async function(){
   var url=clean($("#srvUrl").value);
-  if(!url){try{localStorage.removeItem(SRV_KEY);}catch(_){}toast("Ссылка очищена");return;}
+  if(!url){try{localStorage.removeItem(SRV_KEY);}catch(_){}setRsvpMode(currentRsvpMode);toast("Ссылка очищена");return;}
   if(!/^https:\/\/script\.google\.com\//i.test(url)){toast("Ссылка должна начинаться с https://script.google.com/");return;}
   var btn=this;btn.disabled=true;
   try{
-    localStorage.setItem(SRV_KEY,url);$("#sheet").value=url;
+    localStorage.setItem(SRV_KEY,url);
+    setRsvpMode(currentRsvpMode);
     var r=await fetch(url+"?action=auth&pin="+encodeURIComponent(getAdminPin()));
     var j=await r.json();
     if(j&&j.ok){$("#setSrvBadge").textContent="Подключено";toast("✅ Сервер проверен!");}
@@ -1944,9 +1965,9 @@ $("#saveSrvBtn").addEventListener("click",async function(){
 });
 $("#saveEjsCfgBtn").addEventListener("click",function(){
   var cfg={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
-  $("#ejsService").value=cfg.s;$("#ejsTemplate").value=cfg.t;$("#ejsKey").value=cfg.u;
   try{localStorage.setItem(EJS_KEY,JSON.stringify(cfg));}catch(_){}
   $("#setEjsBadge").textContent=(cfg.s&&cfg.t&&cfg.u)?"Настроено":"Не задано";
+  setRsvpMode(currentRsvpMode);
   toast("✅ Настройки EmailJS сохранены");
 });
 $("#exportBackup").addEventListener("click",async function(){
@@ -2048,11 +2069,10 @@ $("#changePwBtn").addEventListener("click",async function(){
 /* ---------- Инициализация ---------- */
 var curSrv=DEFAULT_SRV_URL;
 try{curSrv=localStorage.getItem(SRV_KEY)||DEFAULT_SRV_URL;}catch(_){}
-$("#srvUrl").value=curSrv;$("#sheet").value=curSrv;
+$("#srvUrl").value=curSrv;
 
 var ejsCfg=DEFAULT_EJS;
 try{var rawEjs=JSON.parse(localStorage.getItem(EJS_KEY)||"null");if(rawEjs&&rawEjs.s)ejsCfg=rawEjs;}catch(_){}
-$("#ejsService").value=ejsCfg.s;$("#ejsTemplate").value=ejsCfg.t;$("#ejsKey").value=ejsCfg.u;
 $("#cfgEjsService").value=ejsCfg.s;$("#cfgEjsTemplate").value=ejsCfg.t;$("#cfgEjsKey").value=ejsCfg.u;
 
 var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
@@ -2061,6 +2081,7 @@ var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_)
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
 else{applyPreset("luxury");setRsvpMode("saqtaa");}
 setTemplateCards();
+autoGrowAll();
 getPhoto("current").then(setCurrentPhoto).catch(function(){});
 if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
 })();
