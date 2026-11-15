@@ -4,442 +4,856 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<meta name="theme-color" content="#0F4A38">
-<title>SAQTAA · Создать приглашение</title>
+<meta name="theme-color" content="#F5F4F1">
+<title>SAQTAA · Панель администратора</title>
 <meta name="referrer" content="no-referrer">
 <style>
-:root{--em:#0F4A38;--em2:#0A3527;--gold:#B98E45;--gs:#D9BC7F;--paper:#F5EFE2;--card:#FFFDF6;--ink:#182720;--ink2:#46584D;--hair:rgba(24,39,32,.16)}
+:root{
+  --bg:#F5F4F1;
+  --card:#FFFFFF;
+  --card-soft:#FAF9F7;
+  --input:#F3F2EE;
+  --ink:#1C1917;
+  --ink2:#78716C;
+  --ink3:#A8A29E;
+  --hair:rgba(28,25,23,.09);
+  --hair2:rgba(28,25,23,.14);
+  --accent:#262320;
+  --accent-ink:#FFFFFF;
+  --em:#0F4A38;
+  --gold:#B98E45;
+  --green:#3C9D68;
+  --green-bg:#E3F5E9;
+  --green-ink:#166534;
+  --amber-bg:#FEF3C7;
+  --amber-ink:#92400E;
+  --muted-bg:#EFECE6;
+  --muted-ink:#6B655E;
+  --red:#D65A5A;
+  --red-ink:#DC2626;
+  --shadow:0 2px 10px rgba(28,25,23,.04);
+  --nav-bg:rgba(255,255,255,.94);
+}
+body[data-theme="dark"]{
+  --bg:#141312;
+  --card:#1E1D1B;
+  --card-soft:#252320;
+  --input:#2A2825;
+  --ink:#F5F4F1;
+  --ink2:#A8A29E;
+  --ink3:#78716C;
+  --hair:rgba(255,255,255,.09);
+  --hair2:rgba(255,255,255,.15);
+  --accent:#F5F4F1;
+  --accent-ink:#1C1917;
+  --green-bg:rgba(60,157,104,.18);
+  --green-ink:#6EE7B7;
+  --amber-bg:rgba(217,119,6,.2);
+  --amber-ink:#FCD34D;
+  --muted-bg:rgba(255,255,255,.08);
+  --muted-ink:#A8A29E;
+  --shadow:0 4px 16px rgba(0,0,0,.28);
+  --nav-bg:rgba(30,29,27,.94);
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--paper);color:var(--ink);line-height:1.45;padding-bottom:92px;-webkit-font-smoothing:antialiased}
-header{background:var(--em2);color:#F2EBDA;padding:12px 16px;position:sticky;top:0;z-index:30;box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.hdr-inner{max-width:1040px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
-header h1{font-size:1.05rem;letter-spacing:.1em;font-weight:800}
-header p{font-size:.73rem;opacity:.78;margin-top:1px}
-.hdr-actions{display:flex;align-items:center;gap:8px}
-.hdr-btn{min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid rgba(217,188,127,.45);background:rgba(255,255,255,.08);color:#F6F1E4;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap}
-.hdr-btn.gold{background:var(--gold);color:#1E1505;border-color:var(--gold)}
-.hdr-btn:active{transform:scale(.97)}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.42;
+  padding-bottom:calc(88px + env(safe-area-inset-bottom));
+  -webkit-font-smoothing:antialiased;
+  transition:background .2s,color .2s;
+}
+[hidden]{display:none!important}
 
-/* Top desktop nav & Bottom mobile app bar */
-.app-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--hair);display:grid;grid-template-columns:repeat(4,1fr);padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:40;box-shadow:0 -4px 18px rgba(0,0,0,.07)}
-.app-nav button{border:0;background:none;padding:6px 4px;border-radius:12px;font:inherit;color:var(--ink2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;position:relative;transition:background .15s,color .15s}
-.app-nav button .nav-ico{font-size:1.2rem;line-height:1}
-.app-nav button .nav-lbl{font-size:.7rem;font-weight:700}
-.app-nav button.on{background:rgba(15,74,56,.11);color:var(--em)}
-.nav-badge{position:absolute;top:3px;right:calc(50% - 22px);background:var(--gold);color:#1E1505;font-size:.62rem;font-weight:800;padding:1px 6px;border-radius:999px;min-width:18px;text-align:center}
+/* App Shell */
+.app-shell{max-width:1080px;margin:0 auto;padding:12px 16px 24px}
+.app-topbar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 2px 14px;
+}
+.brand-wrap{display:flex;flex-direction:column}
+.brand-logo{font-size:1.25rem;font-weight:800;letter-spacing:.08em;color:var(--ink);line-height:1.1}
+.brand-sub{font-size:.78rem;color:var(--ink2);font-weight:500;margin-top:2px}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-pill{
+  height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--hair);
+  background:var(--card);color:var(--ink);font:inherit;font-size:.78rem;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;box-shadow:var(--shadow);
+}
+.icon-pill:active{transform:scale(.97)}
 
-main{max-width:1040px;margin:0 auto;padding:14px 14px 0}
-.box{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(24,39,32,.03)}
-.box h2{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#7F5D22;margin-bottom:10px;font-weight:800}
-label{display:block;font-size:.78rem;font-weight:700;color:var(--ink2);margin:10px 0 4px}
-label:first-of-type{margin-top:0}
-input,select,textarea{width:100%;min-height:48px;border:1px solid var(--hair);border-radius:11px;padding:10px 12px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
-textarea{min-height:105px;resize:vertical}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+/* Screen Headers */
+.screen-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.screen-title{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.15}
+.back-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.back-btn{
+  width:38px;height:38px;border-radius:12px;border:1px solid var(--hair);background:var(--card);
+  color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;
+}
+.back-title{font-size:1.25rem;font-weight:700;color:var(--ink);text-align:center;flex:1}
+
+/* Cards & Surfaces */
+.card{
+  background:var(--card);border:1px solid var(--hair);border-radius:20px;
+  padding:16px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card-flush{
+  background:var(--card);border:1px solid var(--hair);border-radius:20px;
+  overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.section-row{display:flex;align-items:center;justify-content:space-between;margin:18px 2px 10px}
+.section-row h2{font-size:1.08rem;font-weight:700;color:var(--ink)}
+.section-link{border:0;background:none;color:var(--ink2);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+
+/* Home Summary Tiles */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.kpi-card{
+  background:var(--card);border:1px solid var(--hair);border-radius:18px;
+  padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);
+}
+.kpi-ico{
+  width:38px;height:38px;border-radius:12px;background:var(--input);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kpi-meta span{display:block;font-size:.76rem;color:var(--ink2);font-weight:500}
+.kpi-meta b{display:block;font-size:1.5rem;font-weight:800;color:var(--ink);line-height:1.15;margin-top:2px}
+
+/* Primary & Secondary Buttons */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  min-height:50px;border:0;border-radius:16px;font:inherit;font-weight:700;font-size:.94rem;
+  cursor:pointer;text-decoration:none;padding:10px 16px;text-align:center;transition:transform .12s,opacity .15s;
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.secondary{background:var(--input);color:var(--ink);border:1px solid var(--hair)}
+.btn.outline{background:transparent;color:var(--ink);border:1px solid var(--hair2)}
+.btn.emerald{background:#0F4A38;color:#FFFFFF}
+.btn.wa{background:#197A42;color:#FFFFFF}
+.btn.danger{background:transparent;color:var(--red-ink);border:1px solid rgba(220,38,38,.28)}
+.btn-sm{min-height:38px;padding:6px 12px;font-size:.8rem;border-radius:12px;width:auto}
+
+/* Order List Rows (Home & Orders) */
+.order-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 16px;border-bottom:1px solid var(--hair);cursor:pointer;transition:background .12s;
+}
+.order-row:last-child{border-bottom:0}
+.order-row:active{background:var(--input)}
+.order-row-main{min-width:0;flex:1}
+.order-row-title{font-size:.96rem;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.order-row-sub{font-size:.78rem;color:var(--ink2);margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.order-row-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pill{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pill.active{background:var(--green-bg);color:var(--green-ink)}
+.pill.draft{background:var(--amber-bg);color:var(--amber-ink)}
+.pill.done{background:var(--muted-bg);color:var(--muted-ink)}
+.chev{color:var(--ink3);font-size:1.05rem;line-height:1}
+
+/* Expanded Order Card in Orders Tab */
+.order-card{
+  background:var(--card);border:1px solid var(--hair);border-radius:18px;
+  padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);
+}
+.order-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;cursor:pointer}
+.order-card-actions{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:8px;
+  margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);
+}
+.act-btn{
+  min-height:40px;border-radius:12px;border:1px solid var(--hair);background:var(--card-soft);
+  color:var(--ink);font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;padding:6px 8px;
+}
+.act-btn.dark{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.act-btn.wa{background:var(--green-bg);color:var(--green-ink);border-color:transparent}
+.act-btn.del{color:var(--red-ink);grid-column:1/-1}
+
+/* Search & Filter Chips */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink2);pointer-events:none}
+.search-input{
+  width:100%;height:46px;border-radius:14px;border:1px solid var(--hair);
+  background:var(--card);color:var(--ink);padding:0 14px 0 40px;font:inherit;font-size:.94rem;
+}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  border:1px solid var(--hair);background:var(--card);color:var(--ink2);
+  border-radius:999px;padding:7px 14px;font:inherit;font-size:.8rem;font-weight:600;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;
+}
+.chip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+/* Forms & Inputs */
+label.lbl{display:block;font-size:.78rem;font-weight:600;color:var(--ink2);margin:12px 0 6px}
+label.lbl:first-child{margin-top:0}
+input.inp,select.inp,textarea.inp{
+  width:100%;min-height:48px;border:1px solid var(--hair);border-radius:14px;
+  padding:10px 14px;font:inherit;font-size:16px;background:var(--card);color:var(--ink);
+}
+textarea.inp{min-height:96px;resize:vertical}
+input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--accent);outline-offset:1px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 @media(max-width:540px){.row3{grid-template-columns:1fr}}
-.hint{font-size:.74rem;color:var(--ink2);margin-top:5px;line-height:1.45}
-.tabs{display:flex;gap:8px;margin-bottom:10px}
-.tabs button,.seg button{flex:1;min-height:44px;border:1px solid var(--hair);border-radius:999px;background:#fff;font:inherit;font-weight:700;font-size:.86rem;cursor:pointer;padding:6px 10px}
-.tabs button.on,.seg button.on{background:var(--em);color:#F6F1E4;border-color:var(--em)}
-.seg{display:flex;gap:8px}
-.prow{border:1px dashed var(--hair);border-radius:11px;padding:10px;margin-bottom:10px;position:relative;background:#FCFBF7}
-.prow .del{position:absolute;top:6px;right:6px;width:36px;height:36px;border:0;background:none;font-size:1.1rem;color:#7C2230;cursor:pointer}
-.prow input{margin-bottom:6px;min-height:44px}
-.prow .tm{max-width:120px}
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:52px;border:0;border-radius:999px;font:inherit;font-weight:800;font-size:.93rem;cursor:pointer;text-decoration:none;margin-top:10px;padding:10px 16px;text-align:center}
-.btn.main{background:var(--em);color:#F6F1E4}
-.btn.gold{background:var(--gold);color:#241A08}
-.btn.line{background:#fff;border:1px solid var(--em);color:var(--em)}
-.btn.danger{background:#fff;border:1px solid #9E2B3A;color:#9E2B3A}
-.btn:active{transform:scale(.98)}
-.out{width:100%;min-height:82px;font-size:.78rem;word-break:break-all}
-.err{color:#7C2230;font-weight:700;font-size:.85rem;margin-top:8px}
-.ok{color:var(--em);font-weight:700;font-size:.85rem;margin-top:8px}
-.toast{position:fixed;left:50%;bottom:88px;translate:-50% 0;background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:60;max-width:90vw;text-align:center;box-shadow:0 6px 20px rgba(0,0,0,.22)}
-.toast.show{opacity:1}
-[hidden]{display:none!important}
-.gate{max-width:420px;margin:0 auto;padding:40px 18px}
-.gate form{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:24px 18px;box-shadow:0 8px 28px rgba(0,0,0,.06)}
-.gate h2{font-size:1.25rem;margin-bottom:6px;color:var(--em)}
-.gate p{font-size:.88rem;color:var(--ink2);margin-bottom:14px}
-.lh{font-weight:800;color:var(--em);margin:4px 0 0;font-size:.95rem}
-.lblock+.lblock{border-top:1px dashed var(--hair);margin-top:16px;padding-top:14px}
-.ptag{display:inline-block;font-size:.7rem;font-weight:800;color:#7F5D22;margin:2px 0}
+.hint{font-size:.75rem;color:var(--ink2);margin-top:6px;line-height:1.45}
 
-/* Templates & Preview */
-.tpl-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:10px}
-.tpl-card{border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px;text-align:left;cursor:pointer;min-width:0;color:var(--ink)}
-.tpl-card[aria-pressed="true"]{outline:2px solid var(--em);border-color:var(--em);background:#f4f8f4}
-.tpl-art{height:78px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;overflow:hidden;margin-bottom:6px;border:1px solid rgba(0,0,0,.08)}
-.tpl-art b{font-family:Georgia,serif;font-size:1.02rem;font-weight:500}.tpl-art i{font-size:.55rem;letter-spacing:.15em;font-style:normal}
-.tpl-card small{display:block;font-size:.69rem;color:var(--ink2);margin-top:2px}
-.tpl-luxury .tpl-art{background:#171614;color:#d8bd83}.tpl-floral .tpl-art{background:#f6e9e8;color:#8c5c69}.tpl-qazaq .tpl-art{background:#f3e8d1;color:#8c6328}.tpl-editorial .tpl-art{background:#f0eee8;color:#20231e}.tpl-emerald .tpl-art{background:#0f4a38;color:#d8bd83}.tpl-tusau .tpl-art{background:#e9d9bf;color:#805a31}
-.admin-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.88fr);gap:16px;align-items:start}
-.preview-box{position:sticky;top:74px}.preview-frame{width:100%;height:min(76vh,820px);border:1px solid var(--hair);border-radius:14px;background:#fff;overflow:hidden}.preview-frame iframe{width:100%;height:100%;border:0;background:#fff}
-.preview-note{font-size:.74rem;color:var(--ink2);margin-top:7px}.save-state{font-size:.75rem;color:var(--em);font-weight:700;margin-top:5px}
-.photo-preview{display:none;max-width:100%;max-height:180px;object-fit:contain;border-radius:10px;margin-top:10px;border:1px solid var(--hair)}
-
-/* Orders Screen */
-.orders-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.ostat-card{background:#fff;border:1px solid var(--hair);border-radius:12px;padding:10px;text-align:center}
-.ostat-card b{display:block;font-size:1.35rem;color:var(--em);line-height:1.1}
-.ostat-card span{font-size:.7rem;color:var(--ink2);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
-.history-item{border:1px solid var(--hair);border-radius:14px;padding:14px;margin:10px 0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.02)}
-.order-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
-.order-head strong{font-size:1.05rem;color:var(--ink)}
-.order-badge{font-size:.68rem;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.order-badge.upcoming{background:#E5F4EC;color:#145A36}
-.order-badge.past{background:#F2ECE1;color:#6E6555}
-.order-meta{font-size:.8rem;color:var(--ink2);line-height:1.5;margin-bottom:10px}
-.history-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.history-actions button,.history-actions a{min-height:42px;border:1px solid var(--hair);border-radius:10px;background:#fff;font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:var(--ink);padding:6px 8px}
-.history-actions .act-primary{background:var(--em);color:#F6F1E4;border-color:var(--em)}
-.history-actions .act-wa{background:#E8F7EE;color:#115C33;border-color:#B8E4C9}
-.history-actions .act-stats{background:#FDF6E7;color:#7A5616;border-color:#E7CFA0}
-.btn:disabled{opacity:.55;cursor:wait}
-@media(max-width:820px){
-  .admin-grid{grid-template-columns:1fr}
-  .preview-box.mobile-hidden{display:none}
-  .preview-box{position:static}
-  .preview-frame{height:72vh}
-  .tpl-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* Segmented Control (Language, RSVP) */
+.seg{
+  display:flex;gap:4px;background:var(--input);padding:4px;border-radius:14px;border:1px solid var(--hair);
 }
+.seg button{
+  flex:1;min-height:40px;border:0;border-radius:11px;background:transparent;color:var(--ink2);
+  font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;padding:6px 8px;transition:all .15s;
+}
+.seg button.on{background:var(--accent);color:var(--accent-ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+
+/* Template Visual Picker */
+.tpl-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.tpl-card{
+  border:1px solid var(--hair);border-radius:14px;background:var(--card);padding:6px;
+  text-align:left;cursor:pointer;color:var(--ink);min-width:0;
+}
+.tpl-card[aria-pressed="true"]{outline:2px solid var(--accent);border-color:var(--accent)}
+.tpl-art{
+  height:56px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-direction:column;
+  gap:2px;margin-bottom:5px;border:1px solid rgba(0,0,0,.06);
+}
+.tpl-art b{font-family:Georgia,serif;font-size:.86rem;font-weight:600}
+.tpl-art i{font-size:.5rem;letter-spacing:.12em;font-style:normal;opacity:.8}
+.tpl-card strong{display:block;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tpl-card small{display:block;font-size:.66rem;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tpl-luxury .tpl-art{background:#171614;color:#d8bd83}
+.tpl-floral .tpl-art{background:#f6e9e8;color:#8c5c69}
+.tpl-qazaq .tpl-art{background:#f3e8d1;color:#8c6328}
+.tpl-editorial .tpl-art{background:#f0eee8;color:#20231e}
+.tpl-emerald .tpl-art{background:#0f4a38;color:#d8bd83}
+.tpl-tusau .tpl-art{background:#e9d9bf;color:#805a31}
+
+/* Accordion for Advanced Constructor Fields */
+.acc-btn{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--card);border:1px solid var(--hair);border-radius:16px;
+  padding:14px 16px;font:inherit;font-size:.9rem;font-weight:700;color:var(--ink);
+  cursor:pointer;margin-bottom:10px;box-shadow:var(--shadow);
+}
+.acc-body{padding-top:4px}
+.prow{border:1px dashed var(--hair2);border-radius:14px;padding:12px;margin-bottom:10px;position:relative;background:var(--card-soft)}
+.prow .del{position:absolute;top:8px;right:8px;width:32px;height:32px;border:0;background:none;font-size:1rem;color:var(--red-ink);cursor:pointer}
+.prow input{margin-bottom:6px;min-height:42px}
+.prow .tm{max-width:130px}
+.lblock+.lblock{border-top:1px dashed var(--hair2);margin-top:14px;padding-top:14px}
+.lh{font-weight:700;color:var(--ink);font-size:.86rem;margin-bottom:6px}
+.ptag{display:inline-block;font-size:.68rem;font-weight:700;color:var(--gold);margin:4px 0 2px}
+.photo-preview{display:none;max-width:100%;max-height:180px;object-fit:contain;border-radius:12px;margin-top:10px;border:1px solid var(--hair)}
+
+/* Editor Desktop Grid & Preview */
+.editor-layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start}
+.preview-panel{position:sticky;top:16px}
+.preview-frame{width:100%;height:74vh;max-height:760px;border:1px solid var(--hair);border-radius:22px;background:#fff;overflow:hidden;box-shadow:var(--shadow)}
+.preview-frame iframe{width:100%;height:100%;border:0;background:#fff}
+@media(max-width:880px){
+  .editor-layout{grid-template-columns:1fr}
+  .preview-panel.mob-hidden{display:none}
+  .preview-panel{position:static}
+  .preview-frame{height:70vh}
+}
+
+/* Statistics Screen (Donut + Breakdown + Guest List) */
+.donut-card{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.donut-left h3{font-size:.85rem;font-weight:600;color:var(--ink2)}
+.donut-total{font-size:2.4rem;font-weight:800;color:var(--ink);line-height:1.1;margin:4px 0}
+.donut-sub{font-size:.8rem;color:var(--ink2)}
+.donut-svg-wrap{position:relative;width:118px;height:118px;flex-shrink:0}
+.donut-center{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:1.35rem;font-weight:800;color:var(--ink);
+}
+.stat-legend{margin-top:16px;padding-top:14px;border-top:1px solid var(--hair);display:grid;gap:10px}
+.stat-leg-row{display:flex;align-items:center;justify-content:space-between;font-size:.9rem}
+.stat-leg-lbl{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:500}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot.yes{background:var(--green)}.dot.no{background:var(--red)}.dot.maybe{background:#B5B1AA}
+.stat-leg-val{display:flex;align-items:center;gap:16px;font-variant-numeric:tabular-nums}
+.stat-leg-val b{color:var(--ink);font-weight:700}
+.stat-leg-val span{color:var(--ink2);font-size:.84rem;min-width:36px;text-align:right}
+
+.menu-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:15px 16px;border-bottom:1px solid var(--hair);cursor:pointer;
+  background:transparent;border-left:0;border-right:0;border-top:0;width:100%;text-align:left;font:inherit;color:var(--ink);
+}
+.menu-row:last-child{border-bottom:0}
+.menu-row:active{background:var(--input)}
+.menu-row-l{display:flex;align-items:center;gap:12px;font-weight:600;font-size:.94rem}
+.menu-row-r{display:flex;align-items:center;gap:6px;color:var(--ink2);font-size:.85rem}
+.menu-row.danger{color:var(--red-ink)}
+
+/* Guest list inside Stats */
+.guest-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:12px 0;border-bottom:1px solid var(--hair);
+}
+.guest-row:last-child{border-bottom:0}
+.guest-name{font-size:.92rem;font-weight:700;color:var(--ink)}
+.guest-meta{font-size:.76rem;color:var(--ink2);margin-top:2px}
+.guest-del{border:0;background:none;color:var(--ink3);font-size:1rem;cursor:pointer;padding:6px}
+
+/* Bottom Navigation (5 Tabs matching mockup) */
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:var(--nav-bg);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--hair);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:6px 4px calc(8px + env(safe-area-inset-bottom));
+}
+.bottom-nav button{
+  border:0;background:none;color:var(--ink2);font:inherit;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:4px 2px;cursor:pointer;position:relative;
+}
+.bottom-nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.85}
+.bottom-nav button span{font-size:.66rem;font-weight:600}
+.bottom-nav button.on{color:var(--ink)}
+.bottom-nav button.on span{font-weight:800}
+.bottom-nav button.on svg{stroke-width:2.3}
+
+/* Login Gate */
+.gate{max-width:400px;margin:48px auto;padding:0 16px}
+.gate-card{background:var(--card);border:1px solid var(--hair);border-radius:24px;padding:28px 22px;box-shadow:var(--shadow)}
+.gate-card h2{font-size:1.35rem;font-weight:800;margin-bottom:6px;color:var(--ink)}
+.gate-card p{font-size:.86rem;color:var(--ink2);margin-bottom:16px}
+
+/* Toast & Errors */
+.err{color:var(--red-ink);font-weight:600;font-size:.84rem;margin-top:8px}
+.ok{color:var(--green-ink);font-weight:600;font-size:.84rem;margin-top:8px}
+.out-area{width:100%;min-height:66px;font-size:.76rem;word-break:break-all;border:1px solid var(--hair);border-radius:12px;padding:10px;background:var(--input);color:var(--ink);font-family:monospace}
+.toast{
+  position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));translate:-50% 0;
+  background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;
+  font-size:.84rem;font-weight:600;opacity:0;pointer-events:none;transition:opacity .22s;
+  z-index:80;max-width:90vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.22);
+}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
-<header>
-  <div class="hdr-inner">
-    <div>
-      <h1>SAQTAA · Панель заказов</h1>
-      <p id="hdrSub">Конструктор приглашений и база клиентов</p>
-    </div>
-    <div class="hdr-actions" id="hdrActions" hidden>
-      <button class="hdr-btn gold" id="newOrderBtn" type="button">➕ Новый заказ</button>
-      <button class="hdr-btn" id="mobPreviewBtn" type="button">👁️ Просмотр</button>
-    </div>
-  </div>
-</header>
 
+<!-- ==================== ЭКРАН ВХОДА ==================== -->
 <section class="gate" id="gate">
-  <form id="gateForm" autocomplete="off">
-    <h2>Вход в SAQTAA</h2>
-    <p id="gateHint">Введите пароль администратора для входа в приложение.</p>
-    <input id="gatePw" type="password" placeholder="Пароль администратора" autocomplete="current-password" required>
-    <button class="btn main" id="gateBtn" type="submit">Войти в панель</button>
+  <form class="gate-card" id="gateForm" autocomplete="off">
+    <div style="font-size:.76rem;letter-spacing:.14em;font-weight:800;color:var(--ink2);margin-bottom:6px">SAQTAA</div>
+    <h2>Вход для администратора</h2>
+    <p id="gateHint">Введите пароль для управления приглашениями и статистикой.</p>
+    <input class="inp" id="gatePw" type="password" placeholder="Пароль" autocomplete="current-password" required>
+    <button class="btn primary" id="gateBtn" type="submit" style="margin-top:14px">Войти</button>
     <p class="err" id="gateErr" role="alert"></p>
-    <textarea id="gateOut" class="out" readonly hidden></textarea>
+    <textarea id="gateOut" class="out-area" readonly hidden style="margin-top:10px"></textarea>
   </form>
 </section>
 
-<main hidden>
-  <!-- Переключатель разделов сверху для удобства на ПК и телефоне -->
-  <div class="seg" id="topTabSeg" style="margin-bottom:14px;background:var(--card);padding:5px;border-radius:999px;border:1px solid var(--hair)">
-    <button type="button" data-nav="editor" class="on">✏️ Конструктор</button>
-    <button type="button" data-nav="orders">📋 Заказы <span id="topOrdersCount" style="opacity:.85">(0)</span></button>
-    <button type="button" data-nav="settings">⚙️ Настройки и пароль</button>
-  </div>
+<!-- ==================== ОСНОВНОЕ ПРИЛОЖЕНИЕ ==================== -->
+<main class="app-shell" id="appMain" hidden>
 
-  <!-- ================= ЭКРАН 1: КОНСТРУКТОР ЗАКАЗА ================= -->
-  <section id="screenEditor">
-    <div class="admin-grid">
-      <div class="editor-column" id="editorCol">
+  <!-- Верхняя шапка -->
+  <header class="app-topbar">
+    <div class="brand-wrap">
+      <div class="brand-logo">SAQTAA</div>
+      <div class="brand-sub" id="topSub">Администратор</div>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="icon-pill" id="topPreviewBtn" hidden>👁️ Предпросмотр</button>
+      <button type="button" class="icon-pill" id="topThemeBtn" title="Сменить тему">🌙</button>
+    </div>
+  </header>
 
-        <!-- Быстрая панель текущего заказа -->
-        <div class="box" style="background:#F7FAF8;border-color:rgba(15,74,56,.28);padding:12px 14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+  <!-- ==================== 1. ГЛАВНАЯ ==================== -->
+  <section id="screenHome">
+    <div class="screen-head">
+      <h1 class="screen-title">Приглашения</h1>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="kpi-meta">
+          <span>Всего</span>
+          <b id="homeTotalCount">0</b>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-ico">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+        </div>
+        <div class="kpi-meta">
+          <span>Активных</span>
+          <b id="homeActiveCount">0</b>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn primary" id="homeCreateBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+      Создать приглашение
+    </button>
+
+    <div class="section-row">
+      <h2>Последние заказы</h2>
+      <button type="button" class="section-link" id="homeAllOrdersBtn">Все <span>›</span></button>
+    </div>
+
+    <div class="card-flush" id="homeRecentList">
+      <div style="padding:20px;text-align:center;color:var(--ink2);font-size:.86rem">Заказов пока нет</div>
+    </div>
+  </section>
+
+  <!-- ==================== 2. ЗАКАЗЫ ==================== -->
+  <section id="screenOrders" hidden>
+    <div class="screen-head">
+      <h1 class="screen-title">Заказы</h1>
+      <button type="button" class="btn secondary btn-sm" id="syncCloudHist">☁️ С сервера</button>
+    </div>
+
+    <div class="search-wrap">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input class="search-input" id="histSearch" type="search" placeholder="Поиск по названию, дате или email…" autocomplete="off">
+    </div>
+
+    <div class="chips" id="orderFilterSeg">
+      <button type="button" class="chip on" data-of="all">Все</button>
+      <button type="button" class="chip" data-of="active">Активные</button>
+      <button type="button" class="chip" data-of="draft">Черновики</button>
+      <button type="button" class="chip" data-of="done">Завершённые</button>
+    </div>
+
+    <div id="historyList"></div>
+  </section>
+
+  <!-- ==================== 3. СОЗДАТЬ / РЕДАКТОР ==================== -->
+  <section id="screenEditor" hidden>
+    <div class="back-head">
+      <button type="button" class="back-btn" id="edBackBtn" aria-label="Назад">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="back-title" id="activeOrderBadge">Создать приглашение</div>
+      <button type="button" class="btn secondary btn-sm" id="fillDemoBtn">⚡ Пример</button>
+    </div>
+
+    <div class="editor-layout">
+      <div>
+        <!-- Основная карточка как на макете -->
+        <div class="card">
+          <label class="lbl" for="tpl">Шаблон</label>
+          <select class="inp" id="tpl">
+            <option value="luxury">Luxury · свадьба</option>
+            <option value="floral">Floral · свадьба</option>
+            <option value="qazaq">Qazaq · семейный той</option>
+            <option value="editorial">Editorial · юбилей</option>
+            <option value="emerald">Emerald · день рождения</option>
+            <option value="tusau">Tusau · тұсау кесер</option>
+          </select>
+
+          <div class="tpl-strip" id="tplGrid">
+            <button class="tpl-card tpl-luxury" type="button" data-template="luxury" aria-pressed="true"><span class="tpl-art"><i>THE WEDDING</i><b>Names</b></span><strong>Luxury</strong><small>Свадьба</small></button>
+            <button class="tpl-card tpl-floral" type="button" data-template="floral" aria-pressed="false"><span class="tpl-art"><i>OUR DAY</i><b>Names</b></span><strong>Floral</strong><small>Нежный</small></button>
+            <button class="tpl-card tpl-qazaq" type="button" data-template="qazaq" aria-pressed="false"><span class="tpl-art"><i>ШАҚЫРУ</i><b>Той</b></span><strong>Qazaq</strong><small>Ұлттық</small></button>
+            <button class="tpl-card tpl-editorial" type="button" data-template="editorial" aria-pressed="false"><span class="tpl-art"><i>EVENING</i><b>50</b></span><strong>Editorial</strong><small>Юбилей</small></button>
+            <button class="tpl-card tpl-emerald" type="button" data-template="emerald" aria-pressed="false"><span class="tpl-art"><i>INVITED</i><b>Party</b></span><strong>Emerald</strong><small>Туған күн</small></button>
+            <button class="tpl-card tpl-tusau" type="button" data-template="tusau" aria-pressed="false"><span class="tpl-art"><i>ҚАДАМ</i><b>1 жас</b></span><strong>Tusau</strong><small>Тұсау кесер</small></button>
+          </div>
+
+          <label class="lbl">Язык</label>
+          <div class="seg" id="langSeg">
+            <button type="button" data-l="ru" class="on">Русский</button>
+            <button type="button" data-l="kz">Қазақша</button>
+            <button type="button" data-l="both">Оба</button>
+          </div>
+
+          <label class="lbl" for="n">Название события / Имена</label>
+          <input class="inp" id="n" type="text" maxlength="120" placeholder="Например: Ерасыл & Аяулым" autocomplete="off">
+
+          <div id="bigWrap" hidden>
+            <label class="lbl" for="b">Возраст юбиляра на обложке</label>
+            <input class="inp" id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
+          </div>
+
+          <div class="row2">
             <div>
-              <strong id="activeOrderBadge" style="font-size:.88rem;color:var(--em)">✨ Создание нового приглашения</strong>
-              <p class="save-state" id="saveState" style="margin-top:2px">Автосохранение включено</p>
+              <label class="lbl" for="d">Дата</label>
+              <input class="inp" id="d" type="date">
             </div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <button class="btn gold" id="fillDemoBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">⚡ Заполнить пример</button>
-              <button class="btn line" id="toggleLoadOldBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">🔗 Открыть по ссылке</button>
+            <div>
+              <label class="lbl" for="s">Время начала</label>
+              <input class="inp" id="s" type="time">
             </div>
           </div>
-          <div id="loadOldWrap" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--hair)" hidden>
-            <label for="old">Вставьте готовую ссылку приглашения для редактирования</label>
-            <input id="old" type="url" placeholder="https://…/invite.html#…" inputmode="url" autocomplete="off">
-            <button class="btn line" id="loadOld" type="button" style="min-height:42px">Загрузить данные из ссылки</button>
+
+          <div class="row2">
+            <div>
+              <label class="lbl" for="e">Окончание</label>
+              <input class="inp" id="e" type="time">
+            </div>
+            <div>
+              <label class="lbl" for="ve">Место проведения</label>
+              <input class="inp" id="ve" type="text" maxlength="120" placeholder="Ресторан «Салтанат»" autocomplete="off">
+            </div>
+          </div>
+
+          <label class="lbl" for="ad">Адрес (город, улица)</label>
+          <input class="inp" id="ad" type="text" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off">
+        </div>
+
+        <!-- Раскрывающийся блок: Фото, 2ГИС, Тексты и Программа -->
+        <button type="button" class="acc-btn" id="accMediaBtn">
+          <span>📸 Фото, 2ГИС и тексты программы</span>
+          <span id="accMediaChev">▾</span>
+        </button>
+        <div class="card acc-body" id="accMediaWrap" hidden>
+          <label class="lbl" for="photoFile">Фотография с телефона</label>
+          <input class="inp" id="photoFile" type="file" accept="image/jpeg,image/png,image/webp" style="padding:10px">
+          <img id="photoPreview" class="photo-preview" alt="Предпросмотр фото">
+          <p class="hint" id="photoStatus">Выберите фото — оно сожмётся и сохранится к заказу.</p>
+          <button class="btn secondary btn-sm" id="clearPhoto" type="button" style="margin-top:8px">🗑️ Убрать фото</button>
+
+          <label class="lbl" for="p">Прямая ссылка на фото (подставляется сама)</label>
+          <input class="inp" id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
+
+          <label class="lbl" for="g">Ссылка 2ГИС (необязательно)</label>
+          <input class="inp" id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
+
+          <label class="lbl" for="h">Хештег (необязательно)</label>
+          <input class="inp" id="h" type="text" maxlength="60" placeholder="#SAQTAA2026" autocomplete="off">
+
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--hair2)">
+            <div id="txt"></div>
+            <p class="hint">Подсказка: <code>{names}</code> в тексте автоматически заменится на имена.</p>
+          </div>
+
+          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--hair2)">
+            <label class="lbl" style="margin-top:0">Программа вечера</label>
+            <div id="prog"></div>
+            <button class="btn secondary" id="addRow" type="button" style="min-height:42px">+ Добавить пункт программы</button>
+          </div>
+        </div>
+
+        <!-- Раскрывающийся блок: RSVP и Email клиента -->
+        <button type="button" class="acc-btn" id="accRsvpBtn">
+          <span>✉️ Ответы гостей (RSVP) и почта клиента</span>
+          <span id="accRsvpChev">▾</span>
+        </button>
+        <div class="card acc-body" id="accRsvpWrap" hidden>
+          <label class="lbl">Способ сбора ответов</label>
+          <div class="seg" id="rsvpSeg" style="flex-wrap:wrap">
+            <button type="button" data-r="saqtaa" class="on">Gmail SAQTAA + Таблица</button>
+            <button type="button" data-r="ejs">EmailJS</button>
+            <button type="button" data-r="w3f">Web3Forms</button>
+            <button type="button" data-r="none">Без RSVP</button>
+          </div>
+
+          <div id="rsvpEmailCommon">
+            <label class="lbl" for="clientEmail">Email клиента (куда приходят ответы гостей)</label>
+            <input class="inp" id="clientEmail" type="email" placeholder="client@gmail.com" inputmode="email" autocomplete="off">
+            <p class="hint">Клиенту не нужна регистрация — письма с ответами приходят автоматически.</p>
+          </div>
+
+          <div id="rsvpSaqtaaWrap">
+            <label class="lbl" for="sheet">URL сервера SAQTAA (из Настроек)</label>
+            <input class="inp" id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+          </div>
+
+          <div id="rsvpEjsWrap" hidden>
+            <div class="row3">
+              <div><label class="lbl" for="ejsService">Service ID</label><input class="inp" id="ejsService" type="text" autocomplete="off"></div>
+              <div><label class="lbl" for="ejsTemplate">Template ID</label><input class="inp" id="ejsTemplate" type="text" autocomplete="off"></div>
+              <div><label class="lbl" for="ejsKey">Public Key</label><input class="inp" id="ejsKey" type="text" autocomplete="off"></div>
+            </div>
+          </div>
+
+          <div id="rsvpW3fWrap" hidden>
+            <label class="lbl" for="k">Ключ Web3Forms</label>
+            <input class="inp" id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-…" autocomplete="off">
+          </div>
+
+          <div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--hair2)">
+            <label class="lbl" for="old">Загрузить данные из старой ссылки</label>
+            <div style="display:flex;gap:8px">
+              <input class="inp" id="old" type="url" placeholder="https://…/invite.html#…" autocomplete="off">
+              <button class="btn secondary btn-sm" id="loadOld" type="button" style="min-height:48px">Загрузить</button>
+            </div>
             <p class="err" id="oldErr" hidden></p>
           </div>
         </div>
 
-        <div class="box">
-          <h2>1. Шаблон и язык</h2>
-          <label for="tpl">Выберите дизайн (1-в-1 как на витрине)</label>
-          <select id="tpl">
-            <option value="luxury">№ 01 Luxury · свадьба</option>
-            <option value="floral">№ 02 Floral · свадьба</option>
-            <option value="qazaq">№ 03 Qazaq · той</option>
-            <option value="editorial">№ 04 Editorial · юбилей</option>
-            <option value="emerald">№ 05 Emerald · день рождения</option>
-            <option value="tusau">№ 06 Tusau · тұсау кесер</option>
+        <div style="display:none"><input id="base" type="url" autocomplete="off"></div>
+
+        <!-- Главные кнопки создания -->
+        <button class="btn primary" id="make" type="button" style="min-height:54px;font-size:1rem">Создать</button>
+        <button class="btn secondary" id="saveDraftBtn" type="button" style="margin-top:8px">Сохранить как черновик</button>
+        <p class="err" id="mkErr" hidden></p>
+        <p class="hint" id="saveState" style="text-align:center;margin-top:8px">Автосохранение включено</p>
+
+        <!-- Результат (ссылки для клиента) -->
+        <div class="card" id="result" style="margin-top:14px" hidden>
+          <label class="lbl" for="out" style="margin-top:0">🔗 Ссылка приглашения (для гостей)</label>
+          <textarea id="out" class="out-area" readonly></textarea>
+          <p class="ok" id="len"></p>
+          <div class="row2" style="margin-top:8px">
+            <button class="btn secondary btn-sm" id="copy" type="button" style="width:100%;min-height:44px">📋 Скопировать</button>
+            <a class="btn secondary btn-sm" id="open" target="_blank" rel="noopener" style="width:100%;min-height:44px">👁️ Открыть</a>
+          </div>
+          <button class="btn outline" id="sh" type="button" style="min-height:42px;font-size:.84rem;margin-top:8px">✂️ Сократить через is.gd</button>
+          <p class="err" id="shErr" hidden></p>
+          <div id="shBox" style="margin-top:8px" hidden>
+            <input class="inp" id="shOut" type="text" readonly>
+            <button class="btn secondary btn-sm" id="shCopy" type="button" style="margin-top:6px;width:100%">Скопировать короткую</button>
+          </div>
+
+          <div id="statsBox" style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--hair2)" hidden>
+            <label class="lbl" for="statsOut" style="margin-top:0">📊 Ссылка статистики для клиента</label>
+            <textarea id="statsOut" class="out-area" readonly></textarea>
+            <div class="row2" style="margin-top:8px">
+              <button class="btn secondary btn-sm" id="copyStats" type="button" style="width:100%;min-height:44px">📋 Скопировать</button>
+              <a class="btn secondary btn-sm" id="openStats" target="_blank" rel="noopener" style="width:100%;min-height:44px">📊 Открыть</a>
+            </div>
+          </div>
+
+          <a class="btn wa" id="wa" target="_blank" rel="noopener" style="margin-top:12px">📲 Отправить клиенту в WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- Живой предпросмотр (справа на ПК, по кнопке на телефоне) -->
+      <div class="preview-panel mob-hidden" id="previewBox">
+        <div class="card" style="padding:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <strong style="font-size:.88rem">👁️ Живой предпросмотр</strong>
+            <button class="btn secondary btn-sm" id="mobBackBtn" type="button">✕ Закрыть</button>
+          </div>
+          <div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 4. СТАТИСТИКА ==================== -->
+  <section id="screenStats" hidden>
+    <div class="screen-head">
+      <h1 class="screen-title">Статистика</h1>
+      <button type="button" class="btn secondary btn-sm" id="statsRefreshBtn">↻ Обновить</button>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <select class="inp" id="statsOrderSelect" aria-label="Выберите заказ"></select>
+    </div>
+
+    <!-- Карточка с кольцевой диаграммой 1-в-1 как на макете -->
+    <div class="card">
+      <div class="donut-card">
+        <div class="donut-left">
+          <h3>Ответы RSVP</h3>
+          <div class="donut-total" id="stTotal">0</div>
+          <div class="donut-sub">всего</div>
+        </div>
+        <div class="donut-svg-wrap">
+          <svg viewBox="0 0 120 120" width="118" height="118">
+            <circle cx="60" cy="60" r="46" fill="none" stroke="var(--input)" stroke-width="14"/>
+            <circle id="arcYes" cx="60" cy="60" r="46" fill="none" stroke="#3C9D68" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)" stroke-linecap="butt"/>
+            <circle id="arcNo" cx="60" cy="60" r="46" fill="none" stroke="#D65A5A" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)" stroke-linecap="butt"/>
+            <circle id="arcMaybe" cx="60" cy="60" r="46" fill="none" stroke="#B5B1AA" stroke-width="14" stroke-dasharray="0 289" transform="rotate(-90 60 60)" stroke-linecap="butt"/>
+          </svg>
+          <div class="donut-center" id="stDonutNum">0</div>
+        </div>
+      </div>
+
+      <div class="stat-legend">
+        <div class="stat-leg-row">
+          <div class="stat-leg-lbl"><span class="dot yes"></span>Придут <small id="stYesGuestsNote" style="color:var(--ink2)"></small></div>
+          <div class="stat-leg-val"><b id="stYes">0</b><span id="stYesPct">0%</span></div>
+        </div>
+        <div class="stat-leg-row">
+          <div class="stat-leg-lbl"><span class="dot no"></span>Не придут</div>
+          <div class="stat-leg-val"><b id="stNo">0</b><span id="stNoPct">0%</span></div>
+        </div>
+        <div class="stat-leg-row">
+          <div class="stat-leg-lbl"><span class="dot maybe"></span>Пока не знают</div>
+          <div class="stat-leg-val"><b id="stMaybe">0</b><span id="stMaybePct">0%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Действия со статистикой как на макете -->
+    <div class="card-flush">
+      <button type="button" class="menu-row" id="toggleGuestListBtn">
+        <span class="menu-row-l">📋 Список гостей (<span id="stGuestBtnCount">0</span>)</span>
+        <span class="menu-row-r"><span class="chev" id="guestListChev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" id="statsExportCsvBtn">
+        <span class="menu-row-l">📥 Экспорт в Excel</span>
+        <span class="menu-row-r"><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" id="statsCopyWaBtn">
+        <span class="menu-row-l">📲 Скопировать отчёт для WhatsApp</span>
+        <span class="menu-row-r"><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" id="statsCopyClientLinkBtn">
+        <span class="menu-row-l">🔗 Ссылка статистики для клиента</span>
+        <span class="menu-row-r"><span class="chev">›</span></span>
+      </button>
+    </div>
+
+    <!-- Список гостей (раскрывается по нажатию «Список гостей») -->
+    <div class="card" id="statsGuestWrap" hidden>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
+        <strong style="font-size:.95rem">Гости</strong>
+        <button type="button" class="btn primary btn-sm" id="toggleAddGuestBtn">➕ Добавить гостя</button>
+      </div>
+
+      <div id="addGuestForm" style="padding:12px;background:var(--card-soft);border-radius:14px;border:1px solid var(--hair);margin-bottom:12px" hidden>
+        <div class="row2">
+          <input class="inp" id="agName" type="text" placeholder="Имя" autocomplete="off">
+          <input class="inp" id="agFam" type="text" placeholder="Фамилия" autocomplete="off">
+        </div>
+        <div class="row2" style="margin-top:8px">
+          <select class="inp" id="agStatus">
+            <option value="yes">Придёт (1 гость)</option>
+            <option value="yes2">Придёт вдвоём (2 гостя)</option>
+            <option value="maybe">Пока не знает</option>
+            <option value="no">Не сможет прийти</option>
           </select>
-          <div class="tpl-grid" id="tplGrid" aria-label="Визуальный выбор шаблона">
-            <button class="tpl-card tpl-luxury" type="button" data-template="luxury" aria-pressed="true"><span class="tpl-art"><i>THE WEDDING</i><b>Names</b><i>EST. 2026</i></span><strong>Luxury</strong><small>Свадьба · классика</small></button>
-            <button class="tpl-card tpl-floral" type="button" data-template="floral" aria-pressed="false"><span class="tpl-art"><i>OUR DAY</i><b>Names</b><i>WITH LOVE</i></span><strong>Floral</strong><small>Свадьба · нежный</small></button>
-            <button class="tpl-card tpl-qazaq" type="button" data-template="qazaq" aria-pressed="false"><span class="tpl-art"><i>ҚҰРМЕТТІ ҚОНАҚ</i><b>Той</b><i>ШАҚЫРУ</i></span><strong>Qazaq</strong><small>Той · национальный</small></button>
-            <button class="tpl-card tpl-editorial" type="button" data-template="editorial" aria-pressed="false"><span class="tpl-art"><i>AN EVENING FOR</i><b>50</b><i>THE CELEBRATION</i></span><strong>Editorial</strong><small>Юбилей · журнал</small></button>
-            <button class="tpl-card tpl-emerald" type="button" data-template="emerald" aria-pressed="false"><span class="tpl-art"><i>YOU ARE INVITED</i><b>Birthday</b><i>CELEBRATE</i></span><strong>Emerald</strong><small>День рождения</small></button>
-            <button class="tpl-card tpl-tusau" type="button" data-template="tusau" aria-pressed="false"><span class="tpl-art"><i>АЛҒАШҚЫ ҚАДАМ</i><b>Тұсау кесер</b><i>2026</i></span><strong>Tusau</strong><small>Тұсау кесер</small></button>
-          </div>
-          <label style="margin-top:12px">Язык приглашения</label>
-          <div class="seg" id="langSeg">
-            <button type="button" data-l="ru" class="on">Русский</button>
-            <button type="button" data-l="kz">Қазақша</button>
-            <button type="button" data-l="both">Оба языка</button>
-          </div>
+          <button type="button" class="btn primary" id="agSaveBtn" style="min-height:48px">Сохранить</button>
         </div>
-
-        <div class="box">
-          <h2>2. Виновники торжества и дата</h2>
-          <label for="n">Имена на обложке</label>
-          <input id="n" type="text" maxlength="120" placeholder="Ерасыл & Аяулым" autocomplete="off">
-          <div id="bigWrap" hidden>
-            <label for="b">Крупное число на обложке (возраст юбиляра)</label>
-            <input id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
-          </div>
-          <label for="d">Дата мероприятия</label>
-          <input id="d" type="date">
-          <div class="row2">
-            <div><label for="s">Начало</label><input id="s" type="time"></div>
-            <div><label for="e">Окончание</label><input id="e" type="time"></div>
-          </div>
-        </div>
-
-        <div class="box">
-          <h2>3. Место проведения</h2>
-          <label for="ve">Название ресторана / зала</label>
-          <input id="ve" type="text" maxlength="120" placeholder="Grand Ballroom «Astana»" autocomplete="off">
-          <label for="ad">Город и адрес</label>
-          <input id="ad" type="text" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off">
-          <label for="g">Ссылка 2ГИС (необязательно)</label>
-          <input id="g" type="url" placeholder="https://go.2gis.com/…" inputmode="url" autocomplete="off">
-        </div>
-
-        <div class="box">
-          <h2>4. Тексты и программа</h2>
-          <div id="txt"></div>
-          <p class="hint">Подсказка: пишите <code>{names}</code> в тексте, чтобы имена с обложки подставились сами.</p>
-          <label for="h">Хештег (необязательно)</label>
-          <input id="h" type="text" maxlength="60" placeholder="#ЕрасылАяулым" autocomplete="off">
-          <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--hair)">
-            <label style="margin-top:0">Программа вечера по часам</label>
-            <div id="prog"></div>
-            <button class="btn line" id="addRow" type="button" style="min-height:44px">+ Добавить пункт программы</button>
-          </div>
-        </div>
-
-        <div class="box">
-          <h2>5. Фото и ответы гостей (RSVP)</h2>
-          <label for="photoFile">📸 Фотография с телефона (загружается автоматически)</label>
-          <input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp">
-          <img id="photoPreview" class="photo-preview" alt="Предпросмотр выбранного фото">
-          <p class="hint" id="photoStatus">Выберите фото — оно сожмётся и автоматически загрузится на сервер SAQTAA.</p>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <button class="btn line" id="clearPhoto" type="button" style="margin:0;min-height:40px;font-size:.82rem">🗑️ Убрать фото</button>
-          </div>
-          <label for="p">Прямая ссылка на фото (подставляется сама)</label>
-          <input id="p" type="url" placeholder="https://…/photo.jpg" inputmode="url" autocomplete="off">
-
-          <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--hair)">
-            <label style="margin-top:0">Куда присылать ответы гостей (RSVP)?</label>
-            <div class="seg" id="rsvpSeg" style="flex-wrap:wrap">
-              <button type="button" data-r="saqtaa" class="on" style="flex:1 1 45%">📧 Почта клиента + Статистика</button>
-              <button type="button" data-r="ejs" style="flex:1 1 45%">📨 EmailJS</button>
-              <button type="button" data-r="w3f" style="flex:1 1 45%">🔑 Web3Forms</button>
-              <button type="button" data-r="none" style="flex:1 1 45%">🚫 Без ответов</button>
-            </div>
-
-            <div id="rsvpEmailCommon" style="margin-top:12px">
-              <label for="clientEmail">📧 Email клиента (куда приходят ответы гостей)</label>
-              <input id="clientEmail" type="email" placeholder="client@gmail.com (без регистраций и подтверждений)" inputmode="email" autocomplete="off">
-              <p class="hint">Когда гость ответит, ваш сервер SAQTAA сразу отправит клиенту красивое письмо с именем гостя, мероприятием и ответом!</p>
-            </div>
-
-            <div id="rsvpSaqtaaWrap" style="margin-top:10px">
-              <label for="sheet">URL сервера SAQTAA (подставляется сам из Настроек)</label>
-              <input id="sheet" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
-            </div>
-
-            <div id="rsvpEjsWrap" style="margin-top:12px" hidden>
-              <div class="row3">
-                <div><label for="ejsService">Service ID</label><input id="ejsService" type="text" placeholder="service_xxx" autocomplete="off"></div>
-                <div><label for="ejsTemplate">Template ID</label><input id="ejsTemplate" type="text" placeholder="template_xxx" autocomplete="off"></div>
-                <div><label for="ejsKey">Public Key</label><input id="ejsKey" type="text" placeholder="Public Key" autocomplete="off"></div>
-              </div>
-              <p class="hint">Ключи EmailJS запоминаются автоматически. Переменные шаблона: <code>{{to_email}}</code>, <code>{{guest_name}}</code>, <code>{{event_title}}</code>, <code>{{attendance}}</code>.</p>
-            </div>
-
-            <div id="rsvpW3fWrap" style="margin-top:12px" hidden>
-              <label for="k">Ключ Web3Forms клиента</label>
-              <input id="k" type="text" maxlength="80" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
-            </div>
-          </div>
-        </div>
-
-        <div class="box" style="border:2px solid var(--em);background:#F7FAF8">
-          <h2>6. Создание ссылок для клиента</h2>
-          <div style="display:none"><input id="base" type="url" inputmode="url" autocomplete="off"></div>
-          <button class="btn main" id="make" type="button" style="min-height:56px;font-size:1rem">✨ Создать приглашение и статистику</button>
-          <p class="err" id="mkErr" hidden></p>
-
-          <div id="result" style="margin-top:14px" hidden>
-            <div style="background:#fff;border:1px solid var(--hair);border-radius:12px;padding:12px;margin-bottom:10px">
-              <label for="out" style="margin-top:0;color:var(--em)">🔗 1. Ссылка приглашения (для гостей)</label>
-              <textarea id="out" class="out" readonly style="min-height:68px"></textarea>
-              <p class="ok" id="len" style="margin-top:4px;font-size:.78rem"></p>
-              <div class="row2" style="margin-top:8px">
-                <button class="btn gold" id="copy" type="button" style="margin:0;min-height:44px;font-size:.84rem">📋 Скопировать</button>
-                <a class="btn line" id="open" target="_blank" rel="noopener" style="margin:0;min-height:44px;font-size:.84rem">👁️ Открыть</a>
-              </div>
-              <button class="btn line" id="sh" type="button" style="min-height:40px;font-size:.8rem;margin-top:8px">✂️ Сократить ссылку через is.gd</button>
-              <p class="err" id="shErr" hidden></p>
-              <div id="shBox" style="margin-top:8px" hidden>
-                <label for="shOut">Короткая ссылка приглашения</label>
-                <input id="shOut" type="text" readonly>
-                <button class="btn gold" id="shCopy" type="button" style="min-height:42px">Скопировать короткую</button>
-              </div>
-            </div>
-
-            <div id="statsBox" style="background:#fff;border:1px solid var(--hair);border-radius:12px;padding:12px;margin-bottom:10px" hidden>
-              <label for="statsOut" style="margin-top:0;color:#7F5D22">📊 2. Онлайн-статистика для клиента (Real-Time)</label>
-              <textarea id="statsOut" class="out" readonly style="min-height:68px"></textarea>
-              <div class="row2" style="margin-top:8px">
-                <button class="btn gold" id="copyStats" type="button" style="margin:0;min-height:44px;font-size:.84rem">📋 Скопировать</button>
-                <a class="btn line" id="openStats" target="_blank" rel="noopener" style="margin:0;min-height:44px;font-size:.84rem">📊 Открыть</a>
-              </div>
-            </div>
-
-            <a class="btn main" id="wa" target="_blank" rel="noopener" style="background:#166E3D">📲 Отправить клиенту в WhatsApp (обе ссылки)</a>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ЖИВОЙ ПРЕДПРОСМОТР (справа на ПК или по вкладке «Просмотр» на телефоне) -->
-      <div class="box preview-box mobile-hidden" id="previewBox">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-          <h2 style="margin:0">👁️ Живой предпросмотр</h2>
-          <button class="btn line" id="mobBackBtn" type="button" style="width:auto;min-height:34px;padding:4px 12px;font-size:.76rem;margin:0">✏️ К конструктору</button>
-        </div>
-        <div class="preview-frame"><iframe id="livePreview" title="Предпросмотр приглашения" loading="lazy"></iframe></div>
-        <p class="preview-note">Все изменения отображаются сразу в реальном времени.</p>
-      </div>
+      <input class="inp" id="statsGuestSearch" type="search" placeholder="Поиск гостя по имени…" style="min-height:42px;margin-bottom:8px" autocomplete="off">
+      <div id="statsGuestRows"></div>
     </div>
   </section>
 
-  <!-- ================= ЭКРАН 2: БАЗА ВСЕХ ЗАКАЗОВ ================= -->
-  <section id="screenOrders" hidden>
-    <div class="orders-stats">
-      <div class="ostat-card"><b id="statTotalOrders">0</b><span>Всего заказов</span></div>
-      <div class="ostat-card"><b id="statUpcomingOrders">0</b><span>Предстоящие</span></div>
-      <div class="ostat-card"><b id="statPastOrders">0</b><span>Прошедшие</span></div>
-    </div>
-
-    <div class="box">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        <h2 style="margin:0">📋 Управление заказами</h2>
-        <div style="display:flex;gap:6px">
-          <button class="btn line" id="syncCloudHist" type="button" style="width:auto;min-height:36px;padding:6px 12px;font-size:.78rem;margin:0">☁️ С сервера</button>
-          <button class="btn main" id="newOrderFromListBtn" type="button" style="width:auto;min-height:36px;padding:6px 12px;font-size:.78rem;margin:0">➕ Новый заказ</button>
-        </div>
-      </div>
-
-      <input id="histSearch" type="search" placeholder="🔍 Поиск по имени, дате (14.02.2027), времени или почте…" autocomplete="off">
-
-      <div class="seg" id="orderFilterSeg" style="margin-top:10px">
-        <button type="button" data-of="all" class="on">Все</button>
-        <button type="button" data-of="upcoming">Предстоящие</button>
-        <button type="button" data-of="past">Прошедшие</button>
-      </div>
-
-      <div id="historyList" style="margin-top:12px"><p class="hint">Заказов пока нет.</p></div>
-    </div>
-  </section>
-
-  <!-- ================= ЭКРАН 3: НАСТРОЙКИ И ПАРОЛЬ ================= -->
+  <!-- ==================== 5. НАСТРОЙКИ ==================== -->
   <section id="screenSettings" hidden>
+    <div class="screen-head">
+      <h1 class="screen-title">Настройки</h1>
+    </div>
 
-    <!-- Блок 1: Смена пароля администратора -->
-    <div class="box">
-      <h2>🔐 Безопасность и смена пароля</h2>
-      <p class="hint" style="margin-bottom:10px">Вы можете в любой момент поменять пароль входа в админ-панель. Если подключён сервер SAQTAA, пароль обновится и на сервере.</p>
-      <label for="oldPwInput">Текущий пароль</label>
-      <input id="oldPwInput" type="password" placeholder="Введите текущий пароль" autocomplete="off">
+    <div class="card-flush">
+      <button type="button" class="menu-row" data-setpanel="setProfilePanel">
+        <span class="menu-row-l">👤 Профиль и пароль</span>
+        <span class="menu-row-r"><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" data-setpanel="setServerPanel">
+        <span class="menu-row-l">🔗 Ссылки и домен (Сервер)</span>
+        <span class="menu-row-r"><span id="setSrvBadge">Подключено</span><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" data-setpanel="setNotifPanel">
+        <span class="menu-row-l">✉️ Уведомления (EmailJS)</span>
+        <span class="menu-row-r"><span id="setEjsBadge">Настроено</span><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" data-setpanel="setBackupPanel">
+        <span class="menu-row-l">🗄️ Резервное копирование</span>
+        <span class="menu-row-r"><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" id="themeToggleRow">
+        <span class="menu-row-l">🌙 Тема</span>
+        <span class="menu-row-r"><span id="themeLabel">Светлая</span><span class="chev">›</span></span>
+      </button>
+      <button type="button" class="menu-row" data-setpanel="setAboutPanel">
+        <span class="menu-row-l">ℹ️ О сервисе</span>
+        <span class="menu-row-r"><span>v4.0</span><span class="chev">›</span></span>
+      </button>
+    </div>
+
+    <!-- Панель: Профиль и пароль -->
+    <div class="card set-panel" id="setProfilePanel" hidden>
+      <strong style="font-size:1rem">Смена пароля администратора</strong>
+      <p class="hint">Новый пароль сохраняется локально и синхронизируется с сервером SAQTAA.</p>
+      <label class="lbl" for="oldPwInput">Текущий пароль</label>
+      <input class="inp" id="oldPwInput" type="password" placeholder="Текущий пароль" autocomplete="off">
       <div class="row2">
-        <div>
-          <label for="newPwInput">Новый пароль</label>
-          <input id="newPwInput" type="password" placeholder="Минимум 4 символа" autocomplete="off">
-        </div>
-        <div>
-          <label for="newPwConfirm">Повторите новый пароль</label>
-          <input id="newPwConfirm" type="password" placeholder="Повторите пароль" autocomplete="off">
-        </div>
+        <div><label class="lbl" for="newPwInput">Новый пароль</label><input class="inp" id="newPwInput" type="password" placeholder="От 4 символов" autocomplete="off"></div>
+        <div><label class="lbl" for="newPwConfirm">Повтор</label><input class="inp" id="newPwConfirm" type="password" placeholder="Повторите" autocomplete="off"></div>
       </div>
-      <button class="btn main" id="changePwBtn" type="button" style="min-height:48px">🔑 Сохранить новый пароль</button>
-      <p id="changePwMsg" class="hint" style="font-weight:700;margin-top:8px" hidden></p>
-      <button class="btn danger" id="logoutBtn" type="button" style="min-height:44px;margin-top:14px">🚪 Выйти из админ-панели (заблокировать)</button>
+      <button class="btn primary" id="changePwBtn" type="button" style="margin-top:12px">Сохранить новый пароль</button>
+      <p id="changePwMsg" class="hint" style="font-weight:700" hidden></p>
     </div>
 
-    <!-- Блок 2: Настройка единого сервера SAQTAA -->
-    <div class="box" style="border-color:rgba(15,74,56,.35);background:#F9FBF9">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-        <h2 style="margin:0;color:var(--em)">☁️ Сервер SAQTAA (Gmail + Фото + База заказов)</h2>
-        <button class="btn line" id="toggleServerSetup" type="button" style="width:auto;min-height:32px;padding:4px 10px;font-size:.74rem;margin:0">Инструкция</button>
-      </div>
-      <p class="hint" id="srvStatusText" style="margin-top:6px">Подключите единый скрипт Google-аккаунта SAQTAA один раз — и для каждого клиента достаточно просто вписать его Email.</p>
-      <label for="srvUrl">URL вашего сервера SAQTAA (Google Apps Script Web App)</label>
-      <input id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
+    <!-- Панель: Ссылки и домен (Сервер SAQTAA) -->
+    <div class="card set-panel" id="setServerPanel" hidden>
+      <strong style="font-size:1rem">Сервер SAQTAA (Google Apps Script)</strong>
+      <p class="hint" id="srvStatusText">Подключён единый сервер: письма клиентам уходят с Gmail SAQTAA, ответы собираются в таблицу, фото сохраняются на Google Диск.</p>
+      <label class="lbl" for="srvUrl">URL веб-приложения</label>
+      <input class="inp" id="srvUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" inputmode="url" autocomplete="off">
       <div class="row2" style="margin-top:10px">
-        <button class="btn main" id="saveSrvBtn" type="button" style="margin:0;min-height:46px;font-size:.84rem">💾 Сохранить и проверить</button>
-        <button class="btn line" id="copyAppScript" type="button" style="margin:0;min-height:46px;font-size:.84rem">📋 Скопировать код сервера</button>
-      </div>
-      <div id="serverSetupWrap" style="margin-top:10px" hidden>
-        <div class="hint" style="background:#fff;padding:12px;border-radius:10px;border:1px solid var(--hair);line-height:1.55">
-          <strong>Как подключить аккаунт SAQTAA за 2 минуты (1 раз навсегда):</strong><br>
-          1. Зайдите в Google-аккаунт SAQTAA и откройте новую таблицу <a href="https://sheets.new" target="_blank" rel="noopener" style="color:var(--em);font-weight:700;text-decoration:underline">sheets.new</a>.<br>
-          2. Нажмите <em>«Расширения» → «Apps Script»</em>, вставьте скопированный выше код.<br>
-          3. Нажмите <em>«Развернуть» → «Новое развертывание» → Тип: Веб-приложение</em>.<br>
-          4. «Запуск от имени»: <strong>Меня (Me)</strong>, «У кого есть доступ»: <strong>Все (Anyone)</strong> → нажмите «Развернуть» и дайте разрешения.<br>
-          5. Вставьте полученную ссылку в поле выше и нажмите «Сохранить и проверить».
-        </div>
+        <button class="btn primary" id="saveSrvBtn" type="button">💾 Проверить</button>
+        <button class="btn secondary" id="copyAppScript" type="button">📋 Код скрипта</button>
       </div>
     </div>
 
-    <!-- Блок 3: Резервная копия -->
-    <div class="box">
-      <h2>📦 Резервная копия всех данных</h2>
-      <p class="hint">Вы можете сохранить все заказы, черновики и фотографии в один файл на телефон или компьютер.</p>
-      <button class="btn line" id="exportBackup" type="button" style="min-height:46px">📥 Скачать резервную копию (.json)</button>
-      <label for="importBackup" style="margin-top:12px">📤 Восстановить из файла резервной копии</label>
-      <input id="importBackup" type="file" accept="application/json,.json">
-      <p class="hint" id="backupStatus" aria-live="polite"></p>
+    <!-- Панель: Уведомления (EmailJS) -->
+    <div class="card set-panel" id="setNotifPanel" hidden>
+      <strong style="font-size:1rem">Настройки EmailJS (резервный канал)</strong>
+      <p class="hint">Используется при выборе режима «EmailJS» в конструкторе.</p>
+      <label class="lbl" for="cfgEjsService">Service ID</label>
+      <input class="inp" id="cfgEjsService" type="text" autocomplete="off">
+      <label class="lbl" for="cfgEjsTemplate">Template ID</label>
+      <input class="inp" id="cfgEjsTemplate" type="text" autocomplete="off">
+      <label class="lbl" for="cfgEjsKey">Public Key</label>
+      <input class="inp" id="cfgEjsKey" type="text" autocomplete="off">
+      <button class="btn primary" id="saveEjsCfgBtn" type="button" style="margin-top:12px">Сохранить EmailJS</button>
+    </div>
+
+    <!-- Панель: Резервное копирование -->
+    <div class="card set-panel" id="setBackupPanel" hidden>
+      <strong style="font-size:1rem">Резервная копия</strong>
+      <p class="hint">Экспорт и восстановление всех локальных заказов, черновиков и фотографий.</p>
+      <button class="btn secondary" id="exportBackup" type="button" style="margin-top:10px">📥 Скачать резервную копию (.json)</button>
+      <label class="lbl" for="importBackup">📤 Восстановить из файла</label>
+      <input class="inp" id="importBackup" type="file" accept="application/json,.json" style="padding:10px">
+      <p class="hint" id="backupStatus"></p>
+    </div>
+
+    <!-- Панель: О сервисе -->
+    <div class="card set-panel" id="setAboutPanel" hidden>
+      <strong style="font-size:1rem">SAQTAA · Цифровые приглашения</strong>
+      <p class="hint" style="margin-top:6px">
+        6 дизайнерских шаблонов · 3 языка (RU / KZ / Оба) · Сбор ответов через Gmail SAQTAA + Google Таблицу и EmailJS · Онлайн-статистика гостей в реальном времени.
+      </p>
+    </div>
+
+    <div class="card-flush">
+      <button type="button" class="menu-row danger" id="logoutBtn">
+        <span class="menu-row-l">↪ Выйти</span>
+      </button>
     </div>
   </section>
 
 </main>
 
-<!-- Нижняя панель навигации как в мобильном приложении -->
-<nav class="app-nav" id="bottomAppNav" aria-label="Навигация приложения" hidden>
-  <button type="button" data-nav="editor" class="on">
-    <span class="nav-ico">✏️</span>
-    <span class="nav-lbl">Конструктор</span>
+<!-- ==================== НИЖНЯЯ НАВИГАЦИЯ (5 ВКЛАДОК) ==================== -->
+<nav class="bottom-nav" id="bottomAppNav" aria-label="Навигация" hidden>
+  <button type="button" data-nav="home" class="on">
+    <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+    <span>Главная</span>
   </button>
   <button type="button" data-nav="orders">
-    <span class="nav-ico">📋</span>
-    <span class="nav-lbl">Все заказы</span>
-    <span class="nav-badge" id="navOrdersBadge" hidden>0</span>
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    <span>Заказы</span>
   </button>
-  <button type="button" data-nav="preview">
-    <span class="nav-ico">👁️</span>
-    <span class="nav-lbl">Просмотр</span>
+  <button type="button" data-nav="editor">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+    <span>Создать</span>
+  </button>
+  <button type="button" data-nav="stats">
+    <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+    <span>Статистика</span>
   </button>
   <button type="button" data-nav="settings">
-    <span class="nav-ico">⚙️</span>
-    <span class="nav-lbl">Настройки</span>
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Настройки</span>
   </button>
 </nav>
 
@@ -450,12 +864,23 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-of
 "use strict";
 var $=function(s){return document.querySelector(s);};
 var KEY="saqtaa-admin-v2", HIST_KEY="saqtaa-history-v1";
-var historyItems=[];var previewTimer=null;var photoDBPromise=null;var currentPhotoBlob=null;var currentPhotoUrl="";
-var SRV_KEY="saqtaa-server-url-v1", PIN_KEY="saqtaa-server-pin-v1", EJS_KEY="saqtaa-ejs-cfg-v1", CUSTOM_HASH_KEY="saqtaa-custom-pw-hash-v1";
+var SRV_KEY="saqtaa-server-url-v1", PIN_KEY="saqtaa-server-pin-v1", EJS_KEY="saqtaa-ejs-cfg-v1";
+var CUSTOM_HASH_KEY="saqtaa-custom-pw-hash-v1", THEME_KEY="saqtaa-theme-v1";
+
+var DEFAULT_SRV_URL="https://script.google.com/macros/s/AKfycbwjWW1WmAMtkb6x1OZnv1IJFOAD3b8c4W2IwcAxNQzRb8uF93cz51lfzJiA1U9qpB9o/exec";
+var DEFAULT_EJS={s:"service_bssf2on",t:"template_fxen0ff",u:"yoA05AoeehSw32yJd"};
+
+var historyItems=[];
+var previewTimer=null;
+var photoDBPromise=null;
+var currentPhotoBlob=null;
+var currentPhotoUrl="";
 var currentRsvpMode="saqtaa";
 var currentOrderId="";
 var currentOrderFilter="all";
-var activeScreen="editor";
+var activeScreen="home";
+var currentStatsOrder=null;
+var currentStatsRows=[];
 
 var APPS_SCRIPT_CODE = [
 'var DEFAULT_ADMIN_PIN = "saqtaa2026";',
@@ -493,26 +918,22 @@ var APPS_SCRIPT_CODE = [
 '  var action = String(p.action || "ping").trim();',
 '  if(action === "auth"){',
 '    if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный серверный пароль" });',
-'    ensureSheets();',
-'    return jsonOut({ ok: true });',
+'    ensureSheets(); return jsonOut({ ok: true });',
 '  }',
 '  if(action === "upload_photo"){',
 '    if(!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный пароль сервера" });',
 '    try{',
 '      var b64 = String(p.base64 || "");',
-'      var mime = String(p.mime || "image/jpeg");',
 '      var bytes = Utilities.base64Decode(b64);',
-'      var blob = Utilities.newBlob(bytes, mime, "saqtaa_" + new Date().getTime() + ".jpg");',
+'      var blob = Utilities.newBlob(bytes, String(p.mime || "image/jpeg"), "saqtaa_" + new Date().getTime() + ".jpg");',
 '      var folders = DriveApp.getFoldersByName("SAQTAA_PHOTOS");',
 '      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder("SAQTAA_PHOTOS");',
 '      var file = folder.createFile(blob);',
 '      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);',
-'      var fid = file.getId();',
-'      return jsonOut({ ok: true, id: fid, url: "https://lh3.googleusercontent.com/d/" + fid + "=w1600" });',
+'      return jsonOut({ ok: true, id: file.getId(), url: "https://lh3.googleusercontent.com/d/" + file.getId() + "=w1600" });',
 '    }catch(err){ return jsonOut({ ok: false, error: String(err) }); }',
 '  }',
-'  var lock = LockService.getScriptLock();',
-'  lock.tryLock(10000);',
+'  var lock = LockService.getScriptLock(); lock.tryLock(10000);',
 '  try{',
 '    var db = ensureSheets();',
 '    if(action === "save_order"){',
@@ -534,41 +955,6 @@ var APPS_SCRIPT_CODE = [
 '      }',
 '      return jsonOut({ ok: true, orders: list.reverse() });',
 '    }',
-'    if(action === "rsvp"){',
-'      if(p.botcheck) return jsonOut({ ok: true });',
-'      var name = String(p.name || "").trim().slice(0, 50), fam = String(p.fam || "").trim().slice(0, 50);',
-'      if(!name || !fam) return jsonOut({ ok: false, error: "Укажите имя и фамилию" });',
-'      var attCode = String(p.att_code || p.att || "yes").toLowerCase();',
-'      if(attCode.indexOf("не") !== -1 || attCode === "no") attCode = "no";',
-'      else if(attCode.indexOf("пока") !== -1 || attCode.indexOf("maybe") !== -1) attCode = "maybe";',
-'      else attCode = "yes";',
-'      var labels = { yes: "Придёт (Подтверждено)", no: "Не придёт (Отказ)", maybe: "Пока не знает (Под вопросом)" };',
-'      var attLabel = labels[attCode], guests = attCode === "yes" ? (Number(p.guests) || 1) : 0;',
-'      var orderId = String(p.oid || p.order_id || "default").trim(), rsvpId = String(p.id || ("g_" + new Date().getTime())).trim();',
-'      var eventTitle = String(p.title || "Праздничное торжество").trim(), eventDate = String(p.date || "").trim(), clientEmail = String(p.to_email || "").trim();',
-'      var cache = CacheService.getScriptCache();',
-'      if(cache.get("rate_" + rsvpId)) return jsonOut({ ok: true, cached: true });',
-'      cache.put("rate_" + rsvpId, "1", 10);',
-'      var now = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");',
-'      var rRows = db.rsvps.getDataRange().getValues(), fRsvp = -1;',
-'      for(var j = 1; j < rRows.length; j++){ if(String(rRows[j][0]) === orderId && String(rRows[j][1]) === rsvpId){ fRsvp = j + 1; break; } }',
-'      var isUpdate = fRsvp > 0, rowData = [orderId, rsvpId, now, name, fam, attCode, attLabel, guests, eventTitle, clientEmail];',
-'      if(isUpdate) db.rsvps.getRange(fRsvp, 1, 1, 10).setValues([rowData]); else db.rsvps.appendRow(rowData);',
-'      var allR = db.rsvps.getDataRange().getValues(), tY = 0, tN = 0, tM = 0;',
-'      for(var m = 1; m < allR.length; m++){ if(String(allR[m][0]) === orderId){ var st = String(allR[m][5]); if(st === "yes") tY += (Number(allR[m][7])||1); else if(st === "no") tN++; else tM++; } }',
-'      if(clientEmail && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(clientEmail)){',
-'        try{',
-'          var fullName = name + " " + fam, subj = (isUpdate ? "🔄 Изменение ответа: " : "✦ Новый ответ гостя: ") + fullName + " — " + eventTitle;',
-'          var bCol = attCode === "yes" ? "#1E6F43" : (attCode === "no" ? "#9E2B3A" : "#9E7318");',
-'          var html = "<div style=\\"font-family:Georgia,serif;max-width:520px;margin:0 auto;background:#F5EFE2;padding:24px;border-radius:14px;color:#182720;border:1px solid #D9BC7F\\">" +',
-'            "<div style=\\"text-align:center;border-bottom:1px solid rgba(24,39,32,0.15);padding-bottom:14px;margin-bottom:18px\\"><div style=\\"font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#B98E45;font-weight:bold\\">SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ</div><h2 style=\\"margin:6px 0 2px;font-size:22px;color:#0F4A38\\">" + eventTitle + "</h2>" + (eventDate ? "<div style=\\"font-size:13px;color:#46584D\\">Дата: " + eventDate + "</div>" : "") + "</div>" +',
-'            "<div style=\\"background:#FFFDF6;padding:18px;border-radius:10px;border:1px solid rgba(24,39,32,0.12);margin-bottom:18px\\"><p style=\\"margin:0 0 10px;font-size:15px\\"><strong>Гость:</strong> " + fullName + "</p><p style=\\"margin:0 0 10px;font-size:15px\\"><strong>Ответ:</strong> <span style=\\"color:" + bCol + ";font-weight:bold\\">" + attLabel + "</span></p><p style=\\"margin:0;font-size:12px;color:#46584D\\">Время ответа: " + now + "</p></div>" +',
-'            "<div style=\\"background:#0F4A38;color:#F6F1E4;padding:14px 16px;border-radius:10px;font-size:13px;text-align:center\\"><div style=\\"color:#D9BC7F;font-weight:bold;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px\\">Текущая статистика по вашему приглашению</div>Придут: <b>" + tY + "</b> &nbsp;·&nbsp; Не придут: <b>" + tN + "</b> &nbsp;·&nbsp; Думают: <b>" + tM + "</b></div></div>";',
-'          MailApp.sendEmail({ to: clientEmail, subject: subj, name: BRAND_NAME, htmlBody: html });',
-'        }catch(_e){}',
-'      }',
-'      return jsonOut({ ok: true, id: rsvpId });',
-'    }',
 '    if(action === "stats" || action === "get"){',
 '      var fOid = String(p.oid || p.order_id || "").trim(), rRows = db.rsvps.getDataRange().getValues(), outRows = [];',
 '      for(var i = 1; i < rRows.length; i++){',
@@ -584,7 +970,6 @@ var APPS_SCRIPT_CODE = [
 '}'
 ].join('\n');
 
-/* ---------- заготовки шаблонов: [время, название RU, описание RU, название KZ, описание KZ] ---------- */
 var PRE={
 luxury:{ti:["Свадебное торжество","Үйлену тойы"],
  le:["Дорогие родные и близкие! Мы начинаем новую главу нашей жизни и будем рады разделить этот особенный день с вами. Приглашаем вас на нашу свадьбу!","Құрметті ағайын-туыс, жақындарымыз бен достарымыз! Өміріміздегі ерекше күнді сіздермен бірге атап өткіміз келеді. Сіздерді үйлену тойымыздың қадірлі қонағы болуға шақырамыз!"],
@@ -612,15 +997,38 @@ tusau:{ti:["Тұсау кесер","Тұсау кесер"],
  pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"}
 };
 
-/* ---------- состояние ---------- */
-var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};  /* rows: [время, названиеRU, описаниеRU, названиеKZ, описаниеKZ] */
+var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};
 var lang="ru";
 function act(){return lang==="both"?["ru","kz"]:[lang];}
-function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("show");},3200);}
+function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(function(){el.classList.remove("show");},3000);}
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function clean(s){return String(s||"").trim();}
 function val(sel){var el=document.querySelector(sel);return el?el.value:null;}
+function getAdminPin(){try{return localStorage.getItem(PIN_KEY)||"saqtaa2026";}catch(_){return"saqtaa2026";}}
+function getSrvUrl(){
+  var v=clean($("#srvUrl").value)||clean($("#sheet").value);
+  if(v)return v;
+  try{return localStorage.getItem(SRV_KEY)||DEFAULT_SRV_URL;}catch(_){return DEFAULT_SRV_URL;}
+}
 
-/* забираем то, что сейчас на экране, в состояние */
+/* ---------- Тема (Светлая / Тёмная) ---------- */
+function applyTheme(t){
+  var dark=(t==="dark");
+  document.body.setAttribute("data-theme",dark?"dark":"light");
+  if($("#themeLabel"))$("#themeLabel").textContent=dark?"Тёмная":"Светлая";
+  if($("#topThemeBtn"))$("#topThemeBtn").textContent=dark?"☀️":"🌙";
+  var meta=document.querySelector('meta[name="theme-color"]');
+  if(meta)meta.setAttribute("content",dark?"#141312":"#F5F4F1");
+  try{localStorage.setItem(THEME_KEY,dark?"dark":"light");}catch(_){}
+}
+function toggleTheme(){
+  applyTheme(document.body.getAttribute("data-theme")==="dark"?"light":"dark");
+}
+$("#themeToggleRow").addEventListener("click",toggleTheme);
+$("#topThemeBtn").addEventListener("click",toggleTheme);
+try{applyTheme(localStorage.getItem(THEME_KEY)||"light");}catch(_){}
+
+/* ---------- Тексты и программа конструктора ---------- */
 function grabText(){
   act().forEach(function(k){
     var a=val("#ti_"+k),b=val("#le_"+k),c=val("#sg_"+k);
@@ -639,19 +1047,18 @@ function showText(){
   var two=lang==="both";
   $("#txt").innerHTML=act().map(function(k){
     return'<div class="lblock">'+(two?'<p class="lh">'+(k==="ru"?"Русский":"Қазақша")+'</p>':'')+
-      '<label for="ti_'+k+'">Заголовок</label><input id="ti_'+k+'" type="text" maxlength="80" autocomplete="off" value="'+esc(st[k].ti)+'">'+
-      '<label for="le_'+k+'">Текст приглашения</label><textarea id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
-      '<label for="sg_'+k+'">Подпись</label><input id="sg_'+k+'" type="text" maxlength="160" autocomplete="off" value="'+esc(st[k].sg)+'"></div>';}).join("");
+      '<label class="lbl" for="ti_'+k+'">Заголовок</label><input class="inp" id="ti_'+k+'" type="text" maxlength="80" autocomplete="off" value="'+esc(st[k].ti)+'">'+
+      '<label class="lbl" for="le_'+k+'">Текст приглашения</label><textarea class="inp" id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
+      '<label class="lbl" for="sg_'+k+'">Подпись</label><input class="inp" id="sg_'+k+'" type="text" maxlength="160" autocomplete="off" value="'+esc(st[k].sg)+'"></div>';}).join("");
   $("#prog").innerHTML=st.rows.map(function(r,i){
     return'<div class="prow" data-i="'+i+'"><button class="del" type="button" aria-label="Удалить">✕</button>'+
-      '<input class="tm" type="time" value="'+esc(r[0])+'" aria-label="Время">'+
+      '<input class="inp tm" type="time" value="'+esc(r[0])+'" aria-label="Время">'+
       act().map(function(k){
         var off=k==="ru"?0:2;
         return(two?'<span class="ptag">'+(k==="ru"?"RU":"ҚАЗ")+'</span>':'')+
-          '<input class="t1_'+k+'" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
-          '<input class="t2_'+k+'" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'">';}).join("")+'</div>';}).join("");
+          '<input class="inp t1_'+k+'" type="text" maxlength="60" placeholder="Название" value="'+esc(r[1+off])+'">'+
+          '<input class="inp t2_'+k+'" type="text" maxlength="90" placeholder="Описание (необязательно)" value="'+esc(r[2+off])+'">';}).join("")+'</div>';}).join("");
 }
-/* если у языка пусто — подставляем заготовку шаблона, чтобы текст не «пропадал» */
 function ensure(k){
   var p=PRE[$("#tpl").value],i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
   if(!clean(st[k].ti)&&!clean(st[k].le)&&!clean(st[k].sg)){st[k]={ti:p.ti[i],le:p.le[i],sg:p.sg[i]};filled=true;}
@@ -664,7 +1071,7 @@ function setLang(l){
   document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===l);});
   var filled=act().filter(ensure);
   showText();
-  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на этом языке подставлены из шаблона — замените их переводом вашего текста");
+  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на языке подставлены из шаблона");
 }
 function isPresetUnchanged(k){
   var p=PRE[k];if(!p)return false;
@@ -676,10 +1083,7 @@ function isPresetUnchanged(k){
   return true;
 }
 var lastTpl="luxury";
-function defaultFutureDate(days){
-  var dt=new Date(Date.now()+(days||14)*86400000);
-  return dt.toISOString().slice(0,10);
-}
+function defaultFutureDate(days){return new Date(Date.now()+(days||14)*86400000).toISOString().slice(0,10);}
 function applyPreset(k){
   var p=PRE[k];if(!p)return;
   lastTpl=k;
@@ -691,7 +1095,7 @@ function applyPreset(k){
   showText();
 }
 
-/* ---------- кодирование ссылки ---------- */
+/* ---------- Кодирование ссылки (#z / #j) ---------- */
 function b64u(bytes){var s="";for(var i=0;i<bytes.length;i++)s+=String.fromCharCode(bytes[i]);return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
 function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
 async function encode(obj){
@@ -780,19 +1184,14 @@ async function decodeHash(h){
     if(typeof DecompressionStream!=="undefined"){
       var r=new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw")));
       bytes=new Uint8Array(await r.arrayBuffer());
-    }else{
-      bytes=rawInflate(bytes,200000);
-    }
-  }else if(mode!=="j"){throw new Error("unknown-format");}
+    }else bytes=rawInflate(bytes,200000);
+  }else if(mode!=="j")throw new Error("unknown");
   var o=JSON.parse(new TextDecoder().decode(bytes));
-  if(!o||typeof o!=="object"||Array.isArray(o))throw new Error("invalid-data");
+  if(!o||typeof o!=="object"||Array.isArray(o))throw new Error("invalid");
   return o;
 }
 
-/* ---------- сборка данных ---------- */
-function clean(s){return String(s||"").trim();}
-function getAdminPin(){try{return localStorage.getItem(PIN_KEY)||"saqtaa2026";}catch(_){return"saqtaa2026";}}
-function getSrvUrl(){return clean($("#srvUrl").value)||clean($("#sheet").value)||"";}
+/* ---------- Сборка и валидация данных ---------- */
 function langBlock(i){
   var off=i===0?0:2,k=i===0?"ru":"kz";
   var pr=st.rows.filter(function(r){return r[0]&&clean(r[1+off]);}).map(function(r){
@@ -810,7 +1209,7 @@ function collect(){
   };
   var em=clean($("#clientEmail").value);
   if(em&&currentRsvpMode!=="none")o.em=em;
-  var srv=clean($("#sheet").value)||clean($("#srvUrl").value);
+  var srv=clean($("#sheet").value)||getSrvUrl();
   if(currentRsvpMode==="saqtaa"){
     if(srv){o.srv=srv;o.sheet=srv;}
   }else if(currentRsvpMode==="ejs"){
@@ -826,11 +1225,11 @@ function collect(){
   return o;
 }
 function validate(o){
-  if(!o.n)return"Впишите имена.";
+  if(!o.n)return"Введите название события или имена.";
   if(!o.d)return"Выберите дату.";
   if(!o.s)return"Укажите время начала.";
   if(!o.e)return"Укажите время окончания.";
-  if(o.s===o.e)return"Время окончания не может совпадать со временем начала.";
+  if(o.s===o.e)return"Время окончания не может совпадать с началом.";
   var dateObj=new Date(o.d+"T12:00:00Z");
   if(!Number.isFinite(dateObj.getTime())||dateObj.toISOString().slice(0,10)!==o.d)return"Укажите корректную дату.";
   var endDay=o.d;
@@ -838,29 +1237,28 @@ function validate(o){
   var expMs=Math.max(new Date(endDay+"T"+o.e+":00+05:00").getTime(),new Date(o.d+"T23:59:59+05:00").getTime());
   if(Date.now()>expMs)return"Дата мероприятия уже прошла. Укажите будущую дату.";
   var need=act().filter(function(k){return !clean(st[k].le);});
-  if(need.length)return"Впишите текст приглашения: "+need.map(function(k){return k==="ru"?"русский":"казахский";}).join(" и ")+".";
+  if(need.length)return"Впишите текст приглашения ("+need.map(function(k){return k==="ru"?"RU":"KZ";}).join(", ")+").";
   if(o.g&&!/^https:\/\//i.test(o.g))return"Ссылка 2ГИС должна начинаться с https://";
   if(o.p&&!/^https:\/\//i.test(o.p))return"Ссылка на фото должна начинаться с https://";
   if(o.em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(o.em))return"Проверьте правильность Email клиента.";
   if(o.rsvp){
     if(currentRsvpMode==="saqtaa"){
-      if(o.srv&&!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера SAQTAA должен начинаться с https://script.google.com/";
+      if(o.srv&&!/^https:\/\/script\.google\.com\//i.test(o.srv))return"URL сервера должен начинаться с https://script.google.com/";
     }else if(currentRsvpMode==="ejs"){
-      if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Для EmailJS укажите Service ID, Template ID и Public Key.";
-      if(!o.em)return"Для отправки через EmailJS укажите Email клиента.";
+      if(!o.ejs||!o.ejs.s||!o.ejs.t||!o.ejs.u)return"Укажите Service ID, Template ID и Public Key для EmailJS.";
+      if(!o.em)return"Для EmailJS укажите Email клиента.";
     }else if(currentRsvpMode==="w3f"){
-      if(!o.k)return"Для сбора через Web3Forms укажите ключ клиента.";
-      if(!/^[0-9a-f-]{20,}$/i.test(o.k))return"Ключ Web3Forms выглядит неверно — проверьте его.";
+      if(!o.k)return"Укажите ключ Web3Forms.";
     }
   }
   return"";
 }
 
-/* ---------- черновик и режимы RSVP ---------- */
+/* ---------- Черновик, режимы RSVP и заполнение формы ---------- */
 var saveTimer=null;
 function saveEjsConfig(){
   try{
-    var cfg={s:clean($("#ejsService").value),t:clean($("#ejsTemplate").value),u:clean($("#ejsKey").value)};
+    var cfg={s:clean($("#ejsService").value)||clean($("#cfgEjsService").value),t:clean($("#ejsTemplate").value)||clean($("#cfgEjsTemplate").value),u:clean($("#ejsKey").value)||clean($("#cfgEjsKey").value)};
     if(cfg.s||cfg.t||cfg.u)localStorage.setItem(EJS_KEY,JSON.stringify(cfg));
   }catch(_){}
 }
@@ -869,15 +1267,11 @@ function save(){
   saveEjsConfig();
   try{
     localStorage.setItem(KEY,JSON.stringify({o:collect(),base:$("#base").value,updated:Date.now()}));
-    var ss=$("#saveState");
-    if(ss)ss.textContent="Черновик сохранён · "+new Date().toLocaleTimeString();
-  }catch(_){
-    var ss=$("#saveState");
-    if(ss)ss.textContent="Не удалось сохранить черновик: память браузера заполнена.";
-  }
+    if($("#saveState"))$("#saveState").textContent="Сохранено · "+new Date().toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  }catch(_){}
   schedulePreview();
 }
-function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,220);schedulePreview();}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,240);schedulePreview();}
 function setRsvpMode(mode){
   currentRsvpMode=mode;
   document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.r===mode);});
@@ -890,12 +1284,13 @@ function fillFrom(o){
   currentOrderId=o.oid||("ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
   lastTpl=$("#tpl").value;
+  setTemplateCards();
   $("#bigWrap").hidden=($("#tpl").value!=="editorial");
-  $("#n").value=o.n||"";$("#d").value=o.d||"";$("#s").value=o.s||"";$("#e").value=o.e||"";
+  $("#n").value=o.n||"";$("#d").value=o.d||defaultFutureDate(14);$("#s").value=o.s||"18:00";$("#e").value=o.e||"23:30";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
   $("#p").value=o.p||"";$("#b").value=o.b||"";
   $("#clientEmail").value=o.em||"";
-  var defSrv="";try{defSrv=localStorage.getItem(SRV_KEY)||"";}catch(_){}
+  var defSrv=getSrvUrl();
   if(o.ejs&&o.ejs.s){
     setRsvpMode("ejs");
     $("#ejsService").value=o.ejs.s||"";$("#ejsTemplate").value=o.ejs.t||"";$("#ejsKey").value=o.ejs.u||"";
@@ -914,112 +1309,104 @@ function fillFrom(o){
   var a=(o.ru&&o.ru.pr)||[],b=(o.kz&&o.kz.pr)||[],n=Math.max(a.length,b.length);st.rows=[];
   for(var i=0;i<n;i++){var x=a[i]||[],y=b[i]||[];st.rows.push([x[0]||y[0]||"",x[1]||"",x[2]||"",y[1]||"",y[2]||""]);}
   lang=(o.l==="kz"||o.l==="both")?o.l:"ru";
-  document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===lang);});
+  document.querySelectorAll("#langSeg button").forEach(function(btn){btn.classList.toggle("on",btn.dataset.l===lang);});
   showText();
 }
 
-/* ---------- Навигация между экранами приложения ---------- */
+/* ---------- Навигация между 5 экранами ---------- */
 function switchScreen(sc){
   activeScreen=sc;
-  var isPrev=(sc==="preview");
-  $("#screenEditor").hidden=(sc!=="editor"&&!isPrev);
+  $("#screenHome").hidden=(sc!=="home");
   $("#screenOrders").hidden=(sc!=="orders");
+  $("#screenEditor").hidden=(sc!=="editor");
+  $("#screenStats").hidden=(sc!=="stats");
   $("#screenSettings").hidden=(sc!=="settings");
-  var edCol=$("#editorCol"),prBox=$("#previewBox");
-  if(isPrev){
-    if(window.innerWidth<=820)edCol.hidden=true;
-    prBox.classList.remove("mobile-hidden");
-    schedulePreview();
-  }else if(sc==="editor"){
-    edCol.hidden=false;
-    prBox.classList.add("mobile-hidden");
-    schedulePreview();
-  }
-  document.querySelectorAll("[data-nav]").forEach(function(b){
+  $("#topPreviewBtn").hidden=(sc!=="editor");
+  document.querySelectorAll("#bottomAppNav button").forEach(function(b){
     b.classList.toggle("on",b.dataset.nav===sc);
   });
-  var sub=$("#hdrSub");
+  var sub=$("#topSub");
   if(sub){
-    sub.textContent=sc==="orders"?"Все созданные заказы и статистика клиентов":sc==="settings"?"Безопасность, смена пароля и сервер SAQTAA":sc==="preview"?"Живой предпросмотр приглашения":"Конструктор приглашений и сбор ответов";
+    sub.textContent=sc==="home"?"Администратор":sc==="orders"?"Управление заказами":sc==="editor"?"Конструктор приглашения":sc==="stats"?"Онлайн-статистика гостей":"Настройки приложения";
   }
+  if(sc==="home")renderHome();
+  if(sc==="orders")renderHistory();
+  if(sc==="editor")schedulePreview();
+  if(sc==="stats")initStatsScreen();
   window.scrollTo({top:0,behavior:"smooth"});
 }
 document.querySelectorAll("[data-nav]").forEach(function(b){
   b.addEventListener("click",function(){switchScreen(b.dataset.nav);});
 });
-$("#toggleLoadOldBtn").addEventListener("click",function(){
-  var w=$("#loadOldWrap");
-  w.hidden=!w.hidden;
-});
+$("#edBackBtn").addEventListener("click",function(){switchScreen("home");});
+$("#homeAllOrdersBtn").addEventListener("click",function(){switchScreen("orders");});
+$("#homeCreateBtn").addEventListener("click",startNewOrder);
 
-/* ---------- Настройка сервера SAQTAA ---------- */
-function updateSrvStatusBanner(){
-  var url="";try{url=localStorage.getItem(SRV_KEY)||"";}catch(_){}
-  var stEl=$("#srvStatusText");
-  if(url){
-    $("#srvUrl").value=url;
-    if(!clean($("#sheet").value))$("#sheet").value=url;
-    if(stEl)stEl.innerHTML="✅ <strong>Сервер SAQTAA подключён.</strong> Фото загружаются автоматически, заказы сохраняются в облаке, а письма уходят с Gmail SAQTAA на почту клиента.";
-  }else{
-    if(stEl)stEl.textContent="Подключите единый скрипт Google-аккаунта SAQTAA один раз — и для каждого клиента достаточно просто вписать его Email.";
+/* ---------- Статусы заказов (Активно / Черновик / Завершено) ---------- */
+function getOrderStatus(x){
+  if(x&&x.status==="draft")return"draft";
+  if(x&&x.date){
+    var today=new Date().toISOString().slice(0,10);
+    if(x.date<today)return"done";
   }
+  return"active";
 }
-$("#toggleServerSetup").addEventListener("click",function(){
-  var w=$("#serverSetupWrap");
-  w.hidden=!w.hidden;
-});
-$("#saveSrvBtn").addEventListener("click",async function(){
-  var url=clean($("#srvUrl").value);
-  if(!url){
-    try{localStorage.removeItem(SRV_KEY);}catch(_){}
-    updateSrvStatusBanner();
-    toast("Ссылка сервера очищена");
-    return;
-  }
-  if(!/^https:\/\/script\.google\.com\//i.test(url)){
-    toast("Ссылка должна начинаться с https://script.google.com/");
-    return;
-  }
-  var btn=this,oldTxt=btn.textContent;
-  btn.disabled=true;btn.textContent="⏳ Проверяю сервер…";
+function statusBadgeHtml(stCode){
+  if(stCode==="draft")return'<span class="pill draft">Черновик</span>';
+  if(stCode==="done")return'<span class="pill done">Завершено</span>';
+  return'<span class="pill active">Активно</span>';
+}
+var RU_MONTHS=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+function fmtShortDate(iso){
+  if(!iso)return"Без даты";
+  var p=iso.split("-");
+  if(p.length!==3)return iso;
+  var m=parseInt(p[1],10)-1;
+  return parseInt(p[2],10)+" "+(RU_MONTHS[m]||p[1]);
+}
+function getOrderStatsUrl(x){
+  if(x&&x.stats_url)return x.stats_url;
+  if(x&&x.url&&x.url.indexOf("#")!==-1)return x.url.replace(/invite\.html/i,"stats.html");
+  return"";
+}
+function getLocalOrderRsvpRows(oid){
+  if(!oid)return[];
   try{
-    localStorage.setItem(SRV_KEY,url);
-    $("#sheet").value=url;
-    updateSrvStatusBanner();
-    var r=await fetch(url+"?action=auth&pin="+encodeURIComponent(getAdminPin()));
-    var j=await r.json();
-    if(j&&j.ok){
-      toast("✅ Сервер SAQTAA успешно подключён и проверен!");
-      $("#serverSetupWrap").hidden=true;
-    }else{
-      toast("Сервер сохранён (ответ: "+(j&&j.error?j.error:"проверьте доступ «Все / Anyone»")+")");
-    }
-  }catch(_){
-    toast("Ссылка сервера сохранена!");
+    var r=JSON.parse(localStorage.getItem("saqtaa-rsvp-rows-"+oid)||"[]");
+    return Array.isArray(r)?r:[];
+  }catch(_){return[];}
+}
+
+/* ---------- Главная (#screenHome) ---------- */
+function renderHome(){
+  var total=historyItems.length, active=0;
+  historyItems.forEach(function(x){if(getOrderStatus(x)==="active")active++;});
+  $("#homeTotalCount").textContent=String(total);
+  $("#homeActiveCount").textContent=String(active);
+  var box=$("#homeRecentList");
+  if(!historyItems.length){
+    box.innerHTML='<div style="padding:22px 16px;text-align:center;color:var(--ink2);font-size:.86rem">Пока нет заказов. Нажмите «Создать приглашение».</div>';
+    return;
   }
-  btn.disabled=false;btn.textContent=oldTxt;
-  save();
+  var recent=historyItems.slice(-4).reverse();
+  box.innerHTML=recent.map(function(x){
+    var idx=historyItems.indexOf(x);
+    var stCode=getOrderStatus(x);
+    return'<div class="order-row" data-open-order="'+idx+'">'+
+      '<div class="order-row-main">'+
+        '<div class="order-row-title">'+esc(x.name||"Без названия")+'</div>'+
+        '<div class="order-row-sub"><span>'+esc(fmtShortDate(x.date))+'</span>'+(x.time?'<span>· '+esc(x.time)+'</span>':'')+'</div>'+
+      '</div>'+
+      '<div class="order-row-right">'+statusBadgeHtml(stCode)+'<span class="chev">›</span></div>'+
+    '</div>';
+  }).join("");
+}
+$("#homeRecentList").addEventListener("click",function(e){
+  var row=e.target.closest("[data-open-order]");if(!row)return;
+  loadOrderIntoEditor(Number(row.dataset.openOrder));
 });
 
-/* ---------- SAQTAA v3: База заказов, фильтры, фото, предпросмотр, облако ---------- */
-function setTemplateCards(){document.querySelectorAll("[data-template]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.template===$("#tpl").value));});}
-document.querySelectorAll("[data-template]").forEach(function(b){b.addEventListener("click",function(){$("#tpl").value=b.dataset.template;$("#tpl").dispatchEvent(new Event("change"));setTemplateCards();});});
-
-function isOrderUpcoming(x){
-  if(!x||!x.date)return true;
-  var today=new Date().toISOString().slice(0,10);
-  return x.date>=today;
-}
-function updateOrderCounters(){
-  var total=historyItems.length,up=0,past=0;
-  historyItems.forEach(function(x){if(isOrderUpcoming(x))up++;else past++;});
-  if($("#statTotalOrders"))$("#statTotalOrders").textContent=String(total);
-  if($("#statUpcomingOrders"))$("#statUpcomingOrders").textContent=String(up);
-  if($("#statPastOrders"))$("#statPastOrders").textContent=String(past);
-  if($("#topOrdersCount"))$("#topOrdersCount").textContent="("+total+")";
-  var nb=$("#navOrdersBadge");
-  if(nb){nb.textContent=String(total);nb.hidden=(total===0);}
-}
+/* ---------- Заказы (#screenOrders) ---------- */
 document.querySelectorAll("#orderFilterSeg button").forEach(function(b){
   b.addEventListener("click",function(){
     currentOrderFilter=b.dataset.of||"all";
@@ -1027,207 +1414,367 @@ document.querySelectorAll("#orderFilterSeg button").forEach(function(b){
     renderHistory();
   });
 });
-
-function getOrderStatsUrl(x){
-  if(x&&x.stats_url)return x.stats_url;
-  if(x&&x.url&&x.url.indexOf("#")!==-1)return x.url.replace(/invite\.html/i,"stats.html");
-  return"";
-}
-function getLocalOrderRsvpSummary(x){
-  var oid=(x&&x.id)||(x&&x.data&&x.data.oid)||"";
-  if(!oid)return null;
-  try{
-    var rows=JSON.parse(localStorage.getItem("saqtaa-rsvp-rows-"+oid)||"[]");
-    if(!Array.isArray(rows)||!rows.length)return null;
-    var yesGuests=0,noCount=0,maybeCount=0;
-    rows.forEach(function(r){
-      var st=String(r.status||"").toLowerCase();
-      var g=Math.max(1,parseInt(r.guests,10)||1);
-      if(st.indexOf("приду, вдво")!==-1)yesGuests+=2;
-      else if(st.indexOf("приду")!==-1&&st.indexOf("не приду")===-1)yesGuests+=g;
-      else if(st.indexOf("не смогу")!==-1||st.indexOf("не приду")!==-1)noCount++;
-      else maybeCount++;
-    });
-    return{total:rows.length,yesGuests:yesGuests,noCount:noCount,maybeCount:maybeCount};
-  }catch(_){return null;}
-}
 function renderHistory(){
-  updateOrderCounters();
   var box=$("#historyList");
   if(!historyItems.length){
-    box.innerHTML='<p class="hint" style="text-align:center;padding:20px 10px">В базе пока нет заказов. Создайте первое приглашение во вкладке «✏️ Конструктор» или нажмите «☁️ С сервера».</p>';
+    box.innerHTML='<div class="card" style="text-align:center;color:var(--ink2)">В базе пока нет заказов. Нажмите «Создать» внизу или «☁️ С сервера».</div>';
     return;
   }
   var q=clean($("#histSearch").value).toLowerCase();
   var filtered=historyItems.slice().reverse().filter(function(x){
-    if(currentOrderFilter==="upcoming"&&!isOrderUpcoming(x))return false;
-    if(currentOrderFilter==="past"&&isOrderUpcoming(x))return false;
+    var stCode=getOrderStatus(x);
+    if(currentOrderFilter!=="all"&&stCode!==currentOrderFilter)return false;
     if(!q)return true;
     var dotDate=x.date?x.date.split("-").reverse().join("."):"";
-    var em=(x.email||(x.data&&x.data.em)||"");
+    var em=x.email||(x.data&&x.data.em)||"";
     var str=((x.name||"")+" "+(x.template||"")+" "+(x.date||"")+" "+dotDate+" "+(x.time||"")+" "+em).toLowerCase();
     return str.indexOf(q)!==-1;
   });
   if(!filtered.length){
-    box.innerHTML='<p class="hint" style="text-align:center;padding:18px 10px">Ничего не найдено по вашему фильтру или запросу.</p>';
+    box.innerHTML='<div class="card" style="text-align:center;color:var(--ink2)">Ничего не найдено по фильтру или поиску.</div>';
     return;
   }
   box.innerHTML=filtered.map(function(x){
     var idx=historyItems.indexOf(x);
-    var upcoming=isOrderUpcoming(x);
-    var dotDate=x.date?x.date.split("-").reverse().join("."):"";
-    var dateStr=x.date?("📅 <strong>"+esc(dotDate)+"</strong>"):"📅 Без даты";
-    var timeStr=x.time?(" · ⏰ "+esc(x.time)):"";
-    var tplStr=x.template?(" · 🎨 "+esc(x.template)):"";
-    var em=x.email||(x.data&&x.data.em)||"";
-    var emStr=em?("<br>📧 Клиент: <strong>"+esc(em)+"</strong>"):"";
-    var rsvpSum=getLocalOrderRsvpSummary(x);
-    var rsvpStr=rsvpSum
-      ?("<br><span style='display:inline-block;margin-top:4px;padding:3px 9px;border-radius:999px;background:#E8F5EE;color:#0F4A38;font-weight:700;font-size:.75rem'>👥 Ответов: "+rsvpSum.total+" · Придут: "+rsvpSum.yesGuests+" гост."+(rsvpSum.noCount?" · Отказов: "+rsvpSum.noCount:"")+"</span>")
-      :"";
-    var savedStr="<br><span style='opacity:.75;font-size:.73rem'>🕒 Сохранено: "+new Date(x.at||Date.now()).toLocaleString()+"</span>";
+    var stCode=getOrderStatus(x);
     var stUrl=getOrderStatsUrl(x);
+    var rows=getLocalOrderRsvpRows(x.id);
+    var rsvpTag=rows.length?'<span>· 👥 Ответов: <b>'+rows.length+'</b></span>':'';
     var waHref=waOrderLink(x,stUrl);
-    var statsBtns=stUrl
-      ?'<button type="button" class="act-stats" data-hstats="'+idx+'">📊 Копировать статистику</button><a class="act-stats" href="'+esc(stUrl)+'" target="_blank" rel="noopener">📈 Открыть статистику</a>'
-      :'';
-    return '<div class="history-item" data-hi="'+idx+'">'+
-      '<div class="order-head">'+
-        '<strong>'+esc(x.name||"Без названия")+'</strong>'+
-        '<span class="order-badge '+(upcoming?"upcoming":"past")+'">'+(upcoming?"Предстоит":"Прошло")+'</span>'+
+    return'<div class="order-card" data-hi="'+idx+'">'+
+      '<div class="order-card-top" data-hload="'+idx+'">'+
+        '<div class="order-row-main">'+
+          '<div class="order-row-title">'+esc(x.name||"Без названия")+'</div>'+
+          '<div class="order-row-sub"><span>📅 '+esc(fmtShortDate(x.date))+'</span>'+(x.time?'<span>· ⏰ '+esc(x.time)+'</span>':'')+'<span>· '+esc(x.template||"luxury")+'</span>'+rsvpTag+'</div>'+
+        '</div>'+
+        '<div class="order-row-right">'+statusBadgeHtml(stCode)+'<span class="chev">›</span></div>'+
       '</div>'+
-      '<div class="order-meta">'+dateStr+timeStr+tplStr+emStr+rsvpStr+savedStr+'</div>'+
-      '<div class="history-actions">'+
-        '<button type="button" class="act-primary" data-hload="'+idx+'">✏️ Редактировать</button>'+
-        '<a class="act-wa" href="'+esc(waHref)+'" target="_blank" rel="noopener">📲 В WhatsApp</a>'+
-        '<button type="button" data-hcopy="'+idx+'">🔗 Ссылка гостей</button>'+
-        '<a href="'+esc(x.url||"#")+'" target="_blank" rel="noopener">👁️ Открыть</a>'+
-        statsBtns+
-        '<button type="button" data-hdel="'+idx+'" style="color:#9E2B3A;grid-column:1/-1">🗑️ Удалить заказ</button>'+
-      '</div></div>';
+      '<div class="order-card-actions">'+
+        '<button type="button" class="act-btn dark" data-hload="'+idx+'">✏️ Редактировать</button>'+
+        '<a class="act-btn wa" href="'+esc(waHref)+'" target="_blank" rel="noopener">📲 WhatsApp</a>'+
+        (x.url?'<a class="act-btn" href="'+esc(x.url)+'" target="_blank" rel="noopener">👁️ Приглашение</a>':'<button type="button" class="act-btn" data-hload="'+idx+'">📝 Доделать</button>')+
+        '<button type="button" class="act-btn" data-hopenstats="'+idx+'">📊 Статистика</button>'+
+        '<button type="button" class="act-btn del" data-hdel="'+idx+'">🗑️ Удалить заказ</button>'+
+      '</div>'+
+    '</div>';
   }).join("");
 }
-window.addEventListener("storage",function(e){
-  if(e&&e.key&&e.key.indexOf("saqtaa-rsvp-rows-")===0)renderHistory();
+async function loadOrderIntoEditor(idx){
+  var x=historyItems[idx];if(!x||!x.data){toast("Запись заказа не найдена");return;}
+  fillFrom(x.data);
+  $("#activeOrderBadge").textContent="Редактирование";
+  setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));
+  save();
+  switchScreen("editor");
+}
+$("#historyList").addEventListener("click",async function(e){
+  var el=e.target.closest("[data-hload],[data-hopenstats],[data-hdel]");
+  if(!el)return;
+  if(el.hasAttribute("data-hload")){
+    loadOrderIntoEditor(Number(el.dataset.hload));
+  }else if(el.hasAttribute("data-hopenstats")){
+    var x=historyItems[Number(el.dataset.hopenstats)];
+    if(x){currentStatsOrder=x;switchScreen("stats");}
+  }else if(el.hasAttribute("data-hdel")){
+    var i=Number(el.dataset.hdel),x=historyItems[i];if(!x)return;
+    if(!confirm("Удалить заказ «"+(x.name||"Без названия")+"»?"))return;
+    var delId=x.id;
+    historyItems.splice(i,1);
+    try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}
+    if(delId)delPhoto(delId).catch(function(){});
+    renderHistory();
+    toast("🗑️ Заказ удалён");
+  }
 });
+$("#histSearch").addEventListener("input",renderHistory);
+
+/* ---------- Облачная синхронизация заказов ---------- */
 async function syncOrderToServer(entry){
-  var srv=getSrvUrl();
-  if(!srv)return;
+  var srv=getSrvUrl();if(!srv)return;
   try{
     await fetch(srv,{
       method:"POST",
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body:JSON.stringify({
-        action:"save_order",
-        pin:getAdminPin(),
-        id:entry.id,
-        name:entry.name,
-        date:entry.date,
-        time:entry.time,
-        template:entry.template,
-        email:entry.email||"",
-        invite_url:entry.url,
-        stats_url:entry.stats_url||"",
-        data:entry.data
+        action:"save_order",pin:getAdminPin(),
+        id:entry.id,names:entry.name,name:entry.name,
+        date:entry.date,time:entry.time,
+        tpl:entry.template,template:entry.template,
+        email:entry.email||"",invite_url:entry.url||"",stats_url:entry.stats_url||"",data:entry.data
       })
     });
   }catch(_){}
 }
 $("#syncCloudHist").addEventListener("click",async function(){
   var srv=getSrvUrl();
-  if(!srv){toast("Сначала укажите URL сервера SAQTAA во вкладке «Настройки»");switchScreen("settings");return;}
+  if(!srv){toast("Укажите URL сервера в Настройках");switchScreen("settings");return;}
   var btn=this,old=btn.textContent;
-  btn.disabled=true;btn.textContent="⏳ Загрузка…";
+  btn.disabled=true;btn.textContent="⏳…";
   try{
     var r=await fetch(srv+"?action=list_orders&pin="+encodeURIComponent(getAdminPin()));
     var j=await r.json();
     if(!j||!j.ok)throw new Error((j&&j.error)||"Ошибка сервера");
-    var cloud=j.orders||[];
-    var map={};
-    historyItems.forEach(function(item){map[item.url||item.id]=item;});
+    var cloud=j.orders||[],map={};
+    historyItems.forEach(function(item){map[item.id||item.url]=item;});
     cloud.forEach(function(c){
-      var key=c.invite_url||c.id;
-      if(!key)return;
-      var parsedData=null;
-      try{parsedData=typeof c.data==="string"?JSON.parse(c.data):c.data;}catch(_){}
-      if(!map[key]){
-        historyItems.push({
-          id:c.id||String(Date.now()),
-          name:c.name||"Заказ",
-          date:c.date||"",
-          time:c.time||"",
-          template:c.template||"luxury",
-          email:c.email||"",
-          url:c.invite_url||"",
-          stats_url:c.stats_url||"",
-          data:parsedData||{},
-          at:c.updated_at?new Date(c.updated_at).getTime():Date.now()
-        });
-      }
+      var key=c.id||c.invite_url;if(!key||map[key])return;
+      var parsed=null;try{parsed=typeof c.data==="string"?JSON.parse(c.data):c.data;}catch(_){}
+      historyItems.push({
+        id:c.id||String(Date.now()),
+        name:c.names||c.name||"Заказ",
+        date:c.date||"",time:c.time||"",
+        template:c.tpl||c.template||"luxury",
+        email:c.email||"",url:c.invite_url||"",stats_url:c.stats_url||"",
+        status:c.invite_url?"active":"draft",
+        data:parsed||{},at:Date.now()
+      });
     });
     try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}
     renderHistory();
-    toast("☁️ Заказы синхронизированы ("+historyItems.length+")");
-  }catch(e){
-    toast("Не удалось загрузить с сервера: "+(e&&e.message?e.message:"ошибка"));
-  }
+    toast("☁️ Синхронизировано: "+historyItems.length);
+  }catch(e){toast("Ошибка сервера: "+(e&&e.message?e.message:"недоступен"));}
   btn.disabled=false;btn.textContent=old;
 });
-async function storeHistory(o,url,statsUrl){
+
+async function storeHistory(o,url,statsUrl,status){
   var entry={
     id:o.oid||(crypto.randomUUID?crypto.randomUUID():String(Date.now())),
-    name:o.n,
-    template:o.t,
-    date:o.d,
+    name:o.n||"Черновик без имени",
+    template:o.t||"luxury",
+    date:o.d||"",
     time:o.s?(o.s+(o.e?" – "+o.e:"")):"",
     email:o.em||"",
+    status:status||"active",
     at:Date.now(),
     data:o,
-    url:url,
+    url:url||"",
     stats_url:statsUrl||""
   };
-  var removed=historyItems.filter(function(x){return x.url===url||x.id===entry.id;});
-  historyItems=historyItems.filter(function(x){return x.url!==url&&x.id!==entry.id;});
+  var removed=historyItems.filter(function(x){return x.id===entry.id||(url&&x.url===url);});
+  historyItems=historyItems.filter(function(x){return x.id!==entry.id&&(!url||x.url!==url);});
   historyItems.push(entry);
   if(historyItems.length>50){removed=removed.concat(historyItems.slice(0,historyItems.length-50));historyItems=historyItems.slice(-50);}
-  try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);for(var i=0;i<removed.length;i++)if(removed[i]&&removed[i].id&&removed[i].id!==entry.id)await delPhoto(removed[i].id).catch(function(){});}catch(_){toast("Внимание: память браузера заполнена.");}
+  try{
+    localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));
+    if(currentPhotoBlob)await putPhoto(entry.id,currentPhotoBlob);
+    for(var i=0;i<removed.length;i++)if(removed[i]&&removed[i].id&&removed[i].id!==entry.id)await delPhoto(removed[i].id).catch(function(){});
+  }catch(_){toast("Память браузера заполнена");}
   renderHistory();
-  syncOrderToServer(entry);
+  if(status!=="draft")syncOrderToServer(entry);
 }
-$("#historyList").addEventListener("click",async function(e){
-  var b=e.target.closest("button");if(!b)return;
-  var i=Number(b.dataset.hload||b.dataset.hcopy||b.dataset.hstats||b.dataset.hdel),x=historyItems[i];if(!x)return;
-  if(b.hasAttribute("data-hload")){
-    if(!x.data||typeof x.data!=="object"){toast("Запись заказа повреждена");return;}
-    fillFrom(x.data);
-    if($("#activeOrderBadge"))$("#activeOrderBadge").textContent="✏️ Редактирование заказа: "+(x.name||"Без имени");
-    setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));
-    save();
-    switchScreen("editor");
-    toast("✏️ Заказ открыт в конструкторе");
-  }else if(b.hasAttribute("data-hcopy")){
-    try{await navigator.clipboard.writeText(x.url);toast("🔗 Ссылка приглашения скопирована");}catch(_){toast("Не удалось скопировать ссылку");}
-  }else if(b.hasAttribute("data-hstats")){
-    var stUrl=getOrderStatsUrl(x);
-    if(stUrl){try{await navigator.clipboard.writeText(stUrl);toast("📊 Ссылка статистики скопирована");}catch(_){toast("Не удалось скопировать ссылку статистики");}}
-  }else if(b.hasAttribute("data-hdel")){
-    if(!confirm("Удалить заказ «"+(x.name||"Без названия")+"»?"))return;
-    var delId=x.id;
-    historyItems.splice(i,1);try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}if(delId)delPhoto(delId).catch(function(){});renderHistory();
-    var srv=getSrvUrl();
-    if(srv&&delId){fetch(srv,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"delete_order",pin:getAdminPin(),id:delId})}).catch(function(){});}
-    toast("🗑️ Заказ удалён");
+
+/* ---------- Статистика (#screenStats) ---------- */
+function initStatsScreen(){
+  var sel=$("#statsOrderSelect");
+  if(!historyItems.length){
+    sel.innerHTML='<option value="">Нет созданных заказов</option>';
+    currentStatsOrder=null;
+    renderStatsView([]);
+    return;
+  }
+  sel.innerHTML=historyItems.slice().reverse().map(function(x){
+    return'<option value="'+esc(x.id)+'">'+esc(x.name||"Без названия")+(x.date?" ("+fmtShortDate(x.date)+")":"")+'</option>';
+  }).join("");
+  if(currentStatsOrder&&historyItems.some(function(x){return x.id===currentStatsOrder.id;})){
+    sel.value=currentStatsOrder.id;
+  }else{
+    currentStatsOrder=historyItems[historyItems.length-1];
+    sel.value=currentStatsOrder.id;
+  }
+  loadStatsForOrder(currentStatsOrder);
+}
+$("#statsOrderSelect").addEventListener("change",function(){
+  var id=this.value;
+  currentStatsOrder=historyItems.find(function(x){return x.id===id;})||null;
+  loadStatsForOrder(currentStatsOrder);
+});
+$("#statsRefreshBtn").addEventListener("click",function(){
+  if(currentStatsOrder)loadStatsForOrder(currentStatsOrder);
+});
+async function loadStatsForOrder(order){
+  if(!order){renderStatsView([]);return;}
+  var localRows=getLocalOrderRsvpRows(order.id);
+  renderStatsView(localRows);
+  var srv=(order.data&&(order.data.srv||order.data.sheet))||getSrvUrl();
+  if(!srv)return;
+  try{
+    var r=await fetch(srv+(srv.indexOf("?")===-1?"?":"&")+"action=stats&oid="+encodeURIComponent(order.id)+"&t="+Date.now());
+    var j=await r.json();
+    if(j&&j.ok&&Array.isArray(j.rows)){
+      var map={};
+      j.rows.forEach(function(row){
+        var k=row.id||((row.name||"")+"_"+(row.fam||""));
+        map[k]={id:k,time:row.time||"",name:row.name||"",fam:row.fam||"",status:row.att||"yes",guests:Number(row.guests||1)};
+      });
+      localRows.forEach(function(lr){
+        var k=lr.id||((lr.name||"")+"_"+(lr.fam||""));
+        if(!map[k])map[k]=lr;
+      });
+      var merged=Object.keys(map).map(function(k){return map[k];});
+      renderStatsView(merged);
+    }
+  }catch(_){}
+}
+function classifyRow(r){
+  var stStr=String(r.status||r.att||"").toLowerCase();
+  if(stStr==="no"||stStr.indexOf("не смогу")!==-1||stStr.indexOf("не приду")!==-1)return"no";
+  if(stStr==="maybe"||stStr.indexOf("пока")!==-1||stStr.indexOf("дума")!==-1)return"maybe";
+  return"yes";
+}
+function renderStatsView(rows){
+  currentStatsRows=rows||[];
+  var yes=0,no=0,maybe=0,yesGuests=0;
+  currentStatsRows.forEach(function(r){
+    var c=classifyRow(r);
+    if(c==="yes"){
+      yes++;
+      var g=Math.max(1,parseInt(r.guests,10)||1);
+      if(String(r.status||"").toLowerCase().indexOf("вдво")!==-1&&g<2)g=2;
+      yesGuests+=g;
+    }else if(c==="no")no++;
+    else maybe++;
+  });
+  var total=yes+no+maybe;
+  var pY=total?Math.round(yes/total*100):0;
+  var pN=total?Math.round(no/total*100):0;
+  var pM=total?Math.max(0,100-pY-pN):0;
+  $("#stTotal").textContent=String(total);
+  $("#stDonutNum").textContent=String(total);
+  $("#stYes").textContent=String(yes);
+  $("#stYesGuestsNote").textContent=yesGuests>yes?("("+yesGuests+" чел.)"):"";
+  $("#stNo").textContent=String(no);
+  $("#stMaybe").textContent=String(maybe);
+  $("#stYesPct").textContent=pY+"%";
+  $("#stNoPct").textContent=pN+"%";
+  $("#stMaybePct").textContent=pM+"%";
+  $("#stGuestBtnCount").textContent=String(total);
+
+  var C=2*Math.PI*46;
+  var lY=total?(yes/total)*C:0;
+  var lN=total?(no/total)*C:0;
+  var lM=total?(maybe/total)*C:0;
+  $("#arcYes").setAttribute("stroke-dasharray",lY+" "+C);
+  $("#arcYes").setAttribute("stroke-dashoffset","0");
+  $("#arcNo").setAttribute("stroke-dasharray",lN+" "+C);
+  $("#arcNo").setAttribute("stroke-dashoffset",String(-lY));
+  $("#arcMaybe").setAttribute("stroke-dasharray",lM+" "+C);
+  $("#arcMaybe").setAttribute("stroke-dashoffset",String(-(lY+lN)));
+
+  renderStatsGuestList();
+}
+function renderStatsGuestList(){
+  var q=clean($("#statsGuestSearch").value).toLowerCase();
+  var box=$("#statsGuestRows");
+  var list=currentStatsRows.filter(function(r){
+    if(!q)return true;
+    return((r.name||"")+" "+(r.fam||"")).toLowerCase().indexOf(q)!==-1;
+  });
+  if(!list.length){
+    box.innerHTML='<p class="hint" style="text-align:center;padding:12px 0">Ответов пока нет. Нажмите «Добавить гостя», если кто-то подтвердил по телефону.</p>';
+    return;
+  }
+  box.innerHTML=list.map(function(r,idx){
+    var c=classifyRow(r);
+    var badge=c==="yes"?'<span class="pill active">Придёт</span>':c==="no"?'<span class="pill" style="background:rgba(214,90,90,.16);color:var(--red-ink)">Не придёт</span>':'<span class="pill done">Думает</span>';
+    return'<div class="guest-row">'+
+      '<div>'+
+        '<div class="guest-name">'+esc((r.name||"")+" "+(r.fam||""))+'</div>'+
+        '<div class="guest-meta">'+(r.time?esc(r.time):"")+(c==="yes"&&r.guests>1?" · "+r.guests+" гост.":"")+'</div>'+
+      '</div>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+badge+
+        '<button type="button" class="guest-del" data-gdel="'+idx+'" title="Удалить">✕</button>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+$("#toggleGuestListBtn").addEventListener("click",function(){
+  var w=$("#statsGuestWrap");w.hidden=!w.hidden;
+  $("#guestListChev").textContent=w.hidden?"›":"▾";
+});
+$("#toggleAddGuestBtn").addEventListener("click",function(){
+  $("#addGuestForm").hidden=!$("#addGuestForm").hidden;
+});
+$("#statsGuestSearch").addEventListener("input",renderStatsGuestList);
+$("#agSaveBtn").addEventListener("click",function(){
+  if(!currentStatsOrder){toast("Сначала создайте заказ");return;}
+  var nm=clean($("#agName").value),fm=clean($("#agFam").value),stV=$("#agStatus").value;
+  if(!nm){toast("Введите имя гостя");return;}
+  var statusText=stV==="yes"?"Приду":stV==="yes2"?"Приду, вдвоём":stV==="no"?"Не смогу прийти":"Пока не знаю";
+  var guests=stV==="yes2"?2:(stV==="yes"?1:0);
+  var row={id:"man_"+Date.now(),time:new Date().toLocaleString([], {day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}),name:nm,fam:fm||"—",status:statusText,guests:guests};
+  var rows=getLocalOrderRsvpRows(currentStatsOrder.id);
+  rows.unshift(row);
+  try{localStorage.setItem("saqtaa-rsvp-rows-"+currentStatsOrder.id,JSON.stringify(rows));}catch(_){}
+  $("#agName").value="";$("#agFam").value="";$("#addGuestForm").hidden=true;
+  renderStatsView(rows);
+  toast("✅ Гость добавлен");
+});
+$("#statsGuestRows").addEventListener("click",function(e){
+  var b=e.target.closest("[data-gdel]");if(!b||!currentStatsOrder)return;
+  var idx=Number(b.dataset.gdel);
+  var rows=getLocalOrderRsvpRows(currentStatsOrder.id);
+  if(idx>=0&&idx<rows.length){
+    rows.splice(idx,1);
+    try{localStorage.setItem("saqtaa-rsvp-rows-"+currentStatsOrder.id,JSON.stringify(rows));}catch(_){}
+    renderStatsView(rows);
+    toast("Запись удалена");
   }
 });
-function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,500);}
-async function updatePreview(){var frame=$("#livePreview");if(!frame||!document.querySelector("main")||document.querySelector("main").hidden)return;try{var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;if(!o.n)o.n="Ваши имена";if(!o.d){var d=new Date();d.setDate(d.getDate()+7);o.d=d.toISOString().slice(0,10);}if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";var p=PRE[o.t]||PRE.luxury;if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le){o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}}if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le){o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}}var base=clean($("#base").value)||new URL("invite.html",location.href).href;var url=base.replace(/#.*$/,"")+"#"+await encode(o);if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}}catch(e){}}
-function fileToWebp(file){return new Promise(function(resolve,reject){if(!file||!/^image\/(jpeg|png|webp)$/.test(file.type)){reject(new Error("Выберите JPG, PNG или WebP."));return;}var img=new Image(),u=URL.createObjectURL(file);img.onload=function(){var max=1400,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);var ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(blob){if(!blob){reject(new Error("Не удалось обработать фото."));return;}resolve(blob);},"image/jpeg",.82);};img.onerror=function(){URL.revokeObjectURL(u);reject(new Error("Не удалось прочитать изображение."));};img.src=u;});}
-function openPhotoDB(){if(!window.indexedDB)return Promise.reject(new Error("Браузер не поддерживает локальное хранилище фотографий."));if(!photoDBPromise)photoDBPromise=new Promise(function(resolve,reject){var req=indexedDB.open("saqtaa-local-media",1);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains("photos"))db.createObjectStore("photos",{keyPath:"id"});};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error||new Error("Не удалось открыть хранилище фото."));};});return photoDBPromise;}
-async function putPhoto(id,blob){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").put({id:id,blob:blob,type:blob.type||"image/jpeg"});tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error||new Error("Не удалось сохранить фото."));};});}
+$("#statsExportCsvBtn").addEventListener("click",function(){
+  if(!currentStatsRows.length){toast("Список гостей пуст");return;}
+  var csv="\uFEFFИмя;Фамилия;Статус;Гостей;Время\n"+currentStatsRows.map(function(r){
+    return[r.name||"",r.fam||"",r.status||r.att||"",r.guests||0,r.time||""].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(";");
+  }).join("\n");
+  var blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=u;a.download="saqtaa-guests-"+(currentStatsOrder?currentStatsOrder.id:"export")+".csv";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1000);
+  toast("📥 Таблица скачана");
+});
+$("#statsCopyWaBtn").addEventListener("click",async function(){
+  if(!currentStatsOrder){toast("Нет активного заказа");return;}
+  var lines=["📊 Статистика: "+(currentStatsOrder.name||""),"Всего ответов: "+currentStatsRows.length,"Придут: "+$("#stYes").textContent+" · Не придут: "+$("#stNo").textContent+" · Думают: "+$("#stMaybe").textContent,""];
+  currentStatsRows.forEach(function(r,i){lines.push((i+1)+". "+(r.name||"")+" "+(r.fam||"")+" — "+(r.status||r.att||""));});
+  try{await navigator.clipboard.writeText(lines.join("\n"));toast("📲 Отчёт скопирован для WhatsApp");}catch(_){toast("Не удалось скопировать");}
+});
+$("#statsCopyClientLinkBtn").addEventListener("click",async function(){
+  var u=getOrderStatsUrl(currentStatsOrder);
+  if(!u){toast("Сначала нажмите «Создать» у этого заказа");return;}
+  try{await navigator.clipboard.writeText(u);toast("🔗 Ссылка статистики скопирована");}catch(_){toast("Не удалось скопировать");}
+});
+
+/* ---------- Предпросмотр, Фото (IndexedDB + Google Диск) ---------- */
+function setTemplateCards(){document.querySelectorAll("[data-template]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.template===$("#tpl").value));});}
+document.querySelectorAll("[data-template]").forEach(function(b){b.addEventListener("click",function(){$("#tpl").value=b.dataset.template;$("#tpl").dispatchEvent(new Event("change"));setTemplateCards();});});
+function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,450);}
+async function updatePreview(){
+  var frame=$("#livePreview");if(!frame||$("#appMain").hidden)return;
+  try{
+    var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;
+    if(!o.n)o.n="Ерасыл & Аяулым";if(!o.d)o.d=defaultFutureDate(14);if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";
+    var p=PRE[o.t]||PRE.luxury;
+    if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le)o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}
+    if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le)o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}
+    var base=clean($("#base").value)||new URL("invite.html",location.href).href;
+    var url=base.replace(/#.*$/,"")+"#"+await encode(o);
+    if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}
+  }catch(_){}
+}
+$("#topPreviewBtn").addEventListener("click",function(){
+  var box=$("#previewBox");box.classList.toggle("mob-hidden");
+  if(!box.classList.contains("mob-hidden")){schedulePreview();box.scrollIntoView({behavior:"smooth"});}
+});
+$("#mobBackBtn").addEventListener("click",function(){$("#previewBox").classList.add("mob-hidden");});
+
+function fileToJpeg(file){return new Promise(function(resolve,reject){if(!file||!/^image\/(jpeg|png|webp)$/.test(file.type)){reject(new Error("Выберите JPG, PNG или WebP."));return;}var img=new Image(),u=URL.createObjectURL(file);img.onload=function(){var max=1400,scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext("2d").drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(function(blob){if(!blob)reject(new Error("Ошибка сжатия"));else resolve(blob);},"image/jpeg",.82);};img.onerror=function(){URL.revokeObjectURL(u);reject(new Error("Не удалось прочитать фото"));};img.src=u;});}
+function openPhotoDB(){if(!window.indexedDB)return Promise.reject(new Error("IndexedDB недоступна"));if(!photoDBPromise)photoDBPromise=new Promise(function(resolve,reject){var req=indexedDB.open("saqtaa-local-media",1);req.onupgradeneeded=function(){var db=req.result;if(!db.objectStoreNames.contains("photos"))db.createObjectStore("photos",{keyPath:"id"});};req.onsuccess=function(){resolve(req.result);};req.onerror=function(){reject(req.error);};});return photoDBPromise;}
+async function putPhoto(id,blob){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").put({id:id,blob:blob,type:blob.type||"image/jpeg"});tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});}
 async function getPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").get(id);req.onsuccess=function(){resolve(req.result?req.result.blob:null);};req.onerror=function(){reject(req.error);};});}
-async function delPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete(id);tx.oncomplete=function(){resolve();};tx.onerror=function(){reject(tx.error);};});}
+async function delPhoto(id){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete(id);tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});}
 async function allPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var req=db.transaction("photos","readonly").objectStore("photos").getAll();req.onsuccess=function(){resolve(req.result||[]);};req.onerror=function(){reject(req.error);};});}
 async function clearPhotos(){var db=await openPhotoDB();return new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").clear();tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});}
+async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
+function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректное фото");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
+
 function setCurrentPhoto(blob){
   currentPhotoBlob=blob||null;
   if(currentPhotoUrl)URL.revokeObjectURL(currentPhotoUrl);
@@ -1235,254 +1782,234 @@ function setCurrentPhoto(blob){
   var img=$("#photoPreview");
   if(currentPhotoUrl){
     img.src=currentPhotoUrl;img.style.display="block";
-    if(clean($("#p").value)){
-      $("#photoStatus").textContent="✅ Фото готово ("+Math.round(blob.size/1024)+" КБ) и прикреплено публичной ссылкой.";
-    }else{
-      $("#photoStatus").textContent="✅ Фото сжато ("+Math.round(blob.size/1024)+" КБ) и прикреплено к заказу.";
-    }
+    $("#photoStatus").textContent=clean($("#p").value)?"✅ Фото загружено ("+Math.round(blob.size/1024)+" КБ)":"✅ Фото сжато ("+Math.round(blob.size/1024)+" КБ) и прикреплено к заказу.";
   }else{
     img.removeAttribute("src");img.style.display="none";
-    $("#photoStatus").textContent="Выберите фото с телефона — оно сожмётся и сразу появится в приглашении.";
+    $("#photoStatus").textContent="Выберите фото — оно сожмётся и автоматически сохранится.";
   }
   schedulePreview();
 }
 $("#photoFile").addEventListener("change",async function(){
   var f=this.files&&this.files[0];if(!f)return;
-  var status=$("#photoStatus");
-  status.textContent="⏳ Сжимаю и обрабатываю фотографию…";
+  var status=$("#photoStatus");status.textContent="⏳ Сжимаю фото…";
   try{
-    var blob=await fileToWebp(f);
+    var blob=await fileToJpeg(f);
     await putPhoto("current",blob);
     if(currentOrderId)await putPhoto(currentOrderId,blob);
     setCurrentPhoto(blob);
     var srv=getSrvUrl();
     if(srv){
-      status.textContent="☁️ Загружаю фото на сервер SAQTAA (Google Диск)…";
+      status.textContent="☁️ Загружаю на Google Диск SAQTAA…";
       var dataUrl=await blobToDataUrl(blob);
+      var rawB64=String(dataUrl).split(",")[1]||"";
       var r=await fetch(srv,{
-        method:"POST",
-        headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body:JSON.stringify({
-          action:"upload_photo",
-          pin:getAdminPin(),
-          name:(clean($("#n").value)||"saqtaa")+"_"+Date.now()+".jpg",
-          mime:"image/jpeg",
-          data:dataUrl
-        })
+        method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({action:"upload_photo",pin:getAdminPin(),mime:"image/jpeg",base64:rawB64})
       });
       var j=await r.json();
-      if(j&&j.ok&&j.url){
-        $("#p").value=j.url;
-        status.textContent="✅ Фото загружено на сервер SAQTAA и прикреплено к приглашению!";
-        toast("✅ Фото загружено на сервер SAQTAA!");
-      }else{
-        status.textContent="✅ Фото прикреплено локально (облако: "+((j&&j.error)||"проверьте доступ Apps Script")+")";
-      }
-    }else{
-      toast("✅ Фото сжато и прикреплено к приглашению!");
+      if(j&&j.ok&&j.url){$("#p").value=j.url;status.textContent="✅ Фото загружено на Google Диск!";toast("✅ Фото загружено!");}
+      else status.textContent="✅ Фото прикреплено локально";
     }
     save();
-  }catch(e){
-    status.textContent="Ошибка фото: "+(e&&e.message?e.message:"не удалось обработать");
-    this.value="";
-  }
+  }catch(e){status.textContent="Ошибка: "+e.message;this.value="";}
 });
-$("#clearPhoto").addEventListener("click",async function(){try{var db=await openPhotoDB();await new Promise(function(resolve,reject){var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete("current");if(currentOrderId)tx.objectStore("photos").delete(currentOrderId);tx.oncomplete=resolve;tx.onerror=function(){reject(tx.error);};});setCurrentPhoto(null);$("#photoFile").value="";$("#p").value="";save();}catch(e){toast("Не удалось удалить локальное фото");}});
-$("#p").addEventListener("input",function(){schedulePreview();});
-async function blobToDataUrl(blob){return new Promise(function(resolve,reject){var r=new FileReader();r.onload=function(){resolve(r.result);};r.onerror=function(){reject(r.error);};r.readAsDataURL(blob);});}
-function dataUrlToBlob(data){var parts=String(data).split(","),m=parts[0].match(/data:([^;]+);base64/);if(!m)throw new Error("Некорректный файл фотографии в резервной копии.");var bin=atob(parts[1]),a=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return new Blob([a],{type:m[1]});}
-$("#exportBackup").addEventListener("click",async function(){var status=$("#backupStatus");try{var photos=await allPhotos(),packed=[];for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});var payload={format:"SAQTAA_BACKUP",version:1,exportedAt:new Date().toISOString(),draft:localStorage.getItem(KEY),history:historyItems,photos:packed};var blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);status.textContent="✅ Резервная копия скачана.";}catch(e){status.textContent="Ошибка экспорта: "+e.message;}});
-$("#importBackup").addEventListener("change",async function(){var file=this.files&&this.files[0];if(!file)return;var status=$("#backupStatus");try{if(file.size>40*1024*1024)throw new Error("Файл больше 40 МБ.");var payload=JSON.parse(await file.text());if(!payload||payload.format!=="SAQTAA_BACKUP"||payload.version!==1)throw new Error("Это не резервная копия SAQTAA поддерживаемого формата.");var parsedDraft=null;if(payload.draft){parsedDraft=JSON.parse(payload.draft);if(!parsedDraft||typeof parsedDraft!=="object")throw new Error("Повреждён черновик в резервной копии.");}var parsedPhotos=[];for(var i=0;i<(payload.photos||[]).length;i++){var ph=payload.photos[i];if(!ph||!ph.id)throw new Error("Повреждена запись фотографии в резервной копии.");parsedPhotos.push({id:String(ph.id),blob:dataUrlToBlob(ph.data)});}var validHistory=Array.isArray(payload.history)?payload.history.filter(function(x){return x&&typeof x==="object"&&x.data&&typeof x.data==="object";}).slice(-50):[];if(!confirm("Импорт заменит текущий черновик, историю и локальные фотографии. Продолжить?"))return;await clearPhotos();for(var j=0;j<parsedPhotos.length;j++)await putPhoto(parsedPhotos[j].id,parsedPhotos[j].blob);if(payload.draft)localStorage.setItem(KEY,payload.draft);else localStorage.removeItem(KEY);historyItems=validHistory;localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));if(parsedDraft&&parsedDraft.o){fillFrom(parsedDraft.o);if(parsedDraft.base)$("#base").value=parsedDraft.base;}else{applyPreset("luxury");}setCurrentPhoto(await getPhoto("current"));renderHistory();save();status.textContent="✅ Резервная копия восстановлена.";toast("Импорт завершён");}catch(e){status.textContent="Ошибка импорта: "+e.message;}finally{this.value="";}});
+$("#clearPhoto").addEventListener("click",async function(){
+  try{await delPhoto("current");if(currentOrderId)await delPhoto(currentOrderId);}catch(_){}
+  setCurrentPhoto(null);$("#photoFile").value="";$("#p").value="";save();
+});
 
-/* ---------- события конструктора ---------- */
+/* ---------- Аккордеоны и события конструктора ---------- */
+$("#accMediaBtn").addEventListener("click",function(){
+  var w=$("#accMediaWrap");w.hidden=!w.hidden;$("#accMediaChev").textContent=w.hidden?"▾":"▴";
+});
+$("#accRsvpBtn").addEventListener("click",function(){
+  var w=$("#accRsvpWrap");w.hidden=!w.hidden;$("#accRsvpChev").textContent=w.hidden?"▾":"▴";
+});
 $("#tpl").addEventListener("change",function(){
-  if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить примерные тексты этого шаблона? Текущие тексты программы и приглашения будут заменены."))applyPreset(this.value);
+  if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить тексты этого шаблона?"))applyPreset(this.value);
   else{lastTpl=this.value;$("#bigWrap").hidden=(this.value!=="editorial");}
   setTemplateCards();save();
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
-$("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();var ins=document.querySelectorAll(".prow .tm");if(ins.length)ins[ins.length-1].focus();});
-$("#prog").addEventListener("click",function(e){
-  var d=e.target.closest(".del");if(!d)return;
-  grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();
-});
-document.addEventListener("change",function(e){if(e.target.closest("main")&&e.target.id!=="old")save();});
-document.addEventListener("input",function(e){
-  if(e.target.closest("main")&&e.target.id!=="old"){
-    scheduleSave();
-    if($("#result")&&!$("#result").hidden)$("#len").textContent="Данные изменены. Нажмите «Создать приглашение» заново, чтобы обновить ссылку.";
-  }
-});
-window.addEventListener("beforeunload",function(){if(saveTimer)save();});
+document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
+$("#addRow").addEventListener("click",function(){grabText();st.rows.push(["","","","",""]);showText();});
+$("#prog").addEventListener("click",function(e){var d=e.target.closest(".del");if(!d)return;grabText();st.rows.splice(+d.closest(".prow").dataset.i,1);showText();save();});
+document.addEventListener("change",function(e){if(e.target.closest("#screenEditor")&&e.target.id!=="old")save();});
+document.addEventListener("input",function(e){if(e.target.closest("#screenEditor")&&e.target.id!=="old")scheduleSave();});
 
 try{$("#base").value=new URL("invite.html",location.href).href;}catch(_){$("#base").value="";}
-
-function waLink(link, statsLink){
-  var pre=lang==="kz"?"Сізді тойға шақырамыз ✦ ":lang==="both"?"Приглашаем вас на праздник ✦ Сізді тойға шақырамыз ✦ ":"Приглашаем вас на праздник ✦ ";
-  var text=pre+clean($("#n").value)+"\n\n🔗 Приглашение для гостей:\n"+link;
-  if(statsLink){
-    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+statsLink;
-  }
+function waLink(link,statsLink){
+  var text="Приглашаем вас на праздник ✦ "+clean($("#n").value)+"\n\n🔗 Приглашение:\n"+link;
+  if(statsLink)text+="\n\n📊 Онлайн-статистика гостей:\n"+statsLink;
   return"https://wa.me/?text="+encodeURIComponent(text);
 }
-function waOrderLink(x, stUrl){
+function waOrderLink(x,stUrl){
   var sLink=stUrl||getOrderStatsUrl(x);
-  var text="Приглашаем вас на праздник ✦ "+(x.name||"")+"\n\n🔗 Приглашение для гостей:\n"+(x.url||"");
-  if(sLink){
-    text+="\n\n📊 Онлайн-статистика ответов гостей (обновляется в реальном времени):\n"+sLink;
-  }
+  var text="Приглашаем вас на праздник ✦ "+(x.name||"")+"\n\n🔗 Приглашение:\n"+(x.url||"");
+  if(sLink)text+="\n\n📊 Онлайн-статистика гостей:\n"+sLink;
   return"https://wa.me/?text="+encodeURIComponent(text);
 }
+
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
   try{
     var o=collect(),msg=validate(o);
     if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
-    if(currentPhotoBlob&&o.oid){
-      try{await putPhoto(o.oid,currentPhotoBlob);await putPhoto("current",currentPhotoBlob);}catch(_){}
-    }
+    if(currentPhotoBlob&&o.oid){try{await putPhoto(o.oid,currentPhotoBlob);await putPhoto("current",currentPhotoBlob);}catch(_){}}
     var base=clean($("#base").value)||new URL("invite.html",location.href).href;
     var encodedHash=await encode(o);
     var url=base.replace(/#.*$/,"")+"#"+encodedHash;
     var statsUrl="";
     if(o.rsvp!==false){
-      var statsBase=new URL("stats.html",base).href;
-      statsUrl=statsBase.replace(/#.*$/,"")+"#"+encodedHash;
-      $("#statsOut").value=statsUrl;
-      $("#openStats").href=statsUrl;
-      $("#statsBox").hidden=false;
-    }else{
-      $("#statsBox").hidden=true;
-    }
+      statsUrl=new URL("stats.html",base).href.replace(/#.*$/,"")+"#"+encodedHash;
+      $("#statsOut").value=statsUrl;$("#openStats").href=statsUrl;$("#statsBox").hidden=false;
+    }else $("#statsBox").hidden=true;
     $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
     $("#open").href=url;$("#wa").href=waLink(url,statsUrl);
-    $("#len").textContent="Длина ссылки: "+url.length+" символов — готово к отправке!";
-    save();await storeHistory(o,url,statsUrl);schedulePreview();
-    toast("✅ Заказ сохранён в базу и ссылки готовы!");
+    $("#len").textContent="Готово! Длина ссылки: "+url.length+" симв.";
+    save();await storeHistory(o,url,statsUrl,"active");schedulePreview();
+    toast("✅ Приглашение и статистика созданы!");
     $("#result").scrollIntoView({behavior:"smooth",block:"start"});
-  }catch(e){
-    err.textContent="Не удалось создать ссылку: "+(e&&e.message?e.message:"ошибка браузера");err.hidden=false;
-  }
+  }catch(e){err.textContent="Ошибка: "+(e&&e.message?e.message:"не удалось создать");err.hidden=false;}
 });
+
+$("#saveDraftBtn").addEventListener("click",async function(){
+  var o=collect();
+  await storeHistory(o,"","","draft");
+  save();
+  toast("📝 Сохранено как черновик");
+  switchScreen("orders");
+});
+
 async function copyFrom(sel){
   var el=$(sel);
-  try{await navigator.clipboard.writeText(el.value);toast("📋 Ссылка скопирована");}
-  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("📋 Ссылка скопирована");}catch(__){toast("Выделите ссылку и скопируйте вручную");}}
+  try{await navigator.clipboard.writeText(el.value);toast("📋 Скопировано");}
+  catch(_){el.focus();el.select();try{document.execCommand("copy");toast("📋 Скопировано");}catch(__){toast("Скопируйте вручную");}}
 }
 $("#copy").addEventListener("click",function(){copyFrom("#out");});
 $("#copyStats").addEventListener("click",function(){copyFrom("#statsOut");});
 $("#shCopy").addEventListener("click",function(){copyFrom("#shOut");});
-$("#copyAppScript").addEventListener("click",async function(){
-  try{await navigator.clipboard.writeText(APPS_SCRIPT_CODE);toast("✅ Код сервера SAQTAA скопирован! Вставьте его в Расширения → Apps Script");}
-  catch(_){toast("Не удалось скопировать. Разрешите доступ к буферу обмена.");}
-});
-$("#histSearch").addEventListener("input",renderHistory);
-document.querySelectorAll("#rsvpSeg button").forEach(function(b){
-  b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});
-});
 
-/* сокращение ссылки через is.gd (JSONP) */
-function jsonp(url,ms){return new Promise(function(res,rej){
-  var cb="sq"+Date.now(),s=document.createElement("script");
-  var to=setTimeout(function(){cl();rej(new Error("timeout"));},ms);
-  function cl(){clearTimeout(to);try{delete window[cb];}catch(_){window[cb]=undefined;}s.remove();}
-  window[cb]=function(j){cl();res(j);};
-  s.onerror=function(){cl();rej(new Error("net"));};
-  s.src=url+"&callback="+cb;document.head.appendChild(s);});}
+function jsonp(url,ms){return new Promise(function(res,rej){var cb="sq"+Date.now(),s=document.createElement("script"),to=setTimeout(function(){cl();rej(new Error("timeout"));},ms);function cl(){clearTimeout(to);try{delete window[cb];}catch(_){window[cb]=undefined;}s.remove();}window[cb]=function(j){cl();res(j);};s.onerror=function(){cl();rej(new Error("net"));};s.src=url+"&callback="+cb;document.head.appendChild(s);});}
 $("#sh").addEventListener("click",async function(){
   var er=$("#shErr"),btn=this,long=$("#out").value;er.hidden=true;if(!long)return;
   btn.disabled=true;var old=btn.textContent;btn.textContent="Сокращаю…";
   try{
     var j=await jsonp("https://is.gd/create.php?format=json&url="+encodeURIComponent(long),10000);
-    if(!j||!j.shorturl)throw new Error("bad");
+    if(!j||!j.shorturl)throw 0;
     var curStats=($("#statsBox")&&!$("#statsBox").hidden)?$("#statsOut").value:"";
     $("#shOut").value=j.shorturl;$("#shBox").hidden=false;$("#wa").href=waLink(j.shorturl,curStats);
-    toast("Короткая ссылка готова");
-  }catch(_){
-    er.textContent="Не удалось сократить: сервис недоступен. Отправьте обычную ссылку.";er.hidden=false;
-  }
+  }catch(_){er.textContent="Сервис сокращения недоступен";er.hidden=false;}
   btn.disabled=false;btn.textContent=old;
 });
 $("#loadOld").addEventListener("click",async function(){
-  var er=$("#oldErr");er.hidden=true;
-  var v=clean($("#old").value),i=v.indexOf("#");
-  try{
-    if(i<0)throw 0;
-    var o=await decodeHash(v.slice(i));
-    if(!o||typeof o!=="object")throw 0;
-    fillFrom(o);$("#base").value=v.slice(0,i);save();
-    $("#loadOldWrap").hidden=true;
-    toast("Данные загружены из ссылки");
-  }catch(_){er.textContent="Не удалось прочитать ссылку. Нужна полная длинная ссылка (с «#»).";er.hidden=false;}
+  var er=$("#oldErr");er.hidden=true;var v=clean($("#old").value),i=v.indexOf("#");
+  try{if(i<0)throw 0;var o=await decodeHash(v.slice(i));fillFrom(o);$("#base").value=v.slice(0,i);save();toast("Данные загружены");}
+  catch(_){er.textContent="Нужна полная ссылка с «#»";er.hidden=false;}
 });
+
 async function startNewOrder(){
   currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
   $("#n").value="";$("#d").value=defaultFutureDate(14);$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
   $("#p").value="";$("#clientEmail").value="";$("#old").value="";
-  if($("#activeOrderBadge"))$("#activeOrderBadge").textContent="✨ Создание нового приглашения";
+  $("#activeOrderBadge").textContent="Создать приглашение";
   $("#result").hidden=true;$("#mkErr").hidden=true;
-  try{var db=await openPhotoDB();var tx=db.transaction("photos","readwrite");tx.objectStore("photos").delete("current");}catch(_){}
+  try{await delPhoto("current");}catch(_){}
   setCurrentPhoto(null);$("#photoFile").value="";
   applyPreset($("#tpl").value||"luxury");
-  updateSrvStatusBanner();
-  save();
-  switchScreen("editor");
-  toast("✨ Форма очищена для нового заказа");
+  save();switchScreen("editor");
 }
-$("#newOrderBtn").addEventListener("click",startNewOrder);
-$("#newOrderFromListBtn").addEventListener("click",startNewOrder);
 $("#fillDemoBtn").addEventListener("click",function(){
-  var curTpl=$("#tpl").value||"luxury";
-  applyPreset(curTpl);
-  var demoNames={
-    luxury:"Ерасыл & Аяулым",
-    floral:"Алихан & Дария",
-    qazaq:"Арман мен Аружан",
-    editorial:"Аскар Серикович",
-    emerald:"Айлин",
-    tusau:"Альтаир"
-  };
-  $("#n").value=demoNames[curTpl]||"Ерасыл & Аяулым";
+  var curTpl=$("#tpl").value||"luxury";applyPreset(curTpl);
+  var demo={luxury:"Ерасыл & Аяулым",floral:"Алихан & Дария",qazaq:"Арман мен Аружан",editorial:"Аскар Серикович",emerald:"Айлин",tusau:"Альтаир"};
+  $("#n").value=demo[curTpl]||"Ерасыл & Аяулым";
   $("#d").value=defaultFutureDate(21);
-  $("#ve").value="Grand Ballroom «Ritz-Carlton»";
-  $("#ad").value="г. Алматы, пр. Аль-Фараби, 77/7";
-  $("#g").value="https://go.2gis.com/almaty";
-  $("#h").value="#SAQTAA2026";
+  $("#ve").value="Ресторан «Салтанат»";
+  $("#ad").value="г. Алматы, пр. Достык, 180";
   if(!clean($("#clientEmail").value))$("#clientEmail").value="client@example.com";
-  save();
-  toast("⚡ Пример заполнен — нажмите «Создать приглашение и статистику»!");
+  save();toast("⚡ Пример заполнен — нажмите «Создать»!");
 });
 
-/* ---------- Вход по паролю, смена пароля и выход ---------- */
+/* ---------- Настройки (#screenSettings) ---------- */
+document.querySelectorAll("[data-setpanel]").forEach(function(b){
+  b.addEventListener("click",function(){
+    var id=b.dataset.setpanel, target=$("#"+id), wasOpen=!target.hidden;
+    document.querySelectorAll(".set-panel").forEach(function(p){p.hidden=true;});
+    target.hidden=wasOpen;
+    if(!target.hidden)target.scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+});
+$("#copyAppScript").addEventListener("click",async function(){
+  try{await navigator.clipboard.writeText(APPS_SCRIPT_CODE);toast("📋 Код скрипта скопирован");}catch(_){toast("Не удалось скопировать");}
+});
+$("#saveSrvBtn").addEventListener("click",async function(){
+  var url=clean($("#srvUrl").value);
+  if(!url){try{localStorage.removeItem(SRV_KEY);}catch(_){}toast("Ссылка очищена");return;}
+  if(!/^https:\/\/script\.google\.com\//i.test(url)){toast("Ссылка должна начинаться с https://script.google.com/");return;}
+  var btn=this;btn.disabled=true;
+  try{
+    localStorage.setItem(SRV_KEY,url);$("#sheet").value=url;
+    var r=await fetch(url+"?action=auth&pin="+encodeURIComponent(getAdminPin()));
+    var j=await r.json();
+    if(j&&j.ok){$("#setSrvBadge").textContent="Подключено";toast("✅ Сервер проверен!");}
+    else toast("Сервер сохранён ("+(j&&j.error?j.error:"проверьте доступ")+")");
+  }catch(_){toast("Ссылка сохранена");}
+  btn.disabled=false;
+});
+$("#saveEjsCfgBtn").addEventListener("click",function(){
+  var cfg={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
+  $("#ejsService").value=cfg.s;$("#ejsTemplate").value=cfg.t;$("#ejsKey").value=cfg.u;
+  try{localStorage.setItem(EJS_KEY,JSON.stringify(cfg));}catch(_){}
+  $("#setEjsBadge").textContent=(cfg.s&&cfg.t&&cfg.u)?"Настроено":"Не задано";
+  toast("✅ Настройки EmailJS сохранены");
+});
+$("#exportBackup").addEventListener("click",async function(){
+  try{
+    var photos=await allPhotos(),packed=[];
+    for(var i=0;i<photos.length;i++)packed.push({id:photos[i].id,data:await blobToDataUrl(photos[i].blob)});
+    var blob=new Blob([JSON.stringify({format:"SAQTAA_BACKUP",version:1,draft:localStorage.getItem(KEY),history:historyItems,photos:packed})],{type:"application/json"});
+    var u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="saqtaa-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u);},1000);
+    $("#backupStatus").textContent="✅ Резервная копия скачана";
+  }catch(e){$("#backupStatus").textContent="Ошибка: "+e.message;}
+});
+$("#importBackup").addEventListener("change",async function(){
+  var file=this.files&&this.files[0];if(!file)return;
+  try{
+    var payload=JSON.parse(await file.text());
+    if(!payload||payload.format!=="SAQTAA_BACKUP")throw new Error("Неверный формат");
+    if(!confirm("Восстановить резервную копию? Текущие данные будут заменены."))return;
+    await clearPhotos();
+    for(var j=0;j<(payload.photos||[]).length;j++)await putPhoto(payload.photos[j].id,dataUrlToBlob(payload.photos[j].data));
+    if(payload.draft)localStorage.setItem(KEY,payload.draft);
+    historyItems=Array.isArray(payload.history)?payload.history:[];
+    localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));
+    renderHome();renderHistory();
+    $("#backupStatus").textContent="✅ Восстановлено";toast("✅ Резервная копия восстановлена");
+  }catch(e){$("#backupStatus").textContent="Ошибка: "+e.message;}
+  finally{this.value="";}
+});
+
+/* ---------- Авторизация и смена пароля ---------- */
 var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
-function getActivePwHash(){
-  try{return localStorage.getItem(CUSTOM_HASH_KEY)||PW_HASH;}catch(_){return PW_HASH;}
-}
+function getActivePwHash(){try{return localStorage.getItem(CUSTOM_HASH_KEY)||PW_HASH;}catch(_){return PW_HASH;}}
 async function pwHash(pw){
   var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
   var b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(PW_SALT),iterations:PW_ITER},k,256);
   return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,"0");}).join("");
 }
 function unlock(){
-  $("#gate").hidden=true;
-  document.querySelector("main").hidden=false;
-  $("#bottomAppNav").hidden=false;
-  $("#hdrActions").hidden=false;
-  schedulePreview();
+  $("#gate").hidden=true;$("#appMain").hidden=false;$("#bottomAppNav").hidden=false;
+  switchScreen("home");
 }
 function lockPanel(){
   try{localStorage.removeItem(OK_KEY);}catch(_){}
-  $("#gatePw").value="";
-  document.querySelector("main").hidden=true;
-  $("#bottomAppNav").hidden=true;
-  $("#hdrActions").hidden=true;
-  $("#gate").hidden=false;
-  toast("🔒 Панель заблокирована");
+  $("#gatePw").value="";$("#appMain").hidden=true;$("#bottomAppNav").hidden=true;$("#gate").hidden=false;
+  toast("🔒 Вышли из панели");
 }
 $("#logoutBtn").addEventListener("click",lockPanel);
 
 var helper=(location.hash==="#newpw");
-if(helper){$("#gateHint").textContent="Режим смены пароля: введите новый пароль — получите строку для вставки в файл.";$("#gateBtn").textContent="Получить код";}
 $("#gateForm").addEventListener("submit",async function(e){
   e.preventDefault();var er=$("#gateErr");er.textContent="";
   var pw=$("#gatePw").value;if(!pw)return;
@@ -1496,16 +2023,14 @@ $("#gateForm").addEventListener("submit",async function(e){
       unlock();return;
     }
   }
-  var srv="";try{srv=localStorage.getItem(SRV_KEY)||"";}catch(_){}
+  var srv=getSrvUrl();
   if(srv){
     try{
       var r=await fetch(srv+"?action=auth&pin="+encodeURIComponent(pw));
       var j=await r.json();
       if(j&&j.ok){
-        if(window.crypto&&crypto.subtle){
-          var nh=await pwHash(pw);
-          try{localStorage.setItem(CUSTOM_HASH_KEY,nh);localStorage.setItem(OK_KEY,nh);localStorage.setItem(PIN_KEY,pw);}catch(_){}
-        }
+        var nh=await pwHash(pw);
+        try{localStorage.setItem(CUSTOM_HASH_KEY,nh);localStorage.setItem(OK_KEY,nh);localStorage.setItem(PIN_KEY,pw);}catch(_){}
         unlock();return;
       }
     }catch(_){}
@@ -1515,74 +2040,43 @@ $("#gateForm").addEventListener("submit",async function(e){
 
 $("#changePwBtn").addEventListener("click",async function(){
   var msg=$("#changePwMsg");msg.hidden=true;
-  var oldPw=$("#oldPwInput").value;
-  var newPw=$("#newPwInput").value;
-  var confPw=$("#newPwConfirm").value;
-  if(!oldPw){msg.style.color="#9E2B3A";msg.textContent="Введите текущий пароль.";msg.hidden=false;return;}
-  if(!newPw||newPw.length<4){msg.style.color="#9E2B3A";msg.textContent="Новый пароль должен быть не короче 4 символов.";msg.hidden=false;return;}
-  if(newPw!==confPw){msg.style.color="#9E2B3A";msg.textContent="Новый пароль и повтор не совпадают.";msg.hidden=false;return;}
-  var btn=this,oldTxt=btn.textContent;
-  btn.disabled=true;btn.textContent="⏳ Сохраняю пароль…";
+  var oldPw=$("#oldPwInput").value,newPw=$("#newPwInput").value,confPw=$("#newPwConfirm").value;
+  if(!oldPw||!newPw||newPw.length<4||newPw!==confPw){
+    msg.style.color="var(--red-ink)";msg.textContent="Проверьте текущий пароль и совпадение нового (от 4 симв.)";msg.hidden=false;return;
+  }
   try{
-    var activeHash=getActivePwHash();
-    var oldH=await pwHash(oldPw);
-    var customSet=false;try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
-    var validLocal=(oldH===activeHash)||(!customSet&&oldPw==="saqtaa2026")||(oldPw===getAdminPin());
-    if(!validLocal){
-      msg.style.color="#9E2B3A";msg.textContent="Текущий пароль введён неверно.";msg.hidden=false;
-      btn.disabled=false;btn.textContent=oldTxt;return;
+    var activeHash=getActivePwHash(),oldH=await pwHash(oldPw),customSet=false;
+    try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
+    if(!(oldH===activeHash||(!customSet&&oldPw==="saqtaa2026")||oldPw===getAdminPin())){
+      msg.style.color="var(--red-ink)";msg.textContent="Текущий пароль неверен";msg.hidden=false;return;
     }
     var newH=await pwHash(newPw);
-    localStorage.setItem(CUSTOM_HASH_KEY,newH);
-    localStorage.setItem(OK_KEY,newH);
+    localStorage.setItem(CUSTOM_HASH_KEY,newH);localStorage.setItem(OK_KEY,newH);localStorage.setItem(PIN_KEY,newPw);
     var srv=getSrvUrl();
-    if(srv){
-      try{
-        await fetch(srv,{
-          method:"POST",
-          headers:{"Content-Type":"text/plain;charset=utf-8"},
-          body:JSON.stringify({action:"change_pin",pin:oldPw,new_pin:newPw})
-        });
-      }catch(_){}
-    }
-    localStorage.setItem(PIN_KEY,newPw);
+    if(srv){fetch(srv,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"change_pin",pin:oldPw,new_pin:newPw})}).catch(function(){});}
     $("#oldPwInput").value="";$("#newPwInput").value="";$("#newPwConfirm").value="";
-    msg.style.color="var(--em)";
-    msg.textContent="✅ Пароль успешно изменён! Теперь используйте новый пароль при входе.";
-    msg.hidden=false;
-    toast("🔑 Новый пароль сохранён!");
-  }catch(e){
-    msg.style.color="#9E2B3A";
-    msg.textContent="Ошибка при смене пароля: "+(e&&e.message?e.message:"ошибка браузера");
-    msg.hidden=false;
-  }
-  btn.disabled=false;btn.textContent=oldTxt;
+    msg.style.color="var(--green-ink)";msg.textContent="✅ Пароль успешно изменён";msg.hidden=false;toast("🔑 Пароль сохранён");
+  }catch(e){msg.style.color="var(--red-ink)";msg.textContent="Ошибка: "+e.message;msg.hidden=false;}
 });
 
-var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
-if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
+/* ---------- Инициализация ---------- */
+var curSrv=DEFAULT_SRV_URL;
+try{curSrv=localStorage.getItem(SRV_KEY)||DEFAULT_SRV_URL;}catch(_){}
+$("#srvUrl").value=curSrv;$("#sheet").value=curSrv;
 
-/* ---------- старт ---------- */
-updateSrvStatusBanner();
-try{
-  var ejsSaved=JSON.parse(localStorage.getItem(EJS_KEY)||"null");
-  if(ejsSaved){
-    if(ejsSaved.s)$("#ejsService").value=ejsSaved.s;
-    if(ejsSaved.t)$("#ejsTemplate").value=ejsSaved.t;
-    if(ejsSaved.u)$("#ejsKey").value=ejsSaved.u;
-  }
-}catch(_){}
-var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");if(!saved){saved=JSON.parse(localStorage.getItem("saqtaa-admin-v1")||"null");if(saved)localStorage.setItem(KEY,JSON.stringify(saved));}}catch(_){}
+var ejsCfg=DEFAULT_EJS;
+try{var rawEjs=JSON.parse(localStorage.getItem(EJS_KEY)||"null");if(rawEjs&&rawEjs.s)ejsCfg=rawEjs;}catch(_){}
+$("#ejsService").value=ejsCfg.s;$("#ejsTemplate").value=ejsCfg.t;$("#ejsKey").value=ejsCfg.u;
+$("#cfgEjsService").value=ejsCfg.s;$("#cfgEjsTemplate").value=ejsCfg.t;$("#cfgEjsKey").value=ejsCfg.u;
+
+var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
 try{historyItems=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");if(!Array.isArray(historyItems))historyItems=[];}catch(_){historyItems=[];}
-renderHistory();
+var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
 else{applyPreset("luxury");setRsvpMode("saqtaa");}
-updateSrvStatusBanner();
-setTemplateCards();schedulePreview();
-var mobPrev=$("#mobPreviewBtn"),mobBack=$("#mobBackBtn");
-if(mobPrev)mobPrev.addEventListener("click",function(){switchScreen(activeScreen==="preview"?"editor":"preview");});
-if(mobBack)mobBack.addEventListener("click",function(){switchScreen("editor");});
-getPhoto("current").then(setCurrentPhoto).catch(function(e){$("#photoStatus").textContent="Локальное хранилище фото недоступно: "+e.message;});
+setTemplateCards();
+getPhoto("current").then(setCurrentPhoto).catch(function(){});
+if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
 })();
 </script>
 </body>
