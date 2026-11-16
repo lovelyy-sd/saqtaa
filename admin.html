@@ -1345,7 +1345,10 @@ async function loadOrderIntoEditor(idx){
   var x=historyItems[idx];if(!x||!x.data){toast("Запись заказа не найдена");return;}
   fillFrom(x.data);
   $("#activeOrderBadge").textContent="Редактирование";
-  setCurrentPhoto(await getPhoto(x.id).catch(function(){return null;}));
+  var ph=await getPhoto(x.id).catch(function(){return null;});
+  if(ph){try{await putPhoto("current",ph);}catch(_){}}
+  else{try{await delPhoto("current");}catch(_){}}
+  setCurrentPhoto(ph);
   save();
   switchScreen("editor");
 }
@@ -1987,7 +1990,7 @@ var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_)
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
 else{applyPreset("luxury");setRsvpMode("saqtaa");}
 autoGrowAll();
-getPhoto("current").then(setCurrentPhoto).catch(function(){});
+getPhoto(currentOrderId||"current").then(setCurrentPhoto).catch(function(){});
 if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
 })();
 </script>
