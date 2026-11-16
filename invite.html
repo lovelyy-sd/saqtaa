@@ -594,10 +594,10 @@ function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
 }
 function loadLocalDevicePhoto(oid){
   return new Promise(function(resolve){
+    if(!oid||!window.indexedDB){resolve("");return;}
     var settled=false;
     function fin(v){if(!settled){settled=true;resolve(v||"");}}
     setTimeout(function(){fin("");},500);
-    if(!window.indexedDB){fin("");return;}
     try{
       var req=indexedDB.open("saqtaa-local-media",1);
       req.onblocked=function(){fin("");};
@@ -607,20 +607,9 @@ function loadLocalDevicePhoto(oid){
           var db=req.result;
           if(!db.objectStoreNames.contains("photos")){fin("");return;}
           var tx=db.transaction("photos","readonly"),st=tx.objectStore("photos");
-          var r1=oid?st.get(oid):null;
-          if(r1){
-            r1.onsuccess=function(){
-              if(r1.result&&r1.result.blob){fin(URL.createObjectURL(r1.result.blob));return;}
-              var r2=st.get("current");
-              r2.onsuccess=function(){fin(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
-              r2.onerror=function(){fin("");};
-            };
-            r1.onerror=function(){fin("");};
-          }else{
-            var r2=st.get("current");
-            r2.onsuccess=function(){fin(r2.result&&r2.result.blob?URL.createObjectURL(r2.result.blob):"");};
-            r2.onerror=function(){fin("");};
-          }
+          var r1=st.get(oid);
+          r1.onsuccess=function(){fin(r1.result&&r1.result.blob?URL.createObjectURL(r1.result.blob):"");};
+          r1.onerror=function(){fin("");};
         }catch(_){fin("");}
       };
     }catch(_){fin("");}
