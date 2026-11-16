@@ -79,6 +79,7 @@ function doPost(e) {
 
 function handle(p) {
   var action = String(p.action || "ping").trim();
+  if (action === "ping") return jsonOut({ ok: true, status: "SAQTAA Server Active" });
 
   // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ
   if (action === "auth") {
@@ -284,11 +285,24 @@ function handle(p) {
       var now = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");
       var rRows = db.rsvps.getDataRange().getValues();
       var foundRsvpRow = -1;
+      var totalYes = 0, totalNo = 0, totalMaybe = 0;
+      var needSummary = (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail));
       for (var j = 1; j < rRows.length; j++) {
-        if (String(rRows[j][0]) === orderId && String(rRows[j][1]) === rsvpId) {
+        var rRow = rRows[j];
+        var sameOrder = String(rRow[0]) === orderId;
+        if (sameOrder && String(rRow[1]) === rsvpId) {
           foundRsvpRow = j + 1;
-          break;
+        } else if (needSummary && sameOrder) {
+          var st = String(rRow[5]);
+          if (st === "yes") totalYes += (Number(rRow[7]) || 1);
+          else if (st === "no") totalNo++;
+          else totalMaybe++;
         }
+      }
+      if (needSummary) {
+        if (attCode === "yes") totalYes += (guests || 1);
+        else if (attCode === "no") totalNo++;
+        else totalMaybe++;
       }
 
       var isUpdate = foundRsvpRow > 0;
@@ -301,19 +315,8 @@ function handle(p) {
 
       // Отправка письма с аккаунта SAQTAA на Email клиента через GmailApp (только если не выбран EmailJS)
       var emailSent = false, mailError = "";
-      if (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
+      if (needSummary) {
         try {
-          // Считаем текущую сводку по мероприятию для письма клиенту
-          var allRsvps = db.rsvps.getDataRange().getValues();
-          var totalYes = 0, totalNo = 0, totalMaybe = 0;
-          for (var m = 1; m < allRsvps.length; m++) {
-            if (String(allRsvps[m][0]) === orderId) {
-              var st = String(allRsvps[m][5]);
-              if (st === "yes") totalYes += (Number(allRsvps[m][7]) || 1);
-              else if (st === "no") totalNo++;
-              else totalMaybe++;
-            }
-          }
           var fullName = name + " " + fam;
           var subjPrefix = isBoth
             ? (isUpdate ? "Жауап өзгертілді / Изменение ответа: " : "Жаңа жауап / Новый ответ гостя: ")

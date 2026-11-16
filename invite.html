@@ -789,6 +789,12 @@ async function init(){
       screen("Приглашение больше недоступно ✦","<p>Мероприятие уже состоялось. Спасибо, что были с нами!</p><p>Мереке өтіп кетті. Бізбен бірге болғаныңызға рақмет!</p>");return;
     }
     render();tickTimer=setInterval(tick,1000);
+    if(D.rsvp&&(D.srv||D.sheet)){
+      var warmUrl=D.srv||D.sheet;
+      setTimeout(function(){
+        try{fetch(warmUrl+(warmUrl.indexOf("?")===-1?"?":"&")+"action=ping&_t="+Date.now(),{method:"GET"}).catch(function(){});}catch(_){}
+      },700);
+    }
   }catch(e){
     console.error("SAQTAA_INIT_ERR",e);
     screen("Ошибка загрузки ✦","<p>Не удалось отобразить приглашение: "+esc(e&&e.message?e.message:String(e))+"</p>");
