@@ -299,22 +299,21 @@ function handle(p) {
         db.rsvps.appendRow(rowData);
       }
 
-      // Считаем текущую сводку по мероприятию для письма клиенту
-      var allRsvps = db.rsvps.getDataRange().getValues();
-      var totalYes = 0, totalNo = 0, totalMaybe = 0;
-      for (var m = 1; m < allRsvps.length; m++) {
-        if (String(allRsvps[m][0]) === orderId) {
-          var st = String(allRsvps[m][5]);
-          if (st === "yes") totalYes += (Number(allRsvps[m][7]) || 1);
-          else if (st === "no") totalNo++;
-          else totalMaybe++;
-        }
-      }
-
-      // Отправка письма с аккаунта SAQTAA на Email клиента через MailApp (только если не выбран EmailJS)
+      // Отправка письма с аккаунта SAQTAA на Email клиента через GmailApp (только если не выбран EmailJS)
       var emailSent = false, mailError = "";
       if (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) {
         try {
+          // Считаем текущую сводку по мероприятию для письма клиенту
+          var allRsvps = db.rsvps.getDataRange().getValues();
+          var totalYes = 0, totalNo = 0, totalMaybe = 0;
+          for (var m = 1; m < allRsvps.length; m++) {
+            if (String(allRsvps[m][0]) === orderId) {
+              var st = String(allRsvps[m][5]);
+              if (st === "yes") totalYes += (Number(allRsvps[m][7]) || 1);
+              else if (st === "no") totalNo++;
+              else totalMaybe++;
+            }
+          }
           var fullName = name + " " + fam;
           var subjPrefix = isBoth
             ? (isUpdate ? "Жауап өзгертілді / Изменение ответа: " : "Жаңа жауап / Новый ответ гостя: ")
