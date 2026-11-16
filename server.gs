@@ -98,7 +98,7 @@ function handle(p) {
     return jsonOut({ ok: true });
   }
 
-  // Тест отправки письма через MailApp (из Настроек админ-панели)
+  // Тест отправки письма через GmailApp (из Настроек админ-панели)
   if (action === "test_email") {
     if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: "Неверный пароль администратора" });
     var toAddr = String(p.to || "").trim();
@@ -106,11 +106,10 @@ function handle(p) {
       return jsonOut({ ok: false, error: "Укажите корректный Email получателя" });
     }
     try {
-      MailApp.sendEmail({
-        to: toAddr,
-        subject: "✦ Тест почты SAQTAA",
+      var testPlain = "Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.";
+      GmailApp.sendEmail(toAddr, "Тест почты SAQTAA", testPlain, {
         name: BRAND_NAME,
-        htmlBody: '<div style="font-family:Georgia,serif;padding:20px;background:#F5EFE2;border-radius:12px;border:1px solid #D9BC7F;color:#182720"><h3 style="margin:0 0 8px;color:#0F4A38">SAQTAA · Тест отправки</h3><p style="margin:0">Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.</p></div>'
+        htmlBody: '<div style="font-family:Arial,sans-serif;max-width:520px;padding:20px;background:#ffffff;border:1px solid #e5e0d5;border-radius:10px;color:#182720"><h3 style="margin:0 0 8px;color:#0F4A38;font-size:17px">SAQTAA · Тест отправки</h3><p style="margin:0;font-size:14px;line-height:1.5">' + testPlain + '</p></div>'
       });
       return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });
     } catch (testErr) {
@@ -325,7 +324,7 @@ function handle(p) {
           var subject = subjPrefix + fullName + " — " + eventTitle;
           var badgeColor = attCode === "yes" ? "#1E6F43" : (attCode === "no" ? "#9E2B3A" : "#9E7318");
           var txt = isBoth ? {
-            hdr: "SAQTAA · ҚОНАҚ ЖАУАБЫ / УВЕДОМЛЕНИЕ О ГОСТЕ",
+            hdr: "SAQTAA · Қонақ жауабы / Уведомление о госте",
             date: "Күні / Дата: ",
             guest: "Қонақ / Гость:",
             ans: "Жауабы / Ответ:",
@@ -336,24 +335,24 @@ function handle(p) {
             stPlain: "Келеді / Придут: " + totalYes + " · Келмейді / Не придут: " + totalNo + " · Ойлануда / Думают: " + totalMaybe,
             brand: "SAQTAA · Цифрлық шақырулар / Цифровые приглашения"
           } : (isKz ? {
-            hdr: "SAQTAA · ҚОНАҚ ТУРАЛЫ ХАБАРЛАМА",
+            hdr: "SAQTAA · Қонақ туралы хабарлама",
             date: "Күні: ",
             guest: "Қонақ:",
             ans: "Жауабы:",
             time: "Жауап уақыты: ",
             upd: " (жаңартылған жауап)",
-            stTitle: "Шақыру бойынша ағымдағы статистика",
+            stTitle: "Шақыру бойынша статистика",
             stLine: "Келеді: <b>" + totalYes + "</b> &nbsp;·&nbsp; Келмейді: <b>" + totalNo + "</b> &nbsp;·&nbsp; Ойлануда: <b>" + totalMaybe + "</b>",
             stPlain: "Келеді: " + totalYes + " · Келмейді: " + totalNo + " · Ойлануда: " + totalMaybe,
             brand: "SAQTAA · Цифрлық шақырулар"
           } : {
-            hdr: "SAQTAA · УВЕДОМЛЕНИЕ О ГОСТЕ",
+            hdr: "SAQTAA · Уведомление о госте",
             date: "Дата: ",
             guest: "Гость:",
             ans: "Ответ:",
             time: "Время ответа: ",
             upd: " (обновлённый ответ)",
-            stTitle: "Текущая статистика по вашему приглашению",
+            stTitle: "Статистика по приглашению",
             stLine: "Придут: <b>" + totalYes + "</b> &nbsp;·&nbsp; Не придут: <b>" + totalNo + "</b> &nbsp;·&nbsp; Думают: <b>" + totalMaybe + "</b>",
             stPlain: "Придут: " + totalYes + " · Не придут: " + totalNo + " · Думают: " + totalMaybe,
             brand: BRAND_NAME
@@ -366,29 +365,26 @@ function handle(p) {
             txt.stPlain
           ].join("\n");
           var htmlBody = [
-            '<div style="font-family:Georgia,serif;max-width:520px;margin:0 auto;background:#F5EFE2;padding:24px;border-radius:14px;color:#182720;border:1px solid #D9BC7F">',
-            '  <div style="text-align:center;border-bottom:1px solid rgba(24,39,32,0.15);padding-bottom:14px;margin-bottom:18px">',
-            '    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#B98E45;font-weight:bold">' + txt.hdr + '</div>',
-            '    <h2 style="margin:6px 0 2px;font-size:22px;color:#0F4A38">' + eventTitle + '</h2>',
+            '<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;padding:22px;border-radius:10px;color:#182720;border:1px solid #e5e0d5">',
+            '  <div style="border-bottom:1px solid #ece7dc;padding-bottom:12px;margin-bottom:16px">',
+            '    <div style="font-size:12px;color:#8c6d32;font-weight:bold">' + txt.hdr + '</div>',
+            '    <h2 style="margin:6px 0 2px;font-size:20px;color:#0F4A38">' + eventTitle + '</h2>',
             (eventDate ? '<div style="font-size:13px;color:#46584D">' + txt.date + eventDate + '</div>' : ''),
             '  </div>',
-            '  <div style="background:#FFFDF6;padding:18px;border-radius:10px;border:1px solid rgba(24,39,32,0.12);margin-bottom:18px">',
-            '    <p style="margin:0 0 10px;font-size:15px"><strong>' + txt.guest + '</strong> ' + fullName + '</p>',
-            '    <p style="margin:0 0 10px;font-size:15px"><strong>' + txt.ans + '</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + attLabel + '</span></p>',
-            '    <p style="margin:0;font-size:12px;color:#46584D">' + txt.time + now + (isUpdate ? txt.upd : '') + '</p>',
+            '  <div style="padding:4px 0 14px;border-bottom:1px solid #ece7dc;margin-bottom:14px">',
+            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.guest + '</strong> ' + fullName + '</p>',
+            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.ans + '</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + attLabel + '</span></p>',
+            '    <p style="margin:0;font-size:12px;color:#6a746d">' + txt.time + now + (isUpdate ? txt.upd : '') + '</p>',
             '  </div>',
-            '  <div style="background:#0F4A38;color:#F6F1E4;padding:14px 16px;border-radius:10px;font-size:13px;text-align:center">',
-            '    <div style="color:#D9BC7F;font-weight:bold;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;font-size:11px">' + txt.stTitle + '</div>',
+            '  <div style="font-size:13px;color:#182720">',
+            '    <div style="color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px">' + txt.stTitle + '</div>',
             '    ' + txt.stLine,
             '  </div>',
             '</div>'
           ].join("\n");
 
-          MailApp.sendEmail({
-            to: clientEmail,
-            subject: subject,
+          GmailApp.sendEmail(clientEmail, subject, plainBody, {
             name: txt.brand,
-            body: plainBody,
             htmlBody: htmlBody
           });
           emailSent = true;
