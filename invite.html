@@ -476,7 +476,7 @@ function tick(){
 }
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
-/* ---------- отправка ответа гостя (SAQTAA Server + MailApp / EmailJS / Web3Forms) ---------- */
+/* ---------- отправка ответа гостя (SAQTAA Server + GmailApp / EmailJS) ---------- */
 async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
   var srv=D.srv||D.sheet;
   if(!srv)return false;
@@ -489,36 +489,32 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
   var oid=D.oid||"default";
   var toEmail=D.em||"";
   var dateHuman=dDot(D.d)+(D.s?" "+D.s:"");
+  var query=(srv.indexOf("?")===-1?"?":"&")+"action=rsvp"+
+    "&oid="+encodeURIComponent(oid)+
+    "&id="+encodeURIComponent(rsvpId)+
+    "&name="+encodeURIComponent(cleanNm)+
+    "&fam="+encodeURIComponent(cleanFm)+
+    "&att_code="+encodeURIComponent(val)+
+    "&att="+encodeURIComponent(label)+
+    "&guests="+encodeURIComponent(guestsCount)+
+    "&title="+encodeURIComponent(names())+
+    "&date="+encodeURIComponent(dateHuman)+
+    "&lang="+encodeURIComponent(emailLang)+
+    (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
+    (noEmail?"&no_email=1":"")+
+    (isUpdate?"&isUpdate=1":"")+
+    "&_t="+Date.now();
+  var ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+  var timer=ctrl?setTimeout(function(){ctrl.abort();},12000):null;
   try{
-    var query="?action=rsvp"+
-      "&oid="+encodeURIComponent(oid)+
-      "&id="+encodeURIComponent(rsvpId)+
-      "&name="+encodeURIComponent(cleanNm)+
-      "&fam="+encodeURIComponent(cleanFm)+
-      "&att_code="+encodeURIComponent(val)+
-      "&att="+encodeURIComponent(label)+
-      "&guests="+encodeURIComponent(guestsCount)+
-      "&title="+encodeURIComponent(names())+
-      "&date="+encodeURIComponent(dateHuman)+
-      "&lang="+encodeURIComponent(emailLang)+
-      (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
-      (noEmail?"&no_email=1":"")+
-      (isUpdate?"&isUpdate=1":"");
-    await fetch(srv+query,{method:"GET",mode:"no-cors"});
-    return true;
+    var r=await fetch(srv+query,{method:"GET",signal:ctrl?ctrl.signal:undefined});
+    if(timer)clearTimeout(timer);
+    if(!r.ok)return false;
+    var j=await r.json();
+    return Boolean(j&&j.ok);
   }catch(_){
-    try{
-      await fetch(srv,{
-        method:"POST",
-        mode:"no-cors",
-        body:JSON.stringify({
-          action:"rsvp",oid:oid,id:rsvpId,name:cleanNm,fam:cleanFm,
-          att_code:val,att:label,guests:guestsCount,title:names(),
-          date:dateHuman,lang:emailLang,to_email:toEmail,no_email:noEmail?1:0,isUpdate:isUpdate?1:0
-        })
-      });
-      return true;
-    }catch(_e){return false;}
+    if(timer)clearTimeout(timer);
+    return false;
   }
 }
 async function postEmailJS(full,val,isUpdate,rsvpId){
@@ -682,14 +678,15 @@ app.addEventListener("submit",async function(e){
   isSubmitting=true;
   var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
   saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
-  var results=[],useEjs=Boolean(D.ejs&&D.ejs.s);
+  var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
   if(D.srv||D.sheet){
-    results.push(await postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
+    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
   }
   if(useEjs){
-    results.push(await postEmailJS(full,val,isUpdate,rsvpId));
+    tasks.push(postEmailJS(full,val,isUpdate,rsvpId));
   }
-  var ok=results.length===0?true:results.some(Boolean);
+  var results=tasks.length?await Promise.all(tasks):[];
+  var ok=results.length===0?true:results.every(Boolean);
   isSubmitting=false;
   btn.disabled=false;btn.textContent=t("send");
   if(!ok){
