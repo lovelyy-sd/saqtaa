@@ -33,27 +33,33 @@ function jsonOut(obj) {
 /**
  * Автоматически создаёт листы ORDERS и RSVPS в текущей Google Таблице
  */
-function ensureSheets() {
+function ensureSheets(needOrders, needRsvps) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var orders = ss.getSheetByName("ORDERS");
-  if (!orders) {
-    orders = ss.insertSheet("ORDERS");
-    orders.appendRow([
-      "ID заказа", "Создано", "Имена", "Дата тоя", "Время", "Шаблон",
-      "Email клиента", "Ссылка приглашения", "Ссылка статистики", "JSON данных"
-    ]);
-    orders.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");
-    orders.setFrozenRows(1);
+  var orders = null;
+  if (needOrders !== false) {
+    orders = ss.getSheetByName("ORDERS");
+    if (!orders) {
+      orders = ss.insertSheet("ORDERS");
+      orders.appendRow([
+        "ID заказа", "Создано", "Имена", "Дата тоя", "Время", "Шаблон",
+        "Email клиента", "Ссылка приглашения", "Ссылка статистики", "JSON данных"
+      ]);
+      orders.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");
+      orders.setFrozenRows(1);
+    }
   }
-  var rsvps = ss.getSheetByName("RSVPS");
-  if (!rsvps) {
-    rsvps = ss.insertSheet("RSVPS");
-    rsvps.appendRow([
-      "Order ID", "RSVP ID", "Дата и время", "Имя", "Фамилия",
-      "Статус (yes/no/maybe)", "Ответ текстом", "Гостей", "Мероприятие", "Email клиента"
-    ]);
-    rsvps.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");
-    rsvps.setFrozenRows(1);
+  var rsvps = null;
+  if (needRsvps !== false) {
+    rsvps = ss.getSheetByName("RSVPS");
+    if (!rsvps) {
+      rsvps = ss.insertSheet("RSVPS");
+      rsvps.appendRow([
+        "Order ID", "RSVP ID", "Дата и время", "Имя", "Фамилия",
+        "Статус (yes/no/maybe)", "Ответ текстом", "Гостей", "Мероприятие", "Email клиента"
+      ]);
+      rsvps.getRange(1, 1, 1, 10).setFontWeight("bold").setBackground("#0F4A38").setFontColor("#F6F1E4");
+      rsvps.setFrozenRows(1);
+    }
   }
   return { ss: ss, orders: orders, rsvps: rsvps };
 }
@@ -149,7 +155,10 @@ function handle(p) {
   var lock = LockService.getScriptLock();
   lock.tryLock(10000);
   try {
-    var db = ensureSheets();
+    var needOrdersSheet = (action === "save_order" || action === "list_orders" || action === "delete_order" ||
+      (action === "rsvp" && !String(p.to_email || "").trim() && String(p.oid || p.order_id || "default").trim() !== "default"));
+    var needRsvpsSheet = (action === "rsvp" || action === "stats" || action === "get");
+    var db = ensureSheets(needOrdersSheet, needRsvpsSheet);
 
     // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ
     if (action === "save_order") {
@@ -283,20 +292,23 @@ function handle(p) {
       }
 
       var now = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");
-      var rRows = db.rsvps.getDataRange().getValues();
       var foundRsvpRow = -1;
       var totalYes = 0, totalNo = 0, totalMaybe = 0;
+      var isUpdateReq = String(p.isUpdate || "") === "1";
       var needSummary = (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail));
-      for (var j = 1; j < rRows.length; j++) {
-        var rRow = rRows[j];
-        var sameOrder = String(rRow[0]) === orderId;
-        if (sameOrder && String(rRow[1]) === rsvpId) {
-          foundRsvpRow = j + 1;
-        } else if (needSummary && sameOrder) {
-          var st = String(rRow[5]);
-          if (st === "yes") totalYes += (Number(rRow[7]) || 1);
-          else if (st === "no") totalNo++;
-          else totalMaybe++;
+      if (isUpdateReq || needSummary) {
+        var rRows = db.rsvps.getDataRange().getValues();
+        for (var j = 1; j < rRows.length; j++) {
+          var rRow = rRows[j];
+          var sameOrder = String(rRow[0]) === orderId;
+          if (sameOrder && String(rRow[1]) === rsvpId) {
+            foundRsvpRow = j + 1;
+          } else if (needSummary && sameOrder) {
+            var st = String(rRow[5]);
+            if (st === "yes") totalYes += (Number(rRow[7]) || 1);
+            else if (st === "no") totalNo++;
+            else totalMaybe++;
+          }
         }
       }
       if (needSummary) {

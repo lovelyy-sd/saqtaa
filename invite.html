@@ -675,25 +675,7 @@ app.addEventListener("submit",async function(e){
   var nextRev=isUpdate?((rsvpState.rev||1)+1):1;
   var rsvpId=isUpdate?(rsvpState.id||makeId()):(hadSent?makeId():((rsvpState&&rsvpState.id)?rsvpState.id:makeId()));
 
-  isSubmitting=true;
-  var btn=f.querySelector(".rs-send");btn.disabled=true;btn.textContent=t("sending");
-  saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
-  var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
-  if(D.srv||D.sheet){
-    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
-  }
-  if(useEjs){
-    tasks.push(postEmailJS(full,val,isUpdate,rsvpId));
-  }
-  var results=tasks.length?await Promise.all(tasks):[];
-  var ok=results.length===0?true:results.every(Boolean);
-  isSubmitting=false;
-  btn.disabled=false;btn.textContent=t("send");
-  if(!ok){
-    if(rsvpState){rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;saveRsvpState();}
-    err.textContent=t("e_send");
-    return;
-  }
+  var prevState=rsvpState?Object.assign({},rsvpState):null;
   if(!rsvpState)rsvpState=loadRsvpState();
   rsvpState.id=rsvpId;
   rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;
@@ -701,7 +683,38 @@ app.addEventListener("submit",async function(e){
   rsvpState.rev=nextRev;rsvpState.guests=(val==="yes"?1:0);rsvpState.maybe=(val==="maybe"?1:0);
   rsvpState.editing=false;rsvpState.lastSentAt=Date.now();
   saveRsvpState();
+  saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
   showDoneCard(sec,full,val,true);
+
+  var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
+  if(D.srv||D.sheet){
+    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
+  }
+  if(useEjs){
+    tasks.push(postEmailJS(full,val,isUpdate,rsvpId));
+  }
+  if(!tasks.length)return;
+
+  isSubmitting=true;
+  var results=await Promise.all(tasks);
+  isSubmitting=false;
+  var ok=results.every(Boolean);
+  if(!ok){
+    if(prevState){
+      rsvpState=Object.assign({},prevState,{nm:cleanNm,fm:cleanFm,att:val,editing:Boolean(prevState.sent)});
+    }else{
+      rsvpState.sent=false;rsvpState.sentNm="";rsvpState.sentFm="";rsvpState.sentAtt="";rsvpState.lastSentAt=0;rsvpState.editing=false;
+    }
+    saveRsvpState();
+    var curSec=app.querySelector(".rs-form")?app.querySelector(".rs-form").closest(".iv-sec"):sec;
+    if(curSec){
+      var cf=curSec.querySelector(".rs-form"),cd=curSec.querySelector(".rs-done"),ce=cf&&cf.querySelector(".rs-err");
+      if(cd)cd.hidden=true;
+      if(cf)cf.hidden=false;
+      if(ce)ce.textContent=t("e_send");
+      if(cf)cf.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  }
 });
 app.addEventListener("change",function(e){
   if(e.target.matches(".rs-opt input")){
