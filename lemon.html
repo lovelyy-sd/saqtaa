@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
 <title>Приглашение на День Рождения 🍋</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Приглашение на День Рождения! 🍋">
+<meta property="og:description" content="22 ноября, 16:00–21:00 · Дом липтона. Загляни на приглашение и оставь тёплое пожелание!">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -853,7 +857,7 @@ body{
     rsvpEnabled:true,
     srv:"https://script.google.com/macros/s/AKfycbwjWW1WmAMtkb6x1OZnv1IJFOAD3b8c4W2IwcAxNQzRb8uF93cz51lfzJiA1U9qpB9o/exec",
     ejs:{s:"service_bssf2on",t:"template_n2q58pb",u:"yoA05AoeehSw32yJd"},
-    email:"saktaganov.diass@gmail.com",
+    email:"danialgabdullin885@gmail.com",
     oid:"lemon_bday_2026"
   };
 
@@ -901,9 +905,9 @@ body{
     document.title=(cfg.title||"День Рождения!")+" — "+(cfg.venue||cfg.badge||"Приглашение");
   }
 
-  /* Обратный отсчёт */
+  /* Обратный отсчёт (по времени Астаны UTC+5) */
   function tick(){
-    var target=new Date((cfg.date||CONFIG.date)+"T"+(cfg.time||"16:00")+":00").getTime();
+    var target=new Date((cfg.date||CONFIG.date)+"T"+(cfg.time||"16:00")+":00+05:00").getTime();
     var diff=Math.max(0,target-Date.now());
     var d=Math.floor(diff/86400000);
     var h=Math.floor((diff%86400000)/3600000);
@@ -986,12 +990,14 @@ body{
   }
 
   if(cfg.rsvpEnabled&&$("#rsvpForm")){
+    var isSending=false;
     $("#editAnsBtn").addEventListener("click",function(){
       $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
     });
 
     $("#rsvpForm").addEventListener("submit",async function(e){
       e.preventDefault();
+      if(isSending)return;
       var nmEl=$("#gName"),fmEl=$("#gFam"),wishEl=$("#gWish"),err=$("#rsvpErr");
       nmEl.classList.remove("bad");fmEl.classList.remove("bad");if(wishEl)wishEl.classList.remove("bad");
       err.textContent="";
@@ -1011,6 +1017,7 @@ body{
         err.textContent="Пожалуйста, напишите пожелание";return;
       }
 
+      isSending=true;
       var prev=loadRsvp();
       var rsvpId=(prev&&prev.id)||("lg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
       var isUpdate=Boolean(prev&&prev.sent);
@@ -1020,6 +1027,8 @@ body{
       var btnRect=this.querySelector(".submit-btn").getBoundingClientRect();
       spawnBurst(btnRect.left+btnRect.width/2,btnRect.top);
 
+      var ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+      var timer=ctrl?setTimeout(function(){ctrl.abort();},12000):null;
       try{
         if(cfg.ejs&&cfg.ejs.s&&cfg.email){
           var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
@@ -1029,6 +1038,7 @@ body{
           var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
             method:"POST",
             headers:{"Content-Type":"application/json"},
+            signal:ctrl?ctrl.signal:undefined,
             body:JSON.stringify({
               service_id:cfg.ejs.s,
               template_id:cfg.ejs.t,
@@ -1055,14 +1065,18 @@ body{
               }
             })
           });
+          if(timer)clearTimeout(timer);
           if(!r.ok)throw new Error("Не удалось отправить пожелание на почту.");
         }
       }catch(sendErr){
+        if(timer)clearTimeout(timer);
         if(prev)saveRsvp(prev);else try{localStorage.removeItem(rsvpKey());}catch(__){}
         $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
-        err.textContent=(sendErr&&sendErr.message)
+        err.textContent=(sendErr&&sendErr.message&&sendErr.name!=="AbortError")
           ?sendErr.message
           :"Не удалось отправить пожелание. Проверьте интернет и попробуйте ещё раз.";
+      }finally{
+        isSending=false;
       }
     });
   }
