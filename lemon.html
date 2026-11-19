@@ -1062,15 +1062,19 @@ body{
         var ctrl=typeof AbortController!=="undefined"?new AbortController():null;
         var timer=ctrl?setTimeout(function(){ctrl.abort();},12000):null;
         try{
-          var r=await fetch(cfg.srv+q,{method:"GET",signal:ctrl?ctrl.signal:undefined});
+          var r=await fetch(cfg.srv+q,{method:"GET",cache:"no-store",signal:ctrl?ctrl.signal:undefined});
           if(timer)clearTimeout(timer);
           var j=r.ok?await r.json():null;
           if(!j||!j.ok)throw new Error("server");
-        }catch(_){
+          if(j.cached)throw new Error("Подождите 10 секунд перед повторной отправкой.");
+          if(hasEmail&&j.email_sent===false)throw new Error(j.mail_error||"Сервер не смог отправить письмо.");
+        }catch(sendErr){
           if(timer)clearTimeout(timer);
           if(prev)saveRsvp(prev);else try{localStorage.removeItem(rsvpKey());}catch(__){}
           $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
-          err.textContent="Не удалось отправить ответ. Проверьте интернет и попробуйте ещё раз.";
+          err.textContent=(sendErr&&sendErr.message&&sendErr.message!=="server"&&sendErr.name!=="AbortError")
+            ?sendErr.message
+            :"Не удалось отправить ответ. Проверьте интернет и попробуйте ещё раз.";
         }
       }
     });
