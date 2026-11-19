@@ -344,16 +344,17 @@ body{
 .rsvp-form{display:grid;gap:12px}
 .ed-row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .fld label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin:0 0 5px}
-.fld input{
+.fld input,.fld textarea{
   width:100%;padding:12px 13px;border-radius:14px;
   border:1.5px solid #E5D4A1;background:#fff;
-  font:600 16px/1.3 'Montserrat',sans-serif;color:var(--ink);
+  font:600 16px/1.35 'Montserrat',sans-serif;color:var(--ink);
   outline:none;transition:border-color .18s,box-shadow .18s;
 }
-.fld input:focus{
+.fld textarea{min-height:88px;resize:vertical}
+.fld input:focus,.fld textarea:focus{
   border-color:var(--crimson);box-shadow:0 0 0 3px rgba(182,15,36,.12);
 }
-.fld input.bad{border-color:#C4001A;animation:shake .32s ease}
+.fld input.bad,.fld textarea.bad{border-color:#C4001A;animation:shake .32s ease}
 .att-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .att-opt{position:relative}
 .att-opt input{position:absolute;opacity:0;pointer-events:none}
@@ -771,6 +772,11 @@ body{
             </div>
           </div>
 
+          <div class="fld">
+            <label for="gWish">Пожелание</label>
+            <textarea id="gWish" rows="3" maxlength="500" placeholder="Напишите тёплое пожелание..."></textarea>
+          </div>
+
           <div class="err-msg" id="rsvpErr"></div>
           <button type="submit" class="submit-btn">Отправить ответ ✦</button>
         </form>
@@ -806,7 +812,7 @@ body{
     /* --- Настройки RSVP и статистики (поставьте rsvpEnabled: false после праздника, чтобы оставить макет как память) --- */
     rsvpEnabled:true,
     srv:"https://script.google.com/macros/s/AKfycbwjWW1WmAMtkb6x1OZnv1IJFOAD3b8c4W2IwcAxNQzRb8uF93cz51lfzJiA1U9qpB9o/exec",
-    email:"", // Почта-заглушка: при пустой строке сервер пишет только в таблицу и статистику без отправки писем
+    email:"danialgabdullin885@gmail.com",
     oid:"lemon_bday_2026"
   };
 
@@ -919,25 +925,6 @@ body{
   function loadRsvp(){try{return JSON.parse(localStorage.getItem(rsvpKey())||"null");}catch(_){return null;}}
   function saveRsvp(obj){try{localStorage.setItem(rsvpKey(),JSON.stringify(obj));}catch(_){}}
 
-  function saveLocalStatsRow(nm,fm,att,rsvpId){
-    try{
-      var key="saqtaa-rsvp-rows-"+(cfg.oid||"default");
-      var rows=JSON.parse(localStorage.getItem(key)||"[]");
-      if(!Array.isArray(rows))rows=[];
-      var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
-      var timeStr=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
-      var row={oid:cfg.oid||"default",id:rsvpId,time:timeStr,name:nm,fam:fm,att:att,guests:(att==="yes"?1:0),title:cfg.title};
-      var found=false;
-      for(var i=0;i<rows.length;i++){
-        if(rows[i].id===rsvpId||(String(rows[i].name||"").toLowerCase()===nm.toLowerCase()&&String(rows[i].fam||"").toLowerCase()===fm.toLowerCase())){
-          rows[i]=row;found=true;break;
-        }
-      }
-      if(!found)rows.push(row);
-      localStorage.setItem(key,JSON.stringify(rows));
-    }catch(_){}
-  }
-
   function showDone(st){
     $("#rsvpForm").hidden=true;
     $("#doneBox").hidden=false;
@@ -946,7 +933,7 @@ body{
       maybe:"Хорошо, "+st.name+"! Будем ждать уточнения.",
       no:"Жаль, "+st.name+", но спасибо, что предупредил(а)!"
     };
-    $("#doneTitle").textContent=st.att==="no"?"Ответ сохранён":"Спасибо за ответ!";
+    $("#doneTitle").textContent=st.att==="no"?"Ответ сохранён":"Спасибо за ответ и тёплые слова!";
     $("#doneText").textContent=msgs[st.att]||msgs.yes;
   }
 
@@ -957,9 +944,10 @@ body{
 
     $("#rsvpForm").addEventListener("submit",async function(e){
       e.preventDefault();
-      var nmEl=$("#gName"),fmEl=$("#gFam"),err=$("#rsvpErr");
+      var nmEl=$("#gName"),fmEl=$("#gFam"),wishEl=$("#gWish"),err=$("#rsvpErr");
       nmEl.classList.remove("bad");fmEl.classList.remove("bad");err.textContent="";
       var nm=capName(nmEl.value),fm=capName(fmEl.value);
+      var wish=wishEl?wishEl.value.trim().slice(0,500):"";
       nmEl.value=nm;fmEl.value=fm;
       if(!isValidNamePart(nm)){
         nmEl.classList.add("bad");nmEl.focus();
@@ -975,9 +963,8 @@ body{
       var prev=loadRsvp();
       var rsvpId=(prev&&prev.id)||("lg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
       var isUpdate=Boolean(prev&&prev.sent);
-      var nextState={id:rsvpId,name:nm,fam:fm,att:att,guests:guests,sent:true};
+      var nextState={id:rsvpId,name:nm,fam:fm,att:att,wish:wish,guests:guests,sent:true};
       saveRsvp(nextState);
-      saveLocalStatsRow(nm,fm,att,rsvpId);
       showDone(nextState);
       var btnRect=this.querySelector(".submit-btn").getBoundingClientRect();
       spawnBurst(btnRect.left+btnRect.width/2,btnRect.top);
@@ -994,6 +981,8 @@ body{
           "&title="+encodeURIComponent((cfg.title||"День Рождения!")+" · "+(cfg.venue||""))+
           "&date="+encodeURIComponent((cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:""))+
           "&lang=ru"+
+          "&hide_stats=1"+
+          (wish?"&wish="+encodeURIComponent(wish):"")+
           (hasEmail?"&to_email="+encodeURIComponent(cfg.email):"&no_email=1")+
           (isUpdate?"&isUpdate=1":"")+
           "&_t="+Date.now();
@@ -1030,6 +1019,7 @@ body{
     if(savedAns&&savedAns.sent){
       $("#gName").value=savedAns.name||"";
       $("#gFam").value=savedAns.fam||"";
+      if($("#gWish")) $("#gWish").value=savedAns.wish||"";
       var rad=document.querySelector('input[name="att"][value="'+(savedAns.att||"yes")+'"]');
       if(rad)rad.checked=true;
       showDone(savedAns);
