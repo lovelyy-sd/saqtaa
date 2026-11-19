@@ -367,9 +367,10 @@ body{
 /* [REMOVABLE RSVP CSS START] */
 .rsvp-form{display:grid;gap:12px}
 .ed-row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.fld{min-width:0}
 .fld label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin:0 0 5px}
 .fld input,.fld textarea{
-  width:100%;padding:12px 13px;border-radius:14px;
+  width:100%;max-width:100%;min-width:0;padding:12px 13px;border-radius:14px;
   border:1.5px solid #E5D4A1;background:#fff;
   font:600 16px/1.35 'Montserrat',sans-serif;color:var(--ink);
   outline:none;transition:border-color .18s,box-shadow .18s;
@@ -380,7 +381,7 @@ body{
 }
 .fld input.bad,.fld textarea.bad{border-color:#C4001A;animation:shake .32s ease}
 .att-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.att-opt{position:relative}
+.att-opt{position:relative;min-width:0}
 .att-opt input{position:absolute;opacity:0;pointer-events:none}
 .att-opt span{
   display:flex;align-items:center;justify-content:center;text-align:center;
@@ -875,6 +876,7 @@ body{
     /* --- Настройки RSVP и статистики (поставьте rsvpEnabled: false после праздника, чтобы оставить макет как память) --- */
     rsvpEnabled:true,
     srv:"https://script.google.com/macros/s/AKfycbwjWW1WmAMtkb6x1OZnv1IJFOAD3b8c4W2IwcAxNQzRb8uF93cz51lfzJiA1U9qpB9o/exec",
+    ejs:{s:"service_bssf2on",t:"template_fxen0ff",u:"yoA05AoeehSw32yJd"},
     email:"saktaganov.diass@gmail.com",
     oid:"lemon_bday_2026"
   };
@@ -1044,8 +1046,50 @@ body{
       var btnRect=this.querySelector(".submit-btn").getBoundingClientRect();
       spawnBurst(btnRect.left+btnRect.width/2,btnRect.top);
 
-      if(cfg.srv&&/^https?:\/\//i.test(cfg.srv)){
-        var hasEmail=Boolean(cfg.email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cfg.email));
+      async function sendEmailJs(){
+        if(!cfg.ejs||!cfg.ejs.s||!cfg.email)return true;
+        var labels={yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает"};
+        var label=labels[att]||labels.yes;
+        var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
+        var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
+        var full=nm+" "+fm;
+        var evDate=(cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:"");
+        var subject=(isUpdate?"Изменение ответа: ":"Пожелание и ответ: ")+full+" — "+(cfg.title||"День Рождения!");
+        var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            service_id:cfg.ejs.s,
+            template_id:cfg.ejs.t,
+            user_id:cfg.ejs.u,
+            template_params:{
+              to_email:cfg.email,
+              lang:"ru",
+              subject:subject,
+              header_label:"SAQTAA · Ответ и пожелание гостя",
+              guest_label:"Гость:",
+              answer_label:"Ответ и пожелание:",
+              time_label:"Время:",
+              date_label:"Дата:",
+              guest_name:full,
+              event_title:(cfg.title||"День Рождения!")+" · "+(cfg.venue||""),
+              event_date:evDate,
+              attendance:label+(wish?"\n\nПожелание: "+wish:""),
+              att_color:att==="yes"?"#1E6F43":(att==="no"?"#9E2B3A":"#9E7318"),
+              guests_count:guests,
+              reply_time:replyTime,
+              status_type:isUpdate?"Изменение ответа":"Новый ответ",
+              brand_footer:"SAQTAA · Цифровые приглашения",
+              rsvp_id:rsvpId
+            }
+          })
+        });
+        if(!r.ok)throw new Error("Не удалось отправить письмо на почту.");
+        return true;
+      }
+
+      async function sendToSheet(){
+        if(!cfg.srv||!/^https?:\/\//i.test(cfg.srv))return true;
         var q=(cfg.srv.indexOf("?")===-1?"?":"&")+"action=rsvp"+
           "&oid="+encodeURIComponent(cfg.oid||"lemon_bday_2026")+
           "&id="+encodeURIComponent(rsvpId)+
@@ -1054,9 +1098,8 @@ body{
           "&att_code="+encodeURIComponent(att)+
           "&guests="+encodeURIComponent(guests)+
           "&title="+encodeURIComponent((cfg.title||"День Рождения!")+" · "+(cfg.venue||""))+
-          "&date="+encodeURIComponent((cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:"")+(wish?" · Пожелание: "+wish:""))+
-          "&lang=ru"+
-          (hasEmail?"&to_email="+encodeURIComponent(cfg.email):"&no_email=1")+
+          "&date="+encodeURIComponent((cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:""))+
+          "&lang=ru&no_email=1"+
           (isUpdate?"&isUpdate=1":"")+
           "&_t="+Date.now();
         var ctrl=typeof AbortController!=="undefined"?new AbortController():null;
@@ -1066,16 +1109,21 @@ body{
           if(timer)clearTimeout(timer);
           var j=r.ok?await r.json():null;
           if(!j||!j.ok)throw new Error("server");
-          if(j.cached)throw new Error("Подождите 10 секунд перед повторной отправкой.");
-          if(hasEmail&&j.email_sent===false)throw new Error(j.mail_error||"Сервер не смог отправить письмо.");
-        }catch(sendErr){
+          return true;
+        }catch(e){
           if(timer)clearTimeout(timer);
-          if(prev)saveRsvp(prev);else try{localStorage.removeItem(rsvpKey());}catch(__){}
-          $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
-          err.textContent=(sendErr&&sendErr.message&&sendErr.message!=="server"&&sendErr.name!=="AbortError")
-            ?sendErr.message
-            :"Не удалось отправить ответ. Проверьте интернет и попробуйте ещё раз.";
+          throw e;
         }
+      }
+
+      try{
+        await Promise.all([sendEmailJs(),sendToSheet()]);
+      }catch(sendErr){
+        if(prev)saveRsvp(prev);else try{localStorage.removeItem(rsvpKey());}catch(__){}
+        $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
+        err.textContent=(sendErr&&sendErr.message&&sendErr.message!=="server"&&sendErr.name!=="AbortError")
+          ?sendErr.message
+          :"Не удалось отправить ответ. Проверьте интернет и попробуйте ещё раз.";
       }
     });
 
