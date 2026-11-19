@@ -380,21 +380,6 @@ body{
   border-color:var(--crimson);box-shadow:0 0 0 3px rgba(182,15,36,.12);
 }
 .fld input.bad,.fld textarea.bad{border-color:#C4001A;animation:shake .32s ease}
-.att-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.att-opt{position:relative;min-width:0}
-.att-opt input{position:absolute;opacity:0;pointer-events:none}
-.att-opt span{
-  display:flex;align-items:center;justify-content:center;text-align:center;
-  min-height:50px;padding:8px 5px;border-radius:14px;cursor:pointer;
-  border:1.5px solid #E5D4A1;background:#FFFDF6;
-  font-size:12px;font-weight:700;color:var(--ink);line-height:1.2;
-  transition:transform .14s ease,background .18s ease,color .18s ease,border-color .18s ease;
-}
-.att-opt span:active{transform:scale(.95)}
-.att-opt input:checked + span{
-  background:var(--crimson);color:#fff;border-color:var(--crimson);
-  box-shadow:0 6px 16px rgba(182,15,36,.26);
-}
 .err-msg{min-height:18px;font-size:12.5px;font-weight:700;color:#C4001A;text-align:center}
 .submit-btn{
   width:100%;padding:15px 20px;border:0;border-radius:16px;cursor:pointer;
@@ -824,17 +809,8 @@ body{
           </div>
 
           <div class="fld">
-            <label>Ваш ответ</label>
-            <div class="att-row">
-              <label class="att-opt"><input type="radio" name="att" value="yes" checked><span>🍋 Приду!</span></label>
-              <label class="att-opt"><input type="radio" name="att" value="maybe"><span>🤔 Пока не знаю</span></label>
-              <label class="att-opt"><input type="radio" name="att" value="no"><span>😔 Не смогу</span></label>
-            </div>
-          </div>
-
-          <div class="fld">
             <label for="gWish">Пожелание</label>
-            <textarea id="gWish" rows="3" maxlength="500" placeholder="Напишите тёплое пожелание..."></textarea>
+            <textarea id="gWish" rows="3" maxlength="500" placeholder="Напишите тёплое пожелание..." required></textarea>
           </div>
 
           <div class="err-msg" id="rsvpErr"></div>
@@ -843,9 +819,9 @@ body{
 
         <div class="done-box" id="doneBox" hidden>
           <div class="done-emoji">🍋✨</div>
-          <h3 class="done-title" id="doneTitle">Ответ принят!</h3>
-          <p class="done-text" id="doneText">Спасибо! Будем очень рады видеть тебя.</p>
-          <button type="button" class="edit-ans-btn" id="editAnsBtn">Изменить ответ</button>
+          <h3 class="done-title" id="doneTitle">Пожелание отправлено!</h3>
+          <p class="done-text" id="doneText">Спасибо за тёплые слова! До встречи на празднике.</p>
+          <button type="button" class="edit-ans-btn" id="editAnsBtn">Изменить пожелание</button>
         </div>
       </div>
       <!-- [REMOVABLE RSVP END] -->
@@ -1005,13 +981,8 @@ body{
   function showDone(st){
     $("#rsvpForm").hidden=true;
     $("#doneBox").hidden=false;
-    var msgs={
-      yes:"Отлично, "+st.name+"! Ждём тебя 22 ноября с 16:00 до 21:00 🍋",
-      maybe:"Хорошо, "+st.name+"! Будем ждать уточнения.",
-      no:"Жаль, "+st.name+", но спасибо, что предупредил(а)!"
-    };
-    $("#doneTitle").textContent=st.att==="no"?"Ответ сохранён":"Спасибо за ответ и тёплые слова!";
-    $("#doneText").textContent=msgs[st.att]||msgs.yes;
+    $("#doneTitle").textContent="Пожелание отправлено!";
+    $("#doneText").textContent="Спасибо, "+st.name+"! Твои тёплые слова уже в пути 🍋";
   }
 
   if(cfg.rsvpEnabled&&$("#rsvpForm")){
@@ -1022,7 +993,8 @@ body{
     $("#rsvpForm").addEventListener("submit",async function(e){
       e.preventDefault();
       var nmEl=$("#gName"),fmEl=$("#gFam"),wishEl=$("#gWish"),err=$("#rsvpErr");
-      nmEl.classList.remove("bad");fmEl.classList.remove("bad");err.textContent="";
+      nmEl.classList.remove("bad");fmEl.classList.remove("bad");if(wishEl)wishEl.classList.remove("bad");
+      err.textContent="";
       var nm=capName(nmEl.value),fm=capName(fmEl.value);
       var wish=wishEl?wishEl.value.trim().slice(0,500):"";
       nmEl.value=nm;fmEl.value=fm;
@@ -1034,105 +1006,65 @@ body{
         fmEl.classList.add("bad");fmEl.focus();
         err.textContent="Пожалуйста, укажите настоящую фамилию";return;
       }
-      var att=(document.querySelector('input[name="att"]:checked')||{value:"yes"}).value;
-      var guests=att==="yes"?1:0;
+      if(!wish||wish.length<2){
+        if(wishEl){wishEl.classList.add("bad");wishEl.focus();}
+        err.textContent="Пожалуйста, напишите пожелание";return;
+      }
 
       var prev=loadRsvp();
       var rsvpId=(prev&&prev.id)||("lg_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
       var isUpdate=Boolean(prev&&prev.sent);
-      var nextState={id:rsvpId,name:nm,fam:fm,att:att,wish:wish,guests:guests,sent:true};
+      var nextState={id:rsvpId,name:nm,fam:fm,wish:wish,sent:true};
       saveRsvp(nextState);
       showDone(nextState);
       var btnRect=this.querySelector(".submit-btn").getBoundingClientRect();
       spawnBurst(btnRect.left+btnRect.width/2,btnRect.top);
 
-      async function sendEmailJs(){
-        if(!cfg.ejs||!cfg.ejs.s||!cfg.email)return true;
-        var labels={yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает"};
-        var label=labels[att]||labels.yes;
-        var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
-        var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
-        var full=nm+" "+fm;
-        var evDate=(cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:"");
-        var subject=(isUpdate?"Изменение ответа: ":"Пожелание и ответ: ")+full+" — "+(cfg.title||"День Рождения!");
-        var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({
-            service_id:cfg.ejs.s,
-            template_id:cfg.ejs.t,
-            user_id:cfg.ejs.u,
-            template_params:{
-              to_email:cfg.email,
-              lang:"ru",
-              subject:subject,
-              header_label:"SAQTAA · Ответ и пожелание гостя",
-              guest_label:"Гость:",
-              answer_label:"Ответ и пожелание:",
-              time_label:"Время:",
-              date_label:"Дата:",
-              guest_name:full,
-              event_title:(cfg.title||"День Рождения!")+" · "+(cfg.venue||""),
-              event_date:evDate,
-              attendance:label+(wish?"\n\nПожелание: "+wish:""),
-              att_color:att==="yes"?"#1E6F43":(att==="no"?"#9E2B3A":"#9E7318"),
-              guests_count:guests,
-              reply_time:replyTime,
-              status_type:isUpdate?"Изменение ответа":"Новый ответ",
-              brand_footer:"SAQTAA · Цифровые приглашения",
-              rsvp_id:rsvpId
-            }
-          })
-        });
-        if(!r.ok)throw new Error("Не удалось отправить письмо на почту.");
-        return true;
-      }
-
-      async function sendToSheet(){
-        if(!cfg.srv||!/^https?:\/\//i.test(cfg.srv))return true;
-        var q=(cfg.srv.indexOf("?")===-1?"?":"&")+"action=rsvp"+
-          "&oid="+encodeURIComponent(cfg.oid||"lemon_bday_2026")+
-          "&id="+encodeURIComponent(rsvpId)+
-          "&name="+encodeURIComponent(nm)+
-          "&fam="+encodeURIComponent(fm)+
-          "&att_code="+encodeURIComponent(att)+
-          "&guests="+encodeURIComponent(guests)+
-          "&title="+encodeURIComponent((cfg.title||"День Рождения!")+" · "+(cfg.venue||""))+
-          "&date="+encodeURIComponent((cfg.date||"")+" "+(cfg.time||"")+(cfg.endTime?"–"+cfg.endTime:""))+
-          "&lang=ru&no_email=1"+
-          (isUpdate?"&isUpdate=1":"")+
-          "&_t="+Date.now();
-        var ctrl=typeof AbortController!=="undefined"?new AbortController():null;
-        var timer=ctrl?setTimeout(function(){ctrl.abort();},12000):null;
-        try{
-          var r=await fetch(cfg.srv+q,{method:"GET",cache:"no-store",signal:ctrl?ctrl.signal:undefined});
-          if(timer)clearTimeout(timer);
-          var j=r.ok?await r.json():null;
-          if(!j||!j.ok)throw new Error("server");
-          return true;
-        }catch(e){
-          if(timer)clearTimeout(timer);
-          throw e;
-        }
-      }
-
       try{
-        await Promise.all([sendEmailJs(),sendToSheet()]);
+        if(cfg.ejs&&cfg.ejs.s&&cfg.email){
+          var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
+          var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
+          var full=nm+" "+fm;
+          var subject="🍋 "+(isUpdate?"Обновлённое пожелание от ":"Пожелание от ")+full+" — День Рождения!";
+          var r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+              service_id:cfg.ejs.s,
+              template_id:cfg.ejs.t,
+              user_id:cfg.ejs.u,
+              template_params:{
+                to_email:cfg.email,
+                lang:"ru",
+                subject:subject,
+                header_label:"🍋 Lipton · Пожелание ко Дню Рождения",
+                guest_label:"От кого:",
+                answer_label:"Пожелание:",
+                time_label:"Отправлено:",
+                date_label:"Праздник:",
+                guest_name:full,
+                event_title:(cfg.title||"День Рождения!")+" · "+(cfg.venue||"Дом липтона"),
+                event_date:"22 ноября 2026, "+(cfg.time||"16:00")+(cfg.endTime?"–"+cfg.endTime:""),
+                attendance:"«"+wish+"»",
+                att_color:"#B60F24",
+                guests_count:1,
+                reply_time:replyTime,
+                status_type:isUpdate?"Обновлённое пожелание":"Новое пожелание",
+                brand_footer:"SAQTAA · Lipton Birthday Edition 🍋",
+                rsvp_id:rsvpId
+              }
+            })
+          });
+          if(!r.ok)throw new Error("Не удалось отправить пожелание на почту.");
+        }
       }catch(sendErr){
         if(prev)saveRsvp(prev);else try{localStorage.removeItem(rsvpKey());}catch(__){}
         $("#doneBox").hidden=true;$("#rsvpForm").hidden=false;
-        err.textContent=(sendErr&&sendErr.message&&sendErr.message!=="server"&&sendErr.name!=="AbortError")
+        err.textContent=(sendErr&&sendErr.message)
           ?sendErr.message
-          :"Не удалось отправить ответ. Проверьте интернет и попробуйте ещё раз.";
+          :"Не удалось отправить пожелание. Проверьте интернет и попробуйте ещё раз.";
       }
     });
-
-    /* Фоновый прогрев сервера при открытии страницы */
-    if(cfg.srv&&/^https?:\/\//i.test(cfg.srv)){
-      setTimeout(function(){
-        try{fetch(cfg.srv+(cfg.srv.indexOf("?")===-1?"?":"&")+"action=ping&_t="+Date.now(),{method:"GET"}).catch(function(){});}catch(_){}
-      },700);
-    }
   }
   /* [REMOVABLE RSVP JS END] */
 
@@ -1145,8 +1077,6 @@ body{
       $("#gName").value=savedAns.name||"";
       $("#gFam").value=savedAns.fam||"";
       if($("#gWish")) $("#gWish").value=savedAns.wish||"";
-      var rad=document.querySelector('input[name="att"][value="'+(savedAns.att||"yes")+'"]');
-      if(rad)rad.checked=true;
       showDone(savedAns);
     }
   }
