@@ -133,10 +133,12 @@ body{
   padding:calc(16px + env(safe-area-inset-top)) 14px calc(44px + env(safe-area-inset-bottom));
 }
 
-/* Главный постер */
+/* Главный постер (первый экран на телефоне) */
 .poster{
   text-align:center;
-  padding:4px 2px 14px;
+  min-height:calc(100dvh - 32px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 2px 28px;
 }
 
 /* Эмблема в стиле Lipton */
@@ -149,6 +151,12 @@ body{
   transition:transform .16s ease;
 }
 .emblem:active{transform:scale(.93)}
+.emblem-ring{
+  position:absolute;width:118px;height:118px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.68);
+  will-change:transform,opacity;
+  animation:haloRipple 3.6s ease-out infinite;
+}
 .emblem-sun{
   width:108px;height:108px;border-radius:50%;
   background:radial-gradient(circle at 38% 32%,#FFFFFF 0%,#FFF57E 36%,#FFD000 78%,#F0A800 100%);
@@ -281,7 +289,7 @@ body{
 
 /* Стакан холодного чая со всплеском */
 .drink-stage{
-  position:relative;height:138px;margin:12px auto -24px;
+  position:relative;height:136px;margin:18px auto 0;
   display:flex;align-items:flex-end;justify-content:center;
   cursor:pointer;
   will-change:transform,opacity;
@@ -290,31 +298,41 @@ body{
 .drink-svg{
   width:246px;height:auto;
   will-change:transform;
-  animation:drinkFloat 5.6s ease-in-out infinite;
+  animation:drinkFloat 5.2s ease-in-out infinite;
 }
 .ice-cube-bob{
   transform-box:fill-box;transform-origin:center;
-  animation:iceInGlass 4.2s ease-in-out infinite;
+  animation:iceInGlass 4s ease-in-out infinite;
+}
+.glass-lemon{
+  transform-box:fill-box;transform-origin:center;
+  animation:lemonRock 4.6s ease-in-out infinite;
+}
+.splash-drop{
+  transform-box:fill-box;transform-origin:center;
+  animation:dropBounce 3.2s ease-in-out infinite;
 }
 .straw-tilt{
   transform-box:fill-box;transform-origin:bottom center;
-  animation:strawSway 5s ease-in-out infinite;
+  animation:strawSway 4.8s ease-in-out infinite;
 }
 
-/* Карточка с таймером и RSVP */
+/* Отступ ко второму блоку (Таймер и Пожелания) */
 .card{
   position:relative;z-index:2;
-  margin-top:6px;
+  margin-top:64px;
+  scroll-margin-top:22px;
   background:rgba(255,253,245,.97);
   border-radius:26px;
-  padding:22px 16px 24px;
+  padding:24px 16px 26px;
   box-shadow:var(--shadow),inset 0 1.5px 0 #FFFFFF;
   border:2px solid rgba(255,255,255,.95);
   will-change:transform,opacity;
-  opacity:0;transform:translate3d(0,22px,0);
-  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
+  opacity:0;transform:translate3d(0,26px,0) scale(.98);
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1),box-shadow .4s ease;
 }
-.card.is-visible{opacity:1;transform:translate3d(0,0,0)}
+.card.is-visible{opacity:1;transform:translate3d(0,0,0) scale(1)}
+.card.focus-glow{box-shadow:0 0 0 4px rgba(182,15,36,.2),0 22px 52px rgba(120,66,0,.24)}
 .card-h{
   margin:0 0 4px;text-align:center;
   font-family:'Caveat',cursive;font-size:35px;line-height:1;color:var(--crimson);
@@ -330,7 +348,13 @@ body{
   border:1.5px solid rgba(242,177,0,.45);
   border-radius:14px;padding:10px 4px;text-align:center;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+  opacity:0;transform:translate3d(0,12px,0) scale(.92);
+  transition:opacity .45s ease,transform .45s cubic-bezier(.22,1.25,.36,1);
 }
+.card.is-visible .t-box{opacity:1;transform:translate3d(0,0,0) scale(1)}
+.card.is-visible .t-box:nth-child(2){transition-delay:.07s}
+.card.is-visible .t-box:nth-child(3){transition-delay:.14s}
+.card.is-visible .t-box:nth-child(4){transition-delay:.21s}
 .t-num{display:block;font-size:21px;font-weight:800;color:var(--crimson);line-height:1.1;font-variant-numeric:tabular-nums}
 .t-lbl{display:block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-top:2px}
 
@@ -492,6 +516,19 @@ body{
   0%,100%{transform:translate3d(0,0,0)}
   25%{transform:translate3d(-5px,0,0)}
   75%{transform:translate3d(5px,0,0)}
+}
+@keyframes haloRipple{
+  0%{transform:scale(.9);opacity:.85}
+  70%{transform:scale(1.38);opacity:0}
+  100%{transform:scale(1.38);opacity:0}
+}
+@keyframes lemonRock{
+  0%,100%{transform:rotate(-4deg) translate3d(0,0,0)}
+  50%{transform:rotate(5deg) translate3d(0,-3px,0)}
+}
+@keyframes dropBounce{
+  0%,100%{transform:translate3d(0,0,0) scale(1);opacity:.9}
+  50%{transform:translate3d(0,-6px,0) scale(1.18);opacity:1}
 }
 @keyframes burstFly{
   0%{opacity:1;transform:translate3d(-50%,-50%,0) scale(.5)}
@@ -663,6 +700,7 @@ body{
   <main class="wrap">
     <section class="poster">
       <div class="emblem" id="emblemTap" title="Нажми для всплеска 🍋">
+        <div class="emblem-ring"></div>
         <div class="emblem-sun"></div>
         <div class="emblem-ribbon"><span id="vBadge">Lipton</span></div>
       </div>
@@ -705,7 +743,7 @@ body{
         </div>
       </div>
 
-      <a href="#rsvpSection" class="cta-pill" id="heroCta">Подтверди своё присутствие →</a>
+      <a href="#rsvpSection" class="cta-pill" id="heroCta">Оставить своё пожелание →</a>
 
       <!-- Иллюстрация стакана Lipton Ice Tea со всплеском -->
       <div class="drink-stage" id="drinkTap">
@@ -725,18 +763,22 @@ body{
             <path d="M108 22 L122 14 M108 40 L122 32 M108 58 L122 50 M108 76 L122 68" stroke="#C81428" stroke-width="6"/>
           </g>
           <!-- Долька лимона за стаканом -->
-          <circle cx="195" cy="76" r="42" fill="#F2AE00"/>
-          <circle cx="195" cy="76" r="36" fill="#FFF6D1"/>
-          <circle cx="195" cy="76" r="32" fill="#FFE02B"/>
-          <g stroke="#FFF8DC" stroke-width="3">
-            <line x1="195" y1="44" x2="195" y2="108"/><line x1="163" y1="76" x2="227" y2="76"/>
-            <line x1="173" y1="54" x2="217" y2="98"/><line x1="217" y1="54" x2="173" y2="98"/>
+          <g class="glass-lemon">
+            <circle cx="195" cy="76" r="42" fill="#F2AE00"/>
+            <circle cx="195" cy="76" r="36" fill="#FFF6D1"/>
+            <circle cx="195" cy="76" r="32" fill="#FFE02B"/>
+            <g stroke="#FFF8DC" stroke-width="3">
+              <line x1="195" y1="44" x2="195" y2="108"/><line x1="163" y1="76" x2="227" y2="76"/>
+              <line x1="173" y1="54" x2="217" y2="98"/><line x1="217" y1="54" x2="173" y2="98"/>
+            </g>
           </g>
           <!-- Всплески чая -->
           <path d="M84,96 C62,62 42,66 36,48 C56,50 74,62 92,84 Z" fill="#F08A0B"/>
           <path d="M236,96 C262,66 280,72 292,52 C272,56 254,66 228,84 Z" fill="#F08A0B"/>
-          <circle cx="48" cy="36" r="5" fill="#F7A21B"/><circle cx="276" cy="40" r="6" fill="#F7A21B"/>
-          <circle cx="64" cy="24" r="3.5" fill="#FFD24C"/><circle cx="260" cy="26" r="4" fill="#FFD24C"/>
+          <g class="splash-drop">
+            <circle cx="48" cy="36" r="5" fill="#F7A21B"/><circle cx="276" cy="40" r="6" fill="#F7A21B"/>
+            <circle cx="64" cy="24" r="3.5" fill="#FFD24C"/><circle cx="260" cy="26" r="4" fill="#FFD24C"/>
+          </g>
           <!-- Стакан -->
           <path d="M84,78 L236,78 L216,184 L104,184 Z" fill="url(#teaGrad)" stroke="rgba(255,255,255,.78)" stroke-width="3.5" stroke-linejoin="round"/>
           <!-- Лёд в стакане -->
@@ -795,7 +837,7 @@ body{
           </div>
 
           <div class="err-msg" id="rsvpErr"></div>
-          <button type="submit" class="submit-btn">Отправить ответ ✦</button>
+          <button type="submit" class="submit-btn">Отправить пожелание ✦</button>
         </form>
 
         <div class="done-box" id="doneBox" hidden>
@@ -923,13 +965,25 @@ body{
       setTimeout((function(node){return function(){node.remove();};})(sp),800);
     }
   }
-  ["#emblemTap","#drinkTap","#heroCta"].forEach(function(sel){
+  ["#emblemTap","#drinkTap"].forEach(function(sel){
     var el=$(sel);
     if(el)el.addEventListener("click",function(e){
       var r=this.getBoundingClientRect();
       spawnBurst(e.clientX||(r.left+r.width/2),e.clientY||(r.top+r.height/2));
     });
   });
+  if($("#heroCta")){
+    $("#heroCta").addEventListener("click",function(e){
+      e.preventDefault();
+      var r=this.getBoundingClientRect();
+      spawnBurst(e.clientX||(r.left+r.width/2),e.clientY||(r.top+r.height/2));
+      if(cardEl){
+        cardEl.classList.add("is-visible","focus-glow");
+        cardEl.scrollIntoView({behavior:"smooth",block:"start"});
+        setTimeout(function(){cardEl.classList.remove("focus-glow");},1100);
+      }
+    });
+  }
 
   /* [REMOVABLE RSVP JS START] */
   function normName(s){return String(s||"").replace(/\s+/g," ").trim().slice(0,40);}
