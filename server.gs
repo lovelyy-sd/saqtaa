@@ -295,7 +295,10 @@ function handle(p) {
       var foundRsvpRow = -1;
       var totalYes = 0, totalNo = 0, totalMaybe = 0;
       var isUpdateReq = String(p.isUpdate || "") === "1";
-      var needSummary = (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail));
+      var hideStats = String(p.hide_stats || "") === "1";
+      var wish = String(p.wish || "").trim().slice(0, 600);
+      var needEmail = (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail));
+      var needSummary = needEmail && !hideStats;
       if (isUpdateReq || needSummary) {
         var rRows = db.rsvps.getDataRange().getValues();
         for (var j = 1; j < rRows.length; j++) {
@@ -327,8 +330,11 @@ function handle(p) {
 
       // Отправка письма с аккаунта SAQTAA на Email клиента через GmailApp (только если не выбран EmailJS)
       var emailSent = false, mailError = "";
-      if (needSummary) {
+      if (needEmail) {
         try {
+          var escHtml = function(v) {
+            return String(v || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+          };
           var fullName = name + " " + fam;
           var subjPrefix = isBoth
             ? (isUpdate ? "Жауап өзгертілді / Изменение ответа: " : "Жаңа жауап / Новый ответ гостя: ")
@@ -342,6 +348,7 @@ function handle(p) {
             date: "Күні / Дата: ",
             guest: "Қонақ / Гость:",
             ans: "Жауабы / Ответ:",
+            wish: "Тілек / Пожелание:",
             time: "Уақыты / Время: ",
             upd: " (жаңартылды / обновлено)",
             stTitle: "Статистика / Текущая статистика",
@@ -353,6 +360,7 @@ function handle(p) {
             date: "Күні: ",
             guest: "Қонақ:",
             ans: "Жауабы:",
+            wish: "Тілек:",
             time: "Жауап уақыты: ",
             upd: " (жаңартылған жауап)",
             stTitle: "Шақыру бойынша статистика",
@@ -364,6 +372,7 @@ function handle(p) {
             date: "Дата: ",
             guest: "Гость:",
             ans: "Ответ:",
+            wish: "Пожелание:",
             time: "Время ответа: ",
             upd: " (обновлённый ответ)",
             stTitle: "Статистика по приглашению",
@@ -371,29 +380,43 @@ function handle(p) {
             stPlain: "Придут: " + totalYes + " · Не придут: " + totalNo + " · Думают: " + totalMaybe,
             brand: BRAND_NAME
           });
-          var plainBody = [
+          var plainLines = [
             eventTitle + (eventDate ? " (" + eventDate + ")" : ""),
             txt.guest + " " + fullName,
-            txt.ans + " " + attLabel,
-            txt.time + now + (isUpdate ? txt.upd : ""),
-            txt.stPlain
-          ].join("\n");
+            txt.ans + " " + attLabel
+          ];
+          if (wish) plainLines.push(txt.wish + " " + wish);
+          plainLines.push(txt.time + now + (isUpdate ? txt.upd : ""));
+          if (!hideStats) plainLines.push(txt.stPlain);
+          var plainBody = plainLines.join("\n");
+
+          var wishHtml = wish
+            ? ('  <div style="background:#FFF8DF;border-left:3px solid #D49B1A;border-radius:8px;padding:10px 12px;margin:10px 0 12px;font-size:14px;line-height:1.5;color:#182720">' +
+               '    <div style="font-size:12px;font-weight:bold;color:#8c6d32;margin-bottom:4px">' + txt.wish + '</div>' +
+               '    ' + escHtml(wish).replace(/\r?\n/g, "<br>") +
+               '  </div>')
+            : "";
+          var statsHtml = hideStats
+            ? ""
+            : ('  <div style="font-size:13px;color:#182720;margin-top:14px;padding-top:14px;border-top:1px solid #ece7dc">' +
+               '    <div style="color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px">' + txt.stTitle + '</div>' +
+               '    ' + txt.stLine +
+               '  </div>');
+
           var htmlBody = [
             '<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;padding:22px;border-radius:10px;color:#182720;border:1px solid #e5e0d5">',
             '  <div style="border-bottom:1px solid #ece7dc;padding-bottom:12px;margin-bottom:16px">',
             '    <div style="font-size:12px;color:#8c6d32;font-weight:bold">' + txt.hdr + '</div>',
-            '    <h2 style="margin:6px 0 2px;font-size:20px;color:#0F4A38">' + eventTitle + '</h2>',
-            (eventDate ? '<div style="font-size:13px;color:#46584D">' + txt.date + eventDate + '</div>' : ''),
+            '    <h2 style="margin:6px 0 2px;font-size:20px;color:#0F4A38">' + escHtml(eventTitle) + '</h2>',
+            (eventDate ? '<div style="font-size:13px;color:#46584D">' + txt.date + escHtml(eventDate) + '</div>' : ''),
             '  </div>',
-            '  <div style="padding:4px 0 14px;border-bottom:1px solid #ece7dc;margin-bottom:14px">',
-            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.guest + '</strong> ' + fullName + '</p>',
-            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.ans + '</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + attLabel + '</span></p>',
+            '  <div style="padding:4px 0 2px">',
+            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.guest + '</strong> ' + escHtml(fullName) + '</p>',
+            '    <p style="margin:0 0 8px;font-size:15px"><strong>' + txt.ans + '</strong> <span style="color:' + badgeColor + ';font-weight:bold">' + escHtml(attLabel) + '</span></p>',
+            wishHtml,
             '    <p style="margin:0;font-size:12px;color:#6a746d">' + txt.time + now + (isUpdate ? txt.upd : '') + '</p>',
             '  </div>',
-            '  <div style="font-size:13px;color:#182720">',
-            '    <div style="color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px">' + txt.stTitle + '</div>',
-            '    ' + txt.stLine,
-            '  </div>',
+            statsHtml,
             '</div>'
           ].join("\n");
 
