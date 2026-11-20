@@ -116,6 +116,17 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .rd-venue{font-size:.85rem;opacity:.75}
 .rd-cals{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 .rd-gcal{display:inline-flex;align-items:center;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.75}
+.rs-guests{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,transparent);border-radius:12px;padding:11px 14px;background:color-mix(in srgb,var(--acc) 5%,transparent);text-align:left}
+.rs-guests[hidden],.rd-guests[hidden]{display:none!important}
+.rs-guests-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rs-guests-lbl{font-size:.9rem;font-weight:700;line-height:1.25}
+.rs-guests-hint{font-size:.74rem;opacity:.72;line-height:1.25}
+.rs-step{display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.rs-step-btn{width:40px;height:40px;border-radius:50%;border:1px solid color-mix(in srgb,var(--acc) 55%,transparent);background:transparent;color:inherit;font-size:1.2rem;line-height:1;font-weight:600;display:grid;place-items:center;transition:transform .15s,background .15s,opacity .15s}
+.rs-step-btn:not([disabled]):active{transform:scale(.93);background:color-mix(in srgb,var(--acc) 18%,transparent)}
+.rs-step-btn[disabled]{opacity:.3;pointer-events:none}
+.rs-step-val{min-width:24px;text-align:center;font-family:var(--fd);font-size:1.28rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--acc)}
+.rd-guests{font-size:.82rem;font-weight:700;color:var(--acc);margin-top:-4px}
 .rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7}
 .rs-stats{width:100%;margin-top:10px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--acc) 28%,transparent);display:flex;flex-direction:column;align-items:center;gap:10px}
 .rs-stats-h{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);font-weight:700}
@@ -150,7 +161,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .theme-editorial .inv-inner{max-width:620px}
 .ed-big{font-family:var(--fd);font-weight:800;font-size:clamp(5rem,22vw,7.5rem);line-height:.85}
 .theme-editorial .inv-names{font-size:clamp(1.6rem,6vw,2.2rem);letter-spacing:.3em;text-transform:uppercase}
-.theme-editorial .inv-btn,.theme-editorial .rs-send,.theme-editorial .rd-card{border-radius:0}
+.theme-editorial .inv-btn,.theme-editorial .rs-send,.theme-editorial .rd-card,.theme-editorial .rs-guests,.theme-editorial .rs-step-btn{border-radius:0}
 .theme-editorial .cd>div,.theme-editorial .rs-stat-grid>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
 .theme-emerald{background:linear-gradient(180deg,#0E4D3C,#072A20);color:#EFE4C6;--acc:#D9BC7F;--acc-ink:#0A3527;--field:rgba(255,255,255,.08)}
 .theme-emerald .cd>div{border-color:rgba(217,188,127,.35);background:rgba(217,188,127,.07)}
@@ -295,6 +306,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",cdesc:"Программа: ",cdone:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
  cd:{d:["день","дня","дней"],h:["час","часа","часов"],m:["минута","минуты","минут"],s:["секунда","секунды","секунд"]},
  st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",st_empty:"Пока нет ответов — будьте первыми",
+ g_lbl:"Сколько человек придёт",g_one:"Только вы (1 чел.)",g_many:"{n} чел. (вы + {extra})",g_done_one:"Придёте: 1 чел.",g_done_many:"Придут с вами: {n} чел.",
  months:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],sw:"ҚАЗ"},
 kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарлама",loc:"Өткізілетін орын",gis:"2ГИС-тен ашу",
  rh:"Қатысуды растау",rt:"Жауабыңызды күтеміз",rs:"Қатысатыныңызды растауыңызды сұраймыз.",
@@ -308,6 +320,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",cdesc:"Бағдарлама: ",cdone:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
  cd:{d:"күн",h:"сағат",m:"минут",s:"секунд"},
  st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",st_empty:"Әзірге жауаптар жоқ — алғашқы болыңыз",
+ g_lbl:"Неше адам келеді",g_one:"Тек сіз (1 адам)",g_many:"{n} адам (сіз + {extra})",g_done_one:"Келеді: 1 адам",g_done_many:"Сізбен бірге: {n} адам",
  months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"],sw:"РУС"}
 };
 
@@ -360,9 +373,22 @@ function isValidNamePart(s){
 function makeId(){return(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("rsvp-"+Date.now()+"-"+Math.random().toString(36).slice(2,10));}
 function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
 function invKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
+function clampGuests(n){var x=parseInt(n,10);return Number.isFinite(x)?Math.max(1,Math.min(10,x)):1;}
+function guestHint(n){n=clampGuests(n);return n<=1?t("g_one"):fill(t("g_many"),{n:n,extra:n-1});}
+function guestDoneText(n){n=clampGuests(n);return n<=1?t("g_done_one"):fill(t("g_done_many"),{n:n});}
+function syncGuestsUI(f,n){
+  if(!f)return;
+  n=clampGuests(n);
+  var valEl=f.querySelector("[data-gval]"),hintEl=f.querySelector("[data-ghint]"),btns=f.querySelectorAll("[data-gstep]");
+  if(valEl)valEl.textContent=String(n);
+  if(hintEl)hintEl.textContent=guestHint(n);
+  btns.forEach(function(b){var d=parseInt(b.getAttribute("data-gstep"),10);b.disabled=(d<0&&n<=1)||(d>0&&n>=10);});
+  var box=f.querySelector(".rs-guests"),ch=f.querySelector("input[type=radio]:checked");
+  if(box&&ch)box.hidden=(validAtt(ch.value)!=="yes");
+}
 function loadRsvpState(){
   var key=invKey(),cached=memRsvp[key];
-  var def={id:makeId(),nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",rev:0,guests:0,maybe:0,editing:false,lastSentAt:0,lang:""};
+  var def={id:makeId(),nm:"",fm:"",att:"yes",cnt:1,sent:false,sentNm:"",sentFm:"",sentAtt:"yes",sentCnt:0,rev:0,guests:0,maybe:0,editing:false,lastSentAt:0,lang:""};
   var p=null;
   try{
     var raw=localStorage.getItem(key);
@@ -370,18 +396,22 @@ function loadRsvpState(){
   }catch(_){}
   if((!p||typeof p!=="object")&&cached&&typeof cached==="object")p=cached;
   if(!p||typeof p!=="object"){memRsvp[key]=def;return def;}
+  var sAtt=validAtt(p.sentAtt);
+  var sCnt=sAtt==="yes"?clampGuests(p.sentCnt||p.guests||1):0;
   var st={
     id:String(p.id||def.id).slice(0,64),
     nm:normName(p.nm),
     fm:normName(p.fm),
     att:validAtt(p.att),
+    cnt:clampGuests(p.cnt||(sCnt||1)),
     sent:Boolean(p.sent&&p.sentNm&&p.sentFm),
     sentNm:normName(p.sentNm),
     sentFm:normName(p.sentFm),
-    sentAtt:validAtt(p.sentAtt),
+    sentAtt:sAtt,
+    sentCnt:sCnt,
     rev:Number.isFinite(+p.rev)&&+p.rev>0?Math.floor(+p.rev):0,
-    guests:validAtt(p.sentAtt)==="yes"?1:0,
-    maybe:validAtt(p.sentAtt)==="maybe"?1:0,
+    guests:sCnt,
+    maybe:sAtt==="maybe"?1:0,
     editing:false,
     lastSentAt:Number.isFinite(+p.lastSentAt)?+p.lastSentAt:0,
     lang:(p.lang==="ru"||p.lang==="kz")?p.lang:""
@@ -393,8 +423,8 @@ function saveRsvpState(){
   if(!D||!rsvpState)return;
   var key=invKey();
   memRsvp[key]={
-    id:rsvpState.id,nm:rsvpState.nm,fm:rsvpState.fm,att:rsvpState.att,
-    sent:rsvpState.sent,sentNm:rsvpState.sentNm,sentFm:rsvpState.sentFm,sentAtt:rsvpState.sentAtt,
+    id:rsvpState.id,nm:rsvpState.nm,fm:rsvpState.fm,att:rsvpState.att,cnt:rsvpState.cnt,
+    sent:rsvpState.sent,sentNm:rsvpState.sentNm,sentFm:rsvpState.sentFm,sentAtt:rsvpState.sentAtt,sentCnt:rsvpState.sentCnt,
     rev:rsvpState.rev,guests:rsvpState.guests,maybe:rsvpState.maybe,editing:rsvpState.editing,
     lastSentAt:rsvpState.lastSentAt,lang:rsvpState.lang
   };
@@ -409,6 +439,8 @@ function captureFormToState(){
   if(inputs[1])rsvpState.fm=inputs[1].value.slice(0,NAME_MAX);
   var ch=f.querySelector("input[type=radio]:checked");
   if(ch)rsvpState.att=validAtt(ch.value);
+  var gv=f.querySelector("[data-gval]");
+  if(gv)rsvpState.cnt=clampGuests(gv.textContent);
   saveRsvpState();
 }
 
@@ -444,9 +476,9 @@ function render(){
   var todayKz=new Date(Date.now()+5*36e5).toISOString().slice(0,10),rawBy=addDays(D.d,-RSVP_DAYS);
   var by=fill(t("by"),{date:dDot(rawBy<todayKz?(todayKz<D.d?todayKz:D.d):rawBy)});
   var venueLine=[D.ve,D.ad].filter(Boolean).join(", ");
-  var st=rsvpState||{nm:"",fm:"",att:"yes",sent:false,sentNm:"",sentFm:"",sentAtt:"yes",editing:false};
-  var curAtt=validAtt(st.att),showDone=Boolean(st.sent&&!st.editing);
-  var sentFull=(st.sentNm+" "+st.sentFm).trim(),sentAtt=validAtt(st.sentAtt);
+  var st=rsvpState||{nm:"",fm:"",att:"yes",cnt:1,sent:false,sentNm:"",sentFm:"",sentAtt:"yes",sentCnt:1,editing:false};
+  var curAtt=validAtt(st.att),curCnt=clampGuests(st.cnt),showDone=Boolean(st.sent&&!st.editing);
+  var sentFull=(st.sentNm+" "+st.sentFm).trim(),sentAtt=validAtt(st.sentAtt),sentCnt=sentAtt==="yes"?clampGuests(st.sentCnt||st.guests||1):0;
   var rsvpHTML=D.rsvp===false?'':'<section class="iv-sec fx" style="--d:.44s"><p class="iv-eyebrow">'+t("rh")+'</p><h3 class="rs-h">'+t("rt")+'</h3><p class="rs-sub">'+t("rs")+'</p>'+
     '<form class="rs-form" novalidate'+(showDone?' hidden':'')+'>'+
       '<input type="checkbox" name="botcheck" class="rs-hp" tabindex="-1" autocomplete="off" aria-hidden="true">'+
@@ -457,8 +489,9 @@ function render(){
         '<label class="rs-opt'+(curAtt==="yes"?' sel':'')+'"><input type="radio" name="att" value="yes"'+(curAtt==="yes"?' checked':'')+'><i></i><span>'+t("yes")+'</span></label>'+
         '<label class="rs-opt'+(curAtt==="no"?' sel':'')+'"><input type="radio" name="att" value="no"'+(curAtt==="no"?' checked':'')+'><i></i><span>'+t("no")+'</span></label>'+
         '<label class="rs-opt'+(curAtt==="maybe"?' sel':'')+'"><input type="radio" name="att" value="maybe"'+(curAtt==="maybe"?' checked':'')+'><i></i><span>'+t("maybe")+'</span></label></div>'+
+      '<div class="rs-guests"'+(curAtt!=="yes"?' hidden':'')+'><div class="rs-guests-txt"><span class="rs-guests-lbl">'+t("g_lbl")+'</span><span class="rs-guests-hint" data-ghint>'+esc(guestHint(curCnt))+'</span></div><div class="rs-step" role="group" aria-label="'+esc(t("g_lbl"))+'"><button type="button" class="rs-step-btn" data-gstep="-1" aria-label="−"'+(curCnt<=1?' disabled':'')+'>−</button><b class="rs-step-val" data-gval>'+curCnt+'</b><button type="button" class="rs-step-btn" data-gstep="1" aria-label="+"'+(curCnt>=10?' disabled':'')+'>+</button></div></div>'+
       '<p class="rs-err" role="alert"></p><button class="rs-send" type="submit">'+t("send")+'</button><p class="rs-note">'+by+'</p></form>'+
-    '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><span class="rd-div"></span>'+
+    '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><p class="rd-guests"'+(sentAtt==="yes"?'':' hidden')+'>'+(sentAtt==="yes"?esc(guestDoneText(sentCnt)):'')+'</p><span class="rd-div"></span>'+
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div>'+
       '<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div></section>';
@@ -524,7 +557,8 @@ function mergeStatsRows(localRows,cloudRows){
   (localRows||[]).forEach(function(r){upsert(r,false);});
   if(rsvpState&&rsvpState.sent&&rsvpState.id){
     var rk="id:"+rsvpState.id;
-    var localCurrent={id:rsvpState.id,name:rsvpState.sentNm,fam:rsvpState.sentFm,att:rsvpState.sentAtt,guests:rsvpState.sentAtt==="yes"?1:0,time:rsvpState.lastSentAt?new Date(rsvpState.lastSentAt).toISOString():""};
+    var sCnt=rsvpState.sentAtt==="yes"?clampGuests(rsvpState.sentCnt||rsvpState.guests||1):0;
+    var localCurrent={id:rsvpState.id,name:rsvpState.sentNm,fam:rsvpState.sentFm,att:rsvpState.sentAtt,guests:sCnt,time:rsvpState.lastSentAt?new Date(rsvpState.lastSentAt).toISOString():""};
     if(!map[rk]){map[rk]=localCurrent;order.push(rk);}
     else if(statRowTime(localCurrent)>=statRowTime(map[rk])){map[rk]=Object.assign({},map[rk],localCurrent);}
   }
@@ -603,7 +637,7 @@ async function fetchInviteStats(force){
 })();
 
 /* ---------- отправка ответа гостя (SAQTAA Server + GmailApp / EmailJS) ---------- */
-async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
+async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail,guestsCount){
   var srv=D.srv||D.sheet;
   if(!srv)return false;
   var emailLang=(D.l==="both")?"both":lang;
@@ -611,7 +645,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
   var labelsKz={yes:"Келеді",no:"Келе алмайды",maybe:"Әзірге білмейді"};
   var labelsBoth={yes:"Келеді / Придёт",no:"Келе алмайды / Не придёт",maybe:"Әзірге білмейді / Пока не знает"};
   var label=(emailLang==="both"?labelsBoth:(emailLang==="kz"?labelsKz:labelsRu))[val]||labelsRu.yes;
-  var guestsCount=val==="yes"?1:0;
+  var gCount=val==="yes"?clampGuests(guestsCount):0;
   var oid=D.oid||"default";
   var toEmail=D.em||"";
   var dateHuman=dDot(D.d)+(D.s?" "+D.s:"");
@@ -622,7 +656,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
     "&fam="+encodeURIComponent(cleanFm)+
     "&att_code="+encodeURIComponent(val)+
     "&att="+encodeURIComponent(label)+
-    "&guests="+encodeURIComponent(guestsCount)+
+    "&guests="+encodeURIComponent(gCount)+
     "&title="+encodeURIComponent(names())+
     "&date="+encodeURIComponent(dateHuman)+
     "&lang="+encodeURIComponent(emailLang)+
@@ -643,7 +677,7 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
     return false;
   }
 }
-async function postEmailJS(full,val,isUpdate,rsvpId){
+async function postEmailJS(full,val,isUpdate,rsvpId,guestsCount){
   if(!D.ejs||!D.ejs.s||!D.ejs.t||!D.ejs.u)return false;
   var isBoth=(D.l==="both"),isKz=(!isBoth&&lang==="kz");
   var labels=isBoth
@@ -652,6 +686,7 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
       ?{yes:"Келеді (Расталды)",no:"Келе алмайды (Бас тартты)",maybe:"Әзірге білмейді (Ойлануда)"}
       :{yes:"Придёт (Подтверждено)",no:"Не придёт (Отказ)",maybe:"Пока не знает (Под вопросом)"});
   var label=labels[val]||labels.yes;
+  var gCount=val==="yes"?clampGuests(guestsCount):0;
   var now=new Date(),p2=function(n){return String(n).padStart(2,"0");};
   var replyTime=p2(now.getDate())+"."+p2(now.getMonth()+1)+"."+now.getFullYear()+" "+p2(now.getHours())+":"+p2(now.getMinutes());
   var subjPrefix=isBoth
@@ -680,7 +715,7 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
           event_date:dDot(D.d)+(D.s?" "+D.s:""),
           attendance:label,
           att_color:val==="yes"?"#1E6F43":(val==="no"?"#9E2B3A":"#9E7318"),
-          guests_count:val==="yes"?1:0,
+          guests_count:gCount,
           reply_time:replyTime,
           status_type:isBoth?(isUpdate?"Жауапты өзгерту / Изменение ответа":"Жаңа жауап / Новый ответ"):(isUpdate?(isKz?"Жауапты өзгерту":"Изменение ответа"):(isKz?"Жаңа жауап":"Новый ответ")),
           brand_footer:isBoth?"SAQTAA · Цифрлық шақырулар / Цифровые приглашения":(isKz?"SAQTAA · Цифрлық шақырулар":"SAQTAA · Цифровые приглашения"),
@@ -691,7 +726,7 @@ async function postEmailJS(full,val,isUpdate,rsvpId){
     return r.ok;
   }catch(_){return false;}
 }
-function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
+function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId,guestsCount){
   try{
     var key="saqtaa-rsvp-rows-"+(D.oid||"default");
     var rows=JSON.parse(localStorage.getItem(key)||"[]");
@@ -705,7 +740,7 @@ function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId){
       name:cleanNm,
       fam:cleanFm,
       att:val,
-      guests:val==="yes"?1:0,
+      guests:val==="yes"?clampGuests(guestsCount):0,
       title:names()
     };
     var found=false;
@@ -741,10 +776,15 @@ function loadLocalDevicePhoto(oid){
     }catch(_){fin("");}
   });
 }
-function showDoneCard(sec,full,val,scroll){
+function showDoneCard(sec,full,val,scroll,guestsCount){
   var f=sec.querySelector(".rs-form"),done=sec.querySelector(".rs-done");
   done.querySelector(".rd-name").textContent=full;
   done.querySelector(".rd-msg").textContent=t("ok_"+val);
+  var dg=done.querySelector(".rd-guests");
+  if(dg){
+    if(val==="yes"){dg.textContent=guestDoneText(clampGuests(guestsCount));dg.hidden=false;}
+    else{dg.textContent="";dg.hidden=true;}
+  }
   f.hidden=true;done.hidden=false;
   var ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});
   if(scroll)done.scrollIntoView({behavior:"smooth",block:"center"});
@@ -763,14 +803,16 @@ app.addEventListener("submit",async function(e){
   if(!isValidNamePart(cleanFm)){bad(fm,"e_fam_bad");return;}
   err.textContent="";
   var val=validAtt((f.querySelector("input[type=radio]:checked")||{value:"yes"}).value);
+  var gv=f.querySelector("[data-gval]");
+  var cnt=val==="yes"?clampGuests(gv?gv.textContent:(rsvpState?rsvpState.cnt:1)):0;
   var full=cleanNm+" "+cleanFm;
   var sec=f.closest(".iv-sec");
 
   /* Если гость нажал «Изменить ответ», но ничего не менял — не отправляем дубликат */
-  if(rsvpState&&rsvpState.sent&&rsvpState.sentNm===cleanNm&&rsvpState.sentFm===cleanFm&&rsvpState.sentAtt===val){
-    rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;rsvpState.editing=false;
+  if(rsvpState&&rsvpState.sent&&rsvpState.sentNm===cleanNm&&rsvpState.sentFm===cleanFm&&rsvpState.sentAtt===val&&(val!=="yes"||clampGuests(rsvpState.sentCnt||rsvpState.guests||1)===cnt)){
+    rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;if(val==="yes")rsvpState.cnt=cnt;rsvpState.sentCnt=cnt;rsvpState.guests=cnt;rsvpState.editing=false;
     saveRsvpState();
-    showDoneCard(sec,full,val,true);
+    showDoneCard(sec,full,val,true,cnt);
     return;
   }
   /* Защита от слишком частой повторной отправки (cooldown) */
@@ -794,19 +836,21 @@ app.addEventListener("submit",async function(e){
   if(!rsvpState)rsvpState=loadRsvpState();
   rsvpState.id=rsvpId;
   rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;
-  rsvpState.sent=true;rsvpState.sentNm=cleanNm;rsvpState.sentFm=cleanFm;rsvpState.sentAtt=val;
-  rsvpState.rev=nextRev;rsvpState.guests=(val==="yes"?1:0);rsvpState.maybe=(val==="maybe"?1:0);
+  if(val==="yes")rsvpState.cnt=cnt;
+  rsvpState.sent=true;rsvpState.sentNm=cleanNm;rsvpState.sentFm=cleanFm;rsvpState.sentAtt=val;rsvpState.sentCnt=cnt;
+  rsvpState.rev=nextRev;rsvpState.guests=cnt;rsvpState.maybe=(val==="maybe"?1:0);
   rsvpState.editing=false;rsvpState.lastSentAt=Date.now();
   saveRsvpState();
-  saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId);
-  showDoneCard(sec,full,val,true);
+  saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId,cnt);
+  showDoneCard(sec,full,val,true,cnt);
+  updateStatsDOM();
 
   var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
   if(D.srv||D.sheet){
-    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs));
+    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs,cnt));
   }
   if(useEjs){
-    tasks.push(postEmailJS(full,val,isUpdate,rsvpId));
+    tasks.push(postEmailJS(full,val,isUpdate,rsvpId,cnt));
   }
   if(!tasks.length)return;
 
@@ -816,11 +860,12 @@ app.addEventListener("submit",async function(e){
   var ok=results.every(Boolean);
   if(!ok){
     if(prevState){
-      rsvpState=Object.assign({},prevState,{nm:cleanNm,fm:cleanFm,att:val,editing:Boolean(prevState.sent)});
+      rsvpState=Object.assign({},prevState,{nm:cleanNm,fm:cleanFm,att:val,cnt:val==="yes"?cnt:prevState.cnt,editing:Boolean(prevState.sent)});
     }else{
-      rsvpState.sent=false;rsvpState.sentNm="";rsvpState.sentFm="";rsvpState.sentAtt="";rsvpState.lastSentAt=0;rsvpState.editing=false;
+      rsvpState.sent=false;rsvpState.sentNm="";rsvpState.sentFm="";rsvpState.sentAtt="";rsvpState.sentCnt=0;rsvpState.guests=0;rsvpState.lastSentAt=0;rsvpState.editing=false;
     }
     saveRsvpState();
+    updateStatsDOM();
     var curSec=app.querySelector(".rs-form")?app.querySelector(".rs-form").closest(".iv-sec"):sec;
     if(curSec){
       var cf=curSec.querySelector(".rs-form"),cd=curSec.querySelector(".rs-done"),ce=cf&&cf.querySelector(".rs-err");
@@ -833,7 +878,9 @@ app.addEventListener("submit",async function(e){
 });
 app.addEventListener("change",function(e){
   if(e.target.matches(".rs-opt input")){
-    syncOpts(e.target.closest(".rs-form"));
+    var f=e.target.closest(".rs-form"),gv=f&&f.querySelector("[data-gval]");
+    syncOpts(f);
+    syncGuestsUI(f,gv?gv.textContent:(rsvpState?rsvpState.cnt:1));
     captureFormToState();
   }
 });
@@ -852,6 +899,15 @@ app.addEventListener("click",function(e){
     render();
     return;
   }
+  var gs=e.target.closest("[data-gstep]");
+  if(gs){
+    var sf=gs.closest(".rs-form"),gv=sf&&sf.querySelector("[data-gval]");
+    var cur=clampGuests(gv?gv.textContent:(rsvpState?rsvpState.cnt:1));
+    var nxt=clampGuests(cur+parseInt(gs.getAttribute("data-gstep"),10));
+    syncGuestsUI(sf,nxt);
+    captureFormToState();
+    return;
+  }
   var ed=e.target.closest(".rd-edit");
   if(ed){
     var sec=ed.closest(".iv-sec");
@@ -860,6 +916,7 @@ app.addEventListener("click",function(e){
       rsvpState.nm=rsvpState.sentNm||rsvpState.nm;
       rsvpState.fm=rsvpState.sentFm||rsvpState.fm;
       rsvpState.att=validAtt(rsvpState.sentAtt||rsvpState.att);
+      rsvpState.cnt=clampGuests(rsvpState.sentCnt||rsvpState.cnt||1);
       saveRsvpState();
     }
     sec.querySelector(".rs-done").hidden=true;
@@ -871,6 +928,7 @@ app.addEventListener("click",function(e){
       var rad=f.querySelector('input[type=radio][value="'+validAtt(rsvpState.att)+'"]');
       if(rad)rad.checked=true;
       syncOpts(f);
+      syncGuestsUI(f,rsvpState.cnt);
     }
     f.hidden=false;
     if(inputs[0])inputs[0].focus();
