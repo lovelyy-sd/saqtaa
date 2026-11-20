@@ -51,7 +51,7 @@ document.documentElement.classList.add("js");
 }
 *{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth;scroll-padding-top:86px;overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:16px;overflow-x:clip}
 body{
   font-family:var(--fb);color:var(--ink);background:var(--paper);
   background-image:radial-gradient(rgba(24,39,32,.05) 1px,transparent 1px);
@@ -528,6 +528,7 @@ body.menu-open{overflow:hidden}
   .demo-stage{cursor:grab}
 }
 @media (min-width:900px) and (hover:hover) and (pointer:fine){
+  html{scroll-padding-top:76px}
   .head{position:sticky;top:0}
 }
 @media (prefers-reduced-motion:reduce){
@@ -1495,13 +1496,19 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
   /* пока открыт просмотр, страница под ним недоступна для Tab и экранного диктора */
   function pageInert(on){[...document.body.children].forEach(el=>{if(el!==view&&el.id!=="toast"&&el.tagName!=="SCRIPT")el.inert=on;});}
   /* фокус на «Закрыть» — повторяем, пока диалог не станет видимым (идёт анимация появления) */
-  function focusClose(n){const b=qs("#dvClose");b.focus();if(document.activeElement!==b&&n>0&&view.classList.contains("open"))requestAnimationFrame(()=>focusClose(n-1));}
+  function focusClose(n){const b=qs("#dvClose");b.focus({preventScroll:true});if(document.activeElement!==b&&n>0&&view.classList.contains("open"))requestAnimationFrame(()=>focusClose(n-1));}
   function openViewer(i){
+    lastFocus=document.activeElement;
     setPhotoMode(false);
-    setSlide(i||0,true,true);
-    view.classList.add("open");view.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
-    lastFocus=document.activeElement;pageInert(true);focusClose(30);
+    view.classList.add("open");view.setAttribute("aria-hidden","false");
+    setSlide(i||0,true,true);
+    requestAnimationFrame(()=>{
+      setSlide(cur,true,true);
+      const sl=track.children[cur];
+      if(sl)sl.scrollTop=0;
+    });
+    pageInert(true);focusClose(30);
     tick();updCta();
   }
   function closeViewer(){
@@ -1512,7 +1519,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     for(const k in photoStore)delete photoStore[k];
     qsa("#dvTrack .ph-frame").forEach(fr=>{fr.classList.remove("has-img");const im=fr.querySelector("img");if(im)im.src="";});
     setPhotoMode(false);
-    pageInert(false);if(lastFocus)lastFocus.focus();updCta();
+    pageInert(false);if(lastFocus)lastFocus.focus({preventScroll:true});updCta();
   }
   qs("#dvClose").addEventListener("click",closeViewer);
   qs("#dvBack").addEventListener("click",closeViewer);
@@ -1732,6 +1739,28 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
   qsa(".mmenu a").forEach(a=>a.addEventListener("click",()=>setMenu(false)));
   /* если меню открыто на телефоне, а окно расширили до десктопа — закрываем */
   addEventListener("resize",()=>{if(innerWidth>=900&&document.body.classList.contains("menu-open"))setMenu(false);});
+
+  function pageTop(el){let y=0;while(el){y+=el.offsetTop||0;el=el.offsetParent;}return y;}
+  document.addEventListener("click",e=>{
+    const a=e.target.closest('a[href^="#"]');
+    if(!a)return;
+    const href=a.getAttribute("href");
+    if(!href||href==="#")return;
+    const target=href==="#top"?document.body:qs(href);
+    if(!target)return;
+    e.preventDefault();
+    if(document.body.classList.contains("menu-open"))setMenu(false);
+    if(href==="#top"){
+      window.scrollTo({top:0,behavior:reduced?"auto":"smooth"});
+      return;
+    }
+    const anchorEl=target.querySelector(".coll-head,.feat-h,.price-card")||target;
+    qsa("[data-reveal]",target).forEach(el=>{el.classList.add("in");if(io&&io.unobserve)io.unobserve(el);});
+    const sticky=getComputedStyle(head).position==="sticky";
+    const offset=(sticky?head.getBoundingClientRect().height:0)+16;
+    const dest=Math.max(0,pageTop(anchorEl)-offset);
+    window.scrollTo({top:dest,behavior:reduced?"auto":"smooth"});
+  });
 
   /* ---------- отсчёт ---------- */
   function pad(n){return String(n).padStart(2,"0");}
