@@ -299,27 +299,28 @@ body.menu-open{overflow:hidden}
    ============================================================ */
 .demo-view{position:fixed;inset:0;height:100vh;height:100dvh;z-index:200;display:flex;flex-direction:column;background:var(--em-deep);visibility:hidden;opacity:0;transition:opacity .35s,visibility .35s}
 .demo-view.open{visibility:visible;opacity:1}
-.demo-top{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:8px var(--pad);padding-top:calc(8px + env(safe-area-inset-top));background:rgba(10,35,27,.95);color:#F2EBDA;border-bottom:1px solid rgba(217,188,127,.25)}
-.dt-back{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--gold-soft);font-weight:700;font-size:.85rem;white-space:nowrap}
-.dt-name{font-family:var(--fd);font-style:italic;color:var(--gold-soft);font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
-.dt-close{width:44px;height:44px;flex:0 0 44px;border:1px solid rgba(217,188,127,.35);border-radius:50%;color:#F2EBDA;display:grid;place-items:center;transition:all .25s}
+.demo-top{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:4px var(--pad);padding-top:calc(4px + env(safe-area-inset-top));background:rgba(10,35,27,.95);color:#F2EBDA;border-bottom:1px solid rgba(217,188,127,.22)}
+.dt-back{display:inline-flex;align-items:center;gap:5px;min-height:38px;color:var(--gold-soft);font-weight:700;font-size:.82rem;white-space:nowrap}
+.dt-name{font-family:var(--fd);font-style:italic;color:var(--gold-soft);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:center}
+.dt-close{width:38px;height:38px;flex:0 0 38px;border:1px solid rgba(217,188,127,.35);border-radius:50%;color:#F2EBDA;display:grid;place-items:center;transition:all .25s}
 .dt-close:hover{background:var(--gold);color:#241A08}
 .demo-stage{flex:1;min-height:0;position:relative;overflow:hidden;touch-action:pan-y}
 .demo-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.22,.8,.24,1)}
 .demo-track.drag{transition:none}
 .demo-slide{flex:0 0 100%;height:100%;overflow-y:auto;overscroll-behavior:contain;position:relative;-webkit-overflow-scrolling:touch}
-.demo-bottom{display:flex;align-items:center;justify-content:center;gap:10px 16px;flex-wrap:wrap;padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom));background:rgba(10,35,27,.95);border-top:1px solid rgba(217,188,127,.25)}
-.dnav{width:48px;height:48px;flex:0 0 48px;border-radius:50%;border:1px solid rgba(217,188,127,.4);color:var(--gold-soft);font-size:1.1rem;display:grid;place-items:center;transition:all .25s}
+.demo-bottom{display:flex;flex-direction:column;align-items:center;gap:6px;padding:7px 12px calc(7px + env(safe-area-inset-bottom));background:rgba(10,35,27,.95);border-top:1px solid rgba(217,188,127,.22)}
+.dnav-row{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;max-width:420px}
+.dnav{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:1px solid rgba(217,188,127,.4);color:var(--gold-soft);font-size:.95rem;display:grid;place-items:center;transition:all .25s}
 .dnav:hover{background:var(--gold);color:#241A08;border-color:var(--gold)}
-.ddots{display:flex;gap:4px;align-items:center}
-.ddots button{width:28px;height:28px;display:grid;place-items:center;color:rgba(217,188,127,.35);font-size:.6rem;transition:color .25s,transform .25s}
-.ddots button.on{color:var(--gold);transform:scale(1.55)}
-.dcount{font-size:.75rem;letter-spacing:.22em;color:var(--gold-soft);font-weight:700;min-width:60px;text-align:center}
-.dphoto-ui{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap}
-.dphoto-ui .tab,.dphoto-ui .upl{min-height:42px;padding:0 18px;border-radius:999px;border:1px solid rgba(217,188,127,.35);color:#EDE6D3;font-size:.78rem;font-weight:700;transition:all .25s;display:inline-flex;align-items:center;gap:6px}
+.ddots{display:flex;gap:2px;align-items:center;justify-content:center}
+.ddots button{width:20px;height:26px;display:grid;place-items:center;color:rgba(217,188,127,.35);font-size:.55rem;transition:color .25s,transform .25s}
+.ddots button.on{color:var(--gold);transform:scale(1.45)}
+.dcount{font-size:.7rem;letter-spacing:.14em;color:var(--gold-soft);font-weight:700;white-space:nowrap;text-align:center}
+.dphoto-ui{display:flex;width:100%;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap}
+.dphoto-ui .tab,.dphoto-ui .upl{min-height:32px;padding:0 12px;border-radius:999px;border:1px solid rgba(217,188,127,.35);color:#EDE6D3;font-size:.73rem;font-weight:700;transition:all .25s;display:inline-flex;align-items:center;gap:5px}
 .dphoto-ui .tab.on{background:var(--gold);color:#241A08;border-color:var(--gold)}
 .dphoto-ui .upl:hover{border-color:var(--gold)}
-.dnote{width:100%;text-align:center;font-size:.66rem;color:rgba(217,188,127,.75);letter-spacing:.04em}
+.dnote{width:100%;text-align:center;font-size:.62rem;color:rgba(217,188,127,.75);letter-spacing:.03em}
 
 /* ---- страница-приглашение ---- */
 .inv-page{position:relative;min-height:100%;display:flex;justify-content:center;padding:clamp(28px,7vw,56px) var(--pad)}
@@ -918,10 +919,12 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       <input type="file" accept="image/*" id="dvFile" hidden>
       <span class="dnote" id="dvNote" hidden data-i18n="photo_note">Загруженное фото видно только в этой вкладке — демо-режим.</span>
     </div>
-    <button class="dnav" id="dvPrev" aria-label="Предыдущий шаблон" data-i18n-aria="a_tprev">←</button>
-    <div class="ddots" id="dvDots"></div>
-    <span class="dcount" id="dvCount">01 / 06</span>
-    <button class="dnav" id="dvNext" aria-label="Следующий шаблон" data-i18n-aria="a_tnext">→</button>
+    <div class="dnav-row">
+      <button class="dnav" id="dvPrev" aria-label="Предыдущий шаблон" data-i18n-aria="a_tprev">←</button>
+      <div class="ddots" id="dvDots"></div>
+      <span class="dcount" id="dvCount">01 / 06</span>
+      <button class="dnav" id="dvNext" aria-label="Следующий шаблон" data-i18n-aria="a_tnext">→</button>
+    </div>
   </div>
 </div>
 
