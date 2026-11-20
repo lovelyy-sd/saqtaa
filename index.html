@@ -443,6 +443,24 @@ body.menu-open{overflow:hidden}
 .rd-cal{margin-top:10px}
 .rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7;transition:opacity .2s}
 .rd-edit:hover{opacity:1}
+.rs-guests{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,transparent);border-radius:12px;padding:11px 14px;background:color-mix(in srgb,var(--acc) 5%,transparent);text-align:left}
+.rs-guests[hidden],.rd-guests[hidden]{display:none!important}
+.rs-guests-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.rs-guests-lbl{font-size:.9rem;font-weight:700;line-height:1.25}
+.rs-guests-hint{font-size:.74rem;opacity:.72;line-height:1.25}
+.rs-step{display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.rs-step-btn{width:40px;height:40px;border-radius:50%;border:1px solid color-mix(in srgb,var(--acc) 55%,transparent);background:transparent;color:inherit;font-size:1.2rem;line-height:1;font-weight:600;display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
+.rs-step-btn:not([disabled]):active{transform:scale(.93);background:color-mix(in srgb,var(--acc) 18%,transparent)}
+.rs-step-btn[disabled]{opacity:.3;pointer-events:none}
+.rs-step-val{min-width:24px;text-align:center;font-family:var(--fd);font-size:1.28rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--acc)}
+.rd-guests{font-size:.82rem;font-weight:700;color:var(--acc);margin-top:-4px}
+.rs-stats{width:100%;margin-top:10px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--acc) 28%,transparent);display:flex;flex-direction:column;align-items:center;gap:10px}
+.rs-stats-h{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.rs-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;max-width:360px}
+.rs-stat-grid>div{border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);border-radius:10px;background:color-mix(in srgb,var(--acc) 6%,transparent);padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.rs-stat-grid b{font-family:var(--fd);font-size:clamp(1.3rem,5vw,1.75rem);font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.rs-stat-grid span{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;opacity:.72}
+.rs-stats-tot{font-size:.72rem;opacity:.62}
 
 /* подпись и водяной знак */
 .inv-sign{font-family:var(--fd);font-style:italic;font-size:1.15rem;opacity:.9;max-width:40ch}
@@ -476,10 +494,8 @@ body.menu-open{overflow:hidden}
 .theme-editorial .inv-inner{max-width:620px}
 .ed-big{font-family:var(--fd);font-weight:800;font-size:clamp(5rem,22vw,7.5rem);line-height:.85}
 .theme-editorial .inv-names{font-size:clamp(1.6rem,6vw,2.2rem);letter-spacing:.3em;text-transform:uppercase}
-.theme-editorial .inv-btn{border-radius:0}
-.theme-editorial .rs-send{border-radius:0}
-.theme-editorial .rd-card{border-radius:0}
-.theme-editorial .cd>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
+.theme-editorial .inv-btn,.theme-editorial .rs-send,.theme-editorial .rd-card,.theme-editorial .rs-guests,.theme-editorial .rs-step-btn{border-radius:0}
+.theme-editorial .cd>div,.theme-editorial .rs-stat-grid>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
 
 .theme-emerald{background:linear-gradient(180deg,#0E4D3C,#072A20);color:#EFE4C6;--acc:#D9BC7F;--acc-ink:#0A3527;--field:rgba(255,255,255,.08)}
 .theme-emerald .cd>div{border-color:rgba(217,188,127,.35);background:rgba(217,188,127,.07)}
@@ -1037,6 +1053,8 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       ok_no:"Спасибо за ответ. Нам жаль — но мы всё равно вас любим!",
       ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
       demo_note:"Демо-режим: ответ никуда не отправляется. В настоящем приглашении ответы гостей приходят организатору на почту.",
+      g_lbl:"Сколько человек придёт",g_one:"Только вы (1 чел.)",g_many:"{n} чел. — вы + супруг(а) или семья (+{extra})",g_done_one:"Придёте: 1 чел.",g_done_many:"Придут с вами: {n} чел.",
+      st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",
       err_name:"Укажите имя",err_fam:"Укажите фамилию",
       rsvp_by:"Просим подтвердить присутствие до {date}",
       mq:"SAQTAA ✦ Свадьба ✦ Юбилей ✦ День рождения ✦ Тұсау кесер ✦ Цифровые приглашения ✦ Два языка ✦ ",
@@ -1140,6 +1158,8 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       ok_no:"Жауабыңызға рақмет. Өкінішті — біз бәрібір сізді жақсы көреміз!",
       ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
       demo_note:"Демо-режим: жауап ешқайда жіберілмейді. Нақты шақыруда қонақтардың жауаптары ұйымдастырушының поштасына келеді.",
+      g_lbl:"Неше адам келеді",g_one:"Тек сіз (1 адам)",g_many:"{n} адам — сіз + жұбайыңыз немесе отбасыңыз (+{extra})",g_done_one:"Келеді: 1 адам",g_done_many:"Сізбен бірге: {n} адам",
+      st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",
       err_name:"Атыңызды жазыңыз",err_fam:"Тегіңізді жазыңыз",
       rsvp_by:"Қатысатыныңызды {date} дейін растауды сұраймыз",
       mq:"SAQTAA ✦ Той ✦ Мерейтой ✦ Туған күн ✦ Тұсау кесер ✦ Цифрлық шақырулар ✦ Екі тіл ✦ ",
@@ -1312,6 +1332,17 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
                 <label class="rs-opt"><input type="radio" name="att${i}" value="no"><i></i><span>${t("opt_no")}</span></label>
                 <label class="rs-opt"><input type="radio" name="att${i}" value="maybe"><i></i><span>${t("opt_maybe")}</span></label>
               </div>
+              <div class="rs-guests">
+                <div class="rs-guests-txt">
+                  <span class="rs-guests-lbl">${t("g_lbl")}</span>
+                  <span class="rs-guests-hint" data-ghint>${t("g_one")}</span>
+                </div>
+                <div class="rs-step" role="group" aria-label="${t("g_lbl")}">
+                  <button type="button" class="rs-step-btn" data-gstep="-1" aria-label="−" disabled>−</button>
+                  <b class="rs-step-val" data-gval>1</b>
+                  <button type="button" class="rs-step-btn" data-gstep="1" aria-label="+">+</button>
+                </div>
+              </div>
               <p class="rs-err" role="alert"></p>
               <button class="rs-send" type="submit">${t("rsvp_send")}</button>
               <p class="rs-note rs-demo-note">${t("demo_note")}</p>
@@ -1323,11 +1354,21 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
                 <h3 class="rd-title">${t("rd_title")}</h3>
                 <p class="rd-name"></p>
                 <p class="rd-msg"></p>
+                <p class="rd-guests" hidden></p>
                 <span class="rd-div"></span>
                 <p class="rd-date">${dHuman(ev.date)} · ${ev.times[0]}</p>
                 <p class="rd-venue">${c.venue}, ${c.addr}</p>
                 <button class="rd-edit" type="button">${t("rd_edit")}</button>
               </div>
+            </div>
+            <div class="rs-stats" aria-live="polite">
+              <p class="rs-stats-h">${t("st_h")}</p>
+              <div class="rs-stat-grid">
+                <div><b data-stat="yes">0</b><span>${t("st_yes")}</span></div>
+                <div><b data-stat="no">0</b><span>${t("st_no")}</span></div>
+                <div><b data-stat="maybe">0</b><span>${t("st_maybe")}</span></div>
+              </div>
+              <p class="rs-stats-tot" data-stat="tot"></p>
             </div>
           </section>
 
@@ -1346,7 +1387,37 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
         tabP=qs("#dvTabPhoto"),tabD=qs("#dvTabDeco"),note=qs("#dvNote");
   let cur=0,lastFocus=null;
   const photoStore={};
+  const demoBaseStats=[{yes:24,no:2,maybe:3,resp:14},{yes:18,no:1,maybe:4,resp:11},{yes:32,no:3,maybe:5,resp:18},{yes:20,no:2,maybe:2,resp:13},{yes:16,no:1,maybe:3,resp:10},{yes:22,no:2,maybe:4,resp:12}];
+  const demoSubmitStore={};
 
+  function clampGuests(n){const x=parseInt(n,10);return Number.isFinite(x)?Math.max(1,Math.min(10,x)):1;}
+  function guestHint(n){n=clampGuests(n);return n<=1?t("g_one"):fill(t("g_many"),{n,extra:n-1});}
+  function guestDoneText(n){n=clampGuests(n);return n<=1?t("g_done_one"):fill(t("g_done_many"),{n});}
+  function syncGuestsUI(form,n){
+    if(!form)return;
+    n=clampGuests(n);
+    const valEl=form.querySelector("[data-gval]"),hintEl=form.querySelector("[data-ghint]"),btns=form.querySelectorAll("[data-gstep]");
+    if(valEl)valEl.textContent=String(n);
+    if(hintEl)hintEl.textContent=guestHint(n);
+    btns.forEach(b=>{const d=parseInt(b.getAttribute("data-gstep"),10);b.disabled=(d<0&&n<=1)||(d>0&&n>=10);});
+    const box=form.querySelector(".rs-guests"),ch=form.querySelector("input[type=radio]:checked");
+    if(box&&ch)box.hidden=(ch.value!=="yes");
+  }
+  function syncDemoStats(sl){
+    if(!sl)return;
+    const idx=Number(sl.dataset.i)||0,box=sl.querySelector(".rs-stats");
+    if(!box)return;
+    const base=demoBaseStats[idx%demoBaseStats.length],sub=demoSubmitStore[idx];
+    const yes=base.yes+(sub&&sub.att==="yes"?sub.guests:0);
+    const no=base.no+(sub&&sub.att==="no"?1:0);
+    const maybe=base.maybe+(sub&&sub.att==="maybe"?1:0);
+    const tot=base.resp+(sub?1:0);
+    const ey=box.querySelector('[data-stat="yes"]'),en=box.querySelector('[data-stat="no"]'),em=box.querySelector('[data-stat="maybe"]'),et=box.querySelector('[data-stat="tot"]');
+    if(ey)ey.textContent=String(yes);
+    if(en)en.textContent=String(no);
+    if(em)em.textContent=String(maybe);
+    if(et)et.textContent=fill(t("st_tot"),{n:tot});
+  }
   function syncOpts(form){
     form.querySelectorAll(".rs-opt").forEach(l=>{
       l.classList.toggle("sel",l.querySelector("input").checked);
@@ -1359,10 +1430,12 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       if(!f)return;
       const [nm,fm]=f.querySelectorAll("input[type=text]");
       const chk=f.querySelector("input[type=radio]:checked");
+      const gv=f.querySelector("[data-gval]");
       savedRsvp[idx]={
         name:nm?nm.value:"",
         fam:fm?fm.value:"",
         att:chk?chk.value:"yes",
+        cnt:gv?clampGuests(gv.textContent):1,
         submitted:Boolean(done&&!done.hidden),
         fullName:done&&done.querySelector(".rd-name")?done.querySelector(".rd-name").textContent:""
       };
@@ -1370,20 +1443,26 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     track.innerHTML=DEMOS.map(slideHTML).join("");
     dots.innerHTML=DEMOS.map((d,i)=>`<button data-i="${i}" aria-label="${t("dot_tpl")} ${i+1}">✦</button>`).join("");
     qsa(".demo-slide").forEach(sl=>{
+      syncDemoStats(sl);
       const st=savedRsvp[sl.dataset.i];
-      if(!st)return;
       const f=sl.querySelector(".rs-form"),done=sl.querySelector(".rs-done");
+      if(!st){if(f)syncGuestsUI(f,1);return;}
       if(f){
         const [nm,fm]=f.querySelectorAll("input[type=text]");
         if(nm)nm.value=st.name;
         if(fm)fm.value=st.fam;
         const rad=f.querySelector(`input[type=radio][value="${st.att}"]`);
         if(rad)rad.checked=true;
+        syncGuestsUI(f,st.cnt);
       }
       if(st.submitted&&done&&f){
         done.querySelector(".rd-name").textContent=st.fullName||(st.name.trim()+" "+st.fam.trim()).trim();
         done.querySelector(".rd-msg").textContent=t("ok_"+st.att);
-        done.querySelector(".rd-cals").hidden=st.att==="no";
+        const dg=done.querySelector(".rd-guests");
+        if(dg){
+          if(st.att==="yes"){dg.textContent=guestDoneText(st.cnt);dg.hidden=false;}
+          else{dg.textContent="";dg.hidden=true;}
+        }
         f.hidden=true;
         done.hidden=false;
       }
@@ -1536,7 +1615,11 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     el.focus();
   }
   track.addEventListener("change",e=>{
-    if(e.target.matches(".rs-opt input"))syncOpts(e.target.closest(".rs-form"));
+    if(e.target.matches(".rs-opt input")){
+      const f=e.target.closest(".rs-form"),gv=f&&f.querySelector("[data-gval]");
+      syncOpts(f);
+      syncGuestsUI(f,gv?gv.textContent:1);
+    }
   });
   track.addEventListener("input",e=>{
     if(!e.target.matches(".rs-field input"))return;
@@ -1545,11 +1628,19 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     if(err)err.textContent="";
   });
   track.addEventListener("click",e=>{
+    const gs=e.target.closest("[data-gstep]");
+    if(gs){
+      const f=gs.closest(".rs-form"),gv=f&&f.querySelector("[data-gval]");
+      const cur=clampGuests(gv?gv.textContent:1);
+      syncGuestsUI(f,clampGuests(cur+parseInt(gs.getAttribute("data-gstep"),10)));
+      return;
+    }
     const ed=e.target.closest(".rd-edit");
     if(ed){
       const sec=ed.closest(".iv-sec");
       sec.querySelector(".rs-done").hidden=true;
-      const f=sec.querySelector(".rs-form");
+      const f=sec.querySelector(".rs-form"),gv=f&&f.querySelector("[data-gval]");
+      syncGuestsUI(f,gv?gv.textContent:1);
       f.hidden=false;
       f.querySelector("input[type=text]").focus();
     }
@@ -1565,10 +1656,21 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     if(!fam.value.trim()){fieldErr(f,fam,"err_fam");return;}
     const full=name.value.trim()+" "+fam.value.trim();
     const val=(f.querySelector("input[type=radio]:checked")||{value:"yes"}).value;
-    const sec=f.closest(".iv-sec");
+    const gv=f.querySelector("[data-gval]");
+    const cnt=val==="yes"?clampGuests(gv?gv.textContent:1):0;
+    const sec=f.closest(".iv-sec"),sl=f.closest(".demo-slide");
     const done=sec.querySelector(".rs-done");
     done.querySelector(".rd-name").textContent=full;
     done.querySelector(".rd-msg").textContent=t("ok_"+val);
+    const dg=done.querySelector(".rd-guests");
+    if(dg){
+      if(val==="yes"){dg.textContent=guestDoneText(cnt);dg.hidden=false;}
+      else{dg.textContent="";dg.hidden=true;}
+    }
+    if(sl){
+      demoSubmitStore[Number(sl.dataset.i)||0]={att:val,guests:cnt};
+      syncDemoStats(sl);
+    }
     f.hidden=true;
     done.hidden=false;
     const ttl=done.querySelector(".rd-title");ttl.tabIndex=-1;ttl.focus({preventScroll:true});
