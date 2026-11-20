@@ -117,6 +117,13 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .rd-cals{align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%}
 .rd-gcal{display:inline-flex;align-items:center;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.75}
 .rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7}
+.rs-stats{width:100%;margin-top:10px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--acc) 28%,transparent);display:flex;flex-direction:column;align-items:center;gap:10px}
+.rs-stats-h{font-size:.66rem;letter-spacing:.26em;text-transform:uppercase;color:var(--acc);font-weight:700}
+.rs-stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;max-width:360px}
+.rs-stat-grid>div{border:1px solid color-mix(in srgb,var(--acc) 35%,transparent);border-radius:10px;background:color-mix(in srgb,var(--acc) 6%,transparent);padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.rs-stat-grid b{font-family:var(--fd);font-size:clamp(1.3rem,5vw,1.75rem);font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.rs-stat-grid span{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;opacity:.72}
+.rs-stats-tot{font-size:.72rem;opacity:.62}
 
 .inv-sign{font-family:var(--fd);font-style:italic;font-size:1.15rem;opacity:.9;max-width:40ch}
 .inv-hash{font-size:.72rem;letter-spacing:.2em;opacity:.65;text-transform:uppercase;overflow-wrap:anywhere}
@@ -144,7 +151,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .ed-big{font-family:var(--fd);font-weight:800;font-size:clamp(5rem,22vw,7.5rem);line-height:.85}
 .theme-editorial .inv-names{font-size:clamp(1.6rem,6vw,2.2rem);letter-spacing:.3em;text-transform:uppercase}
 .theme-editorial .inv-btn,.theme-editorial .rs-send,.theme-editorial .rd-card{border-radius:0}
-.theme-editorial .cd>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
+.theme-editorial .cd>div,.theme-editorial .rs-stat-grid>div{border-radius:0;border-color:rgba(20,20,20,.5);background:transparent}
 .theme-emerald{background:linear-gradient(180deg,#0E4D3C,#072A20);color:#EFE4C6;--acc:#D9BC7F;--acc-ink:#0A3527;--field:rgba(255,255,255,.08)}
 .theme-emerald .cd>div{border-color:rgba(217,188,127,.35);background:rgba(217,188,127,.07)}
 .theme-tusau{background:linear-gradient(180deg,#FAEBCB,#F3D8A2);color:#5C4322;--acc:#8A5A10;--acc-ink:#FFF6E2;--field:rgba(255,255,255,.55)}
@@ -287,6 +294,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
  alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",cdesc:"Программа: ",cdone:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
  cd:{d:["день","дня","дней"],h:["час","часа","часов"],m:["минута","минуты","минут"],s:["секунда","секунды","секунд"]},
+ st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",st_empty:"Пока нет ответов — будьте первыми",
  months:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],sw:"ҚАЗ"},
 kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарлама",loc:"Өткізілетін орын",gis:"2ГИС-тен ашу",
  rh:"Қатысуды растау",rt:"Жауабыңызды күтеміз",rs:"Қатысатыныңызды растауыңызды сұраймыз.",
@@ -299,6 +307,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
  alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",cdesc:"Бағдарлама: ",cdone:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
  cd:{d:"күн",h:"сағат",m:"минут",s:"секунд"},
+ st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",st_empty:"Әзірге жауаптар жоқ — алғашқы болыңыз",
  months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"],sw:"РУС"}
 };
 
@@ -451,7 +460,8 @@ function render(){
       '<p class="rs-err" role="alert"></p><button class="rs-send" type="submit">'+t("send")+'</button><p class="rs-note">'+by+'</p></form>'+
     '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><span class="rd-div"></span>'+
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
-      '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div></section>';
+      '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div>'+
+      '<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div></section>';
   app.innerHTML='<article class="inv-page '+T.cls+'">'+sw+(T.deco||"")+'<div class="inv-inner">'+
     (T.band?qband("0s"):"")+(T.orn?ORN:"")+big+head+
     (c.le?'<p class="inv-lead fx" style="--d:.18s">'+esc(sub(c.le))+'</p>':'')+
@@ -468,6 +478,8 @@ function render(){
   document.documentElement.lang=lang==="kz"?"kk":"ru";
   document.title=names()||"Приглашение";
   tick();
+  updateStatsDOM();
+  if(D.rsvp!==false)fetchInviteStats(false);
 }
 function tick(){
   var cd=document.querySelector(".cd");if(!cd||!D)return;
@@ -475,6 +487,120 @@ function tick(){
   for(var k in v){cd.querySelector('[data-cd="'+k+'"]').textContent=pad(v[k]);cd.querySelector('[data-cdl="'+k+'"]').textContent=plural(v[k],t("cd")[k]);}
 }
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
+
+/* ---------- статистика ответов гостей (облако + локальный кэш) ---------- */
+var inviteStats={oid:"",rows:null,loading:false,loaded:false,refreshTimer:null};
+function statsOid(){return(D&&D.oid)?String(D.oid):"default";}
+function statsStorageKey(){return"saqtaa-rsvp-rows-"+statsOid();}
+function readLocalStatsRows(){
+  try{var raw=localStorage.getItem(statsStorageKey());var arr=raw?JSON.parse(raw):[];return Array.isArray(arr)?arr:[];}catch(_){return[];}
+}
+function parseStatAtt(r){
+  var a=String((r&&r.att)||"").toLowerCase().trim(),lbl=String((r&&r.att_label)||"").toLowerCase();
+  if(a==="yes"||lbl.indexOf("прид")===0||lbl.indexOf("келед")>=0)return"yes";
+  if(a==="no"||lbl.indexOf("не прид")>=0||lbl.indexOf("келмей")>=0)return"no";
+  if(a==="maybe"||lbl.indexOf("пока")>=0||lbl.indexOf("ойлан")>=0||lbl.indexOf("дума")>=0)return"maybe";
+  return validAtt(a);
+}
+function statRowTime(r){
+  if(!r||!r.time)return 0;
+  var ms=Date.parse(r.time);
+  return Number.isFinite(ms)?ms:0;
+}
+function mergeStatsRows(localRows,cloudRows){
+  var map=Object.create(null),order=[];
+  function upsert(r,fromCloud){
+    if(!r||typeof r!=="object")return;
+    var id=String(r.id||"").trim();
+    if(!fromCloud&&rsvpState&&rsvpState.id&&id===rsvpState.id)return;
+    var nk=(normName(r.name)+"|"+normName(r.fam)).toLowerCase();
+    var k=id?("id:"+id):(nk&&nk!=="|"?"nm:"+nk:"");
+    if(!k)return;
+    if(!map[k]){map[k]=r;order.push(k);return;}
+    var prev=map[k],pt=statRowTime(prev),nt=statRowTime(r);
+    if(nt>pt||(nt===pt&&fromCloud))map[k]=r;
+  }
+  (cloudRows||[]).forEach(function(r){upsert(r,true);});
+  (localRows||[]).forEach(function(r){upsert(r,false);});
+  if(rsvpState&&rsvpState.sent&&rsvpState.id){
+    var rk="id:"+rsvpState.id;
+    var localCurrent={id:rsvpState.id,name:rsvpState.sentNm,fam:rsvpState.sentFm,att:rsvpState.sentAtt,guests:rsvpState.sentAtt==="yes"?1:0,time:rsvpState.lastSentAt?new Date(rsvpState.lastSentAt).toISOString():""};
+    if(!map[rk]){map[rk]=localCurrent;order.push(rk);}
+    else if(statRowTime(localCurrent)>=statRowTime(map[rk])){map[rk]=Object.assign({},map[rk],localCurrent);}
+  }
+  return order.map(function(k){return map[k];});
+}
+function computeStatsCounts(){
+  var oid=statsOid();
+  var cloud=(inviteStats.oid===oid&&Array.isArray(inviteStats.rows))?inviteStats.rows:[];
+  var rows=mergeStatsRows(readLocalStatsRows(),cloud);
+  var yes=0,no=0,maybe=0;
+  rows.forEach(function(r){
+    var att=parseStatAtt(r);
+    if(att==="yes"){
+      var g=parseInt(r.guests,10);
+      yes+=(Number.isFinite(g)&&g>0)?g:1;
+    }else if(att==="no"){
+      no+=1;
+    }else{
+      maybe+=1;
+    }
+  });
+  return{yes:yes,no:no,maybe:maybe,responses:rows.length};
+}
+function updateStatsDOM(){
+  if(!D||D.rsvp===false)return;
+  var box=app.querySelector(".rs-stats");
+  if(!box)return;
+  var c=computeStatsCounts();
+  var elY=box.querySelector('[data-stat="yes"]'),elN=box.querySelector('[data-stat="no"]'),elM=box.querySelector('[data-stat="maybe"]'),elT=box.querySelector('[data-stat="tot"]');
+  if(elY)elY.textContent=String(c.yes);
+  if(elN)elN.textContent=String(c.no);
+  if(elM)elM.textContent=String(c.maybe);
+  if(elT)elT.textContent=c.responses?fill(t("st_tot"),{n:c.responses}):t("st_empty");
+}
+async function fetchInviteStats(force){
+  if(!D||D.rsvp===false)return;
+  var srv=D.srv||D.sheet;
+  if(!srv)return;
+  var oid=statsOid();
+  if(!force&&inviteStats.oid===oid&&(inviteStats.loading||inviteStats.loaded))return;
+  inviteStats.oid=oid;
+  inviteStats.loading=true;
+  try{
+    var sep=srv.indexOf("?")>=0?"&":"?";
+    var res=await fetch(srv+sep+"action=stats&oid="+encodeURIComponent(oid)+"&_t="+Date.now(),{method:"GET",cache:"no-store"});
+    if(!res.ok)throw new Error("http-"+res.status);
+    var json=await res.json();
+    if(json&&json.ok&&Array.isArray(json.rows)&&statsOid()===oid){
+      inviteStats.rows=json.rows;
+      inviteStats.loaded=true;
+      updateStatsDOM();
+    }
+  }catch(_){
+  }finally{
+    if(statsOid()===oid)inviteStats.loading=false;
+  }
+}
+(function bindStatsObservers(){
+  if(typeof MutationObserver!=="undefined"){
+    var mo=new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var m=muts[i];
+        if(m.type==="attributes"&&m.target&&m.target.classList&&m.target.classList.contains("rs-done")){
+          updateStatsDOM();
+          if(!m.target.hidden){
+            clearTimeout(inviteStats.refreshTimer);
+            inviteStats.refreshTimer=setTimeout(function(){fetchInviteStats(true);},2600);
+          }
+          break;
+        }
+      }
+    });
+    mo.observe(app,{attributes:true,attributeFilter:["hidden"],subtree:true});
+  }
+  window.addEventListener("storage",function(e){if(D&&e&&e.key===statsStorageKey())updateStatsDOM();});
+})();
 
 /* ---------- отправка ответа гостя (SAQTAA Server + GmailApp / EmailJS) ---------- */
 async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail){
