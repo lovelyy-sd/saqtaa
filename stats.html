@@ -886,8 +886,14 @@ $("#addGuestForm").addEventListener("submit",async function(e){
   toast(t("toastAdded"));
   if(sheetUrl){
     var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("optMaybe")};
-    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"));
-    fetch(sheetUrl+q,{method:"GET",mode:"no-cors"}).catch(function(){});
+    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"))+"&no_email=1&_t="+Date.now();
+    try{
+      var sr=await fetch(sheetUrl+q,{method:"GET"});
+      var sj=sr.ok?await sr.json():null;
+      if(!sj||!sj.ok)throw new Error("sync");
+    }catch(_){
+      toast("⚠️ Сохранено локально (сервер недоступен)");
+    }
   }
 });
 
