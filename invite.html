@@ -424,7 +424,9 @@ var DC_PALS={
   pastel:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]],
   bordo:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]],
   mono:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]],
-  warm:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]
+  emerald:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]],
+  warm:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]],
+  none:[]
 };
 
 /* ---------- данные, даты и локальное состояние RSVP ---------- */
@@ -558,20 +560,45 @@ function monogramHTML(rawNames,T,edBigVal){
   }
   return '<div class="inv-mono fx" style="--d:.03s" aria-hidden="true"><span class="mono-ring"></span><div class="mono-disc"><i class="mono-cr">'+(T.crest||T.glyph||"✦")+'</i><b class="mono-txt">'+init+'</b><i class="mono-bt">'+(T.tglyph||"❦")+'</i></div><span class="mono-sp ms1">✦</span><span class="mono-sp ms2">✦</span></div>';
 }
+function pearlBg(colSpec){
+  var cols=String(colSpec||"").split(",").map(function(c){return c.trim();}).filter(Boolean);
+  if(cols.length>=2)return"linear-gradient(135deg,"+cols[0]+" 0%,"+cols[1]+" 100%)";
+  var h=cols[0]||"#d9bc7f";
+  var m=h.match(/^#?([0-9a-f]{6})$/i);
+  if(!m)return"linear-gradient(135deg,"+h+" 0%,"+h+" 100%)";
+  var n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  var hx=function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");};
+  var c1="#"+hx(r+(255-r)*.32)+hx(g+(255-g)*.32)+hx(b+(255-b)*.32);
+  var c2="#"+hx(r*.58)+hx(g*.58)+hx(b*.58);
+  return"linear-gradient(135deg,"+c1+" 0%,"+c2+" 100%)";
+}
 function dressHTML(T){
   if(D&&D.dc===false)return"";
   var dc=T&&T.dc,custom=(D&&D.dc&&typeof D.dc==="object")?D.dc:null;
-  var pal=custom&&custom.pal&&DC_PALS[custom.pal]?DC_PALS[custom.pal]:(dc&&Array.isArray(dc.sw)?dc.sw:[]);
-  var title=custom?(lang==="kz"?(custom.kz||custom.ru):(custom.ru||custom.kz)):(dc?(lang==="kz"?(dc.kz||dc.ru):(dc.ru||dc.kz)):"");
-  if(!title)title=(dc?(lang==="kz"?(dc.kz||dc.ru):(dc.ru||dc.kz)):"")||"Дресс-код";
-  var subTxt=(custom&&(custom.sru||custom.skz))?(lang==="kz"?(custom.skz||custom.sru):(custom.sru||custom.skz)):t("dc_sub");
-  if(!title&&!pal.length)return"";
-  var dots=pal.map(function(s){
-    var lbl=lang==="kz"?s[1]:s[0],cols=String(s[2]||"").split(",");
-    var bg="linear-gradient(135deg,"+(cols[0]||"#fff")+" 0%,"+(cols[1]||cols[0]||"#999")+" 100%)";
-    return '<div class="dress-dot"><span class="dress-pearl" style="background:'+esc(bg)+'"></span><span>'+esc(lbl)+'</span></div>';
+  var pal;
+  if(custom&&Array.isArray(custom.sw))pal=custom.sw;
+  else if(custom&&custom.pal==="none")pal=[];
+  else if(custom&&custom.pal&&DC_PALS[custom.pal])pal=DC_PALS[custom.pal];
+  else pal=(dc&&Array.isArray(dc.sw))?dc.sw:[];
+  var defTitle=(dc?(lang==="kz"?(dc.kz||dc.ru):(dc.ru||dc.kz)):"")||"Дресс-код";
+  var title;
+  if(custom&&custom.nt)title="";
+  else if(custom&&(custom.ru||custom.kz))title=lang==="kz"?(custom.kz||custom.ru):(custom.ru||custom.kz);
+  else title=defTitle;
+  var subTxt;
+  if(custom&&custom.ns)subTxt="";
+  else if(custom&&(custom.sru||custom.skz))subTxt=lang==="kz"?(custom.skz||custom.sru):(custom.sru||custom.skz);
+  else subTxt=t("dc_sub");
+  var dots=pal.filter(function(s){return Array.isArray(s)&&(s[0]||s[1]||s[2]);}).map(function(s){
+    var lbl=lang==="kz"?(s[1]||s[0]||""):(s[0]||s[1]||"");
+    return '<div class="dress-dot"><span class="dress-pearl" style="background:'+esc(pearlBg(s[2]))+'"></span><span>'+esc(lbl)+'</span></div>';
   }).join("");
-  return '<section class="iv-sec fx" style="--d:.41s"><div class="dress-card"><h4 class="dress-h">❖ '+esc(title)+' ❖</h4><p class="dress-sub">'+esc(subTxt)+'</p>'+(dots?'<div class="dress-dots">'+dots+'</div>':'')+'</div></section>';
+  if(!title&&!subTxt&&!dots)return"";
+  return '<section class="iv-sec fx" style="--d:.41s"><div class="dress-card">'+
+    (title?'<h4 class="dress-h">❖ '+esc(title)+' ❖</h4>':'')+
+    (subTxt?'<p class="dress-sub">'+esc(subTxt)+'</p>':'')+
+    (dots?'<div class="dress-dots">'+dots+'</div>':'')+
+    '</div></section>';
 }
 function render(){
   var T=TPL[D.t]||TPL.luxury,c=blk(),pr=c.pr||[];
