@@ -1427,10 +1427,10 @@ function collect(){
   if(em&&currentRsvpMode!=="none")o.em=em;
   var srv=getSrvUrl();
   if(currentRsvpMode==="saqtaa"){
-    if(srv){o.srv=srv;o.sheet=srv;}
+    if(srv)o.srv=srv;
   }else if(currentRsvpMode==="ejs"){
     o.ejs={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
-    if(srv){o.srv=srv;o.sheet=srv;}
+    if(srv)o.srv=srv;
   }
   if(o.t==="editorial"||o.t==="jubilee")o.b=clean($("#b").value);
   if(currentDcMode==="off")o.dc=false;
@@ -2134,7 +2134,7 @@ $("#statsCopyClientLinkBtn").addEventListener("click",async function(){
 });
 
 /* ---------- Предпросмотр, Фото (IndexedDB + Google Диск) ---------- */
-function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,450);}
+function schedulePreview(){clearTimeout(previewTimer);previewTimer=setTimeout(updatePreview,180);}
 async function updatePreview(){
   var frame=$("#livePreview");if(!frame||$("#appMain").hidden)return;
   try{
@@ -2143,9 +2143,21 @@ async function updatePreview(){
     var p=PRE[o.t]||PRE.luxury;
     if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le)o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}
     if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le)o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}
-    var base=clean($("#base").value)||new URL("invite.html",location.href).href;
-    var url=base.replace(/#.*$/,"")+"?v=7#"+await encode(o);
-    if(frame.dataset.url!==url){frame.src=url;frame.dataset.url=url;}
+    var base=(clean($("#base").value)||new URL("invite.html",location.href).href).replace(/#.*$/,"");
+    if(frame.dataset.loaded==="1"&&frame.dataset.base===base&&frame.contentWindow){
+      try{
+        frame.contentWindow.postMessage({type:"saqtaa-preview",payload:JSON.parse(JSON.stringify(o))},"*");
+        return;
+      }catch(_){}
+    }
+    var url=base+"?v=7#"+await encode(o);
+    if(frame.dataset.url!==url){
+      frame.dataset.loaded="";
+      frame.dataset.base=base;
+      frame.onload=function(){frame.dataset.loaded="1";};
+      frame.src=url;
+      frame.dataset.url=url;
+    }
   }catch(_){}
 }
 function openMobPreview(){
@@ -2457,11 +2469,27 @@ async function startNewOrder(){
 }
 $("#fillDemoBtn").addEventListener("click",function(){
   var curTpl=$("#tpl").value||"luxury";applyPreset(curTpl);
-  var demo={luxury:"Ерасыл & Аяулым",floral:"Алихан & Дария",qazaq:"Арман мен Аружан",editorial:"Аскар Серикович",emerald:"Айлин",tusau:"Альтаир",uzatu:"Айзере",uzatu2:"Мадина",tusau2:"Әлихан · 1 жас",jubilee:"Айгүл · 50",lavender:"Ләйлә",sunset:"Амир"};
-  $("#n").value=demo[curTpl]||"Ерасыл & Аяулым";
+  var demo={
+    luxury:{n:"Ерасыл & Аяулым",ve:"The Ritz-Carlton, зал Ballroom",ad:"г. Астана, ул. Достык, 16",h:"#ЕрасылАяулым",b:""},
+    floral:{n:"Әмір & Томирис",ve:"Оранжерея «Villa Verde»",ad:"г. Алматы, ул. Керимбекова, 12",h:"#ӘмірТомирис",b:""},
+    qazaq:{n:"Бауыржан & Айым",ve:"Тойхана «Дастархан», зал «Қонақжай»",ad:"г. Астана, пр. Кабанбай батыра, 30",h:"#ЕкіӘулет_БірТой",b:""},
+    editorial:{n:"Гүлнара Сериковна",ve:"Галерея «Esentai Loft»",ad:"г. Алматы, пр. Аль-Фараби, 77/8",h:"#Gulnara50Vogue",b:"50"},
+    emerald:{n:"Медина",ve:"Лаундж «Emerald Sky»",ad:"г. Астана, ул. Сарыарка, 8",h:"#MedinaEmeraldNight",b:""},
+    tusau:{n:"Айсұлтан · 1 жас",ve:"Семейный ресторан «Күн Шуақ»",ad:"г. Алматы, ул. Омарова, 45",h:"#Айсұлтан1Жас",b:""},
+    uzatu:{n:"Айзере",ve:"Дворец торжеств «Ақ Орда»",ad:"г. Астана, пр. Туран, 42",h:"#АйзереҰзату",b:""},
+    uzatu2:{n:"Мадина",ve:"Зал торжеств «Алтын Сарай»",ad:"г. Алматы, пр. Достык, 210",h:"#МадинаҚызҰзату",b:""},
+    tusau2:{n:"Әлихан · 1 жас",ve:"Ресторан «Ақ Жол»",ad:"г. Астана, ул. Кунаева, 14",h:"#ӘлиханАқЖол",b:""},
+    jubilee:{n:"Айгүл",ve:"Гранд-холл «Жемчужина»",ad:"г. Алматы, пр. Абая, 52",h:"#АйгүлМерейтой50",b:"50"},
+    lavender:{n:"Ләйлә",ve:"Терраса «Лаванда Garden»",ad:"г. Алматы, ул. Горная, 24",h:"#ЛәйләBirthday",b:""},
+    sunset:{n:"Амир",ve:"Руфтоп «Golden Hour»",ad:"г. Алматы, пр. Аль-Фараби, 140",h:"#AmirSunsetParty",b:""}
+  };
+  var d=demo[curTpl]||demo.luxury;
+  $("#n").value=d.n;
   $("#d").value=defaultFutureDate(21);
-  $("#ve").value="Ресторан «Салтанат»";
-  $("#ad").value="г. Алматы, пр. Достык, 180";
+  $("#ve").value=d.ve;
+  $("#ad").value=d.ad;
+  $("#h").value=d.h;
+  if(d.b)$("#b").value=d.b;
   if(!clean($("#clientEmail").value))$("#clientEmail").value="client@example.com";
   save();toast("⚡ Пример заполнен — нажмите «Создать»!");
 });

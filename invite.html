@@ -897,12 +897,12 @@ function render(instantFx){
       '<div class="lux-banner-plate fx" style="--d:.08s">'+dSpaced(D.d)+' · '+esc(D.s)+'</div>'+
       (photo
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
-        :'<p class="inv-kicker fx" style="--d:.1s">'+t("inv")+' · '+dDot(D.d)+'</p><h2 class="inv-names fx" style="--d:.12s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
+        :'<p class="inv-kicker fx" style="--d:.1s">'+t("inv")+'</p><h2 class="inv-names fx" style="--d:.12s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
   }else if(D.t==="floral"){
     head='<div class="fl-trio fx" style="--d:.05s"><div class="fl-side-note">'+dDot(D.d)+'</div><div>'+heroBox+'</div><div class="fl-side-note">'+esc(D.s)+'</div></div>'+
       (photo
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
-        :'<p class="inv-kicker fx" style="--d:.06s">'+t("inv")+' · '+dDot(D.d)+'</p><h2 class="inv-names fx" style="--d:.1s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
+        :'<p class="inv-kicker fx" style="--d:.06s">'+t("inv")+'</p><h2 class="inv-names fx" style="--d:.1s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
   }else if(D.t==="qazaq"){
     var qAmp=String(names()||"").split(/\s*(?:&amp;|&|\+| и | пен | мен )\s*/i).filter(Boolean);
     var qInit=qAmp.length>=2?(esc(qAmp[0].trim()[0].toUpperCase())+"◆"+esc(qAmp[1].trim()[0].toUpperCase())):(esc(String(names()||"✦").trim()[0]||"✦"));
@@ -911,10 +911,11 @@ function render(instantFx){
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
         :'<p class="inv-kicker fx" style="--d:.08s">'+t("inv")+' · '+dDot(D.d)+'</p><h2 class="inv-names fx" style="--d:.1s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
   }else if(D.t==="editorial"){
-    head='<div class="ed-masthead fx" style="--d:.01s"><span>SPECIAL ISSUE · NO. 04</span><span>'+dDot(D.d)+'</span></div>'+
+    var edIssue=lang==="kz"?"АРНАЙЫ БАСЫЛЫМ · NO. 04":"SPECIAL ISSUE · NO. 04";
+    head='<div class="ed-masthead fx" style="--d:.01s"><span>'+edIssue+'</span><span>'+dDot(D.d)+'</span></div>'+
       '<div class="ed-split fx" style="--d:.05s"><div class="ed-split-meta">'+(big||'<div class="ed-big">№4</div>')+'<h2 class="ed-split-nm">'+nm+'</h2>'+(title?'<p class="ed-split-sub">'+title+'</p>':'')+'</div><div>'+heroBox+'</div></div>'+
       '<div class="ed-rule fx" style="--d:.1s"></div>'+
-      (photo?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':''):'');
+      '<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>';
   }else if(D.t==="emerald"){
     head='<div class="em-orbit-wrap fx" style="--d:.05s"><span class="em-orbit-ring" aria-hidden="true"></span>'+heroBox+'</div>'+
       (photo
@@ -955,11 +956,12 @@ function render(instantFx){
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div>'+
       '<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div></section>';
+  var showDateRow=(D.t!=="luxury"&&D.t!=="floral");
   app.innerHTML='<article class="inv-page '+T.cls+(photo?'':' is-deco')+'">'+sw+'<canvas class="fx-cv" aria-hidden="true"></canvas>'+(T.deco||"")+'<div class="inv-inner">'+
     (T.band?qband("0s"):"")+(T.innerDeco||"")+(photo&&T.orn?ORN:"")+head+
     (c.le?'<div class="inv-lead-box fx" style="--d:.18s"><p class="inv-lead">'+esc(sub(c.le))+'</p></div>':'')+
     '<div class="orn-div fx" style="--d:.22s"><span>❧</span></div>'+
-    '<div class="inv-date fx" style="--d:.24s">'+dSpaced(D.d)+' · '+esc(D.s)+'</div>'+
+    (showDateRow?'<div class="inv-date fx" style="--d:.24s">'+dSpaced(D.d)+' · '+esc(D.s)+'</div>':'')+
     '<div class="cd fx" style="--d:.26s"><div><b data-cd="d">00</b><span data-cdl="d"></span></div><div><b data-cd="h">00</b><span data-cdl="h"></span></div><div><b data-cd="m">00</b><span data-cdl="m"></span></div><div><b data-cd="s">00</b><span data-cdl="s"></span></div></div>'+
     progHTML+locHTML+dressHTML(T)+rsvpHTML+
     (c.sg?'<p class="inv-sign fx" style="--d:.5s">'+esc(sub(c.sg))+'</p>':'')+
@@ -985,15 +987,20 @@ function render(instantFx){
   updateStatsDOM();
   if(D.rsvp!==false)fetchInviteStats(false);
 }
-var fxRaf=0;
+var fxRaf=0,fxRo=null,fxResume=null;
+document.addEventListener("visibilitychange",function(){
+  if(!document.hidden&&fxResume)fxResume();
+});
 function startFxCanvas(kind){
   if(fxRaf){cancelAnimationFrame(fxRaf);fxRaf=0;}
+  if(fxRo){try{fxRo.disconnect();}catch(_){}fxRo=null;}
+  fxResume=null;
   var cv=document.querySelector(".inv-page .fx-cv");
   if(!cv||window.matchMedia("(prefers-reduced-motion:reduce)").matches)return;
   var ctx=cv.getContext("2d"),page=cv.parentElement,w=0,h=0;
   function resize(){w=cv.width=page.offsetWidth||400;h=cv.height=page.offsetHeight||800;}
   resize();
-  if("ResizeObserver" in window)new ResizeObserver(resize).observe(page);
+  if("ResizeObserver" in window){fxRo=new ResizeObserver(resize);fxRo.observe(page);}
   var k=kind||"gold",n=k==="petals"||k==="lavender"?18:k==="embers"?20:k==="geo"?12:18,pts=[];
   for(var i=0;i<n;i++)pts.push({
     x:Math.random()*w,y:Math.random()*h,
@@ -1005,6 +1012,7 @@ function startFxCanvas(kind){
   });
   var t=0;
   function frame(){
+    if(document.hidden){fxRaf=0;return;}
     t+=.02;ctx.clearRect(0,0,w,h);
     for(var i=0;i<pts.length;i++){
       var p=pts[i];
@@ -1042,7 +1050,8 @@ function startFxCanvas(kind){
     }
     fxRaf=requestAnimationFrame(frame);
   }
-  fxRaf=requestAnimationFrame(frame);
+  fxResume=function(){if(!fxRaf&&!document.hidden)fxRaf=requestAnimationFrame(frame);};
+  fxResume();
 }
 function tick(first){
   var cd=document.querySelector(".cd");if(!cd||!D)return;
@@ -1474,9 +1483,9 @@ app.addEventListener("click",function(e){
 function screen(h,p){document.body.style.background="#0F4A38";app.innerHTML='<div class="msg"><div><h1>'+h+'</h1>'+p+'</div></div>';}
 
 /* ---------- запуск ---------- */
-async function init(){
+async function applyInviteData(rawD,instantPreview){
   if(tickTimer){clearInterval(tickTimer);tickTimer=null;}
-  try{D=await decode(location.hash);}catch(_){D=null;}
+  D=rawD;
   var dateText=String(D&&D.d||""),dateCheck=new Date(dateText+"T12:00:00Z");
   if(!D||typeof D!=="object"||Array.isArray(D)||!/^\d{4}-\d{2}-\d{2}$/.test(dateText)||
      !Number.isFinite(dateCheck.getTime())||dateCheck.toISOString().slice(0,10)!==dateText){
@@ -1500,25 +1509,36 @@ async function init(){
   D.rsvp=D.rsvp!==false;
   if(D.dc===false){D.dc=false;}
   else if(D.dc&&typeof D.dc==="object"){
+    var rawSw=Array.isArray(D.dc.sw)?D.dc.sw.slice(0,10).map(function(s){
+      return Array.isArray(s)?[String(s[0]||"").slice(0,40),String(s[1]||"").slice(0,40),String(s[2]||"").slice(0,60)]:null;
+    }).filter(function(s){return s&&(s[0]||s[1]||s[2]);}):null;
     D.dc={
       ru:String(D.dc.ru||"").slice(0,80),kz:String(D.dc.kz||"").slice(0,80),
       sru:String(D.dc.sru||"").slice(0,140),skz:String(D.dc.skz||"").slice(0,140),
-      pal:DC_PALS[D.dc.pal]?String(D.dc.pal):""
+      pal:(D.dc.pal==="none"||DC_PALS[D.dc.pal])?String(D.dc.pal):"",
+      nt:D.dc.nt?1:0,
+      ns:D.dc.ns?1:0,
+      sw:rawSw
     };
   }else{delete D.dc;}
   langs=D.l==="both"?["ru","kz"]:[D.l==="kz"?"kz":"ru"];
   rsvpState=loadRsvpState();
-  lang=langs[0];
-  if(langs.length>1){
-    if(rsvpState.lang&&langs.indexOf(rsvpState.lang)>=0)lang=rsvpState.lang;
-    else if(/^kk/i.test(navigator.language||""))lang="kz";
+  if(!instantPreview||langs.indexOf(lang)<0){
+    lang=langs[0];
+    if(langs.length>1){
+      if(rsvpState.lang&&langs.indexOf(rsvpState.lang)>=0)lang=rsvpState.lang;
+      else if(/^kk/i.test(navigator.language||""))lang="kz";
+    }
   }
   try{
-    if(Date.now()>deadline()){
+    if(!instantPreview&&Date.now()>deadline()){
       screen("Приглашение больше недоступно ✦","<p>Мероприятие уже состоялось. Спасибо, что были с нами!</p><p>Мереке өтіп кетті. Бізбен бірге болғаныңызға рақмет!</p>");return;
     }
-    render();tickTimer=setInterval(tick,1000);
-    if(D.rsvp&&(D.srv||D.sheet)){
+    var prevScroll=instantPreview?(window.scrollY||0):0;
+    render(Boolean(instantPreview));
+    if(instantPreview)window.scrollTo(0,prevScroll);
+    tickTimer=setInterval(tick,1000);
+    if(!instantPreview&&D.rsvp&&(D.srv||D.sheet)){
       var warmUrl=D.srv||D.sheet;
       setTimeout(function(){
         try{fetch(warmUrl+(warmUrl.indexOf("?")===-1?"?":"&")+"action=ping&_t="+Date.now(),{method:"GET"}).catch(function(){});}catch(_){}
@@ -1529,7 +1549,17 @@ async function init(){
     screen("Ошибка загрузки ✦","<p>Не удалось отобразить приглашение: "+esc(e&&e.message?e.message:String(e))+"</p><p>Шақыруды ашу мүмкін болмады.</p>");
   }
 }
+async function init(){
+  var decoded=null;
+  try{decoded=await decode(location.hash);}catch(_){decoded=null;}
+  await applyInviteData(decoded,false);
+}
 addEventListener("hashchange",function(){init();});
+addEventListener("message",function(e){
+  if(e&&e.data&&e.data.type==="saqtaa-preview"&&e.data.payload){
+    applyInviteData(e.data.payload,true);
+  }
+});
 init();
 })();
 </script>
