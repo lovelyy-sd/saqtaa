@@ -383,6 +383,23 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
   z-index:80;max-width:90vw;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.22);
 }
 .toast.show{opacity:1}
+
+/* Dress code visual editor */
+.dc-wrap{margin-top:16px;padding-top:14px;border-top:1px dashed var(--hair2)}
+.dc-auto-box,.dc-off-box{margin-top:10px;padding:12px 14px;border:1px solid var(--hair);border-radius:14px;background:var(--card-soft);display:flex;flex-direction:column;gap:10px}
+.dc-auto-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dc-auto-title{font-size:.86rem;font-weight:700;color:var(--ink)}
+.dc-auto-dots{display:flex;flex-wrap:wrap;gap:12px}
+.dc-auto-dot{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--ink2);font-weight:600}
+.dc-pearl-mini{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(217,188,127,.85);box-shadow:0 3px 7px -2px rgba(0,0,0,.35),inset 0 1.5px 3px rgba(255,255,255,.65);flex-shrink:0}
+.dc-sw-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.dc-sw-row{display:grid;grid-template-columns:38px 1fr 1fr 32px;gap:8px;align-items:center;padding:8px;border:1px solid var(--hair);border-radius:12px;background:var(--card-soft)}
+@media(max-width:440px){.dc-sw-row{grid-template-columns:36px 1fr 30px}.dc-sw-row .dc-sw-kz{grid-column:2/3}}
+.dc-sw-pick{width:34px;height:34px;border-radius:50%;border:2px solid rgba(217,188,127,.9);box-shadow:0 4px 10px -3px rgba(0,0,0,.4),inset 0 2px 4px rgba(255,255,255,.65);cursor:pointer;position:relative;overflow:hidden;display:block;flex-shrink:0}
+.dc-sw-pick input[type=color]{position:absolute;inset:-6px;width:48px;height:48px;opacity:0;cursor:pointer;border:0;padding:0}
+.dc-sw-del{width:30px;height:30px;border-radius:8px;border:1px solid var(--hair);background:var(--card);color:var(--ink2);font-size:.9rem;cursor:pointer;display:grid;place-items:center}
+.dc-sw-del:hover{color:var(--red-ink);border-color:var(--red-ink)}
+.dc-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 </style>
 </head>
 <body>
@@ -545,42 +562,68 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
 
           <label class="lbl" for="ad">Адрес (город, улица)</label>
           <textarea class="inp inp-wrap" id="ad" rows="2" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off"></textarea>
-        </div>
 
-        <!-- Раскрывающийся блок: Фото, Дресс-код, 2ГИС, Тексты и Программа -->
-        <button type="button" class="acc-btn" id="accMediaBtn">
-          <span>📸 Фото, дресс-код, 2ГИС и тексты</span>
-          <span id="accMediaChev">▾</span>
-        </button>
-        <div class="card acc-body" id="accMediaWrap" hidden>
-          <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--hair2)">
-            <label class="lbl" style="margin-top:0">Дресс-код для гостей</label>
+          <!-- Дресс-код: всегда на виду, можно редактировать или убрать полностью -->
+          <div class="dc-wrap">
+            <label class="lbl" style="margin-top:0">👗 Дресс-код для гостей</label>
             <div class="seg" id="dcSeg">
               <button type="button" data-dc="auto" class="on">По шаблону</button>
-              <button type="button" data-dc="custom">Свой</button>
-              <button type="button" data-dc="off">Скрыть</button>
+              <button type="button" data-dc="custom">✏️ Изменить</button>
+              <button type="button" data-dc="off">🚫 Убрать</button>
             </div>
-            <div id="dcCustomBox" hidden style="margin-top:10px;padding:10px 12px;border:1px dashed var(--hair2);border-radius:12px">
-              <label class="lbl" for="dcPal" style="margin-top:0">Палитра оттенков</label>
+
+            <div class="dc-auto-box" id="dcAutoBox">
+              <div class="dc-auto-top">
+                <span class="dc-auto-title" id="dcAutoTitle">Дресс-код: Black Tie &amp; Gold</span>
+                <button type="button" class="btn secondary btn-sm" id="dcEditFromAutoBtn" style="min-height:34px;padding:6px 12px;font-size:.78rem">✏️ Редактировать</button>
+              </div>
+              <div class="dc-auto-dots" id="dcAutoDots"></div>
+            </div>
+
+            <div id="dcCustomBox" hidden style="margin-top:10px;padding:12px;border:1px dashed var(--hair2);border-radius:14px">
+              <label class="lbl" for="dcPal" style="margin-top:0">Готовая палитра оттенков</label>
               <select class="inp" id="dcPal">
                 <option value="">По выбранному шаблону</option>
-                <option value="gold">Изумруд · Золото · Шампань</option>
-                <option value="pastel">Пудра · Айвори · Шалфей</option>
-                <option value="bordo">Бордо · Золото · Молочный</option>
-                <option value="mono">Монохром (Чёрный · Серебро)</option>
-                <option value="warm">Тёплый (Крем · Медовый · Терракота)</option>
+                <option value="gold">Изумруд · Золото · Шампань (Luxury)</option>
+                <option value="pastel">Пудра · Айвори · Шалфей (Floral)</option>
+                <option value="bordo">Бордо · Золото · Молочный (Qazaq)</option>
+                <option value="mono">Монохром: Чёрный · Серебро (Editorial)</option>
+                <option value="emerald">Изумруд · Золото · Жемчуг (Emerald)</option>
+                <option value="warm">Тёплый: Крем · Медовый · Терракота (Tusau)</option>
+                <option value="none">Без кружков (только текст дресс-кода)</option>
               </select>
+
               <label class="lbl" for="dcRu">Заголовок (RU)</label>
               <input class="inp" id="dcRu" type="text" maxlength="80" placeholder="Дресс-код: Black Tie & Gold" autocomplete="off">
               <label class="lbl" for="dcKz">Атауы (ҚАЗ)</label>
               <input class="inp" id="dcKz" type="text" maxlength="80" placeholder="Дресс-код: Классика және алтын" autocomplete="off">
-              <label class="lbl" for="dcSubRu">Подзаголовок (RU, необязательно)</label>
+
+              <label class="lbl" for="dcSubRu">Подзаголовок (RU, можно очистить)</label>
               <input class="inp" id="dcSubRu" type="text" maxlength="140" placeholder="Будем признательны, если вы поддержите оттенки торжества:" autocomplete="off">
-              <label class="lbl" for="dcSubKz">Қосымша мәтін (ҚАЗ, міндетті емес)</label>
+              <label class="lbl" for="dcSubKz">Қосымша мәтін (ҚАЗ, бос қалдыруға болады)</label>
               <input class="inp" id="dcSubKz" type="text" maxlength="140" placeholder="Мереке реңктерін қолдасаңыз, риза боламыз:" autocomplete="off">
+
+              <label class="lbl">Кружки оттенков (нажмите на кружок, чтобы выбрать цвет)</label>
+              <div class="dc-sw-list" id="dcSwList"></div>
+              <div class="dc-acts">
+                <button type="button" class="btn secondary btn-sm" id="dcAddSwBtn" style="min-height:36px">+ Добавить цвет</button>
+                <button type="button" class="btn secondary btn-sm" id="dcClearSwBtn" style="min-height:36px">Убрать кружки</button>
+                <button type="button" class="btn secondary btn-sm" id="dcResetTplBtn" style="min-height:36px">↺ Сбросить по шаблону</button>
+              </div>
+            </div>
+
+            <div class="dc-off-box" id="dcOffBox" hidden>
+              <span style="font-size:.84rem;color:var(--ink2)">🚫 Дресс-код полностью убран — этот блок не будет отображаться в приглашении.</span>
             </div>
           </div>
+        </div>
 
+        <!-- Раскрывающийся блок: Фото, 2ГИС, Тексты и Программа -->
+        <button type="button" class="acc-btn" id="accMediaBtn">
+          <span>📸 Фото, 2ГИС, тексты и программа</span>
+          <span id="accMediaChev">▾</span>
+        </button>
+        <div class="card acc-body" id="accMediaWrap" hidden>
           <label class="lbl" for="photoFile" style="margin-top:0">Фотография с телефона</label>
           <div class="photo-drop">
             <span>📷 Выбрать фото из галереи</span>
@@ -986,6 +1029,29 @@ tusau:{ti:["Тұсау кесер","Тұсау кесер"],
  pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"}
 };
 
+var TPL_DC={
+  luxury:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Классика және алтын",pal:"gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]},
+  floral:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Нәзік пастель",pal:"pastel",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]},
+  qazaq:{ru:"Дресс-код: Королевский бордо",kz:"Дресс-код: Ұлттық нақыш",pal:"bordo",sw:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]]},
+  editorial:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Монохром шик",pal:"mono",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]},
+  emerald:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Зүбәржат және алтын",pal:"emerald",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]},
+  tusau:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",pal:"warm",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]}
+};
+var DC_PALS={
+  gold:TPL_DC.luxury.sw,
+  pastel:TPL_DC.floral.sw,
+  bordo:TPL_DC.qazaq.sw,
+  mono:TPL_DC.editorial.sw,
+  emerald:TPL_DC.emerald.sw,
+  warm:TPL_DC.tusau.sw,
+  none:[]
+};
+var DEF_DC_SUB_RU="Будем признательны, если вы поддержите оттенки торжества:";
+var DEF_DC_SUB_KZ="Мереке реңктерін қолдасаңыз, риза боламыз:";
+var currentDcMode="auto";
+var dcSwatches=[];
+var dcCustomTouched=false;
+
 var st={ru:{ti:"",le:"",sg:""},kz:{ti:"",le:"",sg:""},rows:[]};
 var lang="ru";
 function act(){return lang==="both"?["ru","kz"]:[lang];}
@@ -998,6 +1064,99 @@ function getSrvUrl(){
   var v=clean($("#srvUrl").value);
   if(v)return v;
   try{return localStorage.getItem(SRV_KEY)||DEFAULT_SRV_URL;}catch(_){return DEFAULT_SRV_URL;}
+}
+
+/* ---------- Дресс-код: визуальный редактор оттенков и текстов ---------- */
+function pearlBg(colSpec){
+  var cols=String(colSpec||"").split(",").map(function(c){return c.trim();}).filter(Boolean);
+  if(cols.length>=2)return"linear-gradient(135deg,"+cols[0]+" 0%,"+cols[1]+" 100%)";
+  var h=cols[0]||"#d9bc7f";
+  var m=h.match(/^#?([0-9a-f]{6})$/i);
+  if(!m)return"linear-gradient(135deg,"+h+" 0%,"+h+" 100%)";
+  var n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  var hx=function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");};
+  var c1="#"+hx(r+(255-r)*.32)+hx(g+(255-g)*.32)+hx(b+(255-b)*.32);
+  var c2="#"+hx(r*.58)+hx(g*.58)+hx(b*.58);
+  return"linear-gradient(135deg,"+c1+" 0%,"+c2+" 100%)";
+}
+function hexToPearl(hex){
+  var m=String(hex||"").trim().match(/^#?([0-9a-f]{6})$/i);
+  if(!m)return"#fff3be,#8d6a16";
+  var n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  var hx=function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,"0");};
+  var c1="#"+hx(r+(255-r)*.32)+hx(g+(255-g)*.32)+hx(b+(255-b)*.32);
+  var c2="#"+hx(r*.58)+hx(g*.58)+hx(b*.58);
+  return c1+","+c2;
+}
+function pearlToHex(colSpec){
+  var cols=String(colSpec||"").split(",").map(function(c){return c.trim();}).filter(Boolean);
+  var cand=(cols.length>=2&&/^#fff(?:fff)?$/i.test(cols[0]))?cols[1]:(cols[0]||"#d9bc7f");
+  if(/^#[0-9a-f]{6}$/i.test(cand))return cand.toLowerCase();
+  if(/^#[0-9a-f]{3}$/i.test(cand))return("#"+cand[1]+cand[1]+cand[2]+cand[2]+cand[3]+cand[3]).toLowerCase();
+  return"#d9bc7f";
+}
+function renderDcAutoPreview(){
+  var td=TPL_DC[($("#tpl")&&$("#tpl").value)||"luxury"]||TPL_DC.luxury;
+  var ttl=$("#dcAutoTitle"),dots=$("#dcAutoDots");
+  if(ttl)ttl.textContent=(lang==="kz"?td.kz:td.ru);
+  if(dots){
+    dots.innerHTML=td.sw.map(function(s){
+      var lbl=lang==="kz"?(s[1]||s[0]):(s[0]||s[1]);
+      return'<div class="dc-auto-dot"><span class="dc-pearl-mini" style="background:'+esc(pearlBg(s[2]))+'"></span><span>'+esc(lbl)+'</span></div>';
+    }).join("");
+  }
+}
+function grabDcSwatches(){
+  document.querySelectorAll("#dcSwList .dc-sw-row").forEach(function(r,idx){
+    if(!dcSwatches[idx])return;
+    var ruEl=r.querySelector(".dc-sw-ru"),kzEl=r.querySelector(".dc-sw-kz");
+    if(ruEl)dcSwatches[idx][0]=ruEl.value;
+    if(kzEl)dcSwatches[idx][1]=kzEl.value;
+  });
+}
+function renderDcSwatches(){
+  var box=$("#dcSwList");if(!box)return;
+  if(!dcSwatches.length){
+    box.innerHTML='<p class="hint" style="margin:0;padding:8px 0">Кружки цветов отключены (в приглашении будет только текст дресс-кода).</p>';
+  }else{
+    box.innerHTML=dcSwatches.map(function(s,i){
+      var bg=pearlBg(s[2]),hex=pearlToHex(s[2]);
+      return'<div class="dc-sw-row" data-swi="'+i+'">'+
+        '<label class="dc-sw-pick" style="background:'+esc(bg)+'" title="Выбрать цвет">'+
+          '<input type="color" class="dc-sw-col" value="'+esc(hex)+'" aria-label="Цвет '+(i+1)+'">'+
+        '</label>'+
+        '<input class="inp dc-sw-ru" type="text" maxlength="30" placeholder="Цвет (RU)" value="'+esc(s[0]||"")+'">'+
+        '<input class="inp dc-sw-kz" type="text" maxlength="30" placeholder="Түсі (ҚАЗ)" value="'+esc(s[1]||"")+'">'+
+        '<button type="button" class="dc-sw-del" title="Удалить этот цвет" aria-label="Удалить">✕</button>'+
+      '</div>';
+    }).join("");
+  }
+  var addBtn=$("#dcAddSwBtn"),clrBtn=$("#dcClearSwBtn");
+  if(addBtn)addBtn.disabled=(dcSwatches.length>=8);
+  if(clrBtn)clrBtn.hidden=(!dcSwatches.length);
+}
+function loadDcFromTemplate(tplKey){
+  var td=TPL_DC[tplKey||($("#tpl")&&$("#tpl").value)||"luxury"]||TPL_DC.luxury;
+  $("#dcPal").value="";
+  $("#dcRu").value=td.ru;
+  $("#dcKz").value=td.kz;
+  $("#dcSubRu").value=DEF_DC_SUB_RU;
+  $("#dcSubKz").value=DEF_DC_SUB_KZ;
+  dcSwatches=td.sw.map(function(s){return s.slice();});
+  dcCustomTouched=true;
+  renderDcSwatches();
+}
+function setDcMode(m,skipInit){
+  currentDcMode=(m==="off"||m==="custom")?m:"auto";
+  document.querySelectorAll("#dcSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.dc===currentDcMode);});
+  if(currentDcMode==="custom"&&!skipInit&&!dcCustomTouched){
+    loadDcFromTemplate($("#tpl")&&$("#tpl").value);
+  }
+  var autoBox=$("#dcAutoBox"),custBox=$("#dcCustomBox"),offBox=$("#dcOffBox");
+  if(autoBox)autoBox.hidden=(currentDcMode!=="auto");
+  if(custBox)custBox.hidden=(currentDcMode!=="custom");
+  if(offBox)offBox.hidden=(currentDcMode!=="off");
+  renderDcAutoPreview();
 }
 
 /* ---------- Тема (Светлая / Тёмная) ---------- */
@@ -1072,6 +1231,7 @@ function setLang(l){
   document.querySelectorAll("#langSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.l===l);});
   var filled=act().filter(ensure);
   showText();
+  renderDcAutoPreview();
   if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на языке подставлены из шаблона");
 }
 function isPresetUnchanged(k){
@@ -1094,6 +1254,7 @@ function applyPreset(k){
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
   $("#bigWrap").hidden=(k!=="editorial");
   showText();
+  renderDcAutoPreview();
 }
 
 /* ---------- Кодирование ссылки (#z / #j) ---------- */
@@ -1220,15 +1381,21 @@ function collect(){
   if(o.t==="editorial")o.b=clean($("#b").value);
   if(currentDcMode==="off")o.dc=false;
   else if(currentDcMode==="custom"){
+    grabDcSwatches();
     var dcObj={};
     var dRu=clean($("#dcRu").value),dKz=clean($("#dcKz").value),dPal=clean($("#dcPal").value);
     var dSru=clean($("#dcSubRu").value),dSkz=clean($("#dcSubKz").value);
     if(dRu)dcObj.ru=dRu;
     if(dKz)dcObj.kz=dKz;
+    if(!dRu&&!dKz)dcObj.nt=1;
     if(dSru)dcObj.sru=dSru;
     if(dSkz)dcObj.skz=dSkz;
+    if(!dSru&&!dSkz)dcObj.ns=1;
     if(dPal)dcObj.pal=dPal;
-    if(dRu||dKz||dSru||dSkz||dPal)o.dc=dcObj;
+    dcObj.sw=dcSwatches.filter(function(s){return s&&(clean(s[0])||clean(s[1])||clean(s[2]));}).map(function(s){
+      return[clean(s[0]),clean(s[1]),clean(s[2])||"#fff3be,#8d6a16"];
+    });
+    o.dc=dcObj;
   }
   if(lang==="ru"||lang==="both")o.ru=langBlock(0);
   if(lang==="kz"||lang==="both")o.kz=langBlock(1);
@@ -1309,15 +1476,35 @@ function fillFrom(o){
   $("#n").value=o.n||"";$("#d").value=o.d||defaultFutureDate(14);$("#s").value=o.s||"18:00";$("#e").value=o.e||"23:30";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
   $("#p").value=o.p||"";$("#b").value=o.b||"";
+  var td=TPL_DC[lastTpl]||TPL_DC.luxury;
   if(o.dc===false){
-    setDcMode("off");$("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
+    dcCustomTouched=false;dcSwatches=[];
+    $("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
+    setDcMode("off",true);
   }else if(o.dc&&typeof o.dc==="object"){
-    setDcMode("custom");
-    $("#dcPal").value=o.dc.pal||"";$("#dcRu").value=o.dc.ru||"";$("#dcKz").value=o.dc.kz||"";
-    $("#dcSubRu").value=o.dc.sru||"";$("#dcSubKz").value=o.dc.skz||"";
+    dcCustomTouched=true;
+    $("#dcPal").value=o.dc.pal||"";
+    $("#dcRu").value=o.dc.nt?"":(o.dc.ru!=null?o.dc.ru:td.ru);
+    $("#dcKz").value=o.dc.nt?"":(o.dc.kz!=null?o.dc.kz:td.kz);
+    $("#dcSubRu").value=o.dc.ns?"":(o.dc.sru!=null?o.dc.sru:DEF_DC_SUB_RU);
+    $("#dcSubKz").value=o.dc.ns?"":(o.dc.skz!=null?o.dc.skz:DEF_DC_SUB_KZ);
+    if(Array.isArray(o.dc.sw)){
+      dcSwatches=o.dc.sw.map(function(s){return[s[0]||"",s[1]||"",s[2]||"#fff3be,#8d6a16"];});
+    }else if(o.dc.pal==="none"){
+      dcSwatches=[];
+    }else if(o.dc.pal&&DC_PALS[o.dc.pal]){
+      dcSwatches=DC_PALS[o.dc.pal].map(function(s){return s.slice();});
+    }else{
+      dcSwatches=td.sw.map(function(s){return s.slice();});
+    }
+    setDcMode("custom",true);
+    renderDcSwatches();
   }else{
-    setDcMode("auto");$("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
+    dcCustomTouched=false;dcSwatches=[];
+    $("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
+    setDcMode("auto",true);
   }
+  renderDcAutoPreview();
   $("#clientEmail").value=o.em||"";
   if(o.srv||o.sheet)$("#srvUrl").value=o.srv||o.sheet;
   if(o.ejs&&o.ejs.s){
@@ -2011,7 +2198,7 @@ function handleTplChange(newTpl){
   $("#tpl").value=newTpl;
   syncTplCards(newTpl);
   if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить тексты этого шаблона?"))applyPreset(newTpl);
-  else{lastTpl=newTpl;$("#bigWrap").hidden=(newTpl!=="editorial");}
+  else{lastTpl=newTpl;$("#bigWrap").hidden=(newTpl!=="editorial");renderDcAutoPreview();}
   save();
 }
 $("#tpl").addEventListener("change",function(){handleTplChange(this.value);});
@@ -2021,13 +2208,76 @@ $("#tplGrid").addEventListener("click",function(e){
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
 document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
-var currentDcMode="auto";
-function setDcMode(m){
-  currentDcMode=(m==="off"||m==="custom")?m:"auto";
-  document.querySelectorAll("#dcSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.dc===currentDcMode);});
-  var box=$("#dcCustomBox");if(box)box.hidden=(currentDcMode!=="custom");
-}
 document.querySelectorAll("#dcSeg button").forEach(function(b){b.addEventListener("click",function(){setDcMode(b.dataset.dc);save();});});
+if($("#dcEditFromAutoBtn")){
+  $("#dcEditFromAutoBtn").addEventListener("click",function(){
+    loadDcFromTemplate($("#tpl").value);
+    setDcMode("custom",true);
+    save();
+  });
+}
+if($("#dcPal")){
+  $("#dcPal").addEventListener("change",function(){
+    var v=this.value,td=TPL_DC[$("#tpl").value]||TPL_DC.luxury;
+    if(v==="none")dcSwatches=[];
+    else if(v&&DC_PALS[v])dcSwatches=DC_PALS[v].map(function(s){return s.slice();});
+    else dcSwatches=td.sw.map(function(s){return s.slice();});
+    dcCustomTouched=true;
+    renderDcSwatches();
+    save();
+  });
+}
+if($("#dcSwList")){
+  $("#dcSwList").addEventListener("input",function(e){
+    var row=e.target.closest(".dc-sw-row");if(!row)return;
+    var idx=+row.dataset.swi;if(!dcSwatches[idx])return;
+    if(e.target.classList.contains("dc-sw-col")){
+      var pSpec=hexToPearl(e.target.value);
+      dcSwatches[idx][2]=pSpec;
+      var pick=row.querySelector(".dc-sw-pick");
+      if(pick)pick.style.background=pearlBg(pSpec);
+    }else{
+      grabDcSwatches();
+    }
+    dcCustomTouched=true;
+    scheduleSave();
+  });
+  $("#dcSwList").addEventListener("click",function(e){
+    var del=e.target.closest(".dc-sw-del");if(!del)return;
+    var row=del.closest(".dc-sw-row");if(!row)return;
+    grabDcSwatches();
+    dcSwatches.splice(+row.dataset.swi,1);
+    dcCustomTouched=true;
+    renderDcSwatches();
+    save();
+  });
+}
+if($("#dcAddSwBtn")){
+  $("#dcAddSwBtn").addEventListener("click",function(){
+    if(dcSwatches.length>=8)return;
+    grabDcSwatches();
+    dcSwatches.push(["Оттенок","Реңк","#fff3be,#8d6a16"]);
+    dcCustomTouched=true;
+    renderDcSwatches();
+    save();
+  });
+}
+if($("#dcClearSwBtn")){
+  $("#dcClearSwBtn").addEventListener("click",function(){
+    dcSwatches=[];
+    $("#dcPal").value="none";
+    dcCustomTouched=true;
+    renderDcSwatches();
+    save();
+  });
+}
+if($("#dcResetTplBtn")){
+  $("#dcResetTplBtn").addEventListener("click",function(){
+    loadDcFromTemplate($("#tpl").value);
+    save();
+    toast("↺ Дресс-код сброшен по шаблону");
+  });
+}
 $("#goToRsvpSettingsBtn").addEventListener("click",function(){
   switchScreen("settings");
   var pid=(currentRsvpMode==="ejs")?"setNotifPanel":"setServerPanel";
@@ -2140,8 +2390,9 @@ async function startNewOrder(){
   currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
   $("#n").value="";$("#d").value=defaultFutureDate(14);$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
   $("#p").value="";$("#clientEmail").value="";$("#old").value="";
-  setDcMode("auto");
+  dcCustomTouched=false;dcSwatches=[];
   $("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
+  setDcMode("auto",true);
   $("#activeOrderBadge").textContent="Создать приглашение";
   $("#result").hidden=true;$("#mkErr").hidden=true;
   try{await delPhoto("current");}catch(_){}
