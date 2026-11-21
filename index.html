@@ -509,8 +509,7 @@ body.menu-open{overflow:hidden}
 .rd-edit{margin-top:6px;min-height:40px;font-size:.8rem;text-decoration:underline;opacity:.7;transition:opacity .2s}
 .rd-edit:hover{opacity:1}
 .rs-guests{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid color-mix(in srgb,var(--acc) 40%,transparent);border-radius:13px;padding:12px 14px;background:color-mix(in srgb,var(--acc) 6%,transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);text-align:left}
-.rd-cal{margin-top:4px}
-.rs-guests[hidden],.rd-guests[hidden],.rd-cal[hidden]{display:none!important}
+.rs-guests[hidden],.rd-guests[hidden]{display:none!important}
 .rs-guests-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .rs-guests-lbl{font-size:.9rem;font-weight:700;line-height:1.25}
 .rs-guests-hint{font-size:.74rem;opacity:.74;line-height:1.25}
@@ -1147,7 +1146,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       wa_cta:"Заказать в WhatsApp",foot_desc:"цифровые приглашения",up:"наверх",
       m_back:"Коллекция",tab_photo:"С фото",tab_deco:"Без фото",change_photo:"Заменить фото",
       photo_note:"Загруженное фото видно только в этой вкладке — демо-режим.",
-      lbl_invite:"Приглашение",prog_t:"Программа дня",loc_t:"Место проведения",btn_2gis:"Открыть в 2ГИС",btn_cal:"Добавить в календарь",
+      lbl_invite:"Приглашение",prog_t:"Программа дня",loc_t:"Место проведения",btn_2gis:"Открыть в 2ГИС",
       joy_eyebrow:"С большой радостью",
       ph_hint:"Фото загружается кнопкой 📷 ниже",
       rsvp_eyebrow:"Подтверждение присутствия",rsvp_h:"Ждём вашего ответа",
@@ -1254,7 +1253,7 @@ pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee 
       wa_cta:"WhatsApp арқылы тапсырыс беру",foot_desc:"цифрлық шақырулар",up:"жоғары",
       m_back:"Коллекция",tab_photo:"Фотомен",tab_deco:"Фотосыз",change_photo:"Фотоны ауыстыру",
       photo_note:"Жүктелген фото тек осы қойындыда көрінеді — демо-режим.",
-      lbl_invite:"Шақыру",prog_t:"Бағдарлама",loc_t:"Өткізілетін орын",btn_2gis:"2ГИС-тен ашу",btn_cal:"Күнтізбеге қосу",
+      lbl_invite:"Шақыру",prog_t:"Бағдарлама",loc_t:"Өткізілетін орын",btn_2gis:"2ГИС-тен ашу",
       joy_eyebrow:"Үлкен қуанышпен",
       ph_hint:"Фото төмендегі 📷 батырмасымен жүктеледі",
       rsvp_eyebrow:"Қатысуды растау",rsvp_h:"Жауабыңызды күтеміз",
@@ -1456,7 +1455,6 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
               <p class="v-addr">${c.addr}</p>
               <div class="loc-btns">
                 <a class="inv-btn" href="${gis}" target="_blank" rel="noopener">📍 ${t("btn_2gis")}</a>
-                ${i===0?`<button class="inv-btn" type="button" data-cal="${i}">${CAL_ICON}<span>${t("btn_cal")}</span></button>`:""}
               </div>
             </div>
           </section>
@@ -1503,7 +1501,6 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
                 <span class="rd-div"></span>
                 <p class="rd-date">${dHuman(ev.date)} · ${ev.times[0]}</p>
                 <p class="rd-venue">${c.venue}, ${c.addr}</p>
-                ${i===0?`<button class="inv-btn rd-cal" type="button" data-cal="${i}">${CAL_ICON}<span>${t("btn_cal")}</span></button>`:""}
                 <button class="rd-edit" type="button">${t("rd_edit")}</button>
               </div>
             </div>
@@ -1609,8 +1606,6 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
           if(st.att==="yes"){dg.textContent=guestDoneText(st.cnt);dg.hidden=false;}
           else{dg.textContent="";dg.hidden=true;}
         }
-        const calBtn=done.querySelector(".rd-cal");
-        if(calBtn)calBtn.hidden=(st.att==="no");
         f.hidden=true;
         done.hidden=false;
       }
@@ -1781,108 +1776,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     const err=e.target.closest(".rs-form").querySelector(".rs-err");
     if(err)err.textContent="";
   });
-  /* ---------- календарь (1 умная кнопка: iOS/macOS Safari → .ics Apple Calendar, Android/ПК → Google Calendar) ---------- */
-  const enc=typeof TextEncoder!=="undefined"?new TextEncoder():null;
-  const toIcsUtc=dt=>dt.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
-  const escIcs=s=>String(s||"").replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\r\n|\r|\n/g,"\\n");
-  function foldIcs(line){
-    if(!enc)return line;
-    const parts=[];let cur="",bytes=0,lim=75;
-    for(const ch of line){
-      const b=enc.encode(ch).length;
-      if(bytes+b>lim){parts.push(cur);cur="";bytes=0;lim=74;}
-      cur+=ch;bytes+=b;
-    }
-    parts.push(cur);
-    return parts.join("\r\n ");
-  }
-  function calEventData(i){
-    const ev=EVENTS[i]||EVENTS[0],c=invC(i),d=DEMOS[i]||DEMOS[0];
-    const startT=(ev.times&&ev.times[0])||"18:00",endT=ev.end||"23:00";
-    const endDateStr=endT<startT?addDays(ev.date,1):ev.date;
-    const startDt=new Date(ev.date+"T"+startT+":00"+CONFIG.TZ_OFFSET);
-    const endDt=new Date(endDateStr+"T"+endT+":00"+CONFIG.TZ_OFFSET);
-    const title=d.names+" — "+c.title;
-    const location=c.venue+", "+c.addr;
-    const progLines=(c.prog||[]).map((p,k)=>(ev.times[k]?ev.times[k]+" — ":"")+p[0]+(p[1]?" ("+p[1]+")":"")).join("\n");
-    const gis="https://2gis.kz/search/"+encodeURIComponent(location);
-    const details=[c.lead,progLines,"2ГИС: "+gis].filter(Boolean).join("\n\n");
-    return {ev,startT,endT,endDateStr,startDt,endDt,title,location,details};
-  }
-  function buildIcs(i){
-    const x=calEventData(i);
-    const uid="saqtaa-demo-"+(i+1)+"-"+x.ev.date.replace(/-/g,"")+"@saqtaa.kz";
-    const lines=[
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "PRODID:-//SAQTAA//Digital Invitation//RU",
-      "CALSCALE:GREGORIAN",
-      "METHOD:PUBLISH",
-      "BEGIN:VEVENT",
-      "UID:"+uid,
-      "DTSTAMP:"+toIcsUtc(new Date()),
-      "DTSTART:"+toIcsUtc(x.startDt),
-      "DTEND:"+toIcsUtc(x.endDt),
-      "SUMMARY:"+escIcs(x.title),
-      "DESCRIPTION:"+escIcs(x.details),
-      "LOCATION:"+escIcs(x.location),
-      "STATUS:CONFIRMED",
-      "BEGIN:VALARM",
-      "ACTION:DISPLAY",
-      "DESCRIPTION:"+escIcs(x.title),
-      "TRIGGER:-P1D",
-      "END:VALARM",
-      "BEGIN:VALARM",
-      "ACTION:DISPLAY",
-      "DESCRIPTION:"+escIcs(x.title),
-      "TRIGGER:-PT2H",
-      "END:VALARM",
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ];
-    return lines.map(foldIcs).join("\r\n")+"\r\n";
-  }
-  function buildGoogleCalUrl(i){
-    const x=calEventData(i);
-    const fmt=(dStr,tStr)=>dStr.replace(/-/g,"")+"T"+tStr.replace(/:/g,"")+"00";
-    const dates=fmt(x.ev.date,x.startT)+"/"+fmt(x.endDateStr,x.endT);
-    return "https://calendar.google.com/calendar/render?action=TEMPLATE"+
-      "&text="+encodeURIComponent(x.title)+
-      "&dates="+encodeURIComponent(dates)+
-      "&ctz="+encodeURIComponent(CONFIG.TZ)+
-      "&details="+encodeURIComponent(x.details)+
-      "&location="+encodeURIComponent(x.location);
-  }
-  function openCalendar(i){
-    const ua=navigator.userAgent||"";
-    const isIOS=/iPad|iPhone|iPod/i.test(ua)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-    const isMacSafari=/Macintosh/i.test(ua)&&/Safari/i.test(ua)&&!/Chrome|Chromium|Edg|OPR/i.test(ua);
-    if(isIOS||isMacSafari){
-      const ics=buildIcs(i);
-      if(/FBAN|FBAV|Instagram|CriOS/i.test(ua)){
-        location.href="data:text/calendar;charset=utf-8,"+encodeURIComponent(ics);
-        return;
-      }
-      const blob=new Blob([ics],{type:"text/calendar;charset=utf-8"});
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement("a");
-      a.href=url;
-      a.download="saqtaa-invite-"+(i+1)+".ics";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),2000);
-    }else{
-      window.open(buildGoogleCalUrl(i),"_blank","noopener");
-    }
-  }
-
   track.addEventListener("click",e=>{
-    const cal=e.target.closest("[data-cal]");
-    if(cal){
-      openCalendar(Number(cal.getAttribute("data-cal"))||0);
-      return;
-    }
     const gs=e.target.closest("[data-gstep]");
     if(gs){
       const f=gs.closest(".rs-form"),gv=f&&f.querySelector("[data-gval]");
@@ -1922,8 +1816,6 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       if(val==="yes"){dg.textContent=guestDoneText(cnt);dg.hidden=false;}
       else{dg.textContent="";dg.hidden=true;}
     }
-    const calBtn=done.querySelector(".rd-cal");
-    if(calBtn)calBtn.hidden=(val==="no");
     if(sl){
       demoSubmitStore[Number(sl.dataset.i)||0]={att:val,guests:cnt};
       syncDemoStats(sl);
