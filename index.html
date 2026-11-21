@@ -342,7 +342,14 @@ body.menu-open{overflow:hidden}
 .ci-name{font-size:1.18rem;line-height:1.2}
 .ci-name span{color:var(--gold-text);font-size:.82rem;font-family:var(--fb);font-weight:800;margin-right:4px}
 .ci-cat{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);background:var(--paper2);padding:4px 9px;border-radius:999px;white-space:nowrap}
+.ci-cat.rec{background:linear-gradient(135deg,#F7EAD0,#E5CA8E);color:#3B2908;border:1px solid rgba(154,116,42,.3)}
+.ci-cat.alt{background:transparent;border:1px solid var(--hair);color:var(--ink2);font-size:.62rem;letter-spacing:.04em}
+.card.is-rec{border-color:rgba(181,139,60,.52);box-shadow:0 16px 34px -24px rgba(154,116,42,.38)}
 .ci-desc{color:var(--ink2);font-size:.86rem;line-height:1.45;flex:1}
+.ci-fit{font-size:.74rem;line-height:1.38;color:var(--ink2);background:var(--paper2);border:1px solid var(--hair);border-radius:10px;padding:6px 10px}
+.ci-fit b{color:var(--em);font-weight:700}
+.card.is-rec .ci-fit{background:rgba(217,188,127,.14);border-color:rgba(181,139,60,.34);color:var(--ink)}
+.card.is-rec .ci-fit b{color:var(--gold-text)}
 .ci-btns{display:grid;grid-template-columns:1.35fr 1fr;gap:8px;margin-top:6px}
 .ci-btns .btn{min-height:44px;padding:.6em .9em;font-size:.84rem}
 
@@ -483,7 +490,10 @@ body.menu-open{overflow:hidden}
 .demo-evbar::-webkit-scrollbar{display:none}
 .demo-evbar .ev-pill{flex:0 0 auto;min-height:28px;padding:0 11px;border-radius:999px;border:1px solid rgba(217,188,127,.3);color:rgba(242,235,218,.84);font-size:.72rem;font-weight:700;letter-spacing:.02em;white-space:nowrap;transition:background .2s,color .2s,border-color .2s}
 .demo-evbar .ev-pill:hover{border-color:var(--gold);color:#FFF}
+.demo-evbar .ev-pill.rec{border-color:rgba(217,188,127,.68);color:#F8E6BD}
+.demo-evbar .ev-pill.rec::before{content:"✦ ";color:var(--gold);font-size:.66rem}
 .demo-evbar .ev-pill.on{background:var(--gold);color:#241A08;border-color:var(--gold)}
+.demo-evbar .ev-pill.on::before{color:#241A08}
 @media (min-width:680px){.demo-evbar{justify-content:center}}
 .demo-stage{flex:1;min-height:0;position:relative;overflow:hidden;touch-action:pan-y}
 .demo-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.22,.8,.24,1)}
@@ -1700,6 +1710,7 @@ body.menu-open{overflow:hidden}
       c_lead:"Двенадцать направлений — от классики до журнальной подачи. Откройте демо, чтобы увидеть дизайн вживую.",
       c_note:"<b>✦</b><span>Каждый шаблон меняем под вас: имена, дату, место и тексты. Подходит для любого праздника — свадьбы, юбилея, дня рождения, тұсау кесер и других.</span>",
       chip_all:"Все примеры",cat_wed:"Свадьба",cat_uzatu:"Қыз ұзату",cat_jub:"Юбилей",cat_bd:"День рождения",cat_tusau:"Тұсау кесер",cat_sunnet:"Сүндет той",cat_shilde:"Шілдехана",cat_toy:"Семейный той",
+      rec_badge:"✦ Рекомендуем",alt_prefix:"По умолчанию",fit_def:"По умолчанию: <b>{def}</b> · адаптируем под любой повод",fit_rec:"✦ Идеально подходит для «<b>{ev}</b>»",fit_alt:"Создан для «<b>{def}</b>», но адаптируем и под «{ev}»",
       d1:"Восьмиугольный бриллиант, парящая корона и шахматная программа.",
       d2:"Садовый подиум-трио, порхающая бабочка и лепестковые карточки.",
       d3:"Стрельчатый портал, орнамент қошқар мүйіз и щит Тұмарша.",
@@ -1846,6 +1857,7 @@ pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee 
       c_lead:"Он екі бағыт — классикадан журналдық үлгіге дейін. Дизайнды толық көру үшін демо ашыңыз.",
       c_note:"<b>✦</b><span>Әр үлгіні өзіңізге қарай өзгертеміз: есімдер, күн, орын және мәтіндер. Кез келген мерекеге лайық — үйлену тойы, мерейтой, туған күн, тұсау кесер және басқалар.</span>",
       chip_all:"Барлық үлгі",cat_wed:"Үйлену тойы",cat_uzatu:"Қыз ұзату",cat_jub:"Мерейтой",cat_bd:"Туған күн",cat_tusau:"Тұсау кесер",cat_sunnet:"Сүндет той",cat_shilde:"Шілдехана",cat_toy:"Отбасылық той",
+      rec_badge:"✦ Ұсынамыз",alt_prefix:"Негізгісі",fit_def:"Негізгісі: <b>{def}</b> · кез келген тойға бейімдейміз",fit_rec:"✦ «<b>{ev}</b>» үшін ең үйлесімді",fit_alt:"«<b>{def}</b>» үшін жасалған, бірақ «{ev}» тойына да бейімдейміз",
       d1:"Сегізбұрышты гауһар, қалықтаған тәж және шахмат бағдарламасы.",
       d2:"Бақша подиумы-трио, ұшқан көбелек және күлте карточкалар.",
       d3:"Сүйір шығыс порталы, қошқар мүйіз және Тұмарша қалқаны.",
@@ -2039,36 +2051,36 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   };
   let activeEv="all", demoEv=null;
   const DEMOS=[
-    {theme:"theme-luxury",  defEv:"wedding",  styleName:"Luxury",    names:"Ерасыл & Аяулым", kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧", crest:"♕", pt:"gold",
+    {theme:"theme-luxury",  defEv:"wedding",  fit:["wedding","jubilee","toy"],        styleName:"Luxury",    names:"Ерасыл & Аяулым", kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧", crest:"♕", pt:"gold",
      dc:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Классика және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]}},
-    {theme:"theme-floral",  defEv:"wedding",  styleName:"Floral",    names:"Әмір & Томирис", kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀", crest:"✿", pt:"petals",
+    {theme:"theme-floral",  defEv:"wedding",  fit:["wedding","uzatu","birthday"],     styleName:"Floral",    names:"Әмір & Томирис", kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀", crest:"✿", pt:"petals",
      deco:'<svg class="flor fl-tl" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><svg class="flor fl-br" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><div class="bfly" aria-hidden="true">'+BFLY_SVG+'</div>',
      dc:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Нәзік пастель",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]}},
-    {theme:"theme-qazaq",   defEv:"toy",      styleName:"Qazaq",     names:"Бауыржан & Айым", kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", crest:"❖", band:true, pt:"gold",
+    {theme:"theme-qazaq",   defEv:"toy",      fit:["wedding","toy","sunnet","uzatu"], styleName:"Qazaq",     names:"Бауыржан & Айым", kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", crest:"❖", band:true, pt:"gold",
      dc:{ru:"Дресс-код: Королевский бордо",kz:"Дресс-код: Ұлттық нақыш",sw:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]]}},
-    {theme:"theme-editorial",defEv:"jubilee", styleName:"Editorial", names:"Гүлнара",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", crest:"✦", edBig:"50", pt:"geo",
+    {theme:"theme-editorial",defEv:"jubilee", fit:["jubilee","birthday","wedding"],   styleName:"Editorial", names:"Гүлнара",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", crest:"✦", edBig:"50", pt:"geo",
      dc:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Монохром шик",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]}},
-    {theme:"theme-emerald", defEv:"birthday", styleName:"Emerald",   names:"Медина",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧", crest:"♕", pt:"gold",
+    {theme:"theme-emerald", defEv:"birthday", fit:["birthday","jubilee","wedding"],   styleName:"Emerald",   names:"Медина",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧", crest:"♕", pt:"gold",
      deco:'<span class="spk s1">✦</span><span class="spk s2">✦</span><span class="spk s3">✦</span><span class="spk s4">✦</span><span class="spk s5">✦</span>',
      dc:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Зүбәржат және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]}},
-    {theme:"theme-tusau",   defEv:"tusau",    styleName:"Sun Cream", names:"Айсұлтан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀", crest:"☀", innerDeco:SUN_SVG, pt:"gold",
+    {theme:"theme-tusau",   defEv:"tusau",    fit:["tusau","shildekhana","sunnet"],   styleName:"Sun Cream", names:"Айсұлтан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀", crest:"☀", innerDeco:SUN_SVG, pt:"gold",
      deco:'<svg class="fp fp1" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp2" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp3" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp4" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg>',
      dc:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]}},
-    {theme:"theme-uzatu",   defEv:"uzatu",    styleName:"Silk",      names:"Айзере",          kicker:"Uzatu · Шёлк",       orn:ORN, glyph:"✿", tglyph:"❧", crest:"♕", pt:"petals",
+    {theme:"theme-uzatu",   defEv:"uzatu",    fit:["uzatu","wedding","birthday"],     styleName:"Silk",      names:"Айзере",          kicker:"Uzatu · Шёлк",       orn:ORN, glyph:"✿", tglyph:"❧", crest:"♕", pt:"petals",
      deco:'<svg class="flor fl-tl" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><svg class="flor fl-br" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg>'+SHOLPY_DECO,
      dc:{ru:"Дресс-код: Жібек пен пастель",kz:"Дресс-код: Жібек пен пастель",sw:[["Айвори","Айвори","#ffffff,#e5d6c3"],["Пыльная роза","Раушан","#fbe1e6,#bc6e7e"],["Шампань","Шампань","#fff4cc,#b4843d"],["Шалфей","Зәйтүн","#dce6da,#6f8570"]]}},
-    {theme:"theme-uzatu2",  defEv:"uzatu",    styleName:"Алтын Ұя",  names:"Мадина",          kicker:"Uzatu · Алтын Ұя",   orn:"",  glyph:"♕", tglyph:"❧", crest:"♕", innerDeco:SHIM_DECO, pt:"pearls",
+    {theme:"theme-uzatu2",  defEv:"uzatu",    fit:["uzatu","wedding","jubilee"],      styleName:"Алтын Ұя",  names:"Мадина",          kicker:"Uzatu · Алтын Ұя",   orn:"",  glyph:"♕", tglyph:"❧", crest:"♕", innerDeco:SHIM_DECO, pt:"pearls",
      deco:'<span class="spk s1">✦</span><span class="spk s2">✦</span><span class="spk s4">✧</span>',
      dc:{ru:"Дресс-код: Гранат, Шампань и Жемчуг",kz:"Дресс-код: Гранат, Шампань және Інжу",sw:[["Гранат","Гранат","#8f2646,#3a0b1b"],["Шампань","Шампань","#fff3dc,#ba8a54"],["Жемчуг","Інжу","#ffffff,#dfd2c8"],["Слива","Барқыт","#3e1122,#1a050d"]]}},
-    {theme:"theme-tusau2",  defEv:"tusau",    styleName:"Ақ жол",    names:"Әлихан · 1 жас",  kicker:"Tusau · Ақ жол",     orn:"",  glyph:"❖", tglyph:"☀", crest:"☀", innerDeco:SHANYRAK_DECO, pt:"stars",
+    {theme:"theme-tusau2",  defEv:"tusau",    fit:["tusau","sunnet","shildekhana"],   styleName:"Ақ жол",    names:"Әлихан · 1 жас",  kicker:"Tusau · Ақ жол",     orn:"",  glyph:"❖", tglyph:"☀", crest:"☀", innerDeco:SHANYRAK_DECO, pt:"stars",
      deco:'<svg class="fp fp1" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp2" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp3" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp4" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg>',
      dc:{ru:"Дресс-код: Небесная пастель",kz:"Дресс-код: Ақ жібек және аспан реңкі",sw:[["Белый шёлк","Ақ жібек","#ffffff,#cfdde8"],["Тёплое золото","Алтын","#f5d28a,#a87624"],["Небесный","Аспан көк","#d7e8f4,#6a96ba"],["Жемчуг","Інжу","#ede7dc,#b4a892"]]}},
-    {theme:"theme-jubilee", defEv:"jubilee",  styleName:"Pearl",     names:"Айгүл",           kicker:"Jubilee · Жемчуг",   orn:"",  glyph:"❧", tglyph:"✦", crest:"♕", edBig:"50", pt:"gold",
+    {theme:"theme-jubilee", defEv:"jubilee",  fit:["jubilee","wedding","toy"],        styleName:"Pearl",     names:"Айгүл",           kicker:"Jubilee · Жемчуг",   orn:"",  glyph:"❧", tglyph:"✦", crest:"♕", edBig:"50", pt:"gold",
      dc:{ru:"Дресс-код: Светлая классика & Золото",kz:"Дресс-код: Ақ классика және Алтын",sw:[["Айвори","Піл сүйегі","#ffffff,#dfd6c5"],["Золото","Алтын","#fff0c6,#a57f3e"],["Олива","Зәйтүн","#4e5d4f,#232e24"],["Графит","Графит","#2d2d2d,#0a0a0a"]]}},
-    {theme:"theme-lavender",defEv:"birthday", styleName:"Lavender",  names:"Ләйлә",           kicker:"ДР · Лаванда",       orn:ORN, glyph:"✿", tglyph:"✧", crest:"✿", pt:"lavender",
+    {theme:"theme-lavender",defEv:"birthday", fit:["birthday","uzatu","shildekhana"], styleName:"Lavender",  names:"Ләйлә",           kicker:"ДР · Лаванда",       orn:ORN, glyph:"✿", tglyph:"✧", crest:"✿", pt:"lavender",
      deco:'<svg class="flor fl-tl" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><svg class="flor fl-br" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><div class="bfly" aria-hidden="true">'+BFLY_SVG+'</div><div class="bfly b2" aria-hidden="true">'+BFLY_SVG+'</div>',
      dc:{ru:"Дресс-код: Лаванда и Пастель",kz:"Дресс-код: Лаванда және Пастель",sw:[["Лаванда","Лаванда","#e9d8f5,#986bb0"],["Жемчуг","Інжу","#ffffff,#d8cce2"],["Роза","Раушан","#f8dce6,#b97690"],["Мята","Жалбыз","#d4e2db,#7b9588"]]}},
-    {theme:"theme-sunset",  defEv:"birthday", styleName:"Sunset",    names:"Амир",            kicker:"ДР · Закат",         orn:ORN, glyph:"☀", tglyph:"✦", crest:"☀", pt:"embers",
+    {theme:"theme-sunset",  defEv:"birthday", fit:["birthday","wedding","jubilee"],   styleName:"Sunset",    names:"Амир",            kicker:"ДР · Закат",         orn:ORN, glyph:"☀", tglyph:"✦", crest:"☀", pt:"embers",
      deco:'<span class="spk s1">✦</span><span class="spk s2">✧</span><span class="spk s4">✦</span>',
      dc:{ru:"Дресс-код: Тёплый закат & Олива",kz:"Дресс-код: Жылы реңктер",sw:[["Терракота","Терракота","#e89d72,#a84f26"],["Крем","Крем","#fff6ec,#e0cebe"],["Олива","Зәйтүн","#b3b894,#6b7349"],["Шоколад","Қоңыр","#5c3a28,#26140b"]]}}
   ];
@@ -2466,10 +2478,12 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   const dvEvBar=qs("#dvEvBar");
   function syncDemoEvBar(){
     if(!dvEvBar)return;
-    const evKey=(demoEv&&EV_DEMOS[demoEv])?demoEv:(DEMOS[cur]?DEMOS[cur].defEv:"wedding");
+    const d=DEMOS[cur],fits=(d&&Array.isArray(d.fit))?d.fit:[];
+    const evKey=(demoEv&&EV_DEMOS[demoEv])?demoEv:(d?d.defEv:"wedding");
     dvEvBar.querySelectorAll(".ev-pill").forEach(b=>{
       const on=b.dataset.ev===evKey;
       b.classList.toggle("on",on);
+      b.classList.toggle("rec",fits.includes(b.dataset.ev));
       b.setAttribute("aria-selected",on?"true":"false");
       if(on&&b.scrollIntoView)b.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
     });
@@ -2881,7 +2895,20 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     const lbl=ov?evLabel(activeEv):"";
     cards.forEach((c,idx)=>{
       c.hidden=false;c.classList.remove("off");
-      const orig=cardOrig[idx];
+      const orig=cardOrig[idx],dm=DEMOS[idx];
+      const defLbl=dm?evLabel(dm.defEv):"";
+      const isRec=Boolean(ov&&dm&&Array.isArray(dm.fit)&&dm.fit.includes(activeEv));
+      c.classList.toggle("is-rec",isRec);
+      c.style.order=ov?(isRec?"-1":"1"):"";
+      let fitEl=c.querySelector(".ci-fit");
+      if(!fitEl){
+        const info=c.querySelector(".card-info"),btns=c.querySelector(".ci-btns");
+        if(info){
+          fitEl=document.createElement("p");
+          fitEl.className="ci-fit";
+          if(btns)info.insertBefore(fitEl,btns);else info.appendChild(fitEl);
+        }
+      }
       const tag=c.querySelector(".p-tag"),cat=c.querySelector(".ci-cat"),
             st=c.querySelector(".preview strong"),lab=c.querySelector(".preview .lab"),
             big=c.querySelector(".preview .big50"),seal=c.querySelector(".preview .p-seal"),
@@ -2890,7 +2917,12 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
             pk=c.querySelector('[data-i18n^="pk"]');
       if(ov){
         if(tag)tag.textContent=lbl;
-        if(cat)cat.textContent=lbl;
+        if(cat){
+          cat.classList.toggle("rec",isRec);
+          cat.classList.toggle("alt",!isRec);
+          cat.textContent=isRec?t("rec_badge"):(t("alt_prefix")+": "+defLbl);
+        }
+        if(fitEl)fitEl.innerHTML=isRec?fill(t("fit_rec"),{ev:lbl}):fill(t("fit_alt"),{def:defLbl,ev:lbl});
         if(st)st.innerHTML=ov.shortName;
         if(lab)lab.textContent=ov.names.split("·")[0].trim()+" ✦";
         if(big){
@@ -2901,10 +2933,14 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
         if(shield)shield.textContent=shortInit(ov.names,"◆");
         if(age)age.hidden=(activeEv!=="tusau");
         if(fp)fp.hidden=(activeEv!=="tusau");
-        if(pk&&DEMOS[idx])pk.textContent=DEMOS[idx].styleName+" · "+lbl;
+        if(pk&&dm)pk.textContent=dm.styleName+" · "+lbl;
       }else{
         if(tag&&tag.dataset.i18n)tag.textContent=t(tag.dataset.i18n);
-        if(cat&&cat.dataset.i18n)cat.textContent=t(cat.dataset.i18n);
+        if(cat){
+          cat.classList.remove("rec","alt");
+          if(cat.dataset.i18n)cat.textContent=t(cat.dataset.i18n);
+        }
+        if(fitEl)fitEl.innerHTML=fill(t("fit_def"),{def:defLbl});
         if(st)st.innerHTML=orig.strong;
         if(lab)lab.textContent=orig.lab;
         if(big){big.textContent=orig.big;big.style.fontSize="";}

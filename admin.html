@@ -225,11 +225,13 @@ input.inp:focus,select.inp:focus,textarea.inp:focus{outline:2px solid var(--acce
 .tpl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:4px}
 @media(min-width:600px){.tpl-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .tpl-card{
-  display:flex;align-items:center;gap:9px;text-align:left;min-width:0;max-width:100%;
+  position:relative;display:flex;align-items:center;gap:9px;text-align:left;min-width:0;max-width:100%;
   padding:10px 11px;border-radius:14px;border:1.5px solid var(--hair);
   background:var(--card-soft);color:var(--ink);cursor:pointer;font:inherit;
   transition:border-color .15s,background .15s,transform .12s;
 }
+.tpl-card.rec{border-color:rgba(185,142,69,.52)}
+.tpl-card.rec::after{content:"✦";position:absolute;top:5px;right:7px;font-size:.66rem;color:var(--gold);line-height:1}
 .tpl-card:active{transform:scale(.97)}
 .tpl-card.on{
   border-color:var(--accent);background:var(--card);
@@ -525,22 +527,22 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
             <button type="button" class="chip" data-ev="shildekhana">🌙 Шілдехана</button>
             <button type="button" class="chip" data-ev="toy">🏡 Семейный той</button>
           </div>
-          <p class="hint" style="margin:2px 0 8px">Любой из 12 дизайнов ниже автоматически адаптируется под выбранный праздник.</p>
+          <p class="hint" style="margin:2px 0 8px">Значок ✦ отмечает наиболее подходящие дизайны, но выбрать можно любой из 12.</p>
 
           <label class="lbl" for="tpl">Дизайн-шаблон (12 универсальных стилей)</label>
           <div class="tpl-grid" id="tplGrid">
-            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Изумруд · Корона · Золото</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Цветы · Пастель · Арка</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Бордо · Ою-өрнек · Золото</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Журнал · Монохром</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">Ночной изумруд · Орбита</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Sun Cream</span><span class="tpl-sub">Тёплое солнце · Крем</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="uzatu"><span class="tpl-swatch" style="background:linear-gradient(135deg,#ECDAD0,#AF7C48)"></span><span class="tpl-info"><span class="tpl-name">Silk</span><span class="tpl-sub">Шёлк · Шолпы · Пастель</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="uzatu2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#4D1628,#E9C496)"></span><span class="tpl-info"><span class="tpl-name">Алтын Ұя</span><span class="tpl-sub">Гранат · Шымылдық · Жемчуг</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="tusau2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#E1EEF6,#17324A)"></span><span class="tpl-info"><span class="tpl-name">Ақ жол</span><span class="tpl-sub">Небесный · Шаңырақ</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="jubilee"><span class="tpl-swatch" style="background:linear-gradient(135deg,#FAF6EE,#A57F3E)"></span><span class="tpl-info"><span class="tpl-name">Pearl</span><span class="tpl-sub">Светлая классика · Золото</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="lavender"><span class="tpl-swatch" style="background:linear-gradient(135deg,#EFE6F6,#9B6FB0)"></span><span class="tpl-info"><span class="tpl-name">Lavender</span><span class="tpl-sub">Лаванда · Пастель · Бабочки</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="sunset"><span class="tpl-swatch" style="background:linear-gradient(135deg,#F7DFC9,#C45E2C)"></span><span class="tpl-info"><span class="tpl-name">Sunset</span><span class="tpl-sub">Golden Hour · Терракота</span></span></button>
+            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Свадьба · Изумруд</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Свадьба · Цветы</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Той / Свадьба · Бордо</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Юбилей · Журнал</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">ДР / Юбилей · Изумруд</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Sun Cream</span><span class="tpl-sub">Тұсау кесер · Солнце</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu"><span class="tpl-swatch" style="background:linear-gradient(135deg,#ECDAD0,#AF7C48)"></span><span class="tpl-info"><span class="tpl-name">Silk</span><span class="tpl-sub">Қыз ұзату · Шёлк</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#4D1628,#E9C496)"></span><span class="tpl-info"><span class="tpl-name">Алтын Ұя</span><span class="tpl-sub">Қыз ұзату · Гранат</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="tusau2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#E1EEF6,#17324A)"></span><span class="tpl-info"><span class="tpl-name">Ақ жол</span><span class="tpl-sub">Тұсау кесер · Шаңырақ</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="jubilee"><span class="tpl-swatch" style="background:linear-gradient(135deg,#FAF6EE,#A57F3E)"></span><span class="tpl-info"><span class="tpl-name">Pearl</span><span class="tpl-sub">Юбилей · Классика</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="lavender"><span class="tpl-swatch" style="background:linear-gradient(135deg,#EFE6F6,#9B6FB0)"></span><span class="tpl-info"><span class="tpl-name">Lavender</span><span class="tpl-sub">ДР · Лаванда</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="sunset"><span class="tpl-swatch" style="background:linear-gradient(135deg,#F7DFC9,#C45E2C)"></span><span class="tpl-info"><span class="tpl-name">Sunset</span><span class="tpl-sub">ДР · Golden Hour</span></span></button>
           </div>
           <select class="inp" id="tpl" hidden>
             <option value="luxury">Luxury · Изумруд и золото</option>
@@ -1284,8 +1286,13 @@ function autoGrow(el){
 function autoGrowAll(){
   document.querySelectorAll("textarea.inp.inp-wrap").forEach(autoGrow);
 }
+var TPL_FIT={luxury:["wedding","jubilee","toy"],floral:["wedding","uzatu","birthday"],qazaq:["wedding","toy","sunnet","uzatu"],editorial:["jubilee","birthday","wedding"],emerald:["birthday","jubilee","wedding"],tusau:["tusau","shildekhana","sunnet"],uzatu:["uzatu","wedding","birthday"],uzatu2:["uzatu","wedding","jubilee"],tusau2:["tusau","sunnet","shildekhana"],jubilee:["jubilee","wedding","toy"],lavender:["birthday","uzatu","shildekhana"],sunset:["birthday","wedding","jubilee"]};
 function syncEvChips(ev){
   document.querySelectorAll("#evChips button").forEach(function(b){b.classList.toggle("on",b.dataset.ev===ev);});
+  document.querySelectorAll("#tplGrid .tpl-card").forEach(function(b){
+    var fits=TPL_FIT[b.dataset.tpl];
+    b.classList.toggle("rec",Boolean(fits&&fits.indexOf(ev)!==-1));
+  });
 }
 function ensure(k){
   var p=EV_PRE[currentEvent]||EV_PRE.wedding,i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
