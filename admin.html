@@ -510,34 +510,47 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
       <div>
         <!-- Основная карточка как на макете -->
         <div class="card">
-          <label class="lbl" for="tpl">Шаблон</label>
+          <label class="lbl" style="margin-top:0">Повод / Мероприятие</label>
+          <div class="chips" id="evChips" style="margin-bottom:4px">
+            <button type="button" class="chip on" data-ev="wedding">💍 Свадьба</button>
+            <button type="button" class="chip" data-ev="uzatu">🌸 Қыз ұзату</button>
+            <button type="button" class="chip" data-ev="tusau">👣 Тұсау кесер</button>
+            <button type="button" class="chip" data-ev="jubilee">✨ Юбилей</button>
+            <button type="button" class="chip" data-ev="birthday">🎂 День рождения</button>
+            <button type="button" class="chip" data-ev="sunnet">👑 Сүндет той</button>
+            <button type="button" class="chip" data-ev="shildekhana">🌙 Шілдехана</button>
+            <button type="button" class="chip" data-ev="toy">🏡 Семейный той</button>
+          </div>
+          <p class="hint" style="margin:2px 0 8px">Любой из 12 дизайнов ниже автоматически адаптируется под выбранный праздник.</p>
+
+          <label class="lbl" for="tpl">Дизайн-шаблон (12 универсальных стилей)</label>
           <div class="tpl-grid" id="tplGrid">
-            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Свадьба · Королевский</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Свадьба · Цветы</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Той · Орнамент</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Юбилей · Журнал</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">День рождения</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Tusau</span><span class="tpl-sub">Тұсау кесер</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="uzatu"><span class="tpl-swatch" style="background:linear-gradient(135deg,#ECDAD0,#AF7C48)"></span><span class="tpl-info"><span class="tpl-name">Қыз ұзату</span><span class="tpl-sub">Шёлк · Шолпы</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="uzatu2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#4D1628,#E9C496)"></span><span class="tpl-info"><span class="tpl-name">Қыз ұзату 2</span><span class="tpl-sub">Гранат · Шымылдық</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="tusau2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#E1EEF6,#17324A)"></span><span class="tpl-info"><span class="tpl-name">Тұсаукесер 2</span><span class="tpl-sub">Ақ жол · Шаңырақ</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="jubilee"><span class="tpl-swatch" style="background:linear-gradient(135deg,#FAF6EE,#A57F3E)"></span><span class="tpl-info"><span class="tpl-name">Юбилей · Жемчуг</span><span class="tpl-sub">Классика · Золото</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="lavender"><span class="tpl-swatch" style="background:linear-gradient(135deg,#EFE6F6,#9B6FB0)"></span><span class="tpl-info"><span class="tpl-name">ДР · Лаванда</span><span class="tpl-sub">Пастель · Бабочки</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="sunset"><span class="tpl-swatch" style="background:linear-gradient(135deg,#F7DFC9,#C45E2C)"></span><span class="tpl-info"><span class="tpl-name">ДР · Закат</span><span class="tpl-sub">Golden Hour · Терракота</span></span></button>
+            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Изумруд · Корона · Золото</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Цветы · Пастель · Арка</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Бордо · Ою-өрнек · Золото</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Журнал · Монохром</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">Ночной изумруд · Орбита</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Sun Cream</span><span class="tpl-sub">Тёплое солнце · Крем</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu"><span class="tpl-swatch" style="background:linear-gradient(135deg,#ECDAD0,#AF7C48)"></span><span class="tpl-info"><span class="tpl-name">Silk</span><span class="tpl-sub">Шёлк · Шолпы · Пастель</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#4D1628,#E9C496)"></span><span class="tpl-info"><span class="tpl-name">Алтын Ұя</span><span class="tpl-sub">Гранат · Шымылдық · Жемчуг</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="tusau2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#E1EEF6,#17324A)"></span><span class="tpl-info"><span class="tpl-name">Ақ жол</span><span class="tpl-sub">Небесный · Шаңырақ</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="jubilee"><span class="tpl-swatch" style="background:linear-gradient(135deg,#FAF6EE,#A57F3E)"></span><span class="tpl-info"><span class="tpl-name">Pearl</span><span class="tpl-sub">Светлая классика · Золото</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="lavender"><span class="tpl-swatch" style="background:linear-gradient(135deg,#EFE6F6,#9B6FB0)"></span><span class="tpl-info"><span class="tpl-name">Lavender</span><span class="tpl-sub">Лаванда · Пастель · Бабочки</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="sunset"><span class="tpl-swatch" style="background:linear-gradient(135deg,#F7DFC9,#C45E2C)"></span><span class="tpl-info"><span class="tpl-name">Sunset</span><span class="tpl-sub">Golden Hour · Терракота</span></span></button>
           </div>
           <select class="inp" id="tpl" hidden>
-            <option value="luxury">Luxury · свадьба</option>
-            <option value="floral">Floral · свадьба</option>
-            <option value="qazaq">Qazaq · семейный той</option>
-            <option value="editorial">Editorial · юбилей</option>
-            <option value="emerald">Emerald · день рождения</option>
-            <option value="tusau">Tusau · тұсау кесер</option>
-            <option value="uzatu">Қыз ұзату · Шёлк</option>
-            <option value="uzatu2">Қыз ұзату 2 · Алтын Ұя</option>
-            <option value="tusau2">Тұсаукесер 2 · Ақ жол</option>
-            <option value="jubilee">Юбилей · Жемчуг</option>
-            <option value="lavender">ДР · Лаванда</option>
-            <option value="sunset">ДР · Закат</option>
+            <option value="luxury">Luxury · Изумруд и золото</option>
+            <option value="floral">Floral · Цветы и пастель</option>
+            <option value="qazaq">Qazaq · Бордо и орнамент</option>
+            <option value="editorial">Editorial · Журнальный стиль</option>
+            <option value="emerald">Emerald · Ночной изумруд</option>
+            <option value="tusau">Sun Cream · Тёплое солнце</option>
+            <option value="uzatu">Silk · Шёлк и пастель</option>
+            <option value="uzatu2">Алтын Ұя · Гранат и жемчуг</option>
+            <option value="tusau2">Ақ жол · Небесный шаңырақ</option>
+            <option value="jubilee">Pearl · Светлая классика</option>
+            <option value="lavender">Lavender · Лаванда и бабочки</option>
+            <option value="sunset">Sunset · Golden Hour</option>
           </select>
 
           <label class="lbl">Язык</label>
@@ -551,8 +564,8 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
           <input class="inp" id="n" type="text" maxlength="120" placeholder="Например: Ерасыл & Аяулым" autocomplete="off">
 
           <div id="bigWrap" hidden>
-            <label class="lbl" for="b">Возраст юбиляра на обложке</label>
-            <input class="inp" id="b" type="text" maxlength="4" placeholder="50" inputmode="numeric">
+            <label class="lbl" for="b">Цифра на обложке (возраст / год, необязательно)</label>
+            <input class="inp" id="b" type="text" maxlength="4" placeholder="Например: 50 или 1" inputmode="numeric">
           </div>
 
           <label class="lbl" for="d">Дата мероприятия</label>
@@ -951,7 +964,7 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
     <div class="card set-panel" id="setAboutPanel" hidden>
       <strong style="font-size:1rem">SAQTAA · Цифровые приглашения</strong>
       <p class="hint" style="margin-top:6px">
-        6 дизайнерских шаблонов · 3 языка (RU / KZ / Оба) · Сбор ответов через Gmail SAQTAA + Google Таблицу и EmailJS · Онлайн-статистика гостей в реальном времени.
+        12 универсальных дизайнерских шаблонов под любое торжество · 3 языка (RU / KZ / Оба) · Сбор ответов через Gmail SAQTAA + Google Таблицу и EmailJS · Онлайн-статистика гостей в реальном времени.
       </p>
     </div>
 
@@ -1020,56 +1033,50 @@ var currentStatsOrder=null;
 var currentStatsRows=[];
 
 var APPS_SCRIPT_CODE="/**\n * SAQTAA BACKEND v3.0 (Google Apps Script)\n * Единый сервер для:\n * 1) Защиты админ-панели паролем на сервере\n * 2) Загрузки фотографий с телефона (сохраняются на Google Диск SAQTAA и отдаются по прямой ссылке)\n * 3) Сохранения и поиска всех заказов с любого телефона/компьютера (по имени, дате и времени)\n * 4) Приёма ответов гостей (RSVP) с защитой от спама и дублей\n * 5) Автоматической отправки красивых HTML-писем на Email клиента через MailApp (без регистрации клиента!)\n * 6) Живой онлайн-статистики ответов для клиента (stats.html)\n */\n\n// ================= НАСТРОЙКИ =================\n// При первом входе из админ-панели вы сможете задать свой пароль, либо укажите его здесь:\nvar DEFAULT_ADMIN_PIN = \"saqtaa2026\";\nvar BRAND_NAME = \"SAQTAA · Цифровые приглашения\";\nvar TIMEZONE = \"Asia/Almaty\";\n// =============================================\n\nfunction getAdminPin() {\n  var saved = PropertiesService.getScriptProperties().getProperty(\"ADMIN_PIN\");\n  return saved || DEFAULT_ADMIN_PIN;\n}\n\nfunction verifyPin(pin) {\n  return String(pin || \"\").trim() === getAdminPin();\n}\n\nfunction jsonOut(obj) {\n  return ContentService.createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\n/**\n * Автоматически создаёт листы ORDERS и RSVPS в текущей Google Таблице\n */\nfunction ensureSheets(needOrders, needRsvps) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var orders = null;\n  if (needOrders !== false) {\n    orders = ss.getSheetByName(\"ORDERS\");\n    if (!orders) {\n      orders = ss.insertSheet(\"ORDERS\");\n      orders.appendRow([\n        \"ID заказа\", \"Создано\", \"Имена\", \"Дата тоя\", \"Время\", \"Шаблон\",\n        \"Email клиента\", \"Ссылка приглашения\", \"Ссылка статистики\", \"JSON данных\"\n      ]);\n      orders.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      orders.setFrozenRows(1);\n    }\n  }\n  var rsvps = null;\n  if (needRsvps !== false) {\n    rsvps = ss.getSheetByName(\"RSVPS\");\n    if (!rsvps) {\n      rsvps = ss.insertSheet(\"RSVPS\");\n      rsvps.appendRow([\n        \"Order ID\", \"RSVP ID\", \"Дата и время\", \"Имя\", \"Фамилия\",\n        \"Статус (yes/no/maybe)\", \"Ответ текстом\", \"Гостей\", \"Мероприятие\", \"Email клиента\"\n      ]);\n      rsvps.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      rsvps.setFrozenRows(1);\n    }\n  }\n  return { ss: ss, orders: orders, rsvps: rsvps };\n}\n\nfunction doGet(e) {\n  return handle(e ? e.parameter : {});\n}\n\nfunction doPost(e) {\n  var p = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      p = JSON.parse(e.postData.contents);\n    }\n  } catch (_) {}\n  if (e && e.parameter) {\n    for (var k in e.parameter) {\n      if (p[k] === undefined) p[k] = e.parameter[k];\n    }\n  }\n  return handle(p);\n}\n\nfunction handle(p) {\n  var action = String(p.action || \"ping\").trim();\n  if (action === \"ping\") return jsonOut({ ok: true, status: \"SAQTAA Server Active\" });\n\n  // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ\n  if (action === \"auth\") {\n    if (!verifyPin(p.pin)) {\n      return jsonOut({ ok: false, error: \"Неверный серверный пароль администратора\" });\n    }\n    ensureSheets();\n    return jsonOut({ ok: true, message: \"Авторизация успешна\" });\n  }\n\n  // Смена пароля администратора\n  if (action === \"change_pin\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный текущий пароль\" });\n    var newPin = String(p.new_pin || \"\").trim();\n    if (newPin.length < 4) return jsonOut({ ok: false, error: \"Новый пароль слишком короткий\" });\n    PropertiesService.getScriptProperties().setProperty(\"ADMIN_PIN\", newPin);\n    return jsonOut({ ok: true });\n  }\n\n  // Тест отправки письма через GmailApp (из Настроек админ-панели)\n  if (action === \"test_email\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный пароль администратора\" });\n    var toAddr = String(p.to || \"\").trim();\n    if (!toAddr || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(toAddr)) {\n      return jsonOut({ ok: false, error: \"Укажите корректный Email получателя\" });\n    }\n    try {\n      var testPlain = \"Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.\";\n      GmailApp.sendEmail(toAddr, \"Тест почты SAQTAA\", testPlain, {\n        name: BRAND_NAME,\n        htmlBody: '<div style=\"font-family:Arial,sans-serif;max-width:520px;padding:20px;background:#ffffff;border:1px solid #e5e0d5;border-radius:10px;color:#182720\"><h3 style=\"margin:0 0 8px;color:#0F4A38;font-size:17px\">SAQTAA · Тест отправки<\/h3><p style=\"margin:0;font-size:14px;line-height:1.5\">' + testPlain + '<\/p><\/div>'\n      });\n      return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });\n    } catch (testErr) {\n      return jsonOut({ ok: false, error: String(testErr && testErr.message ? testErr.message : testErr) });\n    }\n  }\n\n  // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA\n  if (action === \"upload_photo\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён (неверный пароль)\" });\n    try {\n      var b64 = String(p.base64 || \"\");\n      var mime = String(p.mime || \"image/jpeg\");\n      var name = \"saqtaa_\" + new Date().getTime() + \".jpg\";\n      if (!b64) return jsonOut({ ok: false, error: \"Пустой файл фото\" });\n      var bytes = Utilities.base64Decode(b64);\n      var blob = Utilities.newBlob(bytes, mime, name);\n\n      var folders = DriveApp.getFoldersByName(\"SAQTAA_PHOTOS\");\n      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(\"SAQTAA_PHOTOS\");\n      var file = folder.createFile(blob);\n      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);\n      var fileId = file.getId();\n      var directUrl = \"https://lh3.googleusercontent.com/d/\" + fileId + \"=w1600\";\n      return jsonOut({\n        ok: true,\n        id: fileId,\n        url: directUrl,\n        fallback_url: \"https://drive.google.com/uc?export=view&id=\" + fileId\n      });\n    } catch (err) {\n      return jsonOut({ ok: false, error: \"Ошибка сохранения фото на Google Диск: \" + String(err) });\n    }\n  }\n\n  var lock = LockService.getScriptLock();\n  lock.tryLock(10000);\n  try {\n    var needOrdersSheet = (action === \"save_order\" || action === \"list_orders\" || action === \"delete_order\" ||\n      (action === \"rsvp\" && !String(p.to_email || \"\").trim() && String(p.oid || p.order_id || \"default\").trim() !== \"default\"));\n    var needRsvpsSheet = (action === \"rsvp\" || action === \"stats\" || action === \"get\");\n    var db = ensureSheets(needOrdersSheet, needRsvpsSheet);\n\n    // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ\n    if (action === \"save_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var orderId = String(p.id || (\"ord_\" + new Date().getTime())).trim();\n      var nowStr = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var names = String(p.names || \"\").trim();\n      var dateStr = String(p.date || \"\").trim();\n      var timeStr = String(p.time || \"\").trim();\n      var tpl = String(p.tpl || \"luxury\").trim();\n      var email = String(p.email || \"\").trim();\n      var inviteUrl = String(p.invite_url || \"\").trim();\n      var statsUrl = String(p.stats_url || \"\").trim();\n      var jsonStr = typeof p.data === \"string\" ? p.data : JSON.stringify(p.data || {});\n\n      var rows = db.orders.getDataRange().getValues();\n      var foundRow = -1;\n      for (var i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]) === orderId) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n      var rowVals = [orderId, nowStr, names, dateStr, timeStr, tpl, email, inviteUrl, statsUrl, jsonStr];\n      if (foundRow > 0) {\n        db.orders.getRange(foundRow, 1, 1, 10).setValues([rowVals]);\n      } else {\n        db.orders.appendRow(rowVals);\n      }\n      return jsonOut({ ok: true, id: orderId, saved_at: nowStr });\n    }\n\n    // 4. СПИСОК И ПОИСК ЗАКАЗОВ ДЛЯ АДМИНКИ\n    if (action === \"list_orders\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var rows = db.orders.getDataRange().getValues();\n      var list = [];\n      for (var i = 1; i < rows.length; i++) {\n        var r = rows[i];\n        if (!r[0]) continue;\n        var dVal = r[3] instanceof Date ? Utilities.formatDate(r[3], TIMEZONE, \"yyyy-MM-dd\") : String(r[3] || \"\");\n        var cVal = r[1] instanceof Date ? Utilities.formatDate(r[1], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[1] || \"\");\n        list.push({\n          id: String(r[0]),\n          created: cVal,\n          names: String(r[2] || \"\"),\n          date: dVal,\n          time: String(r[4] || \"\"),\n          tpl: String(r[5] || \"\"),\n          email: String(r[6] || \"\"),\n          invite_url: String(r[7] || \"\"),\n          stats_url: String(r[8] || \"\"),\n          data: String(r[9] || \"{}\")\n        });\n      }\n      return jsonOut({ ok: true, orders: list.reverse() });\n    }\n\n    // 5. УДАЛЕНИЕ ЗАКАЗА\n    if (action === \"delete_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var targetId = String(p.id || \"\").trim();\n      var rows = db.orders.getDataRange().getValues();\n      for (var i = rows.length - 1; i >= 1; i--) {\n        if (String(rows[i][0]) === targetId) {\n          db.orders.deleteRow(i + 1);\n          return jsonOut({ ok: true });\n        }\n      }\n      return jsonOut({ ok: false, error: \"Заказ не найден\" });\n    }\n\n    // 6. ПРИЁМ ОТВЕТА ГОСТЯ (RSVP) + ОТПРАВКА ПИСЬМА НА ПОЧТУ КЛИЕНТА ЧЕРЕЗ GMAIL SAQTAA\n    if (action === \"rsvp\") {\n      if (p.botcheck) return jsonOut({ ok: true }); // Honeypot от ботов\n\n      var name = String(p.name || \"\").trim().slice(0, 50);\n      var fam = String(p.fam || \"\").trim().slice(0, 50);\n      if (!name || !fam) return jsonOut({ ok: false, error: \"Укажите имя и фамилию\" });\n\n      var attCode = String(p.att_code || p.att || \"yes\").toLowerCase();\n      if (attCode.indexOf(\"не\") !== -1 || attCode.indexOf(\"келмей\") !== -1 || attCode.indexOf(\"алмай\") !== -1 || attCode === \"no\") attCode = \"no\";\n      else if (attCode.indexOf(\"пока\") !== -1 || attCode.indexOf(\"білмей\") !== -1 || attCode.indexOf(\"ойлан\") !== -1 || attCode.indexOf(\"maybe\") !== -1) attCode = \"maybe\";\n      else attCode = \"yes\";\n\n      var rawLang = String(p.lang || \"\").toLowerCase().trim();\n      var rawAttText = String(p.att || \"\").toLowerCase();\n      var isBoth = (rawLang === \"both\");\n      var isKz = (!isBoth && (rawLang === \"kz\" || rawLang === \"kk\" || (!rawLang && (rawAttText.indexOf(\"келед\") !== -1 || rawAttText.indexOf(\"келмей\") !== -1 || rawAttText.indexOf(\"алмай\") !== -1 || rawAttText.indexOf(\"білмей\") !== -1))));\n      var lang = isBoth ? \"both\" : (isKz ? \"kz\" : \"ru\");\n      var labels = isBoth ? {\n        yes: \"Келеді (Расталды) / Придёт (Подтверждено)\",\n        no: \"Келе алмайды (Бас тартты) / Не придёт (Отказ)\",\n        maybe: \"Әзірге білмейді / Пока не знает\"\n      } : (isKz ? {\n        yes: \"Келеді (Расталды)\",\n        no: \"Келе алмайды (Бас тартты)\",\n        maybe: \"Әзірге білмейді (Ойлануда)\"\n      } : {\n        yes: \"Придёт (Подтверждено)\",\n        no: \"Не придёт (Отказ)\",\n        maybe: \"Пока не знает (Под вопросом)\"\n      });\n      var attLabel = labels[attCode];\n      var guests = attCode === \"yes\" ? (Number(p.guests) || 1) : 0;\n\n      var orderId = String(p.oid || p.order_id || \"default\").trim();\n      var rsvpId = String(p.id || (\"g_\" + new Date().getTime())).trim();\n      var eventTitle = String(p.title || (isBoth ? \"Мерекелік шара / Праздничное торжество\" : (isKz ? \"Мерекелік шара\" : \"Праздничное торжество\"))).trim();\n      var eventDate = String(p.date || \"\").trim();\n      var clientEmail = String(p.to_email || \"\").trim();\n      var noEmail = String(p.no_email || \"\") === \"1\";\n\n      // Антиспам: защита от частых кликов с одного rsvpId (не чаще 1 раза в 10 сек)\n      var cache = CacheService.getScriptCache();\n      var rateKey = \"rate_\" + rsvpId;\n      if (cache.get(rateKey)) {\n        return jsonOut({ ok: true, cached: true });\n      }\n      cache.put(rateKey, \"1\", 10);\n\n      // Если email клиента не передан в запросе — ищем его в таблице ORDERS по orderId\n      if (!clientEmail && orderId && orderId !== \"default\") {\n        var oRows = db.orders.getDataRange().getValues();\n        for (var k = 1; k < oRows.length; k++) {\n          if (String(oRows[k][0]) === orderId) {\n            clientEmail = String(oRows[k][6] || \"\").trim();\n            break;\n          }\n        }\n      }\n\n      var now = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var foundRsvpRow = -1;\n      var totalYes = 0, totalNo = 0, totalMaybe = 0;\n      var needSummary = (!noEmail && clientEmail && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(clientEmail));\n      var rRows = db.rsvps.getDataRange().getValues();\n      for (var j = 1; j < rRows.length; j++) {\n        var rRow = rRows[j];\n        var sameOrder = String(rRow[0]) === orderId;\n        if (sameOrder && String(rRow[1]) === rsvpId) {\n          foundRsvpRow = j + 1;\n        } else if (needSummary && sameOrder) {\n          var st = String(rRow[5]);\n          if (st === \"yes\") totalYes += (Number(rRow[7]) || 1);\n          else if (st === \"no\") totalNo++;\n          else totalMaybe++;\n        }\n      }\n      if (needSummary) {\n        if (attCode === \"yes\") totalYes += (guests || 1);\n        else if (attCode === \"no\") totalNo++;\n        else totalMaybe++;\n      }\n\n      var isUpdate = foundRsvpRow > 0;\n      var rowData = [orderId, rsvpId, now, name, fam, attCode, attLabel, guests, eventTitle, clientEmail];\n      if (isUpdate) {\n        db.rsvps.getRange(foundRsvpRow, 1, 1, 10).setValues([rowData]);\n      } else {\n        db.rsvps.appendRow(rowData);\n      }\n\n      // Отправка письма с аккаунта SAQTAA на Email клиента через GmailApp (только если не выбран EmailJS)\n      var emailSent = false, mailError = \"\";\n      if (needSummary) {\n        try {\n          var fullName = name + \" \" + fam;\n          var subjPrefix = isBoth\n            ? (isUpdate ? \"Жауап өзгертілді / Изменение ответа: \" : \"Жаңа жауап / Новый ответ гостя: \")\n            : (isUpdate\n              ? (isKz ? \"Жауап өзгертілді: \" : \"Изменение ответа: \")\n              : (isKz ? \"Жаңа жауап: \" : \"Новый ответ гостя: \"));\n          var subject = subjPrefix + fullName + \" — \" + eventTitle;\n          var badgeColor = attCode === \"yes\" ? \"#1E6F43\" : (attCode === \"no\" ? \"#9E2B3A\" : \"#9E7318\");\n          var txt = isBoth ? {\n            hdr: \"SAQTAA · Қонақ жауабы / Уведомление о госте\",\n            date: \"Күні / Дата: \",\n            guest: \"Қонақ / Гость:\",\n            ans: \"Жауабы / Ответ:\",\n            time: \"Уақыты / Время: \",\n            upd: \" (жаңартылды / обновлено)\",\n            stTitle: \"Статистика / Текущая статистика\",\n            stLine: \"Келеді / Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді / Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда / Думают: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Келеді / Придут: \" + totalYes + \" · Келмейді / Не придут: \" + totalNo + \" · Ойлануда / Думают: \" + totalMaybe,\n            brand: \"SAQTAA · Цифрлық шақырулар / Цифровые приглашения\"\n          } : (isKz ? {\n            hdr: \"SAQTAA · Қонақ туралы хабарлама\",\n            date: \"Күні: \",\n            guest: \"Қонақ:\",\n            ans: \"Жауабы:\",\n            time: \"Жауап уақыты: \",\n            upd: \" (жаңартылған жауап)\",\n            stTitle: \"Шақыру бойынша статистика\",\n            stLine: \"Келеді: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Келеді: \" + totalYes + \" · Келмейді: \" + totalNo + \" · Ойлануда: \" + totalMaybe,\n            brand: \"SAQTAA · Цифрлық шақырулар\"\n          } : {\n            hdr: \"SAQTAA · Уведомление о госте\",\n            date: \"Дата: \",\n            guest: \"Гость:\",\n            ans: \"Ответ:\",\n            time: \"Время ответа: \",\n            upd: \" (обновлённый ответ)\",\n            stTitle: \"Статистика по приглашению\",\n            stLine: \"Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Думают: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Придут: \" + totalYes + \" · Не придут: \" + totalNo + \" · Думают: \" + totalMaybe,\n            brand: BRAND_NAME\n          });\n          var plainBody = [\n            eventTitle + (eventDate ? \" (\" + eventDate + \")\" : \"\"),\n            txt.guest + \" \" + fullName,\n            txt.ans + \" \" + attLabel,\n            txt.time + now + (isUpdate ? txt.upd : \"\"),\n            txt.stPlain\n          ].join(\"\\n\");\n          var htmlBody = [\n            '<div style=\"font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;padding:22px;border-radius:10px;color:#182720;border:1px solid #e5e0d5\">',\n            '  <div style=\"border-bottom:1px solid #ece7dc;padding-bottom:12px;margin-bottom:16px\">',\n            '    <div style=\"font-size:12px;color:#8c6d32;font-weight:bold\">' + txt.hdr + '<\/div>',\n            '    <h2 style=\"margin:6px 0 2px;font-size:20px;color:#0F4A38\">' + eventTitle + '<\/h2>',\n            (eventDate ? '<div style=\"font-size:13px;color:#46584D\">' + txt.date + eventDate + '<\/div>' : ''),\n            '  <\/div>',\n            '  <div style=\"padding:4px 0 14px;border-bottom:1px solid #ece7dc;margin-bottom:14px\">',\n            '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + txt.guest + '<\/strong> ' + fullName + '<\/p>',\n            '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + txt.ans + '<\/strong> <span style=\"color:' + badgeColor + ';font-weight:bold\">' + attLabel + '<\/span><\/p>',\n            '    <p style=\"margin:0;font-size:12px;color:#6a746d\">' + txt.time + now + (isUpdate ? txt.upd : '') + '<\/p>',\n            '  <\/div>',\n            '  <div style=\"font-size:13px;color:#182720\">',\n            '    <div style=\"color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px\">' + txt.stTitle + '<\/div>',\n            '    ' + txt.stLine,\n            '  <\/div>',\n            '<\/div>'\n          ].join(\"\\n\");\n\n          GmailApp.sendEmail(clientEmail, subject, plainBody, {\n            name: txt.brand,\n            htmlBody: htmlBody\n          });\n          emailSent = true;\n        } catch (mailErr) {\n          mailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);\n        }\n      }\n\n      return jsonOut({ ok: true, id: rsvpId, updated: isUpdate, email_sent: emailSent, mail_error: mailError });\n    }\n\n    // 7. ПОЛУЧЕНИЕ ЖИВОЙ СТАТИСТИКИ ДЛЯ КЛИЕНТА (stats.html)\n    if (action === \"stats\" || action === \"get\") {\n      var filterOrderId = String(p.oid || p.order_id || \"\").trim();\n      var rRows = db.rsvps.getDataRange().getValues();\n      var outRows = [];\n      for (var i = 1; i < rRows.length; i++) {\n        var r = rRows[i];\n        if (!r[3] && !r[4]) continue;\n        if (filterOrderId && String(r[0]) !== filterOrderId) continue;\n        var tVal = r[2] instanceof Date ? Utilities.formatDate(r[2], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[2] || \"\");\n        outRows.push({\n          oid: String(r[0] || \"\"),\n          id: String(r[1] || \"\"),\n          time: tVal,\n          name: String(r[3] || \"\"),\n          fam: String(r[4] || \"\"),\n          att: String(r[5] || \"yes\"),\n          att_label: String(r[6] || \"\"),\n          guests: Number(r[7] || 0),\n          title: String(r[8] || \"\")\n        });\n      }\n      return jsonOut({ ok: true, rows: outRows });\n    }\n\n    return jsonOut({ ok: true, status: \"SAQTAA Server Active\" });\n  } catch (err) {\n    return jsonOut({ ok: false, error: String(err) });\n  } finally {\n    lock.releaseLock();\n  }\n}";
-var PRE={
-luxury:{ti:["Свадебное торжество","Үйлену тойы"],
- le:["Дорогие родные и близкие! Мы начинаем новую главу нашей жизни и будем рады разделить этот особенный день с вами. Приглашаем вас на нашу свадьбу!","Құрметті ағайын-туыс, жақындарымыз бен достарымыз! Өміріміздегі ерекше күнді сіздермен бірге атап өткіміз келеді. Сіздерді үйлену тойымыздың қадірлі қонағы болуға шақырамыз!"],
- sg:["С любовью и нетерпением ждём встречи — {names}","Асыға күтеміз — {names}"],
- pr:[["17:30","Встреча гостей","Приветственный коктейль и фотозона","Қонақтарды қарсы алу","Қонақтарды қарсы алып, фотосуретке түсу"],["18:00","Церемония","Выход молодожёнов и свадебные клятвы","Салтанатты рәсім","Жас жұбайлардың шығуы мен ақ тілектер"],["19:00","Банкет","Праздничный ужин, тосты и живая музыка","Мерекелік дастарқан","Құттықтаулар, ақ тілектер мен әуен"],["22:30","Торт","Завершение вечера праздничным тортом","Торт","Кештің тәтті сәті — мерекелік торт"]],s:"17:30",e:"23:30"},
-floral:{ti:["Свадебное торжество","Үйлену тойы"],
- le:["Дорогие близкие! Две истории стали одной, и мы хотим разделить этот счастливый момент с вами. Будем рады видеть вас на нашей свадьбе!","Қымбатты жақындарымыз! Екі жүрек бір арнада тоғысқан осы қуанышты күнімізге ортақтасып, тойымыздың қадірлі қонағы болыңыздар!"],
- sg:["С нежностью, ваши {names}","Сүйіспеншілікпен, {names}"],
- pr:[["16:00","Зона встречи гостей","Лёгкие закуски и лимонады","Қонақтарды қарсы алу аймағы","Жеңіл дәмтатымдар мен лимонадтар"],["17:00","Церемония","Трогательные клятвы под аркой","Рәсім","Арка астында айтылатын тілектер"],["18:30","Ужин","Семейный стол и тёплые тосты","Кешкі ас","Жылы отбасылық дастархан"],["21:30","Первый танец","И праздничный торт","Алғашқы би","Мерекелік торт"]],s:"16:00",e:"23:00"},
-qazaq:{ti:["Семейный той","Отбасылық той"],
- le:["Дорогие родные и друзья! Приглашаем вас на семейный той — праздник встречи двух семей. Будем рады разделить этот день за одним дастарханом!","Құрметті ағайын-туыс, құда-жекжат және достар! Екі әулеттің қуанышын бөлісіп, отбасылық тойымыздың қадірлі қонағы болуға шақырамыз!"],
- sg:["С уважением, {names}","Құрметпен, {names}"],
- pr:[["17:00","Қонақ күту","Встреча гостей и шашу","Қонақ күту","Шашу және қонақтарды қарсы алу"],["18:00","Той басталу","Торжественное открытие","Тойдың басталуы","Салтанатты ашылу"],["19:00","Дастархан","Национальные блюда и бата","Дастархан","Ұлттық тағамдар мен бата"],["21:00","Беташар","Обряд и концертная программа","Беташар","Рәсім және концерт"]],s:"17:00",e:"23:30"},
-editorial:{ti:["Юбилейный вечер","Мерейтой кеші"],
- le:["Дорогие друзья! Приглашаю вас отметить мой юбилей. Буду рада провести этот вечер в кругу близких людей — за разговорами, музыкой и тёплыми воспоминаниями.","Қымбатты достар! Сіздерді мерейтойыма арналған салтанатты кештің қадірлі қонағы болуға шақырамын!"],
- sg:["Жду каждого из вас — {names}","Әрқайсысыңызды күтемін — {names}"],
- pr:[["18:00","Встреча гостей","Зона встречи гостей и аперитив","Қонақтарды қарсы алу","Аперитив аймағы"],["19:00","Торжественная часть","История юбиляра в фактах","Салтанатты бөлім","Мерейтой иесінің өмір жолы"],["20:00","Ужин","Ужин от шеф-повара","Кешкі ас","Аспаздың арнайы мәзірі"],["22:00","Танцы","Живая музыка и диджей","Би","Топ және диджей"]],s:"18:00",e:"23:30",b:"50"},
-emerald:{ti:["День рождения","Туған күн"],
- le:["Дорогие мои! Хочу отметить свой день рождения в кругу самых близких и разделить с вами радость этого дня. Буду ждать вас на празднике!","Ардақты жақындарым! Туған күнімді сіздермен бірге атап өтіп, қуанышымды бөліскім келеді. Мерекелік кешімде сіздерді асыға күтемін!"],
- sg:["С любовью, ваша {names}","Сүйіспеншілікпен, {names}"],
- pr:[["18:30","Встреча гостей","Игристое и лёгкие закуски","Қонақтарды қарсы алу","Шампан және жеңіл тағамдар"],["19:30","Ужин","Любимые блюда и сюрпризы","Кешкі ас","Сүйікті тағамдар мен сыйлықтар"],["21:00","Караоке и игры","Самая весёлая часть вечера","Караоке мен ойындар","Ең көңілді бөлім"],["23:00","Торт","Загадаем желание вместе","Торт","Тілек тілейік"]],s:"18:30",e:"00:30"},
-tusau:{ti:["Тұсау кесер","Тұсау кесер"],
- le:["Дорогие родные! Нашему малышу исполняется один год. Приглашаем вас разделить с нами радость его первых шагов и отметить тұсау кесер! Пусть его жизненный путь будет светлым и счастливым.","Қымбатты ағайын-туыс! Бүлдіршініміз бір жасқа толып, тәй-тәй басқан алғашқы қадамын атап өтпекпіз. Тұсаукесер тойына сіздерді шын жүректен шақырамыз!"],
- sg:["С любовью, родители — {names}","Сүйіспеншілікпен, ата-анасы — {names}"],
- pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"},
-uzatu:{ti:["Қыз ұзату","Қыз ұзату"],
- le:["Дорогие родные и почётные гости! Наша любимая дочь вступает в новую главу своей жизни. Приглашаем вас разделить тепло прощального вечера в кругу семьи!","Құрметті ағайын-туыс және қадірлі қонақтар! Аяулы қызымыздың ұзату тойына шақырамыз. Ақ дастарханымыздың қадірлі қонағы болыңыздар!"],
- sg:["С уважением, семья — {names}","Ізгі ниетпен, әулеті — {names}"],
- pr:[["17:00","Қарсы алу","Встреча гостей и фотозона","Қарсы алу","Қонақ күту және фотоаймақ"],["18:00","Бата беру","Благословение старейшин","Бата беру","Ақсақалдардың ақ батасы"],["19:30","Дастархан","Праздничный ужин и поздравления","Дастархан","Мерекелік кешкі ас пен тілектер"],["22:30","Сыңсу · Ақ жол","Трогательные проводы невесты","Сыңсу · Ақ жол","Қызды жаңа өмірге шығарып салу"]],s:"17:00",e:"23:30"},
-uzatu2:{ti:["Қыз ұзату · Алтын Ұя","Қыз ұзату · Алтын Ұя"],
- le:["Уважаемые родные и близкие! Настал светлый час проводить нашу жемчужину в новую семью. Будем рады видеть вас за нашим почётным дастарханом!","Құрметті туған-туыс, дос-жаран! Аяулы қызымызды ақ босағаға аттандыру тойына шақырамыз. Қуанышымызға ортақ болыңыздар!"],
- sg:["С любовью и почтением, родители — {names}","Құрметпен, ата-анасы — {names}"],
- pr:[["17:30","Сбор гостей","Шашу и тёплое приветствие","Қонақ жинау","Шашу және жылы қарсы алу"],["18:30","Той бастау","Торжественный выход невесты","Той бастау","Қыздың салтанатты шығуы"],["20:00","Мерекелік ас","Ужин, бата и душевные тосты","Мерекелік ас","Дастархан, бата және ән-күй"],["22:30","Шығарып салу","Белая дорожка в новую жизнь","Ақ жол","Құтты орнына қондыру рәсімі"]],s:"17:30",e:"23:45"},
-tusau2:{ti:["Тұсау кесер","Тұсау кесер"],
- le:["Дорогие родственники и друзья! Нашему малышу исполняется годик! Приглашаем вас благословить его первые уверенные шаги по светлой дороге ақ жол!","Құрметті туыстар мен достар! Бүлдіршініміз 1 жасқа толды! Сәбиіміздің ақ жолына бата беріп, алғашқы қадамына куә болуға шақырамыз!"],
- sg:["С радостью ждём вас — {names}","Асыға күтеміз — {names}"],
- pr:[["12:30","Қонақ күту","Сбор гостей и шашу","Қонақ күту","Жиналу және шашу"],["13:30","Ақ жол","Перерезание пут и первые шаги","Ақ жол","Тұсау кесу және алғашқы қадам"],["14:00","Той дастарханы","Праздничный обед и бата","Той дастарханы","Түскі ас пен ақ бата"],["15:30","Ойын-сауық","Подарки и семейное фото","Ойын-сауық","Сыйлықтар мен естелік суреттер"]],s:"12:30",e:"16:30"},
-jubilee:{ti:["Юбилейный вечер","Мерейтой кеші"],
- le:["Дорогие друзья и родные! Прекрасный возраст мудрости, красоты и благодарности. Приглашаю вас разделить со мной этот светлый юбилей!","Қымбатты достар мен жақындар! Даналық пен шүкіршілік шағы — жарқын мерейтойымды бірге атап өтуге шақырамын!"],
- sg:["С любовью и благодарностью — {names}","Сүйіспеншілікпен — {names}"],
- pr:[["18:00","Welcome","Игристое и встреча гостей","Welcome","Қарсы алу және фото"],["19:00","Поздравления","Тёплые слова и воспоминания","Құттықтаулар","Жылы лебіздер мен естеліктер"],["20:30","Банкет","Праздничный ужин и музыка","Банкет","Мерекелік дастархан мен музыка"],["22:30","Свечи торта","Волшебный финал вечера","Торт","Кештің салтанатты сәті"]],s:"18:00",e:"23:30",b:"50"},
-lavender:{ti:["День рождения","Туған күн"],
- le:["Мои самые близкие! Приглашаю вас в цветущую атмосферу лавандового вечера, чтобы вместе встретить мой новый год улыбками, музыкой и теплом!","Ең жақындарым! Жаңа жасымды жылы сұхбат, әуен және жақсы көңіл-күймен лаванда кешінде бірге қарсы алуға шақырамын!"],
- sg:["Обнимаю каждого — {names}","Құшақтадым — {names}"],
- pr:[["18:30","Welcome","Лавандовый лимонад и фотозона","Welcome","Лаванда сусыны мен фотоаймақ"],["19:30","Ужин","Вкусные блюда и искренние тосты","Кешкі ас","Дәмді тағамдар мен тілектер"],["21:00","Вечеринка","Музыка, танцы и сюрпризы","Кеш бағдарламасы","Музыка, би және тосынсыйлар"],["22:30","Торт","Исполнение желаний","Торт","Тілек тілеу сәті"]],s:"18:30",e:"23:45"},
-sunset:{ti:["День рождения","Туған күн"],
- le:["Друзья! Собираю всех на тёплый закатный вечер Golden Hour — впереди душевные разговоры, живая музыка, огни террасы и отличное настроение!","Достар! Баршаңызды Golden Hour жылы кешіне шақырамын — алдымызда жанды әуен, терраса шамдары және керемет көңіл-күй!"],
- sg:["Буду рад видеть каждого — {names}","Күтемін — {names}"],
- pr:[["18:00","Sunset Welcome","Коктейли на открытой террасе","Sunset Welcome","Ашық террасадағы кездесу"],["19:00","Ужин","Гриль-меню и тосты друзей","Кешкі ас","Гриль-мәзір мен достар тілегі"],["20:30","Акустика & DJ","Любимые треки под закатным небом","Акустика & DJ","Күн батар сәттегі әуендер"],["22:00","Торт","Огни и загаданные желания","Торт","Отшашу мен ақ тілектер"]],s:"18:00",e:"23:30"}
+var TPL_DEFAULT_EV={luxury:"wedding",floral:"wedding",qazaq:"toy",editorial:"jubilee",emerald:"birthday",tusau:"tusau",uzatu:"uzatu",uzatu2:"uzatu",tusau2:"tusau",jubilee:"jubilee",lavender:"birthday",sunset:"birthday"};
+var EV_PRE={
+ wedding:{ti:["Свадебное торжество","Үйлену тойы"],
+  le:["Дорогие родные и близкие! Мы начинаем новую главу нашей жизни и будем рады разделить этот особенный день с вами. Приглашаем вас на нашу свадьбу!","Құрметті ағайын-туыс, жақындарымыз бен достарымыз! Өміріміздегі ерекше күнді сіздермен бірге атап өткіміз келеді. Сіздерді үйлену тойымыздың қадірлі қонағы болуға шақырамыз!"],
+  sg:["С любовью и нетерпением ждём встречи — {names}","Асыға күтеміз — {names}"],
+  pr:[["17:30","Встреча гостей","Приветственный коктейль и фотозона","Қонақтарды қарсы алу","Қонақтарды қарсы алып, фотосуретке түсу"],["18:00","Церемония","Выход молодожёнов и свадебные клятвы","Салтанатты рәсім","Жас жұбайлардың шығуы мен ақ тілектер"],["19:00","Банкет","Праздничный ужин, тосты и живая музыка","Мерекелік дастарқан","Құттықтаулар, ақ тілектер мен әуен"],["22:30","Торт","Завершение вечера праздничным тортом","Торт","Кештің тәтті сәті — мерекелік торт"]],
+  s:"17:30",e:"23:30",b:"",demo:{n:"Ерасыл & Аяулым",ve:"The Ritz-Carlton, зал Ballroom",ad:"г. Астана, ул. Достык, 16",h:"#ЕрасылАяулым"}},
+ uzatu:{ti:["Қыз ұзату","Қыз ұзату"],
+  le:["Дорогие родные и почётные гости! Наша любимая дочь вступает в новую главу своей жизни. Приглашаем вас разделить тепло прощального вечера в кругу семьи!","Құрметті ағайын-туыс және қадірлі қонақтар! Аяулы қызымыздың ұзату тойына шақырамыз. Ақ дастарханымыздың қадірлі қонағы болыңыздар!"],
+  sg:["С любовью и почтением, семья — {names}","Ізгі ниетпен, әулеті — {names}"],
+  pr:[["17:00","Қарсы алу","Встреча гостей, шашу и фотозона","Қарсы алу","Қонақ күту, шашу және фотоаймақ"],["18:00","Бата беру","Благословение старейшин и выход невесты","Бата беру","Ақсақалдардың ақ батасы және қыз шығуы"],["19:30","Дастархан","Праздничный ужин и поздравления","Дастархан","Мерекелік кешкі ас пен тілектер"],["22:30","Сыңсу · Ақ жол","Трогательные проводы невесты","Сыңсу · Ақ жол","Қызды жаңа өмірге шығарып салу"]],
+  s:"17:00",e:"23:30",b:"",demo:{n:"Айзере",ve:"Дворец торжеств «Ақ Орда»",ad:"г. Астана, пр. Туран, 42",h:"#АйзереҰзату"}},
+ tusau:{ti:["Тұсау кесер","Тұсау кесер"],
+  le:["Дорогие родные! Нашему малышу исполняется один год. Приглашаем вас разделить с нами радость его первых шагов и отметить тұсау кесер! Пусть его жизненный путь будет светлым и счастливым.","Қымбатты ағайын-туыс! Бүлдіршініміз бір жасқа толып, тәй-тәй басқан алғашқы қадамын атап өтпекпіз. Тұсаукесер тойына сіздерді шын жүректен шақырамыз!"],
+  sg:["С любовью, родители — {names}","Сүйіспеншілікпен, ата-анасы — {names}"],
+  pr:[["12:00","Қонақ күту","Встреча гостей, шашу и фотосессия","Қонақ күту","Шашу және естелік фотосуреттер"],["13:00","Тұсау кесер","Обряд перерезания пут и первые шаги","Тұсау кесер","Тұсау кесу рәсімі мен алғашқы қадам"],["13:30","Дастархан","Праздничный обед и ақ бата","Дастархан","Мерекелік түскі ас және бата"],["15:00","Игры и подарки","Весёлая программа и семейное фото","Ойын-сауық","Сыйлықтар мен көңілді ойындар"]],
+  s:"12:00",e:"16:00",b:"1",demo:{n:"Айсұлтан · 1 жас",ve:"Семейный ресторан «Күн Шуақ»",ad:"г. Алматы, ул. Омарова, 45",h:"#Айсұлтан1Жас"}},
+ jubilee:{ti:["Юбилейный вечер","Мерейтой кеші"],
+  le:["Дорогие друзья и родные! Приглашаю вас отметить мой юбилей. Буду рада провести этот вечер в кругу близких людей — за тёплыми словами, музыкой и светлыми воспоминаниями.","Қымбатты достар мен жақындар! Сіздерді мерейтойыма арналған салтанатты кештің қадірлі қонағы болуға шақырамын!"],
+  sg:["Жду каждого из вас — {names}","Әрқайсысыңызды күтемін — {names}"],
+  pr:[["18:00","Встреча гостей","Приветственный фуршет и фотозона","Қонақтарды қарсы алу","Қарсы алу және фотоаймақ"],["19:00","Торжественная часть","Тёплые поздравления и воспоминания","Салтанатты бөлім","Жылы лебіздер мен құттықтаулар"],["20:00","Банкет","Праздничный ужин и живая музыка","Мерекелік ас","Дастархан мен жанды әуен"],["22:30","Торт и танцы","Свечи, музыка и финал вечера","Торт және би","Кештің салтанатты сәті"]],
+  s:"18:00",e:"23:30",b:"50",demo:{n:"Гүлнара Сериковна",ve:"Гранд-холл «Жемчужина»",ad:"г. Алматы, пр. Абая, 52",h:"#Мерейтой50"}},
+ birthday:{ti:["День рождения","Туған күн"],
+  le:["Дорогие мои! Хочу отметить свой день рождения в кругу самых близких и разделить с вами радость этого дня. Впереди вкусный ужин, любимая музыка и отличное настроение!","Ардақты жақындарым! Туған күнімді сіздермен бірге атап өтіп, қуанышымды бөліскім келеді. Мерекелік кешімде сіздерді асыға күтемін!"],
+  sg:["С любовью, {names}","Сүйіспеншілікпен, {names}"],
+  pr:[["18:30","Welcome","Приветственные напитки и фотозона","Welcome","Қарсы алу сусындары мен фотоаймақ"],["19:30","Ужин","Любимые блюда и искренние тосты","Кешкі ас","Дәмді тағамдар мен ақ тілектер"],["21:00","Вечеринка","Музыка, игры и танцы","Кеш бағдарламасы","Музыка, ойындар мен би"],["22:30","Торт","Загадаем желание вместе","Торт","Тілек тілеу сәті"]],
+  s:"18:30",e:"23:45",b:"25",demo:{n:"Медина",ve:"Терраса «Emerald Sky»",ad:"г. Астана, ул. Сарыарка, 8",h:"#Birthday2026"}},
+ sunnet:{ti:["Сүндет той","Сүндет той"],
+  le:["Уважаемые родные, друзья и близкие! Наш сын делает важный шаг во взрослую жизнь. Приглашаем вас разделить нашу радость и дать доброе благословение на его Сүндет той!","Құрметті ағайын-туыс, дос-жаран! Ұлымыздың ер жетіп, азамат болу жолындағы алғашқы үлкен қуанышы — Сүндет тойының қадірлі қонағы болуға шақырамыз!"],
+  sg:["С уважением, родители — {names}","Құрметпен, ата-анасы — {names}"],
+  pr:[["16:00","Қонақ күту","Встреча гостей, шашу и фотосессия","Қонақ күту","Шашу және қонақтарды қарсы алу"],["17:00","Той бастау","Выход джигита и благословение (бата)","Той бастау","Атқа мінгізу және ақсақалдар батасы"],["18:30","Дастархан","Праздничный ужин и концерт","Дастархан","Мерекелік ас пен ән-шашу"],["21:00","Тілектер мен би","Поздравления и праздничный торт","Тілектер мен би","Құттықтаулар мен мерекелік торт"]],
+  s:"16:00",e:"22:30",b:"",demo:{n:"Әлихан",ve:"Ресторан «Ақ Жол»",ad:"г. Астана, ул. Кунаева, 14",h:"#ӘлиханСүндетТой"}},
+ shildekhana:{ti:["Шілдехана · Бесік той","Шілдехана · Бесік той"],
+  le:["Дорогие родные и близкие! В нашем доме зажглась новая звёздочка. Приглашаем вас разделить светлую радость рождения малыша и отметить Шілдехана · Бесік той!","Құрметті ағайын-туыс! Шаңырағымызда жаңа өмір шуағы жанды. Сәбиіміздің дүниеге келу қуанышы — Шілдехана және Бесік тойының қадірлі қонағы болыңыздар!"],
+  sg:["С теплом, счастливые родители — {names}","Ізгі тілекпен, ата-анасы — {names}"],
+  pr:[["13:00","Қонақ күту","Встреча родных и шашу","Қонақ күту","Қонақтарды қарсы алу және шашу"],["14:00","Бесікке салу","Традиционный обряд и ақ бата","Бесікке салу","Сәбиді бесікке бөлеу және бата"],["14:45","Дастархан","Праздничный семейный обед","Дастархан","Отбасылық мерекелік дастархан"],["16:30","Тілектер","Тёплые пожелания и семейные фото","Тілектер","Жылы лебіздер мен естелік суреттер"]],
+  s:"13:00",e:"17:30",b:"",demo:{n:"Айлин",ve:"Ресторан «Шаңырақ»",ad:"г. Алматы, ул. Горная, 24",h:"#АйлинБесікТой"}},
+ toy:{ti:["Семейный той","Отбасылық той"],
+  le:["Дорогие родные, сваты и друзья! Приглашаем вас на наш семейный той — праздник единства, тепла и радости. Будем счастливы разделить этот день за одним дастарханом!","Құрметті ағайын-туыс, құда-жекжат және достар! Әулетіміздің қуанышын бөлісіп, отбасылық тойымыздың қадірлі қонағы болуға шақырамыз!"],
+  sg:["С уважением, семья — {names}","Құрметпен, әулеті — {names}"],
+  pr:[["17:00","Қонақ күту","Встреча гостей и шашу","Қонақ күту","Шашу және қонақтарды қарсы алу"],["18:00","Той бастау","Торжественное открытие и бата","Тойдың басталуы","Салтанатты ашылу мен ақ бата"],["19:00","Дастархан","Национальные блюда и тёплые тосты","Дастархан","Ұлттық тағамдар мен ақ тілектер"],["21:30","Музыка и танцы","Концертная программа и веселье","Ән мен би","Концерттік бағдарлама"]],
+  s:"17:00",e:"23:30",b:"",demo:{n:"Бауыржан & Айым",ve:"Тойхана «Дастархан», зал «Қонақжай»",ad:"г. Астана, пр. Кабанбай батыра, 30",h:"#ЕкіӘулет_БірТой"}}
 };
+var currentEvent="wedding";
 
 var TPL_DC={
   luxury:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Классика және алтын",pal:"gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]},
@@ -1273,8 +1280,11 @@ function autoGrow(el){
 function autoGrowAll(){
   document.querySelectorAll("textarea.inp.inp-wrap").forEach(autoGrow);
 }
+function syncEvChips(ev){
+  document.querySelectorAll("#evChips button").forEach(function(b){b.classList.toggle("on",b.dataset.ev===ev);});
+}
 function ensure(k){
-  var p=PRE[$("#tpl").value],i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
+  var p=EV_PRE[currentEvent]||EV_PRE.wedding,i=k==="ru"?0:1,off=i*2,filled=false;if(!p)return false;
   if(!clean(st[k].ti)&&!clean(st[k].le)&&!clean(st[k].sg)){st[k]={ti:p.ti[i],le:p.le[i],sg:p.sg[i]};filled=true;}
   if(!st.rows.length)st.rows=p.pr.map(function(r){return r.slice();});
   else st.rows.forEach(function(r,j){if(!clean(r[1+off])&&!clean(r[2+off])&&p.pr[j]){r[1+off]=p.pr[j][1+off];r[2+off]=p.pr[j][2+off];}});
@@ -1286,10 +1296,10 @@ function setLang(l){
   var filled=act().filter(ensure);
   showText();
   renderDcAutoPreview();
-  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на языке подставлены из шаблона");
+  if(filled.length&&st.ru.le&&l!=="ru")toast("Тексты на языке подставлены по поводу");
 }
-function isPresetUnchanged(k){
-  var p=PRE[k];if(!p)return false;
+function isEventPresetUnchanged(ev){
+  var p=EV_PRE[ev];if(!p)return false;
   grabText();
   if(st.ru.ti!==p.ti[0]||st.ru.le!==p.le[0]||st.ru.sg!==p.sg[0])return false;
   if(st.kz.ti!==p.ti[1]||st.kz.le!==p.le[1]||st.kz.sg!==p.sg[1])return false;
@@ -1299,14 +1309,17 @@ function isPresetUnchanged(k){
 }
 var lastTpl="luxury";
 function defaultFutureDate(days){return new Date(Date.now()+(days||14)*86400000).toISOString().slice(0,10);}
-function applyPreset(k){
-  var p=PRE[k];if(!p)return;
-  lastTpl=k;
+function applyEventPreset(ev){
+  var key=EV_PRE[ev]?ev:"wedding",p=EV_PRE[key];
+  currentEvent=key;
+  syncEvChips(key);
   st.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0]};st.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1]};
   st.rows=p.pr.map(function(r){return r.slice();});
   if(!$("#d").value)$("#d").value=defaultFutureDate(14);
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
-  $("#bigWrap").hidden=(k!=="editorial"&&k!=="jubilee");
+  var t=$("#tpl").value||"luxury";
+  $("#bigWrap").hidden=(t!=="editorial"&&t!=="jubilee");
+  if($("#n")&&p.demo)$("#n").placeholder="Например: "+p.demo.n;
   showText();
   renderDcAutoPreview();
 }
@@ -1419,7 +1432,7 @@ function collect(){
   if(!currentOrderId)currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
   var o={
     oid:currentOrderId,
-    t:$("#tpl").value,l:lang,n:clean($("#n").value),d:$("#d").value,s:$("#s").value,e:$("#e").value,
+    t:$("#tpl").value,ev:currentEvent,l:lang,n:clean($("#n").value),d:$("#d").value,s:$("#s").value,e:$("#e").value,
     ve:clean($("#ve").value),ad:clean($("#ad").value),g:clean($("#g").value),h:clean($("#h").value),p:clean($("#p").value),
     rsvp:currentRsvpMode!=="none"
   };
@@ -1523,9 +1536,12 @@ function syncTplCards(v){
 }
 function fillFrom(o){
   currentOrderId=o.oid||("ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
-  $("#tpl").value=PRE[o.t]?o.t:"luxury";
+  $("#tpl").value=TPL_DC[o.t]?o.t:"luxury";
   lastTpl=$("#tpl").value;
   syncTplCards(lastTpl);
+  currentEvent=(o.ev&&EV_PRE[o.ev])?o.ev:(TPL_DEFAULT_EV[lastTpl]||"wedding");
+  syncEvChips(currentEvent);
+  if($("#n")&&EV_PRE[currentEvent]&&EV_PRE[currentEvent].demo)$("#n").placeholder="Например: "+EV_PRE[currentEvent].demo.n;
   $("#bigWrap").hidden=($("#tpl").value!=="editorial"&&$("#tpl").value!=="jubilee");
   $("#n").value=o.n||"";$("#d").value=o.d||defaultFutureDate(14);$("#s").value=o.s||"18:00";$("#e").value=o.e||"23:30";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
@@ -2139,8 +2155,8 @@ async function updatePreview(){
   var frame=$("#livePreview");if(!frame||$("#appMain").hidden)return;
   try{
     var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;
-    if(!o.n)o.n="Ерасыл & Аяулым";if(!o.d)o.d=defaultFutureDate(14);if(!o.s)o.s="18:00";if(!o.e)o.e="23:30";
-    var p=PRE[o.t]||PRE.luxury;
+    var p=EV_PRE[o.ev]||EV_PRE.wedding;
+    if(!o.n)o.n=(p.demo&&p.demo.n)||"Ерасыл & Аяулым";if(!o.d)o.d=defaultFutureDate(14);if(!o.s)o.s=p.s||"18:00";if(!o.e)o.e=p.e||"23:30";
     if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le)o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}
     if(o.l==="kz"||o.l==="both"){o.kz=o.kz||{};if(!o.kz.le)o.kz={ti:p.ti[1],le:p.le[1],sg:p.sg[1],pr:p.pr.map(function(r){return[r[0],r[3],r[4]];})};}
     var base=(clean($("#base").value)||new URL("invite.html",location.href).href).replace(/#.*$/,"");
@@ -2262,9 +2278,22 @@ $("#accRsvpBtn").addEventListener("click",function(){
 });
 function handleTplChange(newTpl){
   $("#tpl").value=newTpl;
+  lastTpl=newTpl;
   syncTplCards(newTpl);
-  if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить тексты этого шаблона?"))applyPreset(newTpl);
-  else{lastTpl=newTpl;$("#bigWrap").hidden=(newTpl!=="editorial"&&newTpl!=="jubilee");renderDcAutoPreview();}
+  $("#bigWrap").hidden=(newTpl!=="editorial"&&newTpl!=="jubilee");
+  renderDcAutoPreview();
+  save();
+}
+function handleEventChange(newEv){
+  if(!EV_PRE[newEv]||newEv===currentEvent)return;
+  var prevEv=currentEvent;
+  if(isEventPresetUnchanged(prevEv)||confirm("Подставить готовые тексты и программу для этого праздника?")){
+    applyEventPreset(newEv);
+  }else{
+    currentEvent=newEv;
+    syncEvChips(newEv);
+    if($("#n")&&EV_PRE[newEv].demo)$("#n").placeholder="Например: "+EV_PRE[newEv].demo.n;
+  }
   save();
 }
 $("#tpl").addEventListener("change",function(){handleTplChange(this.value);});
@@ -2272,6 +2301,12 @@ $("#tplGrid").addEventListener("click",function(e){
   var b=e.target.closest("[data-tpl]");if(!b)return;
   if(b.dataset.tpl!==$("#tpl").value)handleTplChange(b.dataset.tpl);
 });
+if($("#evChips")){
+  $("#evChips").addEventListener("click",function(e){
+    var b=e.target.closest("[data-ev]");if(!b)return;
+    handleEventChange(b.dataset.ev);
+  });
+}
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
 document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
 document.querySelectorAll("#dcSeg button").forEach(function(b){b.addEventListener("click",function(){setDcMode(b.dataset.dc);save();});});
@@ -2463,33 +2498,19 @@ async function startNewOrder(){
   $("#result").hidden=true;$("#mkErr").hidden=true;
   try{await delPhoto("current");}catch(_){}
   setCurrentPhoto(null);$("#photoFile").value="";
-  applyPreset($("#tpl").value||"luxury");
   syncTplCards($("#tpl").value||"luxury");
+  applyEventPreset(currentEvent||"wedding");
   save();switchScreen("editor");
 }
 $("#fillDemoBtn").addEventListener("click",function(){
-  var curTpl=$("#tpl").value||"luxury";applyPreset(curTpl);
-  var demo={
-    luxury:{n:"Ерасыл & Аяулым",ve:"The Ritz-Carlton, зал Ballroom",ad:"г. Астана, ул. Достык, 16",h:"#ЕрасылАяулым",b:""},
-    floral:{n:"Әмір & Томирис",ve:"Оранжерея «Villa Verde»",ad:"г. Алматы, ул. Керимбекова, 12",h:"#ӘмірТомирис",b:""},
-    qazaq:{n:"Бауыржан & Айым",ve:"Тойхана «Дастархан», зал «Қонақжай»",ad:"г. Астана, пр. Кабанбай батыра, 30",h:"#ЕкіӘулет_БірТой",b:""},
-    editorial:{n:"Гүлнара Сериковна",ve:"Галерея «Esentai Loft»",ad:"г. Алматы, пр. Аль-Фараби, 77/8",h:"#Gulnara50Vogue",b:"50"},
-    emerald:{n:"Медина",ve:"Лаундж «Emerald Sky»",ad:"г. Астана, ул. Сарыарка, 8",h:"#MedinaEmeraldNight",b:""},
-    tusau:{n:"Айсұлтан · 1 жас",ve:"Семейный ресторан «Күн Шуақ»",ad:"г. Алматы, ул. Омарова, 45",h:"#Айсұлтан1Жас",b:""},
-    uzatu:{n:"Айзере",ve:"Дворец торжеств «Ақ Орда»",ad:"г. Астана, пр. Туран, 42",h:"#АйзереҰзату",b:""},
-    uzatu2:{n:"Мадина",ve:"Зал торжеств «Алтын Сарай»",ad:"г. Алматы, пр. Достык, 210",h:"#МадинаҚызҰзату",b:""},
-    tusau2:{n:"Әлихан · 1 жас",ve:"Ресторан «Ақ Жол»",ad:"г. Астана, ул. Кунаева, 14",h:"#ӘлиханАқЖол",b:""},
-    jubilee:{n:"Айгүл",ve:"Гранд-холл «Жемчужина»",ad:"г. Алматы, пр. Абая, 52",h:"#АйгүлМерейтой50",b:"50"},
-    lavender:{n:"Ләйлә",ve:"Терраса «Лаванда Garden»",ad:"г. Алматы, ул. Горная, 24",h:"#ЛәйләBirthday",b:""},
-    sunset:{n:"Амир",ve:"Руфтоп «Golden Hour»",ad:"г. Алматы, пр. Аль-Фараби, 140",h:"#AmirSunsetParty",b:""}
-  };
-  var d=demo[curTpl]||demo.luxury;
+  applyEventPreset(currentEvent||"wedding");
+  var p=EV_PRE[currentEvent]||EV_PRE.wedding,d=p.demo||EV_PRE.wedding.demo;
   $("#n").value=d.n;
   $("#d").value=defaultFutureDate(21);
   $("#ve").value=d.ve;
   $("#ad").value=d.ad;
   $("#h").value=d.h;
-  if(d.b)$("#b").value=d.b;
+  $("#b").value=p.b||"";
   if(!clean($("#clientEmail").value))$("#clientEmail").value="client@example.com";
   save();toast("⚡ Пример заполнен — нажмите «Создать»!");
 });
@@ -2675,7 +2696,7 @@ var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
 try{historyItems=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");if(!Array.isArray(historyItems))historyItems=[];}catch(_){historyItems=[];}
 var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
-else{applyPreset("luxury");setRsvpMode("saqtaa");}
+else{syncTplCards("luxury");applyEventPreset("wedding");setRsvpMode("saqtaa");}
 syncSecurityBadge();
 autoGrowAll();
 getPhoto(currentOrderId||"current").then(setCurrentPhoto).catch(function(){});
