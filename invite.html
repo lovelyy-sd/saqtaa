@@ -9,6 +9,11 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Вас приглашают на праздник ✦">
 <meta property="og:description" content="Откройте приглашение: программа, место проведения и ответ для хозяев.">
+<meta property="og:image" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
+<meta property="og:image:secure_url" content="https://lovelyy-sd.github.io/saqtaa/og-image.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -485,12 +490,13 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 <script>
 (function(){
 "use strict";
-var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,RSVP_COOLDOWN_MS=5000;
+var TZO="+05:00",TZ="Asia/Almaty",RSVP_DAYS=14,NAME_MAX=40,RSVP_COOLDOWN_MS=10000;
 var $=function(s){return document.querySelector(s);},app=$("#app");
 
 /* ---------- утилиты ---------- */
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function safeUrl(u){try{var x=new URL(u);return(x.protocol==="https:"||x.protocol==="http:"||(x.protocol==="blob:"&&x.origin===location.origin))?x.href:"";}catch(_){return"";}}
+function safeSrvUrl(u){try{var x=new URL(u);return(x.protocol==="https:"&&(x.hostname==="script.google.com"||x.hostname==="script.googleusercontent.com"))?x.href:"";}catch(_){return"";}}
 function pad(n){return String(n).padStart(2,"0");}
 function plural(n,f){if(!Array.isArray(f))return f;var a=n%10,b=n%100;return f[a===1&&b!==11?0:a>=2&&a<=4&&(b<12||b>14)?1:2];}
 function unb64u(s){s=s.replace(/-/g,"+").replace(/_/g,"/");while(s.length%4)s+="=";var bin=atob(s),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return u;}
@@ -597,7 +603,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  send:"Отправить ответ",sending:"Отправляем…",thanks:"Спасибо!",edit:"Изменить ответ",
  ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",ok_no:"Спасибо за ответ. Жаль, что вы не сможете прийти. Спасибо, что сообщили!",ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
  e_name:"Укажите имя",e_fam:"Укажите фамилию",e_name_bad:"Укажите настоящее имя",e_fam_bad:"Укажите настоящую фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
- e_wait:"Пожалуйста, подождите 30 секунд перед повторной отправкой.",
+ e_wait:"Пожалуйста, подождите 10 секунд перед повторной отправкой.",
  by:"Просим подтвердить присутствие до {date}",
  cd:{d:["день","дня","дней"],h:["час","часа","часов"],m:["минута","минуты","минут"],s:["секунда","секунды","секунд"]},
  st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",st_empty:"Пока нет ответов — будьте первыми",
@@ -610,7 +616,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  send:"Жауап жіберу",sending:"Жіберілуде…",thanks:"Рақмет!",edit:"Жауапты өзгерту",
  ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",ok_no:"Жауабыңызға рақмет. Қатыса алмайтыныңыз өкінішті. Хабарлағаныңызға рақмет!",ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
  e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_name_bad:"Шынайы атыңызды жазыңыз",e_fam_bad:"Шынайы тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
- e_wait:"Қайта жіберу алдында 30 секунд күтіңіз.",
+ e_wait:"Қайта жіберу алдында 10 секунд күтіңіз.",
  by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",
  cd:{d:"күн",h:"сағат",m:"минут",s:"секунд"},
  st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",st_empty:"Әзірге жауаптар жоқ — алғашқы болыңыз",
@@ -1078,7 +1084,7 @@ function tick(first){
 function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classList.toggle("sel",l.querySelector("input").checked);});}
 
 /* ---------- статистика ответов гостей (облако + локальный кэш) ---------- */
-var inviteStats={oid:"",rows:null,loading:false,loaded:false,refreshTimer:null};
+var inviteStats={oid:"",rows:null,counts:null,loading:false,loaded:false,refreshTimer:null};
 function statsOid(){return(D&&D.oid&&D.oid!=="default")?String(D.oid):(D?("h_"+Math.abs(hash(names()+"|"+D.d+"|"+D.s))):"default");}
 function statsStorageKey(){return"saqtaa-rsvp-rows-"+statsOid();}
 function readLocalStatsRows(){
@@ -1124,6 +1130,14 @@ function mergeStatsRows(localRows,cloudRows){
 }
 function computeStatsCounts(){
   var oid=statsOid();
+  if(inviteStats.oid===oid&&inviteStats.counts&&typeof inviteStats.counts.yes==="number"){
+    return{
+      yes:inviteStats.counts.yes||0,
+      no:inviteStats.counts.no||0,
+      maybe:inviteStats.counts.maybe||0,
+      responses:inviteStats.counts.responses||0
+    };
+  }
   var cloud=(inviteStats.oid===oid&&Array.isArray(inviteStats.rows))?inviteStats.rows:[];
   var rows=mergeStatsRows(readLocalStatsRows(),cloud);
   var yes=0,no=0,maybe=0;
@@ -1161,13 +1175,21 @@ async function fetchInviteStats(force){
   inviteStats.loading=true;
   try{
     var sep=srv.indexOf("?")>=0?"&":"?";
-    var res=await fetch(srv+sep+"action=stats&oid="+encodeURIComponent(oid)+"&_t="+Date.now(),{method:"GET",cache:"no-store"});
+    var res=await fetch(srv+sep+"action=counts&oid="+encodeURIComponent(oid)+"&_t="+Date.now(),{method:"GET",cache:"no-store"});
     if(!res.ok)throw new Error("http-"+res.status);
     var json=await res.json();
-    if(json&&json.ok&&Array.isArray(json.rows)&&statsOid()===oid){
-      inviteStats.rows=json.rows;
-      inviteStats.loaded=true;
-      updateStatsDOM();
+    if(json&&json.ok&&statsOid()===oid){
+      if(typeof json.yes==="number"){
+        inviteStats.counts={yes:json.yes||0,no:json.no||0,maybe:json.maybe||0,responses:json.responses||0};
+        inviteStats.rows=null;
+        inviteStats.loaded=true;
+        updateStatsDOM();
+      }else if(Array.isArray(json.rows)){
+        inviteStats.rows=json.rows;
+        inviteStats.counts=null;
+        inviteStats.loaded=true;
+        updateStatsDOM();
+      }
     }
   }catch(_){
   }finally{
@@ -1197,7 +1219,7 @@ async function fetchInviteStats(force){
 /* ---------- отправка ответа гостя (SAQTAA Server + GmailApp / EmailJS) ---------- */
 async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail,guestsCount){
   var srv=D.srv||D.sheet;
-  if(!srv)return false;
+  if(!srv)return{ok:false};
   var emailLang=(D.l==="both")?"both":lang;
   var labelsRu={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
   var labelsKz={yes:"Келеді",no:"Келе алмайды",maybe:"Әзірге білмейді"};
@@ -1205,7 +1227,6 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail,g
   var label=(emailLang==="both"?labelsBoth:(emailLang==="kz"?labelsKz:labelsRu))[val]||labelsRu.yes;
   var gCount=val==="yes"?clampGuests(guestsCount):0;
   var oid=D.oid||"default";
-  var toEmail=D.em||"";
   var dateHuman=dDot(D.d)+(D.s?" "+D.s:"");
   var query=(srv.indexOf("?")===-1?"?":"&")+"action=rsvp"+
     "&oid="+encodeURIComponent(oid)+
@@ -1218,7 +1239,6 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail,g
     "&title="+encodeURIComponent(names())+
     "&date="+encodeURIComponent(dateHuman)+
     "&lang="+encodeURIComponent(emailLang)+
-    (toEmail?"&to_email="+encodeURIComponent(toEmail):"")+
     (noEmail?"&no_email=1":"")+
     (isUpdate?"&isUpdate=1":"")+
     "&_t="+Date.now();
@@ -1227,12 +1247,17 @@ async function postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,noEmail,g
   try{
     var r=await fetch(srv+query,{method:"GET",signal:ctrl?ctrl.signal:undefined});
     if(timer)clearTimeout(timer);
-    if(!r.ok)return false;
+    if(!r.ok)return{ok:false};
     var j=await r.json();
-    return Boolean(j&&j.ok);
+    if(j&&j.ok&&j.counts&&typeof j.counts.yes==="number"){
+      inviteStats.oid=statsOid();
+      inviteStats.counts={yes:j.counts.yes||0,no:j.counts.no||0,maybe:j.counts.maybe||0,responses:j.counts.responses||0};
+      inviteStats.loaded=true;
+    }
+    return{ok:Boolean(j&&j.ok),rateLimited:Boolean(j&&j.rate_limited)};
   }catch(_){
     if(timer)clearTimeout(timer);
-    return false;
+    return{ok:false};
   }
 }
 async function postEmailJS(full,val,isUpdate,rsvpId,guestsCount){
@@ -1403,9 +1428,11 @@ app.addEventListener("submit",async function(e){
     var curForm=app.querySelector(".rs-form")||f;
     var curBtn=curForm&&curForm.querySelector(".rs-send");
     if(curBtn){curBtn.disabled=false;curBtn.textContent="✦ "+t("send")+" ✦";}
-    if(!results.every(Boolean)){
+    var isRateLimited=results.some(function(r){return r&&typeof r==="object"&&r.rateLimited;});
+    var allOk=results.every(function(r){return typeof r==="object"?Boolean(r&&r.ok):Boolean(r);});
+    if(!allOk){
       var curErr=(curForm&&curForm.querySelector(".rs-err"))||err;
-      if(curErr)curErr.textContent=t("e_send");
+      if(curErr)curErr.textContent=isRateLimited?t("e_wait"):t("e_send");
       return;
     }
   }
@@ -1504,7 +1531,7 @@ async function applyInviteData(rawD,instantPreview){
   D.n=String(D.n||"").slice(0,120);
   D.t=TPL[D.t]?D.t:"luxury";
   D.ve=String(D.ve||"").slice(0,120);D.ad=String(D.ad||"").slice(0,160);
-  D.g=safeUrl(D.g);D.p=safeUrl(D.p);D.h=String(D.h||"").slice(0,60);D.k=String(D.k||"").slice(0,80);
+  D.g=safeUrl(D.g);D.p=safeUrl(D.p);D.srv=safeSrvUrl(D.srv);D.sheet=safeSrvUrl(D.sheet);D.h=String(D.h||"").slice(0,60);D.k=String(D.k||"").slice(0,80);
   if(!D.p){
     var locPh=await loadLocalDevicePhoto(D.oid);
     if(locPh)D.p=locPh;
@@ -1564,9 +1591,9 @@ async function init(){
 }
 addEventListener("hashchange",function(){init();});
 addEventListener("message",function(e){
-  if(e&&e.data&&e.data.type==="saqtaa-preview"&&e.data.payload){
-    applyInviteData(e.data.payload,true);
-  }
+  if(!e||!e.data||e.data.type!=="saqtaa-preview"||!e.data.payload)return;
+  if(location.origin&&location.origin!=="null"&&e.origin!==location.origin)return;
+  applyInviteData(e.data.payload,true);
 });
 init();
 })();
