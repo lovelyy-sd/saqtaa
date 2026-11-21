@@ -879,9 +879,10 @@ body.menu-open{overflow:hidden}
   .hero .wrap{grid-template-columns:1.05fr .95fr}
   .feat-list li{grid-template-columns:110px 1fr}
   .cards{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);grid-auto-columns:auto;overflow:visible;scroll-snap-type:none;padding:6px 0}
+  .cards.few-2{grid-template-columns:repeat(2,minmax(0,360px));justify-content:center}
   .swipe-hint{display:none}
-  .rail-zone{padding-top:70px}
-  .rail-nav{display:flex}
+  .rail-zone{padding-top:16px}
+  .rail-nav{display:none}
   .steps{grid-template-columns:repeat(3,1fr);gap:26px;padding-left:0}
   .steps::before{left:22px;right:22px;top:21px;bottom:auto;border-left:none;border-top:2px dashed rgba(185,142,69,.5)}
   .steps h3,.steps p,.st-chip{padding-left:0}
@@ -1570,7 +1571,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       g_lbl:"Сколько человек придёт",g_one:"Только вы (1 чел.)",g_many:"{n} чел. — вы + супруг(а) или семья (+{extra})",g_done_one:"Придёте: 1 чел.",g_done_many:"Придут с вами: {n} чел.",
       st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",
       ph_name:"Введите ваше имя",ph_fam:"Введите вашу фамилию",dc_sub:"Будем признательны, если вы поддержите оттенки торжества:",
-      err_name:"Укажите имя",err_fam:"Укажите фамилию",
+      err_name:"Укажите имя",err_fam:"Укажите фамилию",err_name_bad:"Введите корректное имя (только буквы, от 2 символов)",err_fam_bad:"Введите корректную фамилию (только буквы, от 2 символов)",
       rsvp_by:"Просим подтвердить присутствие до {date}",
       mq:"SAQTAA ✦ Свадьба ✦ Юбилей ✦ День рождения ✦ Тұсау кесер ✦ Цифровые приглашения ✦ Два языка ✦ ",
       site_title:"SAQTAA — цифровые приглашения на той",
@@ -1713,7 +1714,7 @@ pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee 
       g_lbl:"Неше адам келеді",g_one:"Тек сіз (1 адам)",g_many:"{n} адам — сіз + жұбайыңыз немесе отбасыңыз (+{extra})",g_done_one:"Келеді: 1 адам",g_done_many:"Сізбен бірге: {n} адам",
       st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",
       ph_name:"Атыңызды жазыңыз",ph_fam:"Тегіңізді жазыңыз",dc_sub:"Мереке реңктерін қолдасаңыз, риза боламыз:",
-      err_name:"Атыңызды жазыңыз",err_fam:"Тегіңізді жазыңыз",
+      err_name:"Атыңызды жазыңыз",err_fam:"Тегіңізді жазыңыз",err_name_bad:"Атыңызды дұрыс жазыңыз (тек әріптер, кемінде 2 таңба)",err_fam_bad:"Тегіңізді дұрыс жазыңыз (тек әріптер, кемінде 2 таңба)",
       rsvp_by:"Қатысатыныңызды {date} дейін растауды сұраймыз",
       mq:"SAQTAA ✦ Той ✦ Мерейтой ✦ Туған күн ✦ Тұсау кесер ✦ Цифрлық шақырулар ✦ Екі тіл ✦ ",
       site_title:"SAQTAA — тойға цифрлық шақырулар",
@@ -1912,17 +1913,19 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     const phHero=`<div class="ph-hero fx" style="--d:.05s"><figure class="ph-frame"><span class="ph-ph">${d.glyph}</span><img data-photo="${i}" alt="" draggable="false"><div class="ph-overlay"><h2 class="ph-names">${d.names}</h2><span class="ph-title">${d.tglyph} ${c.title}</span></div><span class="ph-hint">${t("ph_hint")}</span></figure></div>`;
     const mono=monogramHTML(d);
     const tailTitle=`<p class="inv-kicker fx" style="--d:.06s">${t("lbl_invite")} · ${dDot(ev.date)}</p><h2 class="inv-names fx" style="--d:.1s">${d.names}</h2><p class="inv-sub fx" style="--d:.14s">${t("inv_sub")}</p><p class="iv-eyebrow joy-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p><h3 class="joy-h fx" style="--d:.16s">${c.title}</h3>`;
+    const tailNoDate=`<p class="inv-kicker fx" style="--d:.06s">${t("lbl_invite")}</p><h2 class="inv-names fx" style="--d:.1s">${d.names}</h2><p class="inv-sub fx" style="--d:.14s">${t("inv_sub")}</p><p class="iv-eyebrow joy-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p><h3 class="joy-h fx" style="--d:.16s">${c.title}</h3>`;
     let head="";
     if(k==="luxury"){
-      head=`<div class="lux-crown fx" style="--d:.02s" aria-hidden="true">♕</div>${mono}${phHero}<div class="lux-banner-plate fx" style="--d:.08s">${dSpaced(ev.date)} · ${ev.times[0]}</div>${tailTitle}`;
+      head=`<div class="lux-crown fx" style="--d:.02s" aria-hidden="true">♕</div>${mono}${phHero}<div class="lux-banner-plate fx" style="--d:.08s">${dSpaced(ev.date)} · ${ev.times[0]}</div>${tailNoDate}`;
     }else if(k==="floral"){
-      head=`<div class="fl-trio fx" style="--d:.05s"><div class="fl-side-note">${dDot(ev.date)}</div><div>${mono}${phHero}</div><div class="fl-side-note">${ev.times[0]}</div></div>${tailTitle}`;
+      head=`<div class="fl-trio fx" style="--d:.05s"><div class="fl-side-note">${dDot(ev.date)}</div><div>${mono}${phHero}</div><div class="fl-side-note">${ev.times[0]}</div></div>${tailNoDate}`;
     }else if(k==="qazaq"){
       const amp=String(d.names||"").split(/\s*(?:&amp;|&|\+| и | пен | мен )\s*/i).filter(Boolean);
       const qInit=amp.length>=2?`${amp[0].trim()[0].toUpperCase()}◆${amp[1].trim()[0].toUpperCase()}`:String(d.names||"✦").trim()[0]||"✦";
       head=`${mono}${phHero}<div class="qz-tumar-shield fx" style="--d:.09s" aria-hidden="true"><span>${qInit}</span></div>${tailTitle}`;
     }else if(k==="editorial"){
-      head=`<div class="ed-masthead fx" style="--d:.01s"><span>SPECIAL ISSUE · NO. 04</span><span>${dDot(ev.date)}</span></div><div class="ed-split fx" style="--d:.05s"><div class="ed-split-meta"><div class="ed-big">${d.edBig||"50"}</div><h2 class="ed-split-nm">${d.names}</h2><p class="ed-split-sub">${c.title}</p></div><div>${mono}${phHero}</div></div><div class="ed-rule fx" style="--d:.1s"></div><p class="iv-eyebrow joy-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p><h3 class="joy-h fx" style="--d:.16s">${c.title}</h3>`;
+      const edIssue=lang==="kz"?"АРНАЙЫ БАСЫЛЫМ · NO. 04":"SPECIAL ISSUE · NO. 04";
+      head=`<div class="ed-masthead fx" style="--d:.01s"><span>${edIssue}</span><span>${dDot(ev.date)}</span></div><div class="ed-split fx" style="--d:.05s"><div class="ed-split-meta"><div class="ed-big">${d.edBig||"50"}</div><h2 class="ed-split-nm">${d.names}</h2><p class="ed-split-sub">${c.title}</p></div><div>${mono}${phHero}</div></div><div class="ed-rule fx" style="--d:.1s"></div><p class="iv-eyebrow fx" style="--d:.12s">${t("joy_eyebrow")}</p>`;
     }else if(k==="emerald"){
       head=`<div class="em-orbit-wrap fx" style="--d:.05s"><span class="em-orbit-ring" aria-hidden="true"></span>${mono}${phHero}</div>${tailTitle}`;
     }else if(k==="tusau"){
@@ -1931,6 +1934,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     }else{
       head=`${d.edBig?`<div class="ed-big fx" style="--d:.04s">${d.edBig}</div>`:mono}${phHero}${tailTitle}`;
     }
+    const showDateRow=(k!=="luxury"&&k!=="floral");
     return `<div class="demo-slide" data-i="${i}">
       <article class="inv-page ${d.theme}">
         <canvas class="fx-cv" aria-hidden="true"></canvas>
@@ -1942,7 +1946,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
           ${head}
           <div class="inv-lead-box fx" style="--d:.18s"><p class="inv-lead">${c.lead}</p></div>
           <div class="orn-div fx" style="--d:.22s"><span>❧</span></div>
-          <div class="inv-date fx" style="--d:.24s">${dSpaced(ev.date)} · ${ev.times[0]}</div>
+          ${showDateRow?`<div class="inv-date fx" style="--d:.24s">${dSpaced(ev.date)} · ${ev.times[0]}</div>`:""}
           ${cdHTML(i)}
 
           <section class="iv-sec fx" style="--d:.32s">
@@ -2154,9 +2158,17 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       });
     });
   }
-  let demoFxRaf=0;
-  function startDemoParticles(sl,kind){
+  let demoFxRaf=0,demoFxRo=null,demoFxResume=null;
+  function stopDemoParticles(){
     if(demoFxRaf){cancelAnimationFrame(demoFxRaf);demoFxRaf=0;}
+    if(demoFxRo){try{demoFxRo.disconnect();}catch(_){}demoFxRo=null;}
+    demoFxResume=null;
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden&&view.classList.contains("open")&&demoFxResume)demoFxResume();
+  });
+  function startDemoParticles(sl,kind){
+    stopDemoParticles();
     if(!sl||reduced)return;
     const cv=sl.querySelector(".fx-cv"),page=sl.querySelector(".inv-page");
     if(!cv||!page)return;
@@ -2164,7 +2176,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     let w=0,h=0;
     function resize(){w=cv.width=page.offsetWidth||400;h=cv.height=page.offsetHeight||800;}
     resize();
-    if("ResizeObserver" in window)new ResizeObserver(resize).observe(page);
+    if("ResizeObserver" in window){demoFxRo=new ResizeObserver(resize);demoFxRo.observe(page);}
     const k=kind||"gold",n=k==="petals"||k==="lavender"?18:k==="embers"?20:k==="geo"?12:18;
     const pts=Array.from({length:n},(_,i)=>({
       x:Math.random()*w,y:Math.random()*h,
@@ -2176,6 +2188,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     }));
     let t=0;
     function frame(){
+      if(document.hidden||!view.classList.contains("open")){demoFxRaf=0;return;}
       t+=.02;ctx.clearRect(0,0,w,h);
       for(const p of pts){
         p.x+=p.vx+(k==="petals"||k==="lavender"?Math.sin(t+p.ph)*.35:0);
@@ -2212,7 +2225,8 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       }
       demoFxRaf=requestAnimationFrame(frame);
     }
-    demoFxRaf=requestAnimationFrame(frame);
+    demoFxResume=()=>{if(!demoFxRaf&&!document.hidden&&view.classList.contains("open"))demoFxRaf=requestAnimationFrame(frame);};
+    demoFxResume();
   }
   function setSlide(i,instant,resetScroll){
     const prev=cur;
@@ -2228,7 +2242,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
         s.scrollTop=0;                                /* прокрутка сбрасывается только при смене шаблона */
         s.querySelectorAll(".fx.in").forEach(el=>el.classList.remove("in"));
       }
-      if(on){observeSlideFx(s);startDemoParticles(s,DEMOS[cur].pt);}
+      if(on){observeSlideFx(s);if(view.classList.contains("open"))startDemoParticles(s,DEMOS[cur].pt);}
     });
     qsa("#dvDots button").forEach((b,k)=>b.classList.toggle("on",k===cur));
     count.textContent=String(cur+1).padStart(2,"0")+" / "+String(DEMOS.length).padStart(2,"0");
@@ -2255,6 +2269,8 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   function closeViewer(){
     view.classList.remove("open");view.setAttribute("aria-hidden","true");
     document.body.style.overflow="";
+    stopDemoParticles();
+    if(slideFxIO){try{slideFxIO.disconnect();}catch(_){}slideFxIO=null;}
     /* освобождаем память от загруженных фото */
     Object.values(photoStore).forEach(u=>URL.revokeObjectURL(u));
     for(const k in photoStore)delete photoStore[k];
@@ -2397,16 +2413,29 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       f.querySelector("input[type=text]").focus();
     }
   });
+  function normName(s){return String(s||"").replace(/\s+/g," ").trim().slice(0,NAME_MAX);}
+  function capName(s){return normName(s).replace(/(^|[\s-])([a-zа-яёәғқңөұүһі])/gi,(_,p,c)=>p+c.toUpperCase());}
+  function isValidNamePart(s){
+    const v=normName(s);
+    if(!v||!/^[a-zа-яёәғқңөұүһі'’\-\s]+$/i.test(v))return false;
+    const letters=v.replace(/[^a-zа-яёәғқңөұүһі]/gi,"");
+    if(letters.length<2||/^(.)\1{2,}$/i.test(letters))return false;
+    const bad=["тест","test","asdf","qwerty","йцукен","фыва","123","абв"];
+    const low=letters.toLowerCase();
+    for(let i=0;i<bad.length;i++){if(low===bad[i])return false;}
+    return true;
+  }
   track.addEventListener("submit",e=>{
     const f=e.target.closest(".rs-form");if(!f)return;
     e.preventDefault();
     const [name,fam]=f.querySelectorAll("input[type=text]");
-    /* обрезка по лимиту на случай вставки мимо maxlength */
-    if(name.value.length>NAME_MAX)name.value=name.value.slice(0,NAME_MAX);
-    if(fam.value.length>NAME_MAX)fam.value=fam.value.slice(0,NAME_MAX);
-    if(!name.value.trim()){fieldErr(f,name,"err_name");return;}
-    if(!fam.value.trim()){fieldErr(f,fam,"err_fam");return;}
-    const full=name.value.trim()+" "+fam.value.trim();
+    const cleanNm=capName(name.value),cleanFm=capName(fam.value);
+    name.value=cleanNm;fam.value=cleanFm;
+    if(!cleanNm){fieldErr(f,name,"err_name");return;}
+    if(!isValidNamePart(cleanNm)){fieldErr(f,name,"err_name_bad");return;}
+    if(!cleanFm){fieldErr(f,fam,"err_fam");return;}
+    if(!isValidNamePart(cleanFm)){fieldErr(f,fam,"err_fam_bad");return;}
+    const full=cleanNm+" "+cleanFm;
     const val=(f.querySelector("input[type=radio]:checked")||{value:"yes"}).value;
     const gv=f.querySelector("[data-gval]");
     const cnt=val==="yes"?clampGuests(gv?gv.textContent:1):0;
@@ -2548,20 +2577,27 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   setTimeout(()=>qsa("[data-reveal]").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)el.classList.add("in");}),2500);
 
   /* ---------- фильтр ---------- */
-  const cards=qsa(".card");
+  const cards=qsa(".card"),rail=qs("#cards"),swipeHint=qs(".swipe-hint");
+  function syncSwipeHint(){
+    if(!swipeHint||!rail)return;
+    swipeHint.hidden=rail.scrollWidth<=rail.clientWidth+4;
+  }
   qsa(".chip").forEach(c=>c.setAttribute("aria-pressed",c.classList.contains("on")?"true":"false"));
   qsa(".chip").forEach(ch=>ch.addEventListener("click",()=>{
     qsa(".chip").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-pressed","false");});
     ch.classList.add("on");ch.setAttribute("aria-pressed","true");
     const cat=ch.dataset.cat;
+    let visCount=0;
     cards.forEach(c=>{
       const show=cat==="all"||c.dataset.cat===cat;
-      if(show){c.hidden=false;requestAnimationFrame(()=>c.classList.remove("off"));}
-      else{c.classList.add("off");setTimeout(()=>{if(c.classList.contains("off"))c.hidden=true;},260);}
+      if(show){visCount++;c.hidden=false;requestAnimationFrame(()=>c.classList.remove("off"));}
+      else{c.classList.add("off");setTimeout(()=>{if(c.classList.contains("off"))c.hidden=true;syncSwipeHint();},260);}
     });
-    qs("#cards").scrollTo({left:0,behavior:reduced?"auto":"smooth"});
+    rail.classList.toggle("few-2",visCount===2);
+    rail.scrollTo({left:0,behavior:reduced?"auto":"smooth"});
+    setTimeout(syncSwipeHint,280);
   }));
-  const rail=qs("#cards");
+  addEventListener("resize",syncSwipeHint);
   qs("#railPrev").addEventListener("click",()=>rail.scrollBy({left:-360,behavior:"smooth"}));
   qs("#railNext").addEventListener("click",()=>rail.scrollBy({left:360,behavior:"smooth"}));
 

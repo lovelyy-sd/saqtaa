@@ -117,6 +117,100 @@ body.theme-tusau{
   --chip-bg:#EFE3CB;
   --chip-fg:#5C4322;
 }
+/* Тема 7: Uzatu */
+body.theme-uzatu{
+  --hdr-bg:linear-gradient(180deg,#6E283B 0%,#4A1625 100%);
+  --hdr-fg:#FFF8F2;
+  --hdr-muted:rgba(255,248,242,.82);
+  --hdr-acc:#E6B88A;
+  --bg:#FDF7F2;
+  --ink:#421723;
+  --muted:#7D535E;
+  --line:rgba(82,28,43,.1);
+  --btn-bg:#6E283B;
+  --btn-fg:#FFF8F2;
+  --chip-bg:#F3E3DC;
+  --chip-fg:#521C2B;
+}
+body.theme-uzatu .head-title{font-style:italic}
+/* Тема 8: Uzatu 2 */
+body.theme-uzatu2{
+  --hdr-bg:linear-gradient(180deg,#4D1628 0%,#260812 100%);
+  --hdr-fg:#F8EBDC;
+  --hdr-muted:rgba(248,235,220,.8);
+  --hdr-acc:#E9C496;
+  --bg:#FAF3EE;
+  --ink:#2B0A15;
+  --muted:#704C57;
+  --line:rgba(77,22,40,.11);
+  --btn-bg:#4D1628;
+  --btn-fg:#F8EBDC;
+  --chip-bg:#EFE0D8;
+  --chip-fg:#4D1628;
+}
+body.theme-uzatu2 .head-title{font-style:italic}
+/* Тема 9: Tusau 2 */
+body.theme-tusau2{
+  --hdr-bg:linear-gradient(180deg,#1F4363 0%,#132B40 100%);
+  --hdr-fg:#F5FAFD;
+  --hdr-muted:rgba(245,250,253,.82);
+  --hdr-acc:#E6B86A;
+  --bg:#F2F7FA;
+  --ink:#17324A;
+  --muted:#566E82;
+  --line:rgba(23,50,74,.1);
+  --btn-bg:#1F4363;
+  --btn-fg:#F5FAFD;
+  --chip-bg:#DCE9F2;
+  --chip-fg:#17324A;
+}
+/* Тема 10: Jubilee */
+body.theme-jubilee{
+  --hdr-bg:linear-gradient(180deg,#4A3B22 0%,#2E2414 100%);
+  --hdr-fg:#FAF6EE;
+  --hdr-muted:rgba(250,246,238,.8);
+  --hdr-acc:#E0BC75;
+  --bg:#F8F4EC;
+  --ink:#242924;
+  --muted:#6B655B;
+  --line:rgba(165,127,62,.14);
+  --btn-bg:#7A5C29;
+  --btn-fg:#FAF6EE;
+  --chip-bg:#EAE2D3;
+  --chip-fg:#3D321E;
+}
+/* Тема 11: Lavender */
+body.theme-lavender{
+  --hdr-bg:linear-gradient(180deg,#533269 0%,#382047 100%);
+  --hdr-fg:#FAF6FD;
+  --hdr-muted:rgba(250,246,253,.82);
+  --hdr-acc:#D9B8EC;
+  --bg:#F8F3FC;
+  --ink:#382247;
+  --muted:#715A80;
+  --line:rgba(83,50,105,.1);
+  --btn-bg:#5E3A75;
+  --btn-fg:#FAF6FD;
+  --chip-bg:#E9DDF2;
+  --chip-fg:#382247;
+}
+body.theme-lavender .head-title{font-style:italic}
+/* Тема 12: Sunset */
+body.theme-sunset{
+  --hdr-bg:linear-gradient(180deg,#8C3916 0%,#5C2109 100%);
+  --hdr-fg:#FFF6EE;
+  --hdr-muted:rgba(255,246,238,.82);
+  --hdr-acc:#F5B882;
+  --bg:#FDF4EB;
+  --ink:#4A1F12;
+  --muted:#825747;
+  --line:rgba(140,57,22,.11);
+  --btn-bg:#A3451D;
+  --btn-fg:#FFF6EE;
+  --chip-bg:#F4E1D2;
+  --chip-fg:#5C2109;
+}
+body.theme-sunset .head-title{font-style:italic}
 
 *{margin:0;padding:0;box-sizing:border-box}
 [hidden]{display:none!important}
@@ -191,6 +285,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 .st-num.yes{color:var(--ink)}
 .st-num.no{color:var(--red)}
 .st-num.maybe{color:var(--amber)}
+.st-sub{font-size:.72rem;font-weight:600;color:var(--muted);line-height:1.25}
 
 /* Поиск и фильтры */
 .search-wrap{position:relative;margin-bottom:12px}
@@ -346,6 +441,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
             <span data-i18n="yesPlural">Придут</span>
           </span>
           <span class="st-num yes" id="cntYes">0</span>
+          <small class="st-sub" id="cntYesSub" hidden></small>
         </div>
         <div class="stats-col">
           <span class="st-lbl no">
@@ -585,7 +681,7 @@ var I18N={
     months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"]
   }
 };
-var THEME_COLORS={luxury:"#1A2E23",floral:"#7B2C3E",qazaq:"#7C2230",editorial:"#141414",emerald:"#0E4D3C",tusau:"#734B18"};
+var THEME_COLORS={luxury:"#1A2E23",floral:"#7B2C3E",qazaq:"#7C2230",editorial:"#141414",emerald:"#0E4D3C",tusau:"#734B18",uzatu:"#6E283B",uzatu2:"#4D1628",tusau2:"#1F4363",jubilee:"#4A3B22",lavender:"#533269",sunset:"#8C3916"};
 function t(k){return(I18N[curLang]&&I18N[curLang][k])||I18N.ru[k]||"";}
 function applyLang(l,savePref){
   curLang=(l==="kz")?"kz":"ru";
@@ -607,8 +703,7 @@ function applyLang(l,savePref){
   $("#sortLabel").textContent=sortMode==="old"?t("sortOld"):(sortMode==="az"?t("sortAz"):t("sortNew"));
   if(!currentTitle){$("#eventTitle").textContent=t("defaultTitle");}
   renderMeta();
-  updateGuestBadge(rawRows.length);
-  renderList();
+  updateStats(rawRows);
 }
 
 function toast(msg){
@@ -803,6 +898,18 @@ function updateStats(rows){
 
   $("#cntTotal").textContent=total;
   $("#cntYes").textContent=yesGuests;
+  var yesSub=$("#cntYesSub");
+  if(yesSub){
+    if(yesCount>0){
+      yesSub.textContent=curLang==="kz"
+        ?(yesGuests+" адам · "+yesCount+" жауап")
+        :(yesGuests+" чел. · "+yesCount+" "+plural(yesCount,"ответ","ответа","ответов"));
+      yesSub.hidden=false;
+    }else{
+      yesSub.textContent="";
+      yesSub.hidden=true;
+    }
+  }
   $("#cntNo").textContent=noCount;
   $("#cntMaybe").textContent=maybeCount;
   updateGuestBadge(total);
