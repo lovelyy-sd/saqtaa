@@ -518,6 +518,12 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
             <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Юбилей · Журнал</span></span></button>
             <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">День рождения</span></span></button>
             <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Tusau</span><span class="tpl-sub">Тұсау кесер</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu"><span class="tpl-swatch" style="background:linear-gradient(135deg,#ECDAD0,#AF7C48)"></span><span class="tpl-info"><span class="tpl-name">Қыз ұзату</span><span class="tpl-sub">Шёлк · Шолпы</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="uzatu2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#4D1628,#E9C496)"></span><span class="tpl-info"><span class="tpl-name">Қыз ұзату 2</span><span class="tpl-sub">Гранат · Шымылдық</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="tusau2"><span class="tpl-swatch" style="background:linear-gradient(135deg,#E1EEF6,#17324A)"></span><span class="tpl-info"><span class="tpl-name">Тұсаукесер 2</span><span class="tpl-sub">Ақ жол · Шаңырақ</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="jubilee"><span class="tpl-swatch" style="background:linear-gradient(135deg,#FAF6EE,#A57F3E)"></span><span class="tpl-info"><span class="tpl-name">Юбилей · Жемчуг</span><span class="tpl-sub">Классика · Золото</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="lavender"><span class="tpl-swatch" style="background:linear-gradient(135deg,#EFE6F6,#9B6FB0)"></span><span class="tpl-info"><span class="tpl-name">ДР · Лаванда</span><span class="tpl-sub">Пастель · Бабочки</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="sunset"><span class="tpl-swatch" style="background:linear-gradient(135deg,#F7DFC9,#C45E2C)"></span><span class="tpl-info"><span class="tpl-name">ДР · Закат</span><span class="tpl-sub">Golden Hour · Терракота</span></span></button>
           </div>
           <select class="inp" id="tpl" hidden>
             <option value="luxury">Luxury · свадьба</option>
@@ -526,6 +532,12 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
             <option value="editorial">Editorial · юбилей</option>
             <option value="emerald">Emerald · день рождения</option>
             <option value="tusau">Tusau · тұсау кесер</option>
+            <option value="uzatu">Қыз ұзату · Шёлк</option>
+            <option value="uzatu2">Қыз ұзату 2 · Алтын Ұя</option>
+            <option value="tusau2">Тұсаукесер 2 · Ақ жол</option>
+            <option value="jubilee">Юбилей · Жемчуг</option>
+            <option value="lavender">ДР · Лаванда</option>
+            <option value="sunset">ДР · Закат</option>
           </select>
 
           <label class="lbl">Язык</label>
@@ -590,6 +602,12 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
                 <option value="mono">Монохром: Чёрный · Серебро (Editorial)</option>
                 <option value="emerald">Изумруд · Золото · Жемчуг (Emerald)</option>
                 <option value="warm">Тёплый: Крем · Медовый · Терракота (Tusau)</option>
+                <option value="uzatu">Айвори · Пыльная роза · Шампань (Қыз ұзату)</option>
+                <option value="uzatu2">Гранат · Шампань · Жемчуг (Қыз ұзату 2)</option>
+                <option value="tusau2">Белый шёлк · Золото · Небесный (Тұсаукесер)</option>
+                <option value="jubilee">Айвори · Золото · Олива (Юбилей · Жемчуг)</option>
+                <option value="lavender">Лаванда · Жемчуг · Роза (Лаванда)</option>
+                <option value="sunset">Терракота · Крем · Олива (Закат)</option>
                 <option value="none">Без кружков (только текст дресс-кода)</option>
               </select>
 
@@ -1026,7 +1044,31 @@ emerald:{ti:["День рождения","Туған күн"],
 tusau:{ti:["Тұсау кесер","Тұсау кесер"],
  le:["Дорогие родные! Нашему малышу исполняется один год. Приглашаем вас разделить с нами радость его первых шагов и отметить тұсау кесер! Пусть его жизненный путь будет светлым и счастливым.","Қымбатты ағайын-туыс! Бүлдіршініміз бір жасқа толып, тәй-тәй басқан алғашқы қадамын атап өтпекпіз. Тұсаукесер тойына сіздерді шын жүректен шақырамыз!"],
  sg:["С любовью, родители — {names}","Сүйіспеншілікпен, ата-анасы — {names}"],
- pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"}
+ pr:[["12:00","Қонақтарды қарсы алу","Встреча гостей и фотосессия","Қонақтарды қарсы алу","Қонақтармен жүздесу және фотосуретке түсу"],["13:00","Тұсау кесер","Обряд перерезания пут","Тұсау кесер","Тұсаукесер рәсімі"],["13:30","Дастархан","Праздничный обед","Дастархан","Мерекелік түскі ас"],["15:00","Игры и подарки","Весёлый финал","Ойындар мен сыйлықтар","Көңілді кештің соңы"]],s:"12:00",e:"16:00"},
+uzatu:{ti:["Қыз ұзату","Қыз ұзату"],
+ le:["Дорогие родные и почётные гости! Наша любимая дочь вступает в новую главу своей жизни. Приглашаем вас разделить тепло прощального вечера в кругу семьи!","Құрметті ағайын-туыс және қадірлі қонақтар! Аяулы қызымыздың ұзату тойына шақырамыз. Ақ дастарханымыздың қадірлі қонағы болыңыздар!"],
+ sg:["С уважением, семья — {names}","Ізгі ниетпен, әулеті — {names}"],
+ pr:[["17:00","Қарсы алу","Встреча гостей и фотозона","Қарсы алу","Қонақ күту және фотоаймақ"],["18:00","Бата беру","Благословение старейшин","Бата беру","Ақсақалдардың ақ батасы"],["19:30","Дастархан","Праздничный ужин и поздравления","Дастархан","Мерекелік кешкі ас пен тілектер"],["22:30","Сыңсу · Ақ жол","Трогательные проводы невесты","Сыңсу · Ақ жол","Қызды жаңа өмірге шығарып салу"]],s:"17:00",e:"23:30"},
+uzatu2:{ti:["Қыз ұзату · Алтын Ұя","Қыз ұзату · Алтын Ұя"],
+ le:["Уважаемые родные и близкие! Настал светлый час проводить нашу жемчужину в новую семью. Будем рады видеть вас за нашим почётным дастарханом!","Құрметті туған-туыс, дос-жаран! Аяулы қызымызды ақ босағаға аттандыру тойына шақырамыз. Қуанышымызға ортақ болыңыздар!"],
+ sg:["С любовью и почтением, родители — {names}","Құрметпен, ата-анасы — {names}"],
+ pr:[["17:30","Сбор гостей","Шашу и тёплое приветствие","Қонақ жинау","Шашу және жылы қарсы алу"],["18:30","Той бастау","Торжественный выход невесты","Той бастау","Қыздың салтанатты шығуы"],["20:00","Мерекелік ас","Ужин, бата и душевные тосты","Мерекелік ас","Дастархан, бата және ән-күй"],["22:30","Шығарып салу","Белая дорожка в новую жизнь","Ақ жол","Құтты орнына қондыру рәсімі"]],s:"17:30",e:"23:45"},
+tusau2:{ti:["Тұсау кесер","Тұсау кесер"],
+ le:["Дорогие родственники и друзья! Нашему малышу исполняется годик! Приглашаем вас благословить его первые уверенные шаги по светлой дороге ақ жол!","Құрметті туыстар мен достар! Бүлдіршініміз 1 жасқа толды! Сәбиіміздің ақ жолына бата беріп, алғашқы қадамына куә болуға шақырамыз!"],
+ sg:["С радостью ждём вас — {names}","Асыға күтеміз — {names}"],
+ pr:[["12:30","Қонақ күту","Сбор гостей и шашу","Қонақ күту","Жиналу және шашу"],["13:30","Ақ жол","Перерезание пут и первые шаги","Ақ жол","Тұсау кесу және алғашқы қадам"],["14:00","Той дастарханы","Праздничный обед и бата","Той дастарханы","Түскі ас пен ақ бата"],["15:30","Ойын-сауық","Подарки и семейное фото","Ойын-сауық","Сыйлықтар мен естелік суреттер"]],s:"12:30",e:"16:30"},
+jubilee:{ti:["Юбилейный вечер","Мерейтой кеші"],
+ le:["Дорогие друзья и родные! Прекрасный возраст мудрости, красоты и благодарности. Приглашаю вас разделить со мной этот светлый юбилей!","Қымбатты достар мен жақындар! Даналық пен шүкіршілік шағы — жарқын мерейтойымды бірге атап өтуге шақырамын!"],
+ sg:["С любовью и благодарностью — {names}","Сүйіспеншілікпен — {names}"],
+ pr:[["18:00","Welcome","Игристое и встреча гостей","Welcome","Қарсы алу және фото"],["19:00","Поздравления","Тёплые слова и воспоминания","Құттықтаулар","Жылы лебіздер мен естеліктер"],["20:30","Банкет","Праздничный ужин и музыка","Банкет","Мерекелік дастархан мен музыка"],["22:30","Свечи торта","Волшебный финал вечера","Торт","Кештің салтанатты сәті"]],s:"18:00",e:"23:30",b:"50"},
+lavender:{ti:["День рождения","Туған күн"],
+ le:["Мои самые близкие! Приглашаю вас в цветущую атмосферу лавандового вечера, чтобы вместе встретить мой новый год улыбками, музыкой и теплом!","Ең жақындарым! Жаңа жасымды жылы сұхбат, әуен және жақсы көңіл-күймен лаванда кешінде бірге қарсы алуға шақырамын!"],
+ sg:["Обнимаю каждого — {names}","Құшақтадым — {names}"],
+ pr:[["18:30","Welcome","Лавандовый лимонад и фотозона","Welcome","Лаванда сусыны мен фотоаймақ"],["19:30","Ужин","Вкусные блюда и искренние тосты","Кешкі ас","Дәмді тағамдар мен тілектер"],["21:00","Вечеринка","Музыка, танцы и сюрпризы","Кеш бағдарламасы","Музыка, би және тосынсыйлар"],["22:30","Торт","Исполнение желаний","Торт","Тілек тілеу сәті"]],s:"18:30",e:"23:45"},
+sunset:{ti:["День рождения","Туған күн"],
+ le:["Друзья! Собираю всех на тёплый закатный вечер Golden Hour — впереди душевные разговоры, живая музыка, огни террасы и отличное настроение!","Достар! Баршаңызды Golden Hour жылы кешіне шақырамын — алдымызда жанды әуен, терраса шамдары және керемет көңіл-күй!"],
+ sg:["Буду рад видеть каждого — {names}","Күтемін — {names}"],
+ pr:[["18:00","Sunset Welcome","Коктейли на открытой террасе","Sunset Welcome","Ашық террасадағы кездесу"],["19:00","Ужин","Гриль-меню и тосты друзей","Кешкі ас","Гриль-мәзір мен достар тілегі"],["20:30","Акустика & DJ","Любимые треки под закатным небом","Акустика & DJ","Күн батар сәттегі әуендер"],["22:00","Торт","Огни и загаданные желания","Торт","Отшашу мен ақ тілектер"]],s:"18:00",e:"23:30"}
 };
 
 var TPL_DC={
@@ -1035,7 +1077,13 @@ var TPL_DC={
   qazaq:{ru:"Дресс-код: Королевский бордо",kz:"Дресс-код: Ұлттық нақыш",pal:"bordo",sw:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]]},
   editorial:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Монохром шик",pal:"mono",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]},
   emerald:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Зүбәржат және алтын",pal:"emerald",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]},
-  tusau:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",pal:"warm",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]}
+  tusau:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",pal:"warm",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]},
+  uzatu:{ru:"Дресс-код: Жібек пен пастель",kz:"Дресс-код: Жібек пен пастель",pal:"uzatu",sw:[["Айвори","Айвори","#ffffff,#e5d6c3"],["Пыльная роза","Раушан","#fbe1e6,#bc6e7e"],["Шампань","Шампань","#fff4cc,#b4843d"],["Шалфей","Зәйтүн","#dce6da,#6f8570"]]},
+  uzatu2:{ru:"Дресс-код: Гранат, Шампань и Жемчуг",kz:"Дресс-код: Гранат, Шампань және Інжу",pal:"uzatu2",sw:[["Гранат","Гранат","#8f2646,#3a0b1b"],["Шампань","Шампань","#fff3dc,#ba8a54"],["Жемчуг","Інжу","#ffffff,#dfd2c8"],["Слива","Барқыт","#3e1122,#1a050d"]]},
+  tusau2:{ru:"Дресс-код: Небесная пастель",kz:"Дресс-код: Ақ жібек және аспан реңкі",pal:"tusau2",sw:[["Белый шёлк","Ақ жібек","#ffffff,#cfdde8"],["Тёплое золото","Алтын","#f5d28a,#a87624"],["Небесный","Аспан көк","#d7e8f4,#6a96ba"],["Жемчуг","Інжу","#ede7dc,#b4a892"]]},
+  jubilee:{ru:"Дресс-код: Светлая классика & Золото",kz:"Дресс-код: Ақ классика және Алтын",pal:"jubilee",sw:[["Айвори","Піл сүйегі","#ffffff,#dfd6c5"],["Золото","Алтын","#fff0c6,#a57f3e"],["Олива","Зәйтүн","#4e5d4f,#232e24"],["Графит","Графит","#2d2d2d,#0a0a0a"]]},
+  lavender:{ru:"Дресс-код: Лаванда и Пастель",kz:"Дресс-код: Лаванда және Пастель",pal:"lavender",sw:[["Лаванда","Лаванда","#e9d8f5,#986bb0"],["Жемчуг","Інжу","#ffffff,#d8cce2"],["Роза","Раушан","#f8dce6,#b97690"],["Мята","Жалбыз","#d4e2db,#7b9588"]]},
+  sunset:{ru:"Дресс-код: Тёплый закат & Олива",kz:"Дресс-код: Жылы реңктер",pal:"sunset",sw:[["Терракота","Терракота","#e89d72,#a84f26"],["Крем","Крем","#fff6ec,#e0cebe"],["Олива","Зәйтүн","#b3b894,#6b7349"],["Шоколад","Қоңыр","#5c3a28,#26140b"]]}
 };
 var DC_PALS={
   gold:TPL_DC.luxury.sw,
@@ -1044,6 +1092,12 @@ var DC_PALS={
   mono:TPL_DC.editorial.sw,
   emerald:TPL_DC.emerald.sw,
   warm:TPL_DC.tusau.sw,
+  uzatu:TPL_DC.uzatu.sw,
+  uzatu2:TPL_DC.uzatu2.sw,
+  tusau2:TPL_DC.tusau2.sw,
+  jubilee:TPL_DC.jubilee.sw,
+  lavender:TPL_DC.lavender.sw,
+  sunset:TPL_DC.sunset.sw,
   none:[]
 };
 var DEF_DC_SUB_RU="Будем признательны, если вы поддержите оттенки торжества:";
@@ -1252,7 +1306,7 @@ function applyPreset(k){
   st.rows=p.pr.map(function(r){return r.slice();});
   if(!$("#d").value)$("#d").value=defaultFutureDate(14);
   $("#s").value=p.s;$("#e").value=p.e;$("#b").value=p.b||"";
-  $("#bigWrap").hidden=(k!=="editorial");
+  $("#bigWrap").hidden=(k!=="editorial"&&k!=="jubilee");
   showText();
   renderDcAutoPreview();
 }
@@ -1378,7 +1432,7 @@ function collect(){
     o.ejs={s:clean($("#cfgEjsService").value),t:clean($("#cfgEjsTemplate").value),u:clean($("#cfgEjsKey").value)};
     if(srv){o.srv=srv;o.sheet=srv;}
   }
-  if(o.t==="editorial")o.b=clean($("#b").value);
+  if(o.t==="editorial"||o.t==="jubilee")o.b=clean($("#b").value);
   if(currentDcMode==="off")o.dc=false;
   else if(currentDcMode==="custom"){
     grabDcSwatches();
@@ -1472,7 +1526,7 @@ function fillFrom(o){
   $("#tpl").value=PRE[o.t]?o.t:"luxury";
   lastTpl=$("#tpl").value;
   syncTplCards(lastTpl);
-  $("#bigWrap").hidden=($("#tpl").value!=="editorial");
+  $("#bigWrap").hidden=($("#tpl").value!=="editorial"&&$("#tpl").value!=="jubilee");
   $("#n").value=o.n||"";$("#d").value=o.d||defaultFutureDate(14);$("#s").value=o.s||"18:00";$("#e").value=o.e||"23:30";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
   $("#p").value=o.p||"";$("#b").value=o.b||"";
@@ -2198,7 +2252,7 @@ function handleTplChange(newTpl){
   $("#tpl").value=newTpl;
   syncTplCards(newTpl);
   if((!$("#n").value.trim()&&isPresetUnchanged(lastTpl))||confirm("Подставить тексты этого шаблона?"))applyPreset(newTpl);
-  else{lastTpl=newTpl;$("#bigWrap").hidden=(newTpl!=="editorial");renderDcAutoPreview();}
+  else{lastTpl=newTpl;$("#bigWrap").hidden=(newTpl!=="editorial"&&newTpl!=="jubilee");renderDcAutoPreview();}
   save();
 }
 $("#tpl").addEventListener("change",function(){handleTplChange(this.value);});
@@ -2403,7 +2457,7 @@ async function startNewOrder(){
 }
 $("#fillDemoBtn").addEventListener("click",function(){
   var curTpl=$("#tpl").value||"luxury";applyPreset(curTpl);
-  var demo={luxury:"Ерасыл & Аяулым",floral:"Алихан & Дария",qazaq:"Арман мен Аружан",editorial:"Аскар Серикович",emerald:"Айлин",tusau:"Альтаир"};
+  var demo={luxury:"Ерасыл & Аяулым",floral:"Алихан & Дария",qazaq:"Арман мен Аружан",editorial:"Аскар Серикович",emerald:"Айлин",tusau:"Альтаир",uzatu:"Айзере",uzatu2:"Мадина",tusau2:"Әлихан · 1 жас",jubilee:"Айгүл · 50",lavender:"Ләйлә",sunset:"Амир"};
   $("#n").value=demo[curTpl]||"Ерасыл & Аяулым";
   $("#d").value=defaultFutureDate(21);
   $("#ve").value="Ресторан «Салтанат»";
