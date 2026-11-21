@@ -395,9 +395,12 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .shim-curtain-svg{width:min(290px,86%);height:auto;color:var(--acc);margin:-8px auto -6px}
 .shim-tassel{transform-origin:top center;animation:tasselSwing 4.4s ease-in-out infinite}.shim-tassel.t2{animation-delay:1.2s}
 @keyframes tasselSwing{0%,100%{transform:rotate(-3.5deg)}50%{transform:rotate(3.5deg)}}
-.theme-uzatu2 .prog::before{left:15px}
-.theme-uzatu2 .prog li{grid-template-columns:22px 1fr;padding:10px 12px 10px 36px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(233,196,150,.3);margin-bottom:8px;position:relative}
-.theme-uzatu2 .prog li b{grid-column:2}.theme-uzatu2 .prog li i{position:absolute;left:10px;top:14px}
+.theme-uzatu2 .prog{max-width:410px;gap:10px}
+.theme-uzatu2 .prog::before{left:15px;top:18px;bottom:18px;opacity:.55}
+.theme-uzatu2 .prog li{display:flex;flex-direction:column;gap:3px;padding:13px 16px 13px 38px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(233,196,150,.34);position:relative}
+.theme-uzatu2 .prog li b{font-size:.94rem;letter-spacing:.06em;padding-top:0;line-height:1.2}
+.theme-uzatu2 .prog li i{position:absolute;left:9px;top:16px;margin:0;width:11px;height:11px;border:0;background:radial-gradient(circle at 30% 30%,#FFF,#E9C496);box-shadow:0 0 8px rgba(233,196,150,.75)}
+.theme-uzatu2 .prog li div{display:flex;flex-direction:column;gap:2px}
 
 /* ============ № 09 TUSAU 2 (Тұсаукесер · Небесный Ақ жол и Ала жіп) ============ */
 .theme-tusau2{background:radial-gradient(68% 30% at 50% 0%,rgba(255,255,255,.94),transparent 72%),linear-gradient(180deg,#F2F8FC 0%,#E1EEF6 55%,#D2E3F0 100%);color:#17324A;--acc:#BA8732;--acc-ink:#FFFBF2;--field:rgba(255,255,255,.82)}
