@@ -35,7 +35,7 @@ document.documentElement.classList.add("js");
 <link rel="canonical" href="https://lovelyy-sd.github.io/saqtaa/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============ БАЗА ============ */
 :root{
@@ -222,7 +222,7 @@ body.menu-open{overflow:hidden}
   .cards{grid-template-columns:repeat(3,1fr);gap:20px}
   .cards.few-2{grid-template-columns:repeat(2,minmax(0,370px));justify-content:center}
 }
-.card{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .28s,box-shadow .28s,opacity .25s}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .28s,box-shadow .28s,opacity .25s;content-visibility:auto;contain-intrinsic-size:1px 460px}
 .card:hover{transform:translateY(-4px);box-shadow:0 22px 44px -24px rgba(16,42,32,.32)}
 .card.off{opacity:0;transform:scale(.95);pointer-events:none}
 
@@ -1018,17 +1018,32 @@ body.menu-open{overflow:hidden}
   .inside-item{padding:17px 16px 16px}
   .price-card{padding:22px 18px;border-radius:20px}
   .price-card .btn-gold{width:100%;min-height:52px}
-  .foot-cta{width:100%}
-  .foot-cta .btn-gold{width:100%;min-height:48px}
-  .foot-contacts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
-  .foot-contacts a{min-height:42px;justify-content:center}
-  .foot{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  .foot{padding:22px var(--pad) calc(18px + env(safe-area-inset-bottom))}
+  .foot .wrap{gap:12px}
+  .foot-brand h2{font-size:1.75rem}
+  .foot-brand .tag{font-size:.9rem;margin-top:3px}
+  .foot-brand .sub{display:none}
+  .foot-cta{width:100%;gap:10px}
+  .foot-cta .btn-gold{width:100%;min-height:44px}
+  .foot-contacts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
+  .foot-contacts a{min-height:0;padding:2px 0;justify-content:flex-start}
+  .foot-contacts a b{font-size:.86rem}
+  .foot-links{gap:6px 16px;font-size:.8rem}
+  .foot-bottom{flex-wrap:nowrap;gap:8px;margin-top:10px;padding-top:12px;font-size:.72rem}
+  .foot-bottom span:nth-child(2){display:none}
+  .foot-bottom .up{padding:5px 12px;white-space:nowrap;flex-shrink:0}
   .dt-back span{display:none}
   .dt-back{min-width:38px;justify-content:center;padding:0 6px}
   .dt-name{font-size:.82rem}
   .dt-order{min-height:36px;padding:0 11px;font-size:.72rem}
-  .dnav{width:40px;height:40px;flex:0 0 40px}
-  .dphoto-ui .tab,.dphoto-ui .upl{min-height:36px;padding:0 12px;font-size:.75rem}
+  .demo-bottom{padding:7px 10px calc(7px + env(safe-area-inset-bottom))}
+  .dnav-row{gap:6px;max-width:100%}
+  .dnav{width:36px;height:36px;flex:0 0 36px;font-size:.9rem}
+  .ddots{flex:1 1 auto;min-width:0;gap:0;justify-content:space-between;max-width:210px}
+  .ddots button{flex:1 1 0;width:auto;min-width:10px;max-width:17px;height:28px;font-size:.5rem}
+  .dcount{font-size:.66rem;letter-spacing:.05em;flex:0 0 auto}
+  .dphoto-ui{gap:5px;flex-wrap:nowrap}
+  .dphoto-ui .tab,.dphoto-ui .upl{min-height:34px;padding:0 10px;font-size:.72rem}
 }
 
 /* ============ ПЛАНШЕТ / ДЕСКТОП ============ */
@@ -2223,7 +2238,9 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       l.classList.toggle("sel",l.querySelector("input").checked);
     });
   }
+  let slidesBuilt=false;
   function renderSlides(){
+    slidesBuilt=true;
     const savedRsvp={};
     qsa(".demo-slide").forEach(sl=>{
       const idx=sl.dataset.i,f=sl.querySelector(".rs-form"),done=sl.querySelector(".rs-done");
@@ -2405,6 +2422,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   /* фокус на «Закрыть» — повторяем, пока диалог не станет видимым (идёт анимация появления) */
   function focusClose(n){const b=qs("#dvClose");b.focus({preventScroll:true});if(document.activeElement!==b&&n>0&&view.classList.contains("open"))requestAnimationFrame(()=>focusClose(n-1));}
   function openViewer(i){
+    if(!slidesBuilt){cur=i||0;renderSlides();}
     lastFocus=document.activeElement;
     setPhotoMode(false);
     document.body.style.overflow="hidden";
@@ -2505,7 +2523,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   /* ленту пересчитываем только при смене ширины (поворот экрана);
      высота меняется от клавиатуры и панелей браузера — форму не трогаем */
   let lastW=innerWidth;
-  addEventListener("resize",()=>{if(innerWidth===lastW)return;lastW=innerWidth;setSlide(cur,true);});
+  addEventListener("resize",()=>{if(innerWidth===lastW)return;lastW=innerWidth;if(slidesBuilt)setSlide(cur,true);});
 
   /* фото-режим */
   function setPhotoMode(on){
@@ -2796,7 +2814,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
     try{localStorage.setItem("saqtaa-lang",lang);}catch(_){}
     applyWA();
     syncHeroLang();
-    renderSlides();
+    if(slidesBuilt)renderSlides();
   }
   qs("#langBtn").addEventListener("click",()=>{lang=lang==="ru"?"kz":"ru";applyLang();});
 
