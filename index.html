@@ -1717,9 +1717,11 @@ body.menu-open{overflow:hidden}
       d4:"Сплит-обложка журнала Vogue, контрастная тень и таблица.",
       d5:"Звёздная орбита, вращающиеся лучи и живая рамка в изумруде.",
       d6:"Солнечная тропа ақ жол, шагающие следы и зигзаг-программа.",
+      d6_uni:"Солнечная кремовая палитра, тёплое сияние и зигзаг-программа.",
       d7:"Нежный шёлк айвори с качающимися шолпы и лепестками.",
       d8:"Бархатный гранат с занавесом шымылдық и жемчужными нитями.",
       d9:"Небесная дорожка ақ жол, шаңырақ и плетёная лента ала жіп.",
+      d9_uni:"Небесная палитра, золотой шаңырақ и звёздное сияние.",
       d10:"Сливочно-жемчужная классика с золотым переливом юбилея.",
       d11:"Сиреневая пастель с двумя порхающими бабочками и живой рамкой.",
       d12:"Тёплое сияние Golden Hour с лучами заката и янтарными искрами.",
@@ -1864,9 +1866,11 @@ pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee 
       d4:"Vogue журналының сплит-мұқабасы, контрасты көлеңке және кесте.",
       d5:"Жұлдызды орбита, айналмалы сәулелер және жанды зүбәржат жиектеме.",
       d6:"Күн сәулелі ақ жол, басқан іздер және ирек бағдарлама.",
+      d6_uni:"Күн сәулелі кремді палитра, жылы нұр және ирек бағдарлама.",
       d7:"Нәзік піл сүйегі түсті жібек, тербелген шолпы және гүл жапырақтары.",
       d8:"Барқыт гранат, шымылдық пердесі және інжу моншақтары.",
       d9:"Аспан түстес ақ жол, шаңырақ және өрілген ала жіп.",
+      d9_uni:"Аспан палитрасы, алтын шаңырақ және жұлдызды жарқырау.",
       d10:"Крем-інжу түстес классика және мерейтойлық алтын өрнек.",
       d11:"Қос көбелегі бар нәзік лаванда палитрасы.",
       d12:"Күн батар сәттің алтын нұры мен жылы терракота реңктері.",
@@ -2515,8 +2519,8 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   function pageInert(on){[...document.body.children].forEach(el=>{if(el!==view&&el.id!=="toast"&&el.tagName!=="SCRIPT")el.inert=on;});}
   /* фокус на «Закрыть» — повторяем, пока диалог не станет видимым (идёт анимация появления) */
   function focusClose(n){const b=qs("#dvClose");b.focus({preventScroll:true});if(document.activeElement!==b&&n>0&&view.classList.contains("open"))requestAnimationFrame(()=>focusClose(n-1));}
-  function openViewer(i){
-    demoEv=(activeEv!=="all"&&EV_DEMOS[activeEv])?activeEv:null;
+  function openViewer(i,forceDefaultEv){
+    demoEv=(!forceDefaultEv&&activeEv!=="all"&&EV_DEMOS[activeEv])?activeEv:null;
     if(!slidesBuilt||lastRenderedEv!==demoEv){cur=i||0;renderSlides();}
     lastFocus=document.activeElement;
     setPhotoMode(false);
@@ -2802,8 +2806,8 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       clearTimeout(hResume);hResume=setTimeout(heroStart,6000);
     }
   },{passive:true});
-  invEl.addEventListener("click",()=>{if(hSwiped){hSwiped=false;return;}openViewer(hIdx);});
-  invEl.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openViewer(hIdx);}});
+  invEl.addEventListener("click",()=>{if(hSwiped){hSwiped=false;return;}openViewer(hIdx,true);});
+  invEl.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openViewer(hIdx,true);}});
   invEl.addEventListener("mouseenter",heroStop);
   invEl.addEventListener("mouseleave",heroStart);
   /* пауза автопрокрутки при фокусе с клавиатуры и при касании */
@@ -2914,7 +2918,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
             big=c.querySelector(".preview .big50"),seal=c.querySelector(".preview .p-seal"),
             shield=c.querySelector(".preview .p-q-shield span"),
             age=c.querySelector(".preview .t-age"),fp=c.querySelector(".preview .p-tus-row"),
-            pk=c.querySelector('[data-i18n^="pk"]');
+            pk=c.querySelector('[data-i18n^="pk"]'),desc=c.querySelector(".ci-desc");
       if(ov){
         if(tag)tag.textContent=lbl;
         if(cat){
@@ -2923,6 +2927,10 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
           cat.textContent=isRec?t("rec_badge"):(t("alt_prefix")+": "+defLbl);
         }
         if(fitEl)fitEl.innerHTML=isRec?fill(t("fit_rec"),{ev:lbl}):fill(t("fit_alt"),{def:defLbl,ev:lbl});
+        if(desc&&desc.dataset.i18n){
+          const dk=desc.dataset.i18n;
+          desc.textContent=(activeEv!=="tusau"&&(dk==="d6"||dk==="d9"))?t(dk+"_uni"):t(dk);
+        }
         if(st)st.innerHTML=ov.shortName;
         if(lab)lab.textContent=ov.names.split("·")[0].trim()+" ✦";
         if(big){
@@ -2941,6 +2949,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
           if(cat.dataset.i18n)cat.textContent=t(cat.dataset.i18n);
         }
         if(fitEl)fitEl.innerHTML=fill(t("fit_def"),{def:defLbl});
+        if(desc&&desc.dataset.i18n)desc.textContent=t(desc.dataset.i18n);
         if(st)st.innerHTML=orig.strong;
         if(lab)lab.textContent=orig.lab;
         if(big){big.textContent=orig.big;big.style.fontSize="";}

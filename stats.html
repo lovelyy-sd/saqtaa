@@ -392,6 +392,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
   opacity:0;pointer-events:none;transition:opacity .25s,translate .25s;max-width:88vw;text-align:center;
 }
 .toast.show{opacity:1;translate:-50% 0}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body class="theme-emerald">
@@ -552,7 +553,7 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
 (function(){
 "use strict";
 var $=function(s){return document.querySelector(s);};
-var allGuests=[],rawRows=[],curFilter="all",sortMode="new",sheetUrl="",inviteUrl="",orderId="",currentTitle="",curLang="ru",metaDateStr="",metaTimeStr="",metaVenueStr="";
+var allGuests=[],rawRows=[],curFilter="all",sortMode="new",sheetUrl="",inviteUrl="",orderId="",statsToken="",currentTitle="",curLang="ru",metaDateStr="",metaTimeStr="",metaVenueStr="";
 var I18N={
   ru:{
     docTitle:"SAQTAA · Статистика ответов",
@@ -615,6 +616,7 @@ var I18N={
     csvHead:"\uFEFF№;Имя;Фамилия;Статус;Количество;Время ответа\r\n",
     exportTitle:"Скачать таблицу (CSV)",
     moreTitle:"Дополнительно",
+    errAccess:"Доступ к списку гостей ограничен. Запросите обновлённую ссылку статистики у организатора.",
     months:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"]
   },
   kz:{
@@ -678,6 +680,7 @@ var I18N={
     csvHead:"\uFEFF№;Аты;Тегі;Мәртебе;Саны;Жауап уақыты\r\n",
     exportTitle:"Кестені жүктеу (CSV)",
     moreTitle:"Қосымша",
+    errAccess:"Қонақтар тізіміне қолжетімділік шектелген. Ұйымдастырушыдан жаңартылған статистика сілтемесін сұраңыз.",
     months:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"]
   }
 };
@@ -955,19 +958,46 @@ function mergeRows(cloudRows,localRows){
   return out;
 }
 
+function safeSrvUrl(u){
+  try{
+    var x=new URL(u);
+    return(x.protocol==="https:"&&(x.hostname==="script.google.com"||x.hostname==="script.googleusercontent.com"))?x.href:"";
+  }catch(_){return"";}
+}
+function safeDocUrl(u){
+  try{
+    var x=new URL(u);
+    return(x.protocol==="https:")?x.href:"";
+  }catch(_){return"";}
+}
+function encodeInviteHash(obj){
+  var bytes=new TextEncoder().encode(JSON.stringify(obj)),bin="";
+  for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+  return"#j"+btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+
 async function loadData(){
   $("#loading").hidden=true;
   $("#content").hidden=false;
   $("#errBox").hidden=true;
   var localRows=getLocalRows();
   if(!sheetUrl){updateStats(localRows);return;}
+  if(!orderId){updateStats(localRows);return;}
   try{
-    var fetchUrl=sheetUrl+(sheetUrl.indexOf("?")===-1?"?":"&")+"action=stats"+(orderId?"&oid="+encodeURIComponent(orderId):"")+"&_t="+Date.now();
-    var res=await fetch(fetchUrl);
+    var res=await fetch(sheetUrl,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action:"stats",oid:orderId,st:statsToken})
+    });
     var data=await res.json();
     if(data&&data.ok&&Array.isArray(data.rows)){
       updateStats(mergeRows(data.rows,localRows));
     }else{
+      if(data&&data.error){
+        var eb=$("#errBox");
+        eb.textContent=t("errAccess");
+        eb.hidden=false;
+      }
       updateStats(localRows);
     }
   }catch(_){
@@ -1015,9 +1045,16 @@ $("#addGuestForm").addEventListener("submit",async function(e){
   toast(t("toastAdded"));
   if(sheetUrl){
     var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("optMaybe")};
-    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+gCnt+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"))+"&no_email=1&_t="+Date.now();
     try{
-      var sr=await fetch(sheetUrl+q,{method:"GET"});
+      var sr=await fetch(sheetUrl,{
+        method:"POST",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body:JSON.stringify({
+          action:"rsvp",oid:orderId||"default",id:gid,name:nm,fam:fm,
+          att_code:att,att:labels[att]||t("badgeYes"),guests:gCnt,
+          title:currentTitle||t("defaultTitle"),no_email:"1"
+        })
+      });
       var sj=sr.ok?await sr.json():null;
       if(!sj||!sj.ok)throw new Error("sync");
     }catch(_){
@@ -1125,8 +1162,16 @@ async function init(){
         if(D.t&&THEME_COLORS[D.t])tpl=D.t;
         if(D.srv||D.sheet)sheetUrl=D.srv||D.sheet;
         if(D.oid)orderId=D.oid;
+        if(D.st)statsToken=String(D.st).trim();
         if(D.l==="kz"||D.l==="ru")invLang=D.l;
-        inviteUrl="invite.html"+hash;
+        if(D.st||D.em){
+          var pubCopy=Object.assign({},D);
+          delete pubCopy.st;
+          if(!pubCopy.ejs)delete pubCopy.em;
+          inviteUrl="invite.html"+encodeInviteHash(pubCopy);
+        }else{
+          inviteUrl="invite.html"+hash;
+        }
       }
     }catch(_){}
   }
@@ -1134,9 +1179,11 @@ async function init(){
   if(params.get("t")&&THEME_COLORS[params.get("t")])tpl=params.get("t");
   if(params.get("sheet"))sheetUrl=params.get("sheet");
   if(params.get("oid"))orderId=params.get("oid");
+  if(params.get("st"))statsToken=String(params.get("st")).trim();
   if(params.get("title"))title=params.get("title");
   if(params.get("date"))dateStr=params.get("date");
   if(!sheetUrl){try{sheetUrl=localStorage.getItem("saqtaa-server-url-v1")||"";}catch(_){}}
+  sheetUrl=safeSrvUrl(sheetUrl);
 
   document.body.className="theme-"+tpl;
   var tc=document.querySelector('meta[name="theme-color"]');
@@ -1157,7 +1204,8 @@ async function init(){
   });
 
   if(inviteUrl){var bi=$("#btnInvite");bi.href=inviteUrl;bi.hidden=false;}
-  if(params.get("doc")){var bs=$("#btnSheet");bs.href=params.get("doc");bs.hidden=false;}
+  var docHref=safeDocUrl(params.get("doc")||"");
+  if(docHref){var bs=$("#btnSheet");bs.href=docHref;bs.hidden=false;}
 
   document.querySelectorAll(".chip[data-filter]").forEach(function(b){
     b.addEventListener("click",function(){

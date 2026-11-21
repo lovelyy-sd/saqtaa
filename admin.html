@@ -406,6 +406,7 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
 .dc-sw-del{width:30px;height:30px;border-radius:8px;border:1px solid var(--hair);background:var(--card);color:var(--ink2);font-size:.9rem;cursor:pointer;display:grid;place-items:center}
 .dc-sw-del:hover{color:var(--red-ink);border-color:var(--red-ink)}
 .dc-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -1033,12 +1034,15 @@ var currentPhotoBlob=null;
 var currentPhotoUrl="";
 var currentRsvpMode="saqtaa";
 var currentOrderId="";
+var currentStatsToken="";
+var sessionPin="";
 var currentOrderFilter="all";
 var activeScreen="home";
 var currentStatsOrder=null;
 var currentStatsRows=[];
+try{localStorage.removeItem(PIN_KEY);}catch(_){}
 
-var APPS_SCRIPT_CODE="/**\n * SAQTAA BACKEND v3.0 (Google Apps Script)\n * Единый сервер для:\n * 1) Защиты админ-панели паролем на сервере\n * 2) Загрузки фотографий с телефона (сохраняются на Google Диск SAQTAA и отдаются по прямой ссылке)\n * 3) Сохранения и поиска всех заказов с любого телефона/компьютера (по имени, дате и времени)\n * 4) Приёма ответов гостей (RSVP) с защитой от спама и дублей\n * 5) Автоматической отправки красивых HTML-писем на Email клиента через MailApp (без регистрации клиента!)\n * 6) Живой онлайн-статистики ответов для клиента (stats.html)\n */\n\n// ================= НАСТРОЙКИ =================\n// При первом входе из админ-панели вы сможете задать свой пароль, либо укажите его здесь:\nvar DEFAULT_ADMIN_PIN = \"saqtaa2026\";\nvar BRAND_NAME = \"SAQTAA · Цифровые приглашения\";\nvar TIMEZONE = \"Asia/Almaty\";\n// =============================================\n\nfunction getAdminPin() {\n  var saved = PropertiesService.getScriptProperties().getProperty(\"ADMIN_PIN\");\n  return saved || DEFAULT_ADMIN_PIN;\n}\n\nfunction verifyPin(pin) {\n  return String(pin || \"\").trim() === getAdminPin();\n}\n\nfunction jsonOut(obj) {\n  return ContentService.createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\n/**\n * Автоматически создаёт листы ORDERS и RSVPS в текущей Google Таблице\n */\nfunction ensureSheets(needOrders, needRsvps) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var orders = null;\n  if (needOrders !== false) {\n    orders = ss.getSheetByName(\"ORDERS\");\n    if (!orders) {\n      orders = ss.insertSheet(\"ORDERS\");\n      orders.appendRow([\n        \"ID заказа\", \"Создано\", \"Имена\", \"Дата тоя\", \"Время\", \"Шаблон\",\n        \"Email клиента\", \"Ссылка приглашения\", \"Ссылка статистики\", \"JSON данных\"\n      ]);\n      orders.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      orders.setFrozenRows(1);\n    }\n  }\n  var rsvps = null;\n  if (needRsvps !== false) {\n    rsvps = ss.getSheetByName(\"RSVPS\");\n    if (!rsvps) {\n      rsvps = ss.insertSheet(\"RSVPS\");\n      rsvps.appendRow([\n        \"Order ID\", \"RSVP ID\", \"Дата и время\", \"Имя\", \"Фамилия\",\n        \"Статус (yes/no/maybe)\", \"Ответ текстом\", \"Гостей\", \"Мероприятие\", \"Email клиента\"\n      ]);\n      rsvps.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      rsvps.setFrozenRows(1);\n    }\n  }\n  return { ss: ss, orders: orders, rsvps: rsvps };\n}\n\nfunction doGet(e) {\n  return handle(e ? e.parameter : {});\n}\n\nfunction doPost(e) {\n  var p = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      p = JSON.parse(e.postData.contents);\n    }\n  } catch (_) {}\n  if (e && e.parameter) {\n    for (var k in e.parameter) {\n      if (p[k] === undefined) p[k] = e.parameter[k];\n    }\n  }\n  return handle(p);\n}\n\nfunction handle(p) {\n  var action = String(p.action || \"ping\").trim();\n  if (action === \"ping\") return jsonOut({ ok: true, status: \"SAQTAA Server Active\" });\n\n  // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ\n  if (action === \"auth\") {\n    if (!verifyPin(p.pin)) {\n      return jsonOut({ ok: false, error: \"Неверный серверный пароль администратора\" });\n    }\n    ensureSheets();\n    return jsonOut({ ok: true, message: \"Авторизация успешна\" });\n  }\n\n  // Смена пароля администратора\n  if (action === \"change_pin\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный текущий пароль\" });\n    var newPin = String(p.new_pin || \"\").trim();\n    if (newPin.length < 4) return jsonOut({ ok: false, error: \"Новый пароль слишком короткий\" });\n    PropertiesService.getScriptProperties().setProperty(\"ADMIN_PIN\", newPin);\n    return jsonOut({ ok: true });\n  }\n\n  // Тест отправки письма через GmailApp (из Настроек админ-панели)\n  if (action === \"test_email\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Неверный пароль администратора\" });\n    var toAddr = String(p.to || \"\").trim();\n    if (!toAddr || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(toAddr)) {\n      return jsonOut({ ok: false, error: \"Укажите корректный Email получателя\" });\n    }\n    try {\n      var testPlain = \"Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.\";\n      GmailApp.sendEmail(toAddr, \"Тест почты SAQTAA\", testPlain, {\n        name: BRAND_NAME,\n        htmlBody: '<div style=\"font-family:Arial,sans-serif;max-width:520px;padding:20px;background:#ffffff;border:1px solid #e5e0d5;border-radius:10px;color:#182720\"><h3 style=\"margin:0 0 8px;color:#0F4A38;font-size:17px\">SAQTAA · Тест отправки<\/h3><p style=\"margin:0;font-size:14px;line-height:1.5\">' + testPlain + '<\/p><\/div>'\n      });\n      return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });\n    } catch (testErr) {\n      return jsonOut({ ok: false, error: String(testErr && testErr.message ? testErr.message : testErr) });\n    }\n  }\n\n  // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA\n  if (action === \"upload_photo\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён (неверный пароль)\" });\n    try {\n      var b64 = String(p.base64 || \"\");\n      var mime = String(p.mime || \"image/jpeg\");\n      var name = \"saqtaa_\" + new Date().getTime() + \".jpg\";\n      if (!b64) return jsonOut({ ok: false, error: \"Пустой файл фото\" });\n      var bytes = Utilities.base64Decode(b64);\n      var blob = Utilities.newBlob(bytes, mime, name);\n\n      var folders = DriveApp.getFoldersByName(\"SAQTAA_PHOTOS\");\n      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(\"SAQTAA_PHOTOS\");\n      var file = folder.createFile(blob);\n      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);\n      var fileId = file.getId();\n      var directUrl = \"https://lh3.googleusercontent.com/d/\" + fileId + \"=w1600\";\n      return jsonOut({\n        ok: true,\n        id: fileId,\n        url: directUrl,\n        fallback_url: \"https://drive.google.com/uc?export=view&id=\" + fileId\n      });\n    } catch (err) {\n      return jsonOut({ ok: false, error: \"Ошибка сохранения фото на Google Диск: \" + String(err) });\n    }\n  }\n\n  var lock = LockService.getScriptLock();\n  lock.tryLock(10000);\n  try {\n    var needOrdersSheet = (action === \"save_order\" || action === \"list_orders\" || action === \"delete_order\" ||\n      (action === \"rsvp\" && !String(p.to_email || \"\").trim() && String(p.oid || p.order_id || \"default\").trim() !== \"default\"));\n    var needRsvpsSheet = (action === \"rsvp\" || action === \"stats\" || action === \"get\");\n    var db = ensureSheets(needOrdersSheet, needRsvpsSheet);\n\n    // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ\n    if (action === \"save_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var orderId = String(p.id || (\"ord_\" + new Date().getTime())).trim();\n      var nowStr = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var names = String(p.names || \"\").trim();\n      var dateStr = String(p.date || \"\").trim();\n      var timeStr = String(p.time || \"\").trim();\n      var tpl = String(p.tpl || \"luxury\").trim();\n      var email = String(p.email || \"\").trim();\n      var inviteUrl = String(p.invite_url || \"\").trim();\n      var statsUrl = String(p.stats_url || \"\").trim();\n      var jsonStr = typeof p.data === \"string\" ? p.data : JSON.stringify(p.data || {});\n\n      var rows = db.orders.getDataRange().getValues();\n      var foundRow = -1;\n      for (var i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]) === orderId) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n      var rowVals = [orderId, nowStr, names, dateStr, timeStr, tpl, email, inviteUrl, statsUrl, jsonStr];\n      if (foundRow > 0) {\n        db.orders.getRange(foundRow, 1, 1, 10).setValues([rowVals]);\n      } else {\n        db.orders.appendRow(rowVals);\n      }\n      return jsonOut({ ok: true, id: orderId, saved_at: nowStr });\n    }\n\n    // 4. СПИСОК И ПОИСК ЗАКАЗОВ ДЛЯ АДМИНКИ\n    if (action === \"list_orders\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var rows = db.orders.getDataRange().getValues();\n      var list = [];\n      for (var i = 1; i < rows.length; i++) {\n        var r = rows[i];\n        if (!r[0]) continue;\n        var dVal = r[3] instanceof Date ? Utilities.formatDate(r[3], TIMEZONE, \"yyyy-MM-dd\") : String(r[3] || \"\");\n        var cVal = r[1] instanceof Date ? Utilities.formatDate(r[1], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[1] || \"\");\n        list.push({\n          id: String(r[0]),\n          created: cVal,\n          names: String(r[2] || \"\"),\n          date: dVal,\n          time: String(r[4] || \"\"),\n          tpl: String(r[5] || \"\"),\n          email: String(r[6] || \"\"),\n          invite_url: String(r[7] || \"\"),\n          stats_url: String(r[8] || \"\"),\n          data: String(r[9] || \"{}\")\n        });\n      }\n      return jsonOut({ ok: true, orders: list.reverse() });\n    }\n\n    // 5. УДАЛЕНИЕ ЗАКАЗА\n    if (action === \"delete_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: \"Доступ запрещён\" });\n      var targetId = String(p.id || \"\").trim();\n      var rows = db.orders.getDataRange().getValues();\n      for (var i = rows.length - 1; i >= 1; i--) {\n        if (String(rows[i][0]) === targetId) {\n          db.orders.deleteRow(i + 1);\n          return jsonOut({ ok: true });\n        }\n      }\n      return jsonOut({ ok: false, error: \"Заказ не найден\" });\n    }\n\n    // 6. ПРИЁМ ОТВЕТА ГОСТЯ (RSVP) + ОТПРАВКА ПИСЬМА НА ПОЧТУ КЛИЕНТА ЧЕРЕЗ GMAIL SAQTAA\n    if (action === \"rsvp\") {\n      if (p.botcheck) return jsonOut({ ok: true }); // Honeypot от ботов\n\n      var name = String(p.name || \"\").trim().slice(0, 50);\n      var fam = String(p.fam || \"\").trim().slice(0, 50);\n      if (!name || !fam) return jsonOut({ ok: false, error: \"Укажите имя и фамилию\" });\n\n      var attCode = String(p.att_code || p.att || \"yes\").toLowerCase();\n      if (attCode.indexOf(\"не\") !== -1 || attCode.indexOf(\"келмей\") !== -1 || attCode.indexOf(\"алмай\") !== -1 || attCode === \"no\") attCode = \"no\";\n      else if (attCode.indexOf(\"пока\") !== -1 || attCode.indexOf(\"білмей\") !== -1 || attCode.indexOf(\"ойлан\") !== -1 || attCode.indexOf(\"maybe\") !== -1) attCode = \"maybe\";\n      else attCode = \"yes\";\n\n      var rawLang = String(p.lang || \"\").toLowerCase().trim();\n      var rawAttText = String(p.att || \"\").toLowerCase();\n      var isBoth = (rawLang === \"both\");\n      var isKz = (!isBoth && (rawLang === \"kz\" || rawLang === \"kk\" || (!rawLang && (rawAttText.indexOf(\"келед\") !== -1 || rawAttText.indexOf(\"келмей\") !== -1 || rawAttText.indexOf(\"алмай\") !== -1 || rawAttText.indexOf(\"білмей\") !== -1))));\n      var lang = isBoth ? \"both\" : (isKz ? \"kz\" : \"ru\");\n      var labels = isBoth ? {\n        yes: \"Келеді (Расталды) / Придёт (Подтверждено)\",\n        no: \"Келе алмайды (Бас тартты) / Не придёт (Отказ)\",\n        maybe: \"Әзірге білмейді / Пока не знает\"\n      } : (isKz ? {\n        yes: \"Келеді (Расталды)\",\n        no: \"Келе алмайды (Бас тартты)\",\n        maybe: \"Әзірге білмейді (Ойлануда)\"\n      } : {\n        yes: \"Придёт (Подтверждено)\",\n        no: \"Не придёт (Отказ)\",\n        maybe: \"Пока не знает (Под вопросом)\"\n      });\n      var attLabel = labels[attCode];\n      var guests = attCode === \"yes\" ? (Number(p.guests) || 1) : 0;\n\n      var orderId = String(p.oid || p.order_id || \"default\").trim();\n      var rsvpId = String(p.id || (\"g_\" + new Date().getTime())).trim();\n      var eventTitle = String(p.title || (isBoth ? \"Мерекелік шара / Праздничное торжество\" : (isKz ? \"Мерекелік шара\" : \"Праздничное торжество\"))).trim();\n      var eventDate = String(p.date || \"\").trim();\n      var clientEmail = String(p.to_email || \"\").trim();\n      var noEmail = String(p.no_email || \"\") === \"1\";\n\n      // Антиспам: защита от частых кликов с одного rsvpId (не чаще 1 раза в 10 сек)\n      var cache = CacheService.getScriptCache();\n      var rateKey = \"rate_\" + rsvpId;\n      if (cache.get(rateKey)) {\n        return jsonOut({ ok: true, cached: true });\n      }\n      cache.put(rateKey, \"1\", 10);\n\n      // Если email клиента не передан в запросе — ищем его в таблице ORDERS по orderId\n      if (!clientEmail && orderId && orderId !== \"default\") {\n        var oRows = db.orders.getDataRange().getValues();\n        for (var k = 1; k < oRows.length; k++) {\n          if (String(oRows[k][0]) === orderId) {\n            clientEmail = String(oRows[k][6] || \"\").trim();\n            break;\n          }\n        }\n      }\n\n      var now = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var foundRsvpRow = -1;\n      var totalYes = 0, totalNo = 0, totalMaybe = 0;\n      var needSummary = (!noEmail && clientEmail && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(clientEmail));\n      var rRows = db.rsvps.getDataRange().getValues();\n      for (var j = 1; j < rRows.length; j++) {\n        var rRow = rRows[j];\n        var sameOrder = String(rRow[0]) === orderId;\n        if (sameOrder && String(rRow[1]) === rsvpId) {\n          foundRsvpRow = j + 1;\n        } else if (needSummary && sameOrder) {\n          var st = String(rRow[5]);\n          if (st === \"yes\") totalYes += (Number(rRow[7]) || 1);\n          else if (st === \"no\") totalNo++;\n          else totalMaybe++;\n        }\n      }\n      if (needSummary) {\n        if (attCode === \"yes\") totalYes += (guests || 1);\n        else if (attCode === \"no\") totalNo++;\n        else totalMaybe++;\n      }\n\n      var isUpdate = foundRsvpRow > 0;\n      var rowData = [orderId, rsvpId, now, name, fam, attCode, attLabel, guests, eventTitle, clientEmail];\n      if (isUpdate) {\n        db.rsvps.getRange(foundRsvpRow, 1, 1, 10).setValues([rowData]);\n      } else {\n        db.rsvps.appendRow(rowData);\n      }\n\n      // Отправка письма с аккаунта SAQTAA на Email клиента через GmailApp (только если не выбран EmailJS)\n      var emailSent = false, mailError = \"\";\n      if (needSummary) {\n        try {\n          var fullName = name + \" \" + fam;\n          var subjPrefix = isBoth\n            ? (isUpdate ? \"Жауап өзгертілді / Изменение ответа: \" : \"Жаңа жауап / Новый ответ гостя: \")\n            : (isUpdate\n              ? (isKz ? \"Жауап өзгертілді: \" : \"Изменение ответа: \")\n              : (isKz ? \"Жаңа жауап: \" : \"Новый ответ гостя: \"));\n          var subject = subjPrefix + fullName + \" — \" + eventTitle;\n          var badgeColor = attCode === \"yes\" ? \"#1E6F43\" : (attCode === \"no\" ? \"#9E2B3A\" : \"#9E7318\");\n          var txt = isBoth ? {\n            hdr: \"SAQTAA · Қонақ жауабы / Уведомление о госте\",\n            date: \"Күні / Дата: \",\n            guest: \"Қонақ / Гость:\",\n            ans: \"Жауабы / Ответ:\",\n            time: \"Уақыты / Время: \",\n            upd: \" (жаңартылды / обновлено)\",\n            stTitle: \"Статистика / Текущая статистика\",\n            stLine: \"Келеді / Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді / Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда / Думают: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Келеді / Придут: \" + totalYes + \" · Келмейді / Не придут: \" + totalNo + \" · Ойлануда / Думают: \" + totalMaybe,\n            brand: \"SAQTAA · Цифрлық шақырулар / Цифровые приглашения\"\n          } : (isKz ? {\n            hdr: \"SAQTAA · Қонақ туралы хабарлама\",\n            date: \"Күні: \",\n            guest: \"Қонақ:\",\n            ans: \"Жауабы:\",\n            time: \"Жауап уақыты: \",\n            upd: \" (жаңартылған жауап)\",\n            stTitle: \"Шақыру бойынша статистика\",\n            stLine: \"Келеді: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Келеді: \" + totalYes + \" · Келмейді: \" + totalNo + \" · Ойлануда: \" + totalMaybe,\n            brand: \"SAQTAA · Цифрлық шақырулар\"\n          } : {\n            hdr: \"SAQTAA · Уведомление о госте\",\n            date: \"Дата: \",\n            guest: \"Гость:\",\n            ans: \"Ответ:\",\n            time: \"Время ответа: \",\n            upd: \" (обновлённый ответ)\",\n            stTitle: \"Статистика по приглашению\",\n            stLine: \"Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Думают: <b>\" + totalMaybe + \"<\/b>\",\n            stPlain: \"Придут: \" + totalYes + \" · Не придут: \" + totalNo + \" · Думают: \" + totalMaybe,\n            brand: BRAND_NAME\n          });\n          var plainBody = [\n            eventTitle + (eventDate ? \" (\" + eventDate + \")\" : \"\"),\n            txt.guest + \" \" + fullName,\n            txt.ans + \" \" + attLabel,\n            txt.time + now + (isUpdate ? txt.upd : \"\"),\n            txt.stPlain\n          ].join(\"\\n\");\n          var htmlBody = [\n            '<div style=\"font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;padding:22px;border-radius:10px;color:#182720;border:1px solid #e5e0d5\">',\n            '  <div style=\"border-bottom:1px solid #ece7dc;padding-bottom:12px;margin-bottom:16px\">',\n            '    <div style=\"font-size:12px;color:#8c6d32;font-weight:bold\">' + txt.hdr + '<\/div>',\n            '    <h2 style=\"margin:6px 0 2px;font-size:20px;color:#0F4A38\">' + eventTitle + '<\/h2>',\n            (eventDate ? '<div style=\"font-size:13px;color:#46584D\">' + txt.date + eventDate + '<\/div>' : ''),\n            '  <\/div>',\n            '  <div style=\"padding:4px 0 14px;border-bottom:1px solid #ece7dc;margin-bottom:14px\">',\n            '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + txt.guest + '<\/strong> ' + fullName + '<\/p>',\n            '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + txt.ans + '<\/strong> <span style=\"color:' + badgeColor + ';font-weight:bold\">' + attLabel + '<\/span><\/p>',\n            '    <p style=\"margin:0;font-size:12px;color:#6a746d\">' + txt.time + now + (isUpdate ? txt.upd : '') + '<\/p>',\n            '  <\/div>',\n            '  <div style=\"font-size:13px;color:#182720\">',\n            '    <div style=\"color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px\">' + txt.stTitle + '<\/div>',\n            '    ' + txt.stLine,\n            '  <\/div>',\n            '<\/div>'\n          ].join(\"\\n\");\n\n          GmailApp.sendEmail(clientEmail, subject, plainBody, {\n            name: txt.brand,\n            htmlBody: htmlBody\n          });\n          emailSent = true;\n        } catch (mailErr) {\n          mailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);\n        }\n      }\n\n      return jsonOut({ ok: true, id: rsvpId, updated: isUpdate, email_sent: emailSent, mail_error: mailError });\n    }\n\n    // 7. ПОЛУЧЕНИЕ ЖИВОЙ СТАТИСТИКИ ДЛЯ КЛИЕНТА (stats.html)\n    if (action === \"stats\" || action === \"get\") {\n      var filterOrderId = String(p.oid || p.order_id || \"\").trim();\n      var rRows = db.rsvps.getDataRange().getValues();\n      var outRows = [];\n      for (var i = 1; i < rRows.length; i++) {\n        var r = rRows[i];\n        if (!r[3] && !r[4]) continue;\n        if (filterOrderId && String(r[0]) !== filterOrderId) continue;\n        var tVal = r[2] instanceof Date ? Utilities.formatDate(r[2], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[2] || \"\");\n        outRows.push({\n          oid: String(r[0] || \"\"),\n          id: String(r[1] || \"\"),\n          time: tVal,\n          name: String(r[3] || \"\"),\n          fam: String(r[4] || \"\"),\n          att: String(r[5] || \"yes\"),\n          att_label: String(r[6] || \"\"),\n          guests: Number(r[7] || 0),\n          title: String(r[8] || \"\")\n        });\n      }\n      return jsonOut({ ok: true, rows: outRows });\n    }\n\n    return jsonOut({ ok: true, status: \"SAQTAA Server Active\" });\n  } catch (err) {\n    return jsonOut({ ok: false, error: String(err) });\n  } finally {\n    lock.releaseLock();\n  }\n}";
+var APPS_SCRIPT_CODE="/**\n * SAQTAA BACKEND v4.0 (Google Apps Script)\n * Единый защищённый сервер для:\n * 1) Серверной авторизации админ-панели (PIN хранится только в Script Properties → ADMIN_PIN)\n * 2) Загрузки фотографий с телефона на Google Диск SAQTAA\n * 3) Сохранения, поиска и удаления заказов (только POST + ADMIN_PIN)\n * 4) Приёма ответов гостей (RSVP) с лимитами, защитой от спама и формул\n * 5) Отправки HTML-уведомлений на Email клиента через GmailApp (Email берётся только из таблицы ORDERS)\n * 6) Раздельной статистики: публичные счётчики (action=counts) и список гостей по токену (action=stats)\n *\n * НАСТРОЙКА ПАРОЛЯ:\n * В редакторе Google Apps Script откройте:\n * Настройки проекта (шестерёнка слева) → Свойства скрипта → Добавить свойство:\n *   Свойство: ADMIN_PIN\n *   Значение: ваш надёжный пароль (от 4 символов)\n */\n\n// ================= НАСТРОЙКИ =================\nvar BRAND_NAME = \"SAQTAA · Цифровые приглашения\";\nvar TIMEZONE = \"Asia/Almaty\";\nvar MAX_EMAILS_PER_ORDER_HOUR = 120;\n// =============================================\n\nfunction getAdminPin() {\n  return String(PropertiesService.getScriptProperties().getProperty(\"ADMIN_PIN\") || \"\").trim();\n}\n\nfunction isPinConfigured() {\n  return getAdminPin().length >= 4;\n}\n\nfunction timingSafeEqual(a, b) {\n  var sa = String(a || \"\");\n  var sb = String(b || \"\");\n  if (!sa || sa.length !== sb.length) return false;\n  var diff = 0;\n  for (var i = 0; i < sa.length; i++) {\n    diff |= sa.charCodeAt(i) ^ sb.charCodeAt(i);\n  }\n  return diff === 0;\n}\n\nfunction verifyPin(pin) {\n  var expected = getAdminPin();\n  if (expected.length < 4) return false;\n  return timingSafeEqual(String(pin || \"\").trim(), expected);\n}\n\nfunction pinError() {\n  if (!isPinConfigured()) {\n    return \"Серверный пароль ADMIN_PIN не задан. Откройте Google Apps Script → Настройки проекта → Свойства скрипта и добавьте ADMIN_PIN (от 4 символов).\";\n  }\n  return \"Неверный серверный пароль администратора\";\n}\n\nfunction escHtml(s) {\n  return String(s == null ? \"\" : s)\n    .replace(/&/g, \"&amp;\")\n    .replace(/<\/g, \"&lt;\")\n    .replace(/>/g, \"&gt;\")\n    .replace(/\"/g, \"&quot;\")\n    .replace(/'/g, \"&#39;\");\n}\n\nfunction safeSingleLine(s, maxLen) {\n  var clean = String(s == null ? \"\" : s).replace(/[\\r\\n\\t]+/g, \" \").replace(/\\s+/g, \" \").trim();\n  return maxLen ? clean.slice(0, maxLen) : clean;\n}\n\nfunction safeCell(v) {\n  var s = String(v == null ? \"\" : v).trim();\n  if (/^[=+\\-@\\t\\r]/.test(s)) return \"'\" + s;\n  return s;\n}\n\nfunction isDateVal(v) {\n  return Boolean(v && typeof v === \"object\" && typeof v.getTime === \"function\" && !isNaN(v.getTime()));\n}\n\nfunction extractStatsToken(jsonStr) {\n  try {\n    var obj = typeof jsonStr === \"string\" ? JSON.parse(jsonStr || \"{}\") : jsonStr;\n    return obj && typeof obj === \"object\" ? String(obj.st || \"\").trim() : \"\";\n  } catch (_) {\n    return \"\";\n  }\n}\n\nfunction verifyStatsToken(expected, given) {\n  var e = String(expected || \"\").trim();\n  var g = String(given || \"\").trim();\n  if (e.length < 8 || g.length < 8) return false;\n  return timingSafeEqual(e, g);\n}\n\nfunction jsonOut(obj) {\n  return ContentService.createTextOutput(JSON.stringify(obj))\n    .setMimeType(ContentService.MimeType.JSON);\n}\n\n/**\n * Автоматически создаёт листы ORDERS и RSVPS в текущей Google Таблице\n */\nfunction ensureSheets(needOrders, needRsvps) {\n  var ss = SpreadsheetApp.getActiveSpreadsheet();\n  var orders = null;\n  if (needOrders !== false) {\n    orders = ss.getSheetByName(\"ORDERS\");\n    if (!orders) {\n      orders = ss.insertSheet(\"ORDERS\");\n      orders.appendRow([\n        \"ID заказа\", \"Создано\", \"Имена\", \"Дата тоя\", \"Время\", \"Шаблон\",\n        \"Email клиента\", \"Ссылка приглашения\", \"Ссылка статистики\", \"JSON данных\"\n      ]);\n      orders.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      orders.setFrozenRows(1);\n    }\n  }\n  var rsvps = null;\n  if (needRsvps !== false) {\n    rsvps = ss.getSheetByName(\"RSVPS\");\n    if (!rsvps) {\n      rsvps = ss.insertSheet(\"RSVPS\");\n      rsvps.appendRow([\n        \"Order ID\", \"RSVP ID\", \"Дата и время\", \"Имя\", \"Фамилия\",\n        \"Статус (yes/no/maybe)\", \"Ответ текстом\", \"Гостей\", \"Мероприятие\", \"Email клиента\"\n      ]);\n      rsvps.getRange(1, 1, 1, 10).setFontWeight(\"bold\").setBackground(\"#0F4A38\").setFontColor(\"#F6F1E4\");\n      rsvps.setFrozenRows(1);\n    }\n  }\n  return { ss: ss, orders: orders, rsvps: rsvps };\n}\n\nfunction doGet(e) {\n  return handle(e && e.parameter ? e.parameter : {}, false);\n}\n\nfunction doPost(e) {\n  var p = {};\n  try {\n    if (e && e.postData && e.postData.contents) {\n      p = JSON.parse(e.postData.contents);\n    }\n  } catch (_) {}\n  if (!p || typeof p !== \"object\" || Array.isArray(p)) p = {};\n  return handle(p, true);\n}\n\nfunction handle(p, isPost) {\n  var action = String(p.action || \"ping\").trim();\n  if (action === \"ping\") {\n    return jsonOut({ ok: true, status: \"SAQTAA Server Active\", version: \"4.0\", pin_configured: isPinConfigured() });\n  }\n\n  // Защищённые действия принимаются строго через POST, чтобы PIN и токены не попадали в URL/логи\n  var postOnlyActions = {\n    auth: 1, change_pin: 1, test_email: 1, upload_photo: 1,\n    save_order: 1, list_orders: 1, delete_order: 1, stats: 1, get: 1\n  };\n  if (postOnlyActions[action] && !isPost) {\n    return jsonOut({ ok: false, error: \"Используйте POST-запрос для защищённого действия\" });\n  }\n\n  // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ\n  if (action === \"auth\") {\n    if (!verifyPin(p.pin)) {\n      return jsonOut({ ok: false, error: pinError() });\n    }\n    ensureSheets(true, true);\n    return jsonOut({ ok: true, message: \"Авторизация успешна\", version: \"4.0\" });\n  }\n\n  // Смена пароля администратора\n  if (action === \"change_pin\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n    var newPin = String(p.new_pin || \"\").trim();\n    if (newPin.length < 4 || newPin.length > 64) {\n      return jsonOut({ ok: false, error: \"Новый пароль должен быть от 4 до 64 символов\" });\n    }\n    PropertiesService.getScriptProperties().setProperty(\"ADMIN_PIN\", newPin);\n    return jsonOut({ ok: true });\n  }\n\n  // Тест отправки письма через GmailApp (из Настроек админ-панели)\n  if (action === \"test_email\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n    var toAddr = safeSingleLine(p.to, 120);\n    if (!toAddr || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(toAddr)) {\n      return jsonOut({ ok: false, error: \"Укажите корректный Email получателя\" });\n    }\n    try {\n      var testPlain = \"Почта Google Apps Script работает корректно. Ответы гостей будут приходить на этот адрес.\";\n      GmailApp.sendEmail(toAddr, \"Тест почты SAQTAA\", testPlain, {\n        name: BRAND_NAME,\n        htmlBody: '<div style=\"font-family:Arial,sans-serif;max-width:520px;padding:20px;background:#ffffff;border:1px solid #e5e0d5;border-radius:10px;color:#182720\"><h3 style=\"margin:0 0 8px;color:#0F4A38;font-size:17px\">SAQTAA · Тест отправки<\/h3><p style=\"margin:0;font-size:14px;line-height:1.5\">' + escHtml(testPlain) + '<\/p><\/div>'\n      });\n      return jsonOut({ ok: true, email_sent: true, to: toAddr, remaining_quota: MailApp.getRemainingDailyQuota() });\n    } catch (testErr) {\n      return jsonOut({ ok: false, error: String(testErr && testErr.message ? testErr.message : testErr) });\n    }\n  }\n\n  // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA\n  if (action === \"upload_photo\") {\n    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n    try {\n      var b64 = String(p.base64 || \"\");\n      var mime = String(p.mime || \"image/jpeg\").toLowerCase().trim();\n      var allowedMimes = { \"image/jpeg\": \"jpg\", \"image/png\": \"png\", \"image/webp\": \"webp\" };\n      if (!allowedMimes[mime]) return jsonOut({ ok: false, error: \"Поддерживаются только JPG, PNG или WebP\" });\n      if (!b64) return jsonOut({ ok: false, error: \"Пустой файл фото\" });\n      if (b64.length > 7000000) return jsonOut({ ok: false, error: \"Файл слишком большой (максимум 5 МБ)\" });\n      var name = \"saqtaa_\" + new Date().getTime() + \".\" + allowedMimes[mime];\n      var bytes = Utilities.base64Decode(b64);\n      var blob = Utilities.newBlob(bytes, mime, name);\n\n      var folders = DriveApp.getFoldersByName(\"SAQTAA_PHOTOS\");\n      var folder = folders.hasNext() ? folders.next() : DriveApp.createFolder(\"SAQTAA_PHOTOS\");\n      var file = folder.createFile(blob);\n      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);\n      var fileId = file.getId();\n      var directUrl = \"https://lh3.googleusercontent.com/d/\" + fileId + \"=w1600\";\n      return jsonOut({\n        ok: true,\n        id: fileId,\n        url: directUrl,\n        fallback_url: \"https://drive.google.com/uc?export=view&id=\" + fileId\n      });\n    } catch (err) {\n      return jsonOut({ ok: false, error: \"Ошибка сохранения фото на Google Диск: \" + String(err) });\n    }\n  }\n\n  var lock = LockService.getScriptLock();\n  var locked = lock.tryLock(10000);\n  if (!locked) {\n    return jsonOut({ ok: false, error: \"Сервер занят, попробуйте через пару секунд\" });\n  }\n  try {\n    var needOrdersSheet = (\n      action === \"save_order\" || action === \"list_orders\" || action === \"delete_order\" ||\n      action === \"stats\" || action === \"get\" ||\n      (action === \"rsvp\" && safeSingleLine(p.oid || p.order_id || \"default\", 80) !== \"default\")\n    );\n    var needRsvpsSheet = (action === \"rsvp\" || action === \"stats\" || action === \"get\" || action === \"counts\");\n    var db = ensureSheets(needOrdersSheet, needRsvpsSheet);\n\n    // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ\n    if (action === \"save_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n      var orderId = safeSingleLine(p.id || (\"ord_\" + new Date().getTime()), 80);\n      var nowStr = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var names = safeCell(safeSingleLine(p.names || p.name || \"\", 140));\n      var dateStr = safeSingleLine(p.date || \"\", 20);\n      var rawTime = safeSingleLine(p.time || \"\", 40);\n      // Префикс апострофа не даёт Google Таблицам превращать «18:00» в объект Date\n      var timeStr = rawTime ? (\"'\" + rawTime.replace(/^'+/, \"\")) : \"\";\n      var tpl = safeCell(safeSingleLine(p.tpl || p.template || \"luxury\", 40));\n      var email = safeSingleLine(p.email || \"\", 120);\n      var inviteUrl = safeSingleLine(p.invite_url || \"\", 16000);\n      var statsUrl = safeSingleLine(p.stats_url || \"\", 16000);\n      var dataObj = {};\n      try {\n        dataObj = typeof p.data === \"string\" ? JSON.parse(p.data || \"{}\") : (p.data || {});\n      } catch (_) {\n        dataObj = {};\n      }\n      if (p.stats_token && !dataObj.st) dataObj.st = String(p.stats_token).trim();\n      var jsonStr = JSON.stringify(dataObj);\n\n      var rows = db.orders.getDataRange().getValues();\n      var foundRow = -1;\n      for (var i = 1; i < rows.length; i++) {\n        if (String(rows[i][0]) === orderId) {\n          foundRow = i + 1;\n          break;\n        }\n      }\n      var rowVals = [safeCell(orderId), nowStr, names, dateStr, timeStr, tpl, safeCell(email), inviteUrl, statsUrl, jsonStr];\n      if (foundRow > 0) {\n        db.orders.getRange(foundRow, 1, 1, 10).setValues([rowVals]);\n      } else {\n        db.orders.appendRow(rowVals);\n      }\n      return jsonOut({ ok: true, id: orderId, saved_at: nowStr });\n    }\n\n    // 4. СПИСОК И ПОИСК ЗАКАЗОВ ДЛЯ АДМИНКИ\n    if (action === \"list_orders\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n      var rows = db.orders.getDataRange().getValues();\n      var list = [];\n      for (var i = 1; i < rows.length; i++) {\n        var r = rows[i];\n        if (!r[0]) continue;\n        var dVal = isDateVal(r[3]) ? Utilities.formatDate(r[3], TIMEZONE, \"yyyy-MM-dd\") : String(r[3] || \"\");\n        var cVal = isDateVal(r[1]) ? Utilities.formatDate(r[1], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[1] || \"\");\n        var tVal = isDateVal(r[4]) ? Utilities.formatDate(r[4], TIMEZONE, \"HH:mm\") : String(r[4] || \"\");\n        list.push({\n          id: String(r[0]),\n          created: cVal,\n          names: String(r[2] || \"\"),\n          date: dVal,\n          time: tVal,\n          tpl: String(r[5] || \"\"),\n          email: String(r[6] || \"\"),\n          invite_url: String(r[7] || \"\"),\n          stats_url: String(r[8] || \"\"),\n          data: String(r[9] || \"{}\")\n        });\n      }\n      return jsonOut({ ok: true, orders: list.reverse() });\n    }\n\n    // 5. УДАЛЕНИЕ ЗАКАЗА\n    if (action === \"delete_order\") {\n      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });\n      var targetId = safeSingleLine(p.id || \"\", 80);\n      var rows = db.orders.getDataRange().getValues();\n      for (var i = rows.length - 1; i >= 1; i--) {\n        if (String(rows[i][0]) === targetId) {\n          db.orders.deleteRow(i + 1);\n          return jsonOut({ ok: true });\n        }\n      }\n      return jsonOut({ ok: false, error: \"Заказ не найден\" });\n    }\n\n    // 6. ПРИЁМ ОТВЕТА ГОСТЯ (RSVP) + ОТПРАВКА ПИСЬМА НА ПОЧТУ КЛИЕНТА ИЗ ТАБЛИЦЫ ORDERS\n    if (action === \"rsvp\") {\n      if (p.botcheck) return jsonOut({ ok: true }); // Honeypot от ботов\n\n      var name = safeSingleLine(p.name, 50);\n      var fam = safeSingleLine(p.fam, 50);\n      if (!name || !fam) return jsonOut({ ok: false, error: \"Укажите имя и фамилию\" });\n\n      var attCode = String(p.att_code || p.att || \"yes\").toLowerCase();\n      if (attCode.indexOf(\"не\") !== -1 || attCode.indexOf(\"келмей\") !== -1 || attCode.indexOf(\"алмай\") !== -1 || attCode === \"no\") attCode = \"no\";\n      else if (attCode.indexOf(\"пока\") !== -1 || attCode.indexOf(\"білмей\") !== -1 || attCode.indexOf(\"ойлан\") !== -1 || attCode.indexOf(\"maybe\") !== -1) attCode = \"maybe\";\n      else attCode = \"yes\";\n\n      var rawLang = String(p.lang || \"\").toLowerCase().trim();\n      var rawAttText = String(p.att || \"\").toLowerCase();\n      var isBoth = (rawLang === \"both\");\n      var isKz = (!isBoth && (rawLang === \"kz\" || rawLang === \"kk\" || (!rawLang && (rawAttText.indexOf(\"келед\") !== -1 || rawAttText.indexOf(\"келмей\") !== -1 || rawAttText.indexOf(\"алмай\") !== -1 || rawAttText.indexOf(\"білмей\") !== -1))));\n      var labels = isBoth ? {\n        yes: \"Келеді (Расталды) / Придёт (Подтверждено)\",\n        no: \"Келе алмайды (Бас тартты) / Не придёт (Отказ)\",\n        maybe: \"Әзірге білмейді / Пока не знает\"\n      } : (isKz ? {\n        yes: \"Келеді (Расталды)\",\n        no: \"Келе алмайды (Бас тартты)\",\n        maybe: \"Әзірге білмейді (Ойлануда)\"\n      } : {\n        yes: \"Придёт (Подтверждено)\",\n        no: \"Не придёт (Отказ)\",\n        maybe: \"Пока не знает (Под вопросом)\"\n      });\n      var attLabel = labels[attCode];\n      var parsedGuests = parseInt(p.guests, 10);\n      var guests = attCode === \"yes\" ? Math.max(1, Math.min(10, isNaN(parsedGuests) ? 1 : parsedGuests)) : 0;\n\n      var orderId = safeSingleLine(p.oid || p.order_id || \"default\", 80) || \"default\";\n      var rsvpId = safeSingleLine(p.id || (\"g_\" + new Date().getTime()), 80);\n      var eventTitle = safeSingleLine(p.title || (isBoth ? \"Мерекелік шара / Праздничное торжество\" : (isKz ? \"Мерекелік шара\" : \"Праздничное торжество\")), 120);\n      var eventDate = safeSingleLine(p.date || \"\", 40);\n      var noEmail = String(p.no_email || \"\") === \"1\";\n\n      // Антиспам: не чаще 1 раза в 10 сек на один (orderId + rsvpId), честно сообщаем клиенту\n      var cache = CacheService.getScriptCache();\n      var rateKey = \"rate_\" + orderId.slice(0, 40) + \"_\" + rsvpId.slice(0, 40);\n      if (cache.get(rateKey)) {\n        return jsonOut({ ok: false, rate_limited: true, error: \"Подождите 10 секунд перед повторной отправкой\" });\n      }\n      cache.put(rateKey, \"1\", 10);\n\n      // Email клиента и название события для письма берём ТОЛЬКО из таблицы ORDERS (защита от почтового релея)\n      var clientEmail = \"\";\n      if (orderId !== \"default\" && db.orders) {\n        var oRows = db.orders.getDataRange().getValues();\n        for (var k = 1; k < oRows.length; k++) {\n          if (String(oRows[k][0]) === orderId) {\n            clientEmail = safeSingleLine(oRows[k][6], 120);\n            var dbNames = safeSingleLine(oRows[k][2], 120);\n            if (dbNames) eventTitle = dbNames;\n            if (!eventDate && oRows[k][3]) {\n              var dbDate = isDateVal(oRows[k][3]) ? Utilities.formatDate(oRows[k][3], TIMEZONE, \"dd.MM.yyyy\") : safeSingleLine(oRows[k][3], 20);\n              var dbTime = isDateVal(oRows[k][4]) ? Utilities.formatDate(oRows[k][4], TIMEZONE, \"HH:mm\") : safeSingleLine(oRows[k][4], 20);\n              eventDate = (dbDate + (dbTime ? \" \" + dbTime : \"\")).trim();\n            }\n            break;\n          }\n        }\n      }\n\n      var now = Utilities.formatDate(new Date(), TIMEZONE, \"dd.MM.yyyy HH:mm\");\n      var foundRsvpRow = -1;\n      var totalYes = 0, totalNo = 0, totalMaybe = 0, totalResponses = 0;\n      var rRows = db.rsvps.getDataRange().getValues();\n      for (var j = 1; j < rRows.length; j++) {\n        var rRow = rRows[j];\n        var sameOrder = String(rRow[0]) === orderId;\n        if (!sameOrder) continue;\n        if (String(rRow[1]) === rsvpId) {\n          foundRsvpRow = j + 1;\n        } else {\n          var st = String(rRow[5]);\n          var gVal = parseInt(rRow[7], 10);\n          totalResponses++;\n          if (st === \"yes\") totalYes += Math.max(1, Math.min(10, isNaN(gVal) ? 1 : gVal));\n          else if (st === \"no\") totalNo++;\n          else totalMaybe++;\n        }\n      }\n      totalResponses++;\n      if (attCode === \"yes\") totalYes += guests;\n      else if (attCode === \"no\") totalNo++;\n      else totalMaybe++;\n\n      var isUpdate = foundRsvpRow > 0;\n      var rowData = [\n        safeCell(orderId), safeCell(rsvpId), now, safeCell(name), safeCell(fam),\n        attCode, attLabel, guests, safeCell(eventTitle), safeCell(clientEmail)\n      ];\n      if (isUpdate) {\n        db.rsvps.getRange(foundRsvpRow, 1, 1, 10).setValues([rowData]);\n      } else {\n        db.rsvps.appendRow(rowData);\n      }\n\n      // Отправка письма на подтверждённый Email из ORDERS через GmailApp (с часовым лимитом на заказ)\n      var emailSent = false, mailError = \"\";\n      var needEmail = (!noEmail && clientEmail && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(clientEmail));\n      if (needEmail) {\n        var mailQuotaKey = \"mq_\" + orderId.slice(0, 60);\n        var sentCount = parseInt(cache.get(mailQuotaKey) || \"0\", 10) || 0;\n        if (sentCount >= MAX_EMAILS_PER_ORDER_HOUR) {\n          mailError = \"Превышен часовой лимит уведомлений для заказа\";\n        } else {\n          try {\n            var fullName = name + \" \" + fam;\n            var subjPrefix = isBoth\n              ? (isUpdate ? \"Жауап өзгертілді / Изменение ответа: \" : \"Жаңа жауап / Новый ответ гостя: \")\n              : (isUpdate\n                ? (isKz ? \"Жауап өзгертілді: \" : \"Изменение ответа: \")\n                : (isKz ? \"Жаңа жауап: \" : \"Новый ответ гостя: \"));\n            var subject = safeSingleLine(subjPrefix + fullName + \" — \" + eventTitle, 200);\n            var badgeColor = attCode === \"yes\" ? \"#1E6F43\" : (attCode === \"no\" ? \"#9E2B3A\" : \"#9E7318\");\n            var txt = isBoth ? {\n              hdr: \"SAQTAA · Қонақ жауабы / Уведомление о госте\",\n              date: \"Күні / Дата: \",\n              guest: \"Қонақ / Гость:\",\n              ans: \"Жауабы / Ответ:\",\n              guestsLbl: \"Қонақ саны / Гостей:\",\n              time: \"Уақыты / Время: \",\n              upd: \" (жаңартылды / обновлено)\",\n              stTitle: \"Статистика / Текущая статистика\",\n              stLine: \"Келеді / Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді / Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда / Думают: <b>\" + totalMaybe + \"<\/b>\",\n              stPlain: \"Келеді / Придут: \" + totalYes + \" · Келмейді / Не придут: \" + totalNo + \" · Ойлануда / Думают: \" + totalMaybe,\n              brand: \"SAQTAA · Цифрлық шақырулар / Цифровые приглашения\"\n            } : (isKz ? {\n              hdr: \"SAQTAA · Қонақ туралы хабарлама\",\n              date: \"Күні: \",\n              guest: \"Қонақ:\",\n              ans: \"Жауабы:\",\n              guestsLbl: \"Қонақ саны:\",\n              time: \"Жауап уақыты: \",\n              upd: \" (жаңартылған жауап)\",\n              stTitle: \"Шақыру бойынша статистика\",\n              stLine: \"Келеді: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Келмейді: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Ойлануда: <b>\" + totalMaybe + \"<\/b>\",\n              stPlain: \"Келеді: \" + totalYes + \" · Келмейді: \" + totalNo + \" · Ойлануда: \" + totalMaybe,\n              brand: \"SAQTAA · Цифрлық шақырулар\"\n            } : {\n              hdr: \"SAQTAA · Уведомление о госте\",\n              date: \"Дата: \",\n              guest: \"Гость:\",\n              ans: \"Ответ:\",\n              guestsLbl: \"Количество гостей:\",\n              time: \"Время ответа: \",\n              upd: \" (обновлённый ответ)\",\n              stTitle: \"Статистика по приглашению\",\n              stLine: \"Придут: <b>\" + totalYes + \"<\/b> &nbsp;·&nbsp; Не придут: <b>\" + totalNo + \"<\/b> &nbsp;·&nbsp; Думают: <b>\" + totalMaybe + \"<\/b>\",\n              stPlain: \"Придут: \" + totalYes + \" · Не придут: \" + totalNo + \" · Думают: \" + totalMaybe,\n              brand: BRAND_NAME\n            });\n            var plainBody = [\n              eventTitle + (eventDate ? \" (\" + eventDate + \")\" : \"\"),\n              txt.guest + \" \" + fullName,\n              txt.ans + \" \" + attLabel + (attCode === \"yes\" && guests > 1 ? \" (\" + guests + \")\" : \"\"),\n              txt.time + now + (isUpdate ? txt.upd : \"\"),\n              txt.stPlain\n            ].join(\"\\n\");\n            var htmlBody = [\n              '<div style=\"font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#ffffff;padding:22px;border-radius:10px;color:#182720;border:1px solid #e5e0d5\">',\n              '  <div style=\"border-bottom:1px solid #ece7dc;padding-bottom:12px;margin-bottom:16px\">',\n              '    <div style=\"font-size:12px;color:#8c6d32;font-weight:bold\">' + escHtml(txt.hdr) + '<\/div>',\n              '    <h2 style=\"margin:6px 0 2px;font-size:20px;color:#0F4A38\">' + escHtml(eventTitle) + '<\/h2>',\n              (eventDate ? '    <div style=\"font-size:13px;color:#46584D\">' + escHtml(txt.date + eventDate) + '<\/div>' : ''),\n              '  <\/div>',\n              '  <div style=\"padding:4px 0 14px;border-bottom:1px solid #ece7dc;margin-bottom:14px\">',\n              '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + escHtml(txt.guest) + '<\/strong> ' + escHtml(fullName) + '<\/p>',\n              '    <p style=\"margin:0 0 8px;font-size:15px\"><strong>' + escHtml(txt.ans) + '<\/strong> <span style=\"color:' + badgeColor + ';font-weight:bold\">' + escHtml(attLabel) + '<\/span>' + (attCode === \"yes\" && guests > 1 ? ' (' + guests + ')' : '') + '<\/p>',\n              '    <p style=\"margin:0;font-size:12px;color:#6a746d\">' + escHtml(txt.time + now + (isUpdate ? txt.upd : '')) + '<\/p>',\n              '  <\/div>',\n              '  <div style=\"font-size:13px;color:#182720\">',\n              '    <div style=\"color:#46584D;font-weight:bold;margin-bottom:4px;font-size:12px\">' + escHtml(txt.stTitle) + '<\/div>',\n              '    ' + txt.stLine,\n              '  <\/div>',\n              '<\/div>'\n            ].join(\"\\n\");\n\n            GmailApp.sendEmail(clientEmail, subject, plainBody, {\n              name: txt.brand,\n              htmlBody: htmlBody\n            });\n            cache.put(mailQuotaKey, String(sentCount + 1), 3600);\n            emailSent = true;\n          } catch (mailErr) {\n            mailError = String(mailErr && mailErr.message ? mailErr.message : mailErr);\n          }\n        }\n      }\n\n      return jsonOut({\n        ok: true,\n        id: rsvpId,\n        updated: isUpdate,\n        email_sent: emailSent,\n        mail_error: mailError,\n        counts: { yes: totalYes, no: totalNo, maybe: totalMaybe, responses: totalResponses }\n      });\n    }\n\n    // 7. ПУБЛИЧНЫЕ СЧЁТЧИКИ ДЛЯ СТРАНИЦЫ ПРИГЛАШЕНИЯ (invite.html — без имён и личных данных)\n    if (action === \"counts\") {\n      var cntOrderId = safeSingleLine(p.oid || p.order_id || \"\", 80);\n      if (!cntOrderId || cntOrderId === \"default\") {\n        return jsonOut({ ok: true, yes: 0, no: 0, maybe: 0, responses: 0 });\n      }\n      var cRows = db.rsvps.getDataRange().getValues();\n      var cYes = 0, cNo = 0, cMaybe = 0, cResp = 0;\n      for (var ci = 1; ci < cRows.length; ci++) {\n        var cr = cRows[ci];\n        if ((!cr[3] && !cr[4]) || String(cr[0]) !== cntOrderId) continue;\n        cResp++;\n        var cSt = String(cr[5] || \"yes\");\n        var cG = parseInt(cr[7], 10);\n        if (cSt === \"yes\") cYes += Math.max(1, Math.min(10, isNaN(cG) ? 1 : cG));\n        else if (cSt === \"no\") cNo++;\n        else cMaybe++;\n      }\n      return jsonOut({ ok: true, yes: cYes, no: cNo, maybe: cMaybe, responses: cResp });\n    }\n\n    // 8. ПОЛНЫЙ СПИСОК ГОСТЕЙ ДЛЯ КЛИЕНТА И АДМИНКИ (POST + oid + токен st или ADMIN_PIN)\n    if (action === \"stats\" || action === \"get\") {\n      var filterOrderId = safeSingleLine(p.oid || p.order_id || \"\", 80);\n      if (!filterOrderId || filterOrderId === \"default\") {\n        return jsonOut({ ok: false, error: \"Укажите корректный ID заказа\" });\n      }\n      var hasAccess = verifyPin(p.pin);\n      if (!hasAccess) {\n        var givenToken = String(p.st || p.token || \"\").trim();\n        if (givenToken && db.orders) {\n          var ordRows = db.orders.getDataRange().getValues();\n          for (var oi = 1; oi < ordRows.length; oi++) {\n            if (String(ordRows[oi][0]) === filterOrderId) {\n              var savedToken = extractStatsToken(ordRows[oi][9]);\n              if (verifyStatsToken(savedToken, givenToken)) {\n                hasAccess = true;\n              }\n              break;\n            }\n          }\n        }\n      }\n      if (!hasAccess) {\n        return jsonOut({ ok: false, error: \"Доступ к списку гостей запрещён (требуется токен статистики или пароль администратора)\" });\n      }\n\n      var rRows = db.rsvps.getDataRange().getValues();\n      var outRows = [];\n      for (var i = 1; i < rRows.length; i++) {\n        var r = rRows[i];\n        if (!r[3] && !r[4]) continue;\n        if (String(r[0]) !== filterOrderId) continue;\n        var tVal = isDateVal(r[2]) ? Utilities.formatDate(r[2], TIMEZONE, \"dd.MM.yyyy HH:mm\") : String(r[2] || \"\");\n        var gNum = parseInt(r[7], 10);\n        outRows.push({\n          oid: String(r[0] || \"\"),\n          id: String(r[1] || \"\"),\n          time: tVal,\n          name: String(r[3] || \"\"),\n          fam: String(r[4] || \"\"),\n          att: String(r[5] || \"yes\"),\n          att_label: String(r[6] || \"\"),\n          guests: String(r[5]) === \"yes\" ? Math.max(1, Math.min(10, isNaN(gNum) ? 1 : gNum)) : 0,\n          title: String(r[8] || \"\")\n        });\n      }\n      return jsonOut({ ok: true, rows: outRows });\n    }\n\n    return jsonOut({ ok: true, status: \"SAQTAA Server Active\", version: \"4.0\" });\n  } catch (err) {\n    return jsonOut({ ok: false, error: String(err) });\n  } finally {\n    if (locked) lock.releaseLock();\n  }\n}";
 var TPL_DEFAULT_EV={luxury:"wedding",floral:"wedding",qazaq:"toy",editorial:"jubilee",emerald:"birthday",tusau:"tusau",uzatu:"uzatu",uzatu2:"uzatu",tusau2:"tusau",jubilee:"jubilee",lavender:"birthday",sunset:"birthday"};
 var EV_PRE={
  wedding:{ti:["Свадебное торжество","Үйлену тойы"],
@@ -1126,7 +1130,45 @@ function toast(m){var el=$("#toast");el.textContent=m;el.classList.add("show");c
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function clean(s){return String(s||"").trim();}
 function val(sel){var el=document.querySelector(sel);return el?el.value:null;}
-function getAdminPin(){try{return localStorage.getItem(PIN_KEY)||"saqtaa2026";}catch(_){return"saqtaa2026";}}
+var TPL_LABELS={luxury:"Luxury",floral:"Floral",qazaq:"Qazaq",editorial:"Editorial",emerald:"Emerald",tusau:"Sun Cream",uzatu:"Silk",uzatu2:"Алтын Ұя",tusau2:"Ақ жол",jubilee:"Pearl",lavender:"Lavender",sunset:"Sunset"};
+var EV_LABELS={wedding:"Свадьба",uzatu:"Қыз ұзату",tusau:"Тұсау кесер",jubilee:"Юбилей",birthday:"День рождения",sunnet:"Сүндет той",shildekhana:"Шілдехана",toy:"Семейный той"};
+function formatOrderStyleLabel(x){
+  var tKey=(x&&x.template)||(x&&x.data&&x.data.t)||"luxury";
+  var tName=TPL_LABELS[tKey]||tKey;
+  var evKey=(x&&x.data&&x.data.ev)||"";
+  return evKey&&EV_LABELS[evKey]?(tName+" · "+EV_LABELS[evKey]):tName;
+}
+function makeStatsToken(){
+  if(window.crypto&&crypto.getRandomValues){
+    var b=new Uint8Array(12);crypto.getRandomValues(b);
+    return Array.from(b).map(function(v){return v.toString(16).padStart(2,"0");}).join("");
+  }
+  return"st_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,12);
+}
+function setSessionPin(pin){
+  sessionPin=String(pin||"");
+  try{
+    if(sessionPin)sessionStorage.setItem(PIN_KEY,sessionPin);
+    else sessionStorage.removeItem(PIN_KEY);
+    localStorage.removeItem(PIN_KEY);
+  }catch(_){}
+}
+function getAdminPin(){
+  if(sessionPin)return sessionPin;
+  try{return sessionStorage.getItem(PIN_KEY)||"";}catch(_){return"";}
+}
+async function apiPost(srv,payload){
+  var r=await fetch(srv,{
+    method:"POST",
+    headers:{"Content-Type":"text/plain;charset=utf-8"},
+    body:JSON.stringify(payload)
+  });
+  var txt=await r.text();
+  var j=null;
+  try{j=JSON.parse(txt);}catch(_){throw new Error("Некорректный ответ сервера (HTTP "+r.status+")");}
+  if(!r.ok&&(!j||j.ok!==false))throw new Error("Ошибка сети (HTTP "+r.status+")");
+  return j;
+}
 function getSrvUrl(){
   var v=clean($("#srvUrl").value);
   if(v)return v;
@@ -1441,8 +1483,10 @@ function langBlock(i){
 function collect(){
   grabText();
   if(!currentOrderId)currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
+  if(!currentStatsToken)currentStatsToken=makeStatsToken();
   var o={
     oid:currentOrderId,
+    st:currentStatsToken,
     t:$("#tpl").value,ev:currentEvent,l:lang,n:clean($("#n").value),d:$("#d").value,s:$("#s").value,e:$("#e").value,
     ve:clean($("#ve").value),ad:clean($("#ad").value),g:clean($("#g").value),h:clean($("#h").value),p:clean($("#p").value),
     rsvp:currentRsvpMode!=="none"
@@ -1547,6 +1591,7 @@ function syncTplCards(v){
 }
 function fillFrom(o){
   currentOrderId=o.oid||("ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
+  currentStatsToken=(o.st&&String(o.st).trim().length>=8)?String(o.st).trim():makeStatsToken();
   $("#tpl").value=TPL_DC[o.t]?o.t:"luxury";
   lastTpl=$("#tpl").value;
   syncTplCards(lastTpl);
@@ -1758,7 +1803,8 @@ function renderHistory(){
     if(!q)return true;
     var dotDate=x.date?x.date.split("-").reverse().join("."):"";
     var em=x.email||(x.data&&x.data.em)||"";
-    var str=((x.name||"")+" "+(x.template||"")+" "+(x.date||"")+" "+dotDate+" "+(x.time||"")+" "+em).toLowerCase();
+    var styleLbl=formatOrderStyleLabel(x);
+    var str=((x.name||"")+" "+(x.template||"")+" "+styleLbl+" "+(x.date||"")+" "+dotDate+" "+(x.time||"")+" "+em).toLowerCase();
     return str.indexOf(q)!==-1;
   });
   if(!filtered.length){
@@ -1776,7 +1822,7 @@ function renderHistory(){
       '<div class="order-card-top" data-hload="'+idx+'">'+
         '<div class="order-row-main">'+
           '<div class="order-row-title">'+esc(x.name||"Без названия")+'</div>'+
-          '<div class="order-row-sub"><span>📅 '+esc(fmtShortDate(x.date))+'</span>'+(x.time?'<span>· ⏰ '+esc(x.time)+'</span>':'')+'<span>· '+esc(x.template||"luxury")+'</span>'+rsvpTag+(x.short_url?'<span>· ✂️ Короткая</span>':'')+'</div>'+
+          '<div class="order-row-sub"><span>📅 '+esc(fmtShortDate(x.date))+'</span>'+(x.time?'<span>· ⏰ '+esc(x.time)+'</span>':'')+'<span>· '+esc(formatOrderStyleLabel(x))+'</span>'+rsvpTag+(x.short_url?'<span>· ✂️ Короткая</span>':'')+'</div>'+
         '</div>'+
         '<div class="order-row-right">'+statusBadgeHtml(stCode)+'<span class="chev">›</span></div>'+
       '</div>'+
@@ -1796,6 +1842,7 @@ async function loadOrderIntoEditor(idx,asCopy){
   var cloned=JSON.parse(JSON.stringify(x.data));
   if(asCopy){
     cloned.oid="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
+    cloned.st=makeStatsToken();
     cloned.n=(cloned.n?cloned.n+" (копия)":"");
   }
   fillFrom(cloned);
@@ -1823,38 +1870,49 @@ $("#historyList").addEventListener("click",async function(e){
     var i=Number(el.dataset.hdel),x=historyItems[i];if(!x)return;
     if(!confirm("Удалить заказ «"+(x.name||"Без названия")+"»?"))return;
     var delId=x.id;
-    historyItems.splice(i,1);
+    var srv=getSrvUrl();
+    if(srv&&delId&&x.status!=="draft"){
+      el.disabled=true;
+      try{
+        var dj=await apiPost(srv,{action:"delete_order",pin:getAdminPin(),id:delId});
+        if(!dj||(!dj.ok&&String(dj.error||"").indexOf("не найден")===-1)){
+          el.disabled=false;
+          toast("❌ Сервер не удалил заказ: "+((dj&&dj.error)||"ошибка доступа"));
+          return;
+        }
+      }catch(err){
+        el.disabled=false;
+        if(!confirm("Не удалось связаться с сервером ("+(err&&err.message?err.message:"нет сети")+"). Удалить заказ только локально?"))return;
+      }
+    }
+    var curIdx=historyItems.findIndex(function(item){return item.id===delId;});
+    if(curIdx>=0)historyItems.splice(curIdx,1);
     try{localStorage.setItem(HIST_KEY,JSON.stringify(historyItems));}catch(_){}
     if(delId)delPhoto(delId).catch(function(){});
     renderHistory();
     toast("🗑️ Заказ удалён");
-    var srv=getSrvUrl();
-    if(srv&&delId){
-      fetch(srv,{
-        method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-        body:JSON.stringify({action:"delete_order",pin:getAdminPin(),id:delId})
-      }).catch(function(){});
-    }
   }
 });
 $("#histSearch").addEventListener("input",renderHistory);
 
 /* ---------- Облачная синхронизация заказов ---------- */
 async function syncOrderToServer(entry){
-  var srv=getSrvUrl();if(!srv)return;
+  var srv=getSrvUrl();if(!srv)return{ok:true,skipped:true};
   try{
-    await fetch(srv,{
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({
-        action:"save_order",pin:getAdminPin(),
-        id:entry.id,names:entry.name,name:entry.name,
-        date:entry.date,time:entry.time,
-        tpl:entry.template,template:entry.template,
-        email:entry.email||"",invite_url:entry.url||"",stats_url:entry.stats_url||"",data:entry.data
-      })
+    var j=await apiPost(srv,{
+      action:"save_order",pin:getAdminPin(),
+      id:entry.id,names:entry.name,name:entry.name,
+      date:entry.date,time:entry.time,
+      tpl:entry.template,template:entry.template,
+      email:entry.email||"",invite_url:entry.url||"",stats_url:entry.stats_url||"",
+      stats_token:(entry.data&&entry.data.st)||"",
+      data:entry.data
     });
-  }catch(_){}
+    if(!j||!j.ok)return{ok:false,error:(j&&j.error)||"Ошибка сохранения на сервере"};
+    return{ok:true};
+  }catch(e){
+    return{ok:false,error:(e&&e.message)||"Сервер недоступен"};
+  }
 }
 $("#syncCloudHist").addEventListener("click",async function(){
   var srv=getSrvUrl();
@@ -1862,8 +1920,7 @@ $("#syncCloudHist").addEventListener("click",async function(){
   var btn=this,old=btn.textContent;
   btn.disabled=true;btn.textContent="⏳…";
   try{
-    var r=await fetch(srv+"?action=list_orders&pin="+encodeURIComponent(getAdminPin()));
-    var j=await r.json();
+    var j=await apiPost(srv,{action:"list_orders",pin:getAdminPin()});
     if(!j||!j.ok)throw new Error((j&&j.error)||"Ошибка сервера");
     var cloud=j.orders||[],map={};
     historyItems.forEach(function(item){if(item.id)map[item.id]=item;else if(item.url)map[item.url]=item;});
@@ -1920,7 +1977,8 @@ async function storeHistory(o,url,statsUrl,status){
     for(var i=0;i<removed.length;i++)if(removed[i]&&removed[i].id&&removed[i].id!==entry.id)await delPhoto(removed[i].id).catch(function(){});
   }catch(_){toast("Память браузера заполнена");}
   renderHistory();
-  if(status!=="draft")syncOrderToServer(entry);
+  if(status!=="draft")return await syncOrderToServer(entry);
+  return{ok:true,skipped:true};
 }
 
 /* ---------- Статистика (#screenStats) ---------- */
@@ -1973,8 +2031,12 @@ async function loadStatsForOrder(order){
   var srv=(order.data&&(order.data.srv||order.data.sheet))||getSrvUrl();
   if(!srv)return;
   try{
-    var r=await fetch(srv+(srv.indexOf("?")===-1?"?":"&")+"action=stats&oid="+encodeURIComponent(order.id)+"&t="+Date.now());
-    var j=await r.json();
+    var j=await apiPost(srv,{
+      action:"stats",
+      oid:order.id,
+      pin:getAdminPin(),
+      st:(order.data&&order.data.st)||""
+    });
     if(j&&j.ok&&Array.isArray(j.rows)){
       var map={};
       j.rows.forEach(function(row){
@@ -1988,6 +2050,8 @@ async function loadStatsForOrder(order){
       });
       var merged=Object.keys(map).map(function(k){return map[k];});
       renderStatsView(merged);
+    }else if(j&&j.error){
+      toast("⚠️ Статистика: "+j.error);
     }
   }catch(_){}
 }
@@ -2106,11 +2170,16 @@ $("#agSaveBtn").addEventListener("click",async function(){
   toast("✅ Гость добавлен");
   var srv=(currentStatsOrder.data&&(currentStatsOrder.data.srv||currentStatsOrder.data.sheet))||getSrvUrl();
   if(srv){
-    var q=(srv.indexOf("?")===-1?"?":"&")+"action=rsvp&oid="+encodeURIComponent(currentStatsOrder.id)+
-      "&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm||"—")+
-      "&att_code="+encodeURIComponent(attCode)+"&att="+encodeURIComponent(statusText)+"&guests="+guests+
-      "&title="+encodeURIComponent(currentStatsOrder.name||"Мероприятие")+"&no_email=1&_t="+Date.now();
-    try{await fetch(srv+q,{method:"GET"});}catch(_){}
+    try{
+      var aj=await apiPost(srv,{
+        action:"rsvp",oid:currentStatsOrder.id,id:gid,name:nm,fam:fm||"—",
+        att_code:attCode,att:statusText,guests:guests,
+        title:currentStatsOrder.name||"Мероприятие",no_email:"1"
+      });
+      if(!aj||!aj.ok)throw new Error((aj&&aj.error)||"ошибка сервера");
+    }catch(err){
+      toast("⚠️ Гость сохранён локально (сервер: "+(err&&err.message?err.message:"недоступен")+")");
+    }
   }
 });
 $("#statsGuestRows").addEventListener("click",function(e){
@@ -2166,6 +2235,7 @@ async function updatePreview(){
   var frame=$("#livePreview");if(!frame||$("#appMain").hidden)return;
   try{
     var o=collect();if(!o.p&&currentPhotoUrl)o.p=currentPhotoUrl;
+    delete o.st;if(currentRsvpMode!=="ejs")delete o.em;
     var p=EV_PRE[o.ev]||EV_PRE.wedding;
     if(!o.n)o.n=(p.demo&&p.demo.n)||"Ерасыл & Аяулым";if(!o.d)o.d=defaultFutureDate(14);if(!o.s)o.s=p.s||"18:00";if(!o.e)o.e=p.e||"23:30";
     if(o.l==="ru"||o.l==="both"){o.ru=o.ru||{};if(!o.ru.le)o.ru={ti:p.ti[0],le:p.le[0],sg:p.sg[0],pr:p.pr.map(function(r){return[r[0],r[1],r[2]];})};}
@@ -2173,7 +2243,8 @@ async function updatePreview(){
     var base=(clean($("#base").value)||new URL("invite.html",location.href).href).replace(/#.*$/,"");
     if(frame.dataset.loaded==="1"&&frame.dataset.base===base&&frame.contentWindow){
       try{
-        frame.contentWindow.postMessage({type:"saqtaa-preview",payload:JSON.parse(JSON.stringify(o))},"*");
+        var targetOrigin=(location.origin&&location.origin!=="null")?location.origin:"*";
+        frame.contentWindow.postMessage({type:"saqtaa-preview",payload:JSON.parse(JSON.stringify(o))},targetOrigin);
         return;
       }catch(_){}
     }
@@ -2239,11 +2310,7 @@ async function uploadPhotoToCloud(blob){
   try{
     var dataUrl=await blobToDataUrl(blob);
     var rawB64=String(dataUrl).split(",")[1]||"";
-    var r=await fetch(srv,{
-      method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({action:"upload_photo",pin:getAdminPin(),mime:"image/jpeg",base64:rawB64})
-    });
-    var j=await r.json();
+    var j=await apiPost(srv,{action:"upload_photo",pin:getAdminPin(),mime:"image/jpeg",base64:rawB64});
     if(j&&j.ok&&j.url){
       $("#p").value=j.url;
       status.textContent="✅ Фото загружено на Google Диск!";
@@ -2253,9 +2320,11 @@ async function uploadPhotoToCloud(blob){
       return true;
     }
     throw new Error((j&&j.error)||"Ошибка сервера");
-  }catch(_){
-    status.textContent="⚠️ Не удалось загрузить на Google Диск. Нажмите «Повторить».";
+  }catch(e){
+    var reason=(e&&e.message)?(" ("+e.message+")"):"";
+    status.textContent="⚠️ Не удалось загрузить на Google Диск"+reason+". Нажмите «Повторить».";
     if(retry)retry.hidden=false;
+    toast("❌ Фото не загрузилось"+reason);
     return false;
   }
 }
@@ -2423,26 +2492,44 @@ function waOrderLink(x,stUrl){return buildClientWaText(x.name||"",x.short_url||x
 
 $("#make").addEventListener("click",async function(){
   var err=$("#mkErr");err.hidden=true;
+  var btn=this,oldTxt=btn.textContent;
+  btn.disabled=true;btn.textContent="⏳ Создаю…";
   try{
     var o=collect(),msg=validate(o);
     if(msg){err.textContent=msg;err.hidden=false;err.scrollIntoView({block:"center"});return;}
     if(currentPhotoBlob&&!o.p&&!confirm("Фото не загружено на Google Диск — на других телефонах оно не откроется. Создать ссылку без облачного фото?"))return;
     if(currentPhotoBlob&&o.oid){try{await putPhoto(o.oid,currentPhotoBlob);await putPhoto("current",currentPhotoBlob);}catch(_){}}
     var base=clean($("#base").value)||new URL("invite.html",location.href).href;
-    var encodedHash=await encode(o);
-    var url=base.replace(/#.*$/,"")+"#"+encodedHash;
+    // Публичная ссылка приглашения не содержит токен статистики st и (в режиме SAQTAA) email клиента
+    var invitePayload=JSON.parse(JSON.stringify(o));
+    delete invitePayload.st;
+    if(currentRsvpMode!=="ejs")delete invitePayload.em;
+    var inviteHash=await encode(invitePayload);
+    var url=base.replace(/#.*$/,"")+"#"+inviteHash;
     var statsUrl="";
     if(o.rsvp!==false){
-      statsUrl=new URL("stats.html",base).href.replace(/#.*$/,"")+"#"+encodedHash;
+      var statsPayload=JSON.parse(JSON.stringify(o));
+      delete statsPayload.em;
+      delete statsPayload.ejs;
+      var statsHash=await encode(statsPayload);
+      statsUrl=new URL("stats.html",base).href.replace(/#.*$/,"")+"#"+statsHash;
       $("#statsOut").value=statsUrl;$("#openStats").href=statsUrl;$("#statsBox").hidden=false;
     }else $("#statsBox").hidden=true;
     $("#out").value=url;$("#result").hidden=false;$("#shBox").hidden=true;$("#shErr").hidden=true;
     $("#open").href=url;$("#wa").href=waLink(url,statsUrl);
-    $("#len").textContent="Готово! Длина ссылки: "+url.length+" симв.";
-    save();await storeHistory(o,url,statsUrl,"active");schedulePreview();
-    toast("✅ Приглашение и статистика созданы!");
+    save();
+    var syncRes=await storeHistory(o,url,statsUrl,"active");
+    schedulePreview();
+    if(syncRes&&!syncRes.ok){
+      $("#len").textContent="⚠️ Ссылки созданы локально, но сервер не сохранил заказ ("+(syncRes.error||"нет связи")+"). Письма и статистика заработают после повторного сохранения.";
+      toast("⚠️ Не сохранено на сервере: "+(syncRes.error||"проверьте доступ"));
+    }else{
+      $("#len").textContent="Готово! Длина ссылки: "+url.length+" симв.";
+      toast("✅ Приглашение и статистика созданы!");
+    }
     $("#result").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(e){err.textContent="Ошибка: "+(e&&e.message?e.message:"не удалось создать");err.hidden=false;}
+  finally{btn.disabled=false;btn.textContent=oldTxt;}
 });
 
 $("#saveDraftBtn").addEventListener("click",async function(){
@@ -2500,6 +2587,7 @@ $("#loadOld").addEventListener("click",async function(){
 
 async function startNewOrder(){
   currentOrderId="ord_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6);
+  currentStatsToken=makeStatsToken();
   $("#n").value="";$("#d").value=defaultFutureDate(14);$("#ve").value="";$("#ad").value="";$("#g").value="";$("#h").value="";
   $("#p").value="";$("#clientEmail").value="";$("#old").value="";
   dcCustomTouched=false;dcSwatches=[];
@@ -2552,8 +2640,7 @@ $("#testSrvEmailBtn").addEventListener("click",async function(){
   }
   var btn=this;btn.disabled=true;msg.hidden=false;msg.style.color="var(--ink2)";msg.textContent="⏳ Отправляем тестовое письмо…";
   try{
-    var r=await fetch(url+"?action=test_email&pin="+encodeURIComponent(getAdminPin())+"&to="+encodeURIComponent(to));
-    var j=await r.json();
+    var j=await apiPost(url,{action:"test_email",pin:getAdminPin(),to:to});
     if(j&&j.ok&&j.email_sent){
       msg.style.color="var(--green-ink)";
       msg.textContent="✅ Письмо отправлено на "+to+" (осталось квоты: "+(j.remaining_quota!=null?j.remaining_quota:"—")+")";
@@ -2576,11 +2663,10 @@ $("#saveSrvBtn").addEventListener("click",async function(){
   try{
     localStorage.setItem(SRV_KEY,url);
     setRsvpMode(currentRsvpMode);
-    var r=await fetch(url+"?action=auth&pin="+encodeURIComponent(getAdminPin()));
-    var j=await r.json();
+    var j=await apiPost(url,{action:"auth",pin:getAdminPin()});
     if(j&&j.ok){$("#setSrvBadge").textContent="Подключено";toast("✅ Сервер проверен!");}
-    else toast("Сервер сохранён ("+(j&&j.error?j.error:"проверьте доступ")+")");
-  }catch(_){toast("Ссылка сохранена");}
+    else{$("#setSrvBadge").textContent="Ошибка доступа";toast("⚠️ "+(j&&j.error?j.error:"проверьте пароль и развертывание"));}
+  }catch(e){toast("⚠️ Ссылка сохранена, но сервер недоступен: "+(e&&e.message?e.message:"нет сети"));}
   btn.disabled=false;
 });
 $("#saveEjsCfgBtn").addEventListener("click",function(){
@@ -2619,12 +2705,13 @@ $("#importBackup").addEventListener("change",async function(){
 
 /* ---------- Авторизация и смена пароля ---------- */
 var PW_SALT="saqtaa-admin-v1",PW_ITER=150000,PW_HASH="2a4621bf0c69cb5922f6c1e410a028b42c731c56cf107853d94c3b630c37a3e9",OK_KEY="saqtaa-admin-ok";
+try{localStorage.removeItem(OK_KEY);}catch(_){}
 function getActivePwHash(){try{return localStorage.getItem(CUSTOM_HASH_KEY)||PW_HASH;}catch(_){return PW_HASH;}}
 function syncSecurityBadge(){
   var b=$("#setPwBadge");if(!b)return;
-  var custom=false;try{custom=Boolean(localStorage.getItem(CUSTOM_HASH_KEY))&&getAdminPin()!=="saqtaa2026";}catch(_){}
-  b.textContent=custom?"Защищено":"⚠️ Стандартный пароль";
-  b.style.color=custom?"var(--green-ink)":"var(--red-ink)";
+  var ok=Boolean(getAdminPin())&&getAdminPin()!=="saqtaa2026";
+  b.textContent=ok?"Защищено (сервер)":"⚠️ Смените пароль";
+  b.style.color=ok?"var(--green-ink)":"var(--red-ink)";
 }
 async function pwHash(pw){
   var k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveBits"]);
@@ -2637,7 +2724,8 @@ function unlock(){
   switchScreen("home");
 }
 function lockPanel(){
-  try{localStorage.removeItem(OK_KEY);}catch(_){}
+  setSessionPin("");
+  try{sessionStorage.removeItem(OK_KEY);localStorage.removeItem(OK_KEY);}catch(_){}
   $("#gatePw").value="";$("#appMain").hidden=true;$("#bottomAppNav").hidden=true;$("#gate").hidden=false;
   toast("🔒 Вышли из панели");
 }
@@ -2647,29 +2735,56 @@ var helper=(location.hash==="#newpw");
 $("#gateForm").addEventListener("submit",async function(e){
   e.preventDefault();var er=$("#gateErr");er.textContent="";
   var pw=$("#gatePw").value;if(!pw)return;
-  var activeHash=getActivePwHash();
-  if(window.crypto&&crypto.subtle){
-    var h=await pwHash(pw);
-    if(helper){$("#gateOut").value='PW_HASH="'+h+'"';$("#gateOut").hidden=false;return;}
-    var customSet=false;try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
-    if(h===activeHash||(!customSet&&pw==="saqtaa2026")){
-      try{localStorage.setItem(OK_KEY,activeHash);localStorage.setItem(PIN_KEY,pw);}catch(_){}
-      unlock();return;
+  var btn=$("#gateBtn");if(btn)btn.disabled=true;
+  try{
+    if(helper&&window.crypto&&crypto.subtle){
+      var hh=await pwHash(pw);
+      $("#gateOut").value='PW_HASH="'+hh+'"';$("#gateOut").hidden=false;
+      return;
     }
-  }
-  var srv=getSrvUrl();
-  if(srv){
-    try{
-      var r=await fetch(srv+"?action=auth&pin="+encodeURIComponent(pw));
-      var j=await r.json();
-      if(j&&j.ok){
-        var nh=await pwHash(pw);
-        try{localStorage.setItem(CUSTOM_HASH_KEY,nh);localStorage.setItem(OK_KEY,nh);localStorage.setItem(PIN_KEY,pw);}catch(_){}
+    var srv=getSrvUrl();
+    if(srv){
+      try{
+        var j=await apiPost(srv,{action:"auth",pin:pw});
+        if(j&&j.ok){
+          setSessionPin(pw);
+          try{
+            sessionStorage.setItem(OK_KEY,"1");
+            if(window.crypto&&crypto.subtle){localStorage.setItem(CUSTOM_HASH_KEY,await pwHash(pw));}
+          }catch(_){}
+          unlock();return;
+        }
+        er.textContent=(j&&j.error)||"Неверный пароль";
+        $("#gatePw").select();
+        return;
+      }catch(_){
+        // Офлайн-фолбэк: пускаем только по сохранённому крипто-хешу без дефолтного пароля
+        if(window.crypto&&crypto.subtle){
+          var hOff=await pwHash(pw);
+          if(hOff===getActivePwHash()){
+            setSessionPin(pw);
+            try{sessionStorage.setItem(OK_KEY,"1");}catch(_){}
+            unlock();
+            toast("⚠️ Офлайн-вход: сервер недоступен");
+            return;
+          }
+        }
+        er.textContent="Не удалось проверить пароль на сервере (нет сети)";
+        return;
+      }
+    }
+    if(window.crypto&&crypto.subtle){
+      var hLoc=await pwHash(pw);
+      if(hLoc===getActivePwHash()){
+        setSessionPin(pw);
+        try{sessionStorage.setItem(OK_KEY,"1");}catch(_){}
         unlock();return;
       }
-    }catch(_){}
+    }
+    er.textContent="Неверный пароль";$("#gatePw").select();
+  }finally{
+    if(btn)btn.disabled=false;
   }
-  er.textContent="Неверный пароль";$("#gatePw").select();
 });
 
 $("#changePwBtn").addEventListener("click",async function(){
@@ -2678,20 +2793,35 @@ $("#changePwBtn").addEventListener("click",async function(){
   if(!oldPw||!newPw||newPw.length<4||newPw!==confPw){
     msg.style.color="var(--red-ink)";msg.textContent="Проверьте текущий пароль и совпадение нового (от 4 симв.)";msg.hidden=false;return;
   }
+  var btn=this;btn.disabled=true;
   try{
-    var activeHash=getActivePwHash(),oldH=await pwHash(oldPw),customSet=false;
-    try{customSet=!!localStorage.getItem(CUSTOM_HASH_KEY);}catch(_){}
-    if(!(oldH===activeHash||(!customSet&&oldPw==="saqtaa2026")||oldPw===getAdminPin())){
-      msg.style.color="var(--red-ink)";msg.textContent="Текущий пароль неверен";msg.hidden=false;return;
-    }
-    var newH=await pwHash(newPw);
-    localStorage.setItem(CUSTOM_HASH_KEY,newH);localStorage.setItem(OK_KEY,newH);localStorage.setItem(PIN_KEY,newPw);
-    syncSecurityBadge();
     var srv=getSrvUrl();
-    if(srv){fetch(srv,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"change_pin",pin:oldPw,new_pin:newPw})}).catch(function(){});}
+    if(srv){
+      msg.style.color="var(--ink2)";msg.textContent="⏳ Обновляем пароль на сервере…";msg.hidden=false;
+      var j=await apiPost(srv,{action:"change_pin",pin:oldPw,new_pin:newPw});
+      if(!j||!j.ok){
+        msg.style.color="var(--red-ink)";msg.textContent="❌ Сервер отклонил смену пароля: "+((j&&j.error)||"проверьте текущий пароль");msg.hidden=false;
+        return;
+      }
+    }else if(window.crypto&&crypto.subtle){
+      var oldH=await pwHash(oldPw);
+      if(oldH!==getActivePwHash()){
+        msg.style.color="var(--red-ink)";msg.textContent="Текущий пароль неверен";msg.hidden=false;return;
+      }
+    }
+    setSessionPin(newPw);
+    try{
+      sessionStorage.setItem(OK_KEY,"1");
+      if(window.crypto&&crypto.subtle){localStorage.setItem(CUSTOM_HASH_KEY,await pwHash(newPw));}
+    }catch(_){}
+    syncSecurityBadge();
     $("#oldPwInput").value="";$("#newPwInput").value="";$("#newPwConfirm").value="";
-    msg.style.color="var(--green-ink)";msg.textContent="✅ Пароль успешно изменён";msg.hidden=false;toast("🔑 Пароль сохранён");
-  }catch(e){msg.style.color="var(--red-ink)";msg.textContent="Ошибка: "+e.message;msg.hidden=false;}
+    msg.style.color="var(--green-ink)";msg.textContent="✅ Пароль успешно изменён на сервере";msg.hidden=false;toast("🔑 Пароль сохранён");
+  }catch(e){
+    msg.style.color="var(--red-ink)";msg.textContent="❌ Не удалось сменить пароль на сервере: "+(e&&e.message?e.message:"нет сети");msg.hidden=false;
+  }finally{
+    btn.disabled=false;
+  }
 });
 
 /* ---------- Инициализация ---------- */
@@ -2703,7 +2833,7 @@ var ejsCfg=DEFAULT_EJS;
 try{var rawEjs=JSON.parse(localStorage.getItem(EJS_KEY)||"null");if(rawEjs&&rawEjs.s)ejsCfg=rawEjs;}catch(_){}
 $("#cfgEjsService").value=ejsCfg.s;$("#cfgEjsTemplate").value=ejsCfg.t;$("#cfgEjsKey").value=ejsCfg.u;
 
-var remembered=null;try{remembered=localStorage.getItem(OK_KEY);}catch(_){}
+var sessionOk=false;try{sessionOk=(sessionStorage.getItem(OK_KEY)==="1"&&Boolean(getAdminPin()));}catch(_){}
 try{historyItems=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");if(!Array.isArray(historyItems))historyItems=[];}catch(_){historyItems=[];}
 var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
@@ -2711,7 +2841,7 @@ else{syncTplCards("luxury");applyEventPreset("wedding");setRsvpMode("saqtaa");}
 syncSecurityBadge();
 autoGrowAll();
 getPhoto(currentOrderId||"current").then(setCurrentPhoto).catch(function(){});
-if(remembered&&remembered===getActivePwHash()&&!helper)unlock();
+if(sessionOk&&!helper)unlock();
 })();
 </script>
 </body>
