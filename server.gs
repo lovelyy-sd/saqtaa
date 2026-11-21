@@ -240,14 +240,14 @@ function handle(p) {
       if (!name || !fam) return jsonOut({ ok: false, error: "Укажите имя и фамилию" });
 
       var attCode = String(p.att_code || p.att || "yes").toLowerCase();
-      if (attCode.indexOf("не") !== -1 || attCode === "no") attCode = "no";
-      else if (attCode.indexOf("пока") !== -1 || attCode.indexOf("maybe") !== -1) attCode = "maybe";
+      if (attCode.indexOf("не") !== -1 || attCode.indexOf("келмей") !== -1 || attCode.indexOf("алмай") !== -1 || attCode === "no") attCode = "no";
+      else if (attCode.indexOf("пока") !== -1 || attCode.indexOf("білмей") !== -1 || attCode.indexOf("ойлан") !== -1 || attCode.indexOf("maybe") !== -1) attCode = "maybe";
       else attCode = "yes";
 
       var rawLang = String(p.lang || "").toLowerCase().trim();
       var rawAttText = String(p.att || "").toLowerCase();
       var isBoth = (rawLang === "both");
-      var isKz = (!isBoth && (rawLang === "kz" || rawLang === "kk" || (!rawLang && (rawAttText.indexOf("келед") !== -1 || rawAttText.indexOf("келмей") !== -1 || rawAttText.indexOf("білмей") !== -1))));
+      var isKz = (!isBoth && (rawLang === "kz" || rawLang === "kk" || (!rawLang && (rawAttText.indexOf("келед") !== -1 || rawAttText.indexOf("келмей") !== -1 || rawAttText.indexOf("алмай") !== -1 || rawAttText.indexOf("білмей") !== -1))));
       var lang = isBoth ? "both" : (isKz ? "kz" : "ru");
       var labels = isBoth ? {
         yes: "Келеді (Расталды) / Придёт (Подтверждено)",
@@ -294,21 +294,18 @@ function handle(p) {
       var now = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");
       var foundRsvpRow = -1;
       var totalYes = 0, totalNo = 0, totalMaybe = 0;
-      var isUpdateReq = String(p.isUpdate || "") === "1";
       var needSummary = (!noEmail && clientEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail));
-      if (isUpdateReq || needSummary) {
-        var rRows = db.rsvps.getDataRange().getValues();
-        for (var j = 1; j < rRows.length; j++) {
-          var rRow = rRows[j];
-          var sameOrder = String(rRow[0]) === orderId;
-          if (sameOrder && String(rRow[1]) === rsvpId) {
-            foundRsvpRow = j + 1;
-          } else if (needSummary && sameOrder) {
-            var st = String(rRow[5]);
-            if (st === "yes") totalYes += (Number(rRow[7]) || 1);
-            else if (st === "no") totalNo++;
-            else totalMaybe++;
-          }
+      var rRows = db.rsvps.getDataRange().getValues();
+      for (var j = 1; j < rRows.length; j++) {
+        var rRow = rRows[j];
+        var sameOrder = String(rRow[0]) === orderId;
+        if (sameOrder && String(rRow[1]) === rsvpId) {
+          foundRsvpRow = j + 1;
+        } else if (needSummary && sameOrder) {
+          var st = String(rRow[5]);
+          if (st === "yes") totalYes += (Number(rRow[7]) || 1);
+          else if (st === "no") totalNo++;
+          else totalMaybe++;
         }
       }
       if (needSummary) {

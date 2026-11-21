@@ -373,9 +373,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",ok_no:"Спасибо за ответ. Жаль, что вы не сможете прийти. Спасибо, что сообщили!",ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
  e_name:"Укажите имя",e_fam:"Укажите фамилию",e_name_bad:"Укажите настоящее имя",e_fam_bad:"Укажите настоящую фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
  e_wait:"Пожалуйста, подождите 30 секунд перед повторной отправкой.",
- by:"Просим подтвердить присутствие до {date}",cal:"Добавить в календарь",gcal:"Или открыть в Google Календаре",
- calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
- alarm:"Завтра — {title}. Начало в {time}. Ждём вас! 🤍",cdesc:"Программа: ",cdone:"📅 Файл календаря готов — откройте его, чтобы добавить событие",
+ by:"Просим подтвердить присутствие до {date}",
  cd:{d:["день","дня","дней"],h:["час","часа","часов"],m:["минута","минуты","минут"],s:["секунда","секунды","секунд"]},
  st_h:"Ответы гостей",st_yes:"Придут",st_no:"Не придут",st_maybe:"Думают",st_tot:"Всего ответили: {n}",st_empty:"Пока нет ответов — будьте первыми",
  g_lbl:"Сколько человек придёт",g_one:"Только вы (1 чел.)",g_many:"{n} чел. — вы + супруг(а) или семья (+{extra})",g_done_one:"Придёте: 1 чел.",g_done_many:"Придут с вами: {n} чел.",
@@ -388,9 +386,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",ok_no:"Жауабыңызға рақмет. Қатыса алмайтыныңыз өкінішті. Хабарлағаныңызға рақмет!",ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
  e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_name_bad:"Шынайы атыңызды жазыңыз",e_fam_bad:"Шынайы тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
  e_wait:"Қайта жіберу алдында 30 секунд күтіңіз.",
- by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",cal:"Күнтізбеге қосу",gcal:"Немесе Google Күнтізбеде ашу",
- calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
- alarm:"Ертең — {title}. Басталуы: {time}. Сізді күтеміз! 🤍",cdesc:"Бағдарлама: ",cdone:"📅 Күнтізбе файлы дайын — оқиғаны қосу үшін оны ашыңыз",
+ by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",
  cd:{d:"күн",h:"сағат",m:"минут",s:"секунд"},
  st_h:"Қонақтар жауабы",st_yes:"Келеді",st_no:"Келмейді",st_maybe:"Ойлануда",st_tot:"Барлығы жауап берді: {n}",st_empty:"Әзірге жауаптар жоқ — алғашқы болыңыз",
  g_lbl:"Неше адам келеді",g_one:"Тек сіз (1 адам)",g_many:"{n} адам — сіз + жұбайыңыз немесе отбасыңыз (+{extra})",g_done_one:"Келеді: 1 адам",g_done_many:"Сізбен бірге: {n} адам",
@@ -465,7 +461,8 @@ function isValidNamePart(s){
 }
 function makeId(){return(window.crypto&&crypto.randomUUID)?crypto.randomUUID():("rsvp-"+Date.now()+"-"+Math.random().toString(36).slice(2,10));}
 function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return h;}
-function invKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
+function legacyInvKey(){return"saqtaa-rsvp-"+D.d+"-"+Math.abs(hash(names()+"|"+D.d+"|"+D.s+"|"+D.ve+"|"+D.ad));}
+function invKey(){return(D&&D.oid&&D.oid!=="default")?("saqtaa-rsvp-oid-"+D.oid):legacyInvKey();}
 function clampGuests(n){var x=parseInt(n,10);return Number.isFinite(x)?Math.max(1,Math.min(10,x)):1;}
 function guestHint(n){n=clampGuests(n);return n<=1?t("g_one"):fill(t("g_many"),{n:n,extra:n-1});}
 function guestDoneText(n){n=clampGuests(n);return n<=1?t("g_done_one"):fill(t("g_done_many"),{n:n});}
@@ -480,11 +477,11 @@ function syncGuestsUI(f,n){
   if(box&&ch)box.hidden=(validAtt(ch.value)!=="yes");
 }
 function loadRsvpState(){
-  var key=invKey(),cached=memRsvp[key];
+  var key=invKey(),legKey=legacyInvKey(),cached=memRsvp[key]||memRsvp[legKey];
   var def={id:makeId(),nm:"",fm:"",att:"yes",cnt:1,sent:false,sentNm:"",sentFm:"",sentAtt:"yes",sentCnt:0,rev:0,guests:0,maybe:0,editing:false,lastSentAt:0,lang:""};
   var p=null;
   try{
-    var raw=localStorage.getItem(key);
+    var raw=localStorage.getItem(key)||(legKey!==key?localStorage.getItem(legKey):null);
     if(raw)p=JSON.parse(raw);
   }catch(_){}
   if((!p||typeof p!=="object")&&cached&&typeof cached==="object")p=cached;
@@ -628,7 +625,16 @@ function render(){
     '<p class="inv-wm fx" style="--d:.54s">SAQTAA ✦ digital invitation</p>'+(T.band?qband(".56s"):"")+
   '</div></article>';
   var img=app.querySelector(".ph-frame img");
-  if(img)img.addEventListener("error",function(){img.closest(".ph-frame").classList.remove("has-img");});
+  if(img)img.addEventListener("error",function(){
+    var s=img.getAttribute("src")||"",m=s.match(/googleusercontent\.com\/d\/([^=/?#]+)|[?&]id=([^&#]+)/);
+    var fid=m&&(m[1]||m[2]);
+    if(fid&&!img.dataset.retried){
+      img.dataset.retried="1";
+      img.src="https://drive.google.com/thumbnail?id="+encodeURIComponent(fid)+"&sz=w1600";
+      return;
+    }
+    img.closest(".ph-frame").classList.remove("has-img");
+  });
   document.documentElement.lang=lang==="kz"?"kk":"ru";
   document.title=names()||t("inv");
   tick();
@@ -644,7 +650,7 @@ function syncOpts(f){f.querySelectorAll(".rs-opt").forEach(function(l){l.classLi
 
 /* ---------- статистика ответов гостей (облако + локальный кэш) ---------- */
 var inviteStats={oid:"",rows:null,loading:false,loaded:false,refreshTimer:null};
-function statsOid(){return(D&&D.oid)?String(D.oid):"default";}
+function statsOid(){return(D&&D.oid&&D.oid!=="default")?String(D.oid):(D?("h_"+Math.abs(hash(names()+"|"+D.d+"|"+D.s))):"default");}
 function statsStorageKey(){return"saqtaa-rsvp-rows-"+statsOid();}
 function readLocalStatsRows(){
   try{var raw=localStorage.getItem(statsStorageKey());var arr=raw?JSON.parse(raw):[];return Array.isArray(arr)?arr:[];}catch(_){return[];}
@@ -658,7 +664,9 @@ function parseStatAtt(r){
 }
 function statRowTime(r){
   if(!r||!r.time)return 0;
-  var ms=Date.parse(r.time);
+  var s=String(r.time).trim(),m=s.match(/^(\d{2})\.(\d{2})\.(\d{4})(?:\s+(\d{2}):(\d{2}))?/);
+  if(m)return Date.UTC(+m[3],+m[2]-1,+m[1],(+(m[4]||0))-5,+(m[5]||0));
+  var ms=Date.parse(s);
   return Number.isFinite(ms)?ms:0;
 }
 function mergeStatsRows(localRows,cloudRows){
@@ -849,13 +857,13 @@ async function postEmailJS(full,val,isUpdate,rsvpId,guestsCount){
 }
 function saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId,guestsCount){
   try{
-    var key="saqtaa-rsvp-rows-"+(D.oid||"default");
+    var key=statsStorageKey();
     var rows=JSON.parse(localStorage.getItem(key)||"[]");
     if(!Array.isArray(rows))rows=[];
     var now=new Date();
     var timeStr=pad(now.getDate())+"."+pad(now.getMonth()+1)+"."+now.getFullYear()+" "+pad(now.getHours())+":"+pad(now.getMinutes());
     var row={
-      oid:D.oid||"default",
+      oid:statsOid(),
       id:rsvpId,
       time:timeStr,
       name:cleanNm,
@@ -946,14 +954,33 @@ app.addEventListener("submit",async function(e){
   var samePerson=hadSent&&rsvpState.sentNm.toLowerCase()===cleanNm.toLowerCase()&&rsvpState.sentFm.toLowerCase()===cleanFm.toLowerCase();
   var isUpdate=hadSent&&samePerson;
   var prevVal=rsvpState?rsvpState.sentAtt:"yes";
-  var labels={yes:"Придёт",no:"Не придёт",maybe:"Пока не знает"};
-  var prevGuestInfo=(hadSent&&!samePerson)
-    ?((rsvpState.sentNm+" "+rsvpState.sentFm).trim()+" — "+(labels[prevVal]||prevVal)+", прежний ID: "+rsvpState.id)
-    :"";
   var nextRev=isUpdate?((rsvpState.rev||1)+1):1;
   var rsvpId=isUpdate?(rsvpState.id||makeId()):(hadSent?makeId():((rsvpState&&rsvpState.id)?rsvpState.id:makeId()));
 
-  var prevState=rsvpState?Object.assign({},rsvpState):null;
+  var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
+  if(D.srv||D.sheet){
+    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs,cnt));
+  }
+  if(useEjs){
+    tasks.push(postEmailJS(full,val,isUpdate,rsvpId,cnt));
+  }
+
+  if(tasks.length){
+    var sendBtn=f.querySelector(".rs-send");
+    isSubmitting=true;
+    if(sendBtn){sendBtn.disabled=true;sendBtn.textContent="⏳ "+t("sending");}
+    var results=await Promise.all(tasks);
+    isSubmitting=false;
+    var curForm=app.querySelector(".rs-form")||f;
+    var curBtn=curForm&&curForm.querySelector(".rs-send");
+    if(curBtn){curBtn.disabled=false;curBtn.textContent="✦ "+t("send")+" ✦";}
+    if(!results.every(Boolean)){
+      var curErr=(curForm&&curForm.querySelector(".rs-err"))||err;
+      if(curErr)curErr.textContent=t("e_send");
+      return;
+    }
+  }
+
   if(!rsvpState)rsvpState=loadRsvpState();
   rsvpState.id=rsvpId;
   rsvpState.nm=cleanNm;rsvpState.fm=cleanFm;rsvpState.att=val;
@@ -963,39 +990,9 @@ app.addEventListener("submit",async function(e){
   rsvpState.editing=false;rsvpState.lastSentAt=Date.now();
   saveRsvpState();
   saveLocalRsvpRow(cleanNm,cleanFm,val,rsvpId,cnt);
-  showDoneCard(sec,full,val,true,cnt);
+  var activeSec=(app.querySelector(".rs-form")&&app.querySelector(".rs-form").closest(".iv-sec"))||sec;
+  if(activeSec)showDoneCard(activeSec,full,val,true,cnt);
   updateStatsDOM();
-
-  var tasks=[],useEjs=Boolean(D.ejs&&D.ejs.s);
-  if(D.srv||D.sheet){
-    tasks.push(postToSheet(cleanNm,cleanFm,val,isUpdate,prevVal,rsvpId,useEjs,cnt));
-  }
-  if(useEjs){
-    tasks.push(postEmailJS(full,val,isUpdate,rsvpId,cnt));
-  }
-  if(!tasks.length)return;
-
-  isSubmitting=true;
-  var results=await Promise.all(tasks);
-  isSubmitting=false;
-  var ok=results.every(Boolean);
-  if(!ok){
-    if(prevState){
-      rsvpState=Object.assign({},prevState,{nm:cleanNm,fm:cleanFm,att:val,cnt:val==="yes"?cnt:prevState.cnt,editing:Boolean(prevState.sent)});
-    }else{
-      rsvpState.sent=false;rsvpState.sentNm="";rsvpState.sentFm="";rsvpState.sentAtt="";rsvpState.sentCnt=0;rsvpState.guests=0;rsvpState.lastSentAt=0;rsvpState.editing=false;
-    }
-    saveRsvpState();
-    updateStatsDOM();
-    var curSec=app.querySelector(".rs-form")?app.querySelector(".rs-form").closest(".iv-sec"):sec;
-    if(curSec){
-      var cf=curSec.querySelector(".rs-form"),cd=curSec.querySelector(".rs-done"),ce=cf&&cf.querySelector(".rs-err");
-      if(cd)cd.hidden=true;
-      if(cf)cf.hidden=false;
-      if(ce)ce.textContent=t("e_send");
-      if(cf)cf.scrollIntoView({behavior:"smooth",block:"center"});
-    }
-  }
 });
 app.addEventListener("change",function(e){
   if(e.target.matches(".rs-opt input")){
