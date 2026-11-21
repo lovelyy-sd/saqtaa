@@ -407,6 +407,13 @@ main{max-width:640px;margin:0 auto;padding:18px 16px 12px}
         <option value="maybe" data-i18n="optMaybe">Пока не знает</option>
         <option value="no" data-i18n="optNo">Не придёт</option>
       </select>
+      <div id="agGuestsWrap" style="margin-bottom:10px">
+        <label style="display:block;font-size:.76rem;font-weight:700;color:var(--muted);margin-bottom:4px" for="agGuests" data-i18n="agGuestsLbl">Количество гостей</label>
+        <select class="inp" id="agGuests">
+          <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
+          <option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+        </select>
+      </div>
       <div class="add-err" id="agErr" hidden></div>
       <div class="add-actions">
         <button type="button" class="icon-btn" id="agCancelBtn" style="width:auto;padding:0 16px;font-size:.86rem;font-weight:700" data-i18n="cancel">Отмена</button>
@@ -505,6 +512,10 @@ var I18N={
     waNo:"❌ *Не придут (",
     waNoneYet:"— пока нет",
     waNone:"— нет",
+    waPersonUnit:"чел.",
+    waTotalHeadcount:"Всего гостей (с семьёй)",
+    agGuestsLbl:"Количество гостей",
+    toastLocalOnly:"⚠️ Сохранено локально (сервер недоступен)",
     csvHead:"\uFEFF№;Имя;Фамилия;Статус;Количество;Время ответа\r\n",
     exportTitle:"Скачать таблицу (CSV)",
     moreTitle:"Дополнительно",
@@ -564,6 +575,10 @@ var I18N={
     waNo:"❌ *Келмейді (",
     waNoneYet:"— әзірге жоқ",
     waNone:"— жоқ",
+    waPersonUnit:"адам",
+    waTotalHeadcount:"Барлық қонақ (отбасымен)",
+    agGuestsLbl:"Қонақтар саны",
+    toastLocalOnly:"⚠️ Жергілікті сақталды (сервер қолжетімсіз)",
     csvHead:"\uFEFF№;Аты;Тегі;Мәртебе;Саны;Жауап уақыты\r\n",
     exportTitle:"Кестені жүктеу (CSV)",
     moreTitle:"Қосымша",
@@ -723,8 +738,9 @@ async function decodeHash(h){
 
 function parseAtt(val){
   val=String(val||"").toLowerCase();
+  if(val==="no"||val.indexOf("не прид")!==-1||val.indexOf("келмей")!==-1||val.indexOf("алмай")!==-1)return"no";
+  if(val==="maybe"||val.indexOf("пока")!==-1||val.indexOf("ойлан")!==-1||val.indexOf("дума")!==-1||val.indexOf("білмей")!==-1)return"maybe";
   if(val==="yes"||val.indexOf("прид")!==-1||val.indexOf("келед")!==-1)return"yes";
-  if(val==="no"||val.indexOf("не прид")!==-1||val.indexOf("келмей")!==-1)return"no";
   return"maybe";
 }
 
@@ -852,10 +868,15 @@ async function loadData(){
   }
 }
 
+$("#agAtt").addEventListener("change",function(){
+  var w=$("#agGuestsWrap");
+  if(w)w.hidden=(this.value!=="yes");
+});
 $("#toggleAddGuestBtn").addEventListener("click",function(){
   var f=$("#addGuestForm");
   f.hidden=!f.hidden;
   $("#agErr").hidden=true;
+  if($("#agGuestsWrap"))$("#agGuestsWrap").hidden=($("#agAtt").value!=="yes");
   if(!f.hidden){$("#agName").focus();f.scrollIntoView({behavior:"smooth",block:"center"});}
 });
 $("#agCancelBtn").addEventListener("click",function(){$("#addGuestForm").hidden=true;});
@@ -867,6 +888,7 @@ $("#addGuestForm").addEventListener("submit",async function(e){
   var nm=capName($("#agName").value);
   var fm=capName($("#agFam").value);
   var att=$("#agAtt").value||"yes";
+  var gCnt=att==="yes"?Math.max(1,Math.min(10,parseInt($("#agGuests")&&$("#agGuests").value,10)||1)):0;
   if(!isValidNamePart(nm)){
     errEl.textContent=t("errName");
     errEl.hidden=false;$("#agName").focus();return;
@@ -879,20 +901,20 @@ $("#addGuestForm").addEventListener("submit",async function(e){
   var now=new Date();
   var tStr=pad(now.getDate())+"."+pad(now.getMonth()+1)+"."+now.getFullYear()+" "+pad(now.getHours())+":"+pad(now.getMinutes());
   var gid="manual_"+Date.now().toString(36);
-  var row={oid:orderId||"default",id:gid,time:tStr,name:nm,fam:fm,att:att,guests:att==="yes"?1:0,title:currentTitle||t("defaultTitle")};
+  var row={oid:orderId||"default",id:gid,time:tStr,name:nm,fam:fm,att:att,guests:gCnt,title:currentTitle||t("defaultTitle")};
   saveLocalRow(row);
-  $("#agName").value="";$("#agFam").value="";$("#addGuestForm").hidden=true;
+  $("#agName").value="";$("#agFam").value="";if($("#agGuests"))$("#agGuests").value="1";$("#addGuestForm").hidden=true;
   await loadData();
   toast(t("toastAdded"));
   if(sheetUrl){
     var labels={yes:t("badgeYes"),no:t("badgeNo"),maybe:t("optMaybe")};
-    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+(att==="yes"?1:0)+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"))+"&no_email=1&_t="+Date.now();
+    var q="?action=rsvp&oid="+encodeURIComponent(orderId||"default")+"&id="+encodeURIComponent(gid)+"&name="+encodeURIComponent(nm)+"&fam="+encodeURIComponent(fm)+"&att_code="+encodeURIComponent(att)+"&att="+encodeURIComponent(labels[att]||t("badgeYes"))+"&guests="+gCnt+"&title="+encodeURIComponent(currentTitle||t("defaultTitle"))+"&no_email=1&_t="+Date.now();
     try{
       var sr=await fetch(sheetUrl+q,{method:"GET"});
       var sj=sr.ok?await sr.json():null;
       if(!sj||!sj.ok)throw new Error("sync");
     }catch(_){
-      toast("⚠️ Сохранено локально (сервер недоступен)");
+      toast(t("toastLocalOnly"));
     }
   }
 });
@@ -916,16 +938,21 @@ document.addEventListener("click",function(e){
 
 $("#btnCopyWaReport").addEventListener("click",async function(){
   $("#moreMenu").hidden=true;
-  var yes=[],no=[],maybe=[];
+  var yes=[],no=[],maybe=[],yesHeadcount=0;
   rawRows.forEach(function(g){
     var full=(g.name+" "+g.fam).trim();
-    if(g.normAtt==="yes")yes.push(full);
+    if(g.normAtt==="yes"){
+      var gc=Math.max(1,parseInt(g.guests,10)||1);
+      yesHeadcount+=gc;
+      yes.push(gc>1?(full+" ("+gc+" "+t("waPersonUnit")+")"):full);
+    }
     else if(g.normAtt==="no")no.push(full);
     else maybe.push(full);
   });
   var lines=[t("waHeader")+(currentTitle||t("defaultTitle"))+"*",""];
-  lines.push(t("waYes")+yes.length+"):*");
+  lines.push(t("waYes")+yes.length+(yesHeadcount>yes.length?" / "+yesHeadcount+" "+t("waPersonUnit"):"")+"):*");
   if(yes.length)yes.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push(t("waNoneYet"));
+  if(yesHeadcount>yes.length)lines.push(t("waTotalHeadcount")+": *"+yesHeadcount+"*");
   lines.push("");
   lines.push(t("waMaybe")+maybe.length+"):*");
   if(maybe.length)maybe.forEach(function(n,i){lines.push((i+1)+". "+n);});else lines.push(t("waNone"));
@@ -943,7 +970,8 @@ $("#btnExportCsv").addEventListener("click",function(){
   rawRows.forEach(function(g,idx){
     var st=labels[g.normAtt]||t("badgeYes");
     var escCsv=function(s){return'"'+String(s||"").replace(/"/g,'""')+'"';};
-    csv+=(idx+1)+";"+escCsv(g.name)+";"+escCsv(g.fam)+";"+escCsv(st)+";"+(g.normAtt==="yes"?1:0)+";"+escCsv(g.time)+"\r\n";
+    var gCnt=g.normAtt==="yes"?Math.max(1,parseInt(g.guests,10)||1):0;
+    csv+=(idx+1)+";"+escCsv(g.name)+";"+escCsv(g.fam)+";"+escCsv(st)+";"+gCnt+";"+escCsv(g.time)+"\r\n";
   });
   var blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download="saqtaa-guests-"+new Date().toISOString().slice(0,10)+".csv";
@@ -1013,7 +1041,7 @@ async function init(){
   metaVenueStr=venueStr;
 
   var savedLang="";try{savedLang=localStorage.getItem("saqtaa-stats-lang")||"";}catch(_){}
-  var initLang=params.get("lang")||savedLang||invLang||"ru";
+  var initLang=params.get("lang")||savedLang||invLang||(/^kk/i.test(navigator.language||"")?"kz":"ru");
   applyLang(initLang,false);
   $("#eventTitle").textContent=currentTitle||t("defaultTitle");
 

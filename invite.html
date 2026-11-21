@@ -371,7 +371,7 @@ ru:{inv:"Приглашение",joy:"С большой радостью",prog:"
  name:"Имя",fam:"Фамилия",yes:"✧ Конечно, приду",no:"К сожалению, не смогу прийти",maybe:"Пока не могу ответить",
  send:"Отправить ответ",sending:"Отправляем…",thanks:"Спасибо!",edit:"Изменить ответ",
  ok_yes:"Спасибо за ответ. Мы очень рады и ждём вас!",ok_no:"Спасибо за ответ. Жаль, что вы не сможете прийти. Спасибо, что сообщили!",ok_maybe:"Спасибо за ответ. Будем ждать вашего решения!",
- e_name:"Укажите имя",e_fam:"Укажите фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
+ e_name:"Укажите имя",e_fam:"Укажите фамилию",e_name_bad:"Укажите настоящее имя",e_fam_bad:"Укажите настоящую фамилию",e_send:"Ответ не отправлен. Проверьте интернет и настройки почты организатора.",
  e_wait:"Пожалуйста, подождите 30 секунд перед повторной отправкой.",
  by:"Просим подтвердить присутствие до {date}",cal:"Добавить в календарь",gcal:"Или открыть в Google Календаре",
  calhint:"Файл календаря содержит напоминание за 24 часа. Показ уведомления зависит от приложения и настроек устройства.",
@@ -386,7 +386,7 @@ kz:{inv:"Шақыру",joy:"Үлкен қуанышпен",prog:"Бағдарл�
  name:"Аты",fam:"Тегі",yes:"✧ Әрине, келемін",no:"Өкінішке қарай, келе алмаймын",maybe:"Әзірге жауап бере алмаймын",
  send:"Жауап жіберу",sending:"Жіберілуде…",thanks:"Рақмет!",edit:"Жауапты өзгерту",
  ok_yes:"Жауабыңызға рақмет. Біз өте қуаныштымыз және сізді күтеміз!",ok_no:"Жауабыңызға рақмет. Қатыса алмайтыныңыз өкінішті. Хабарлағаныңызға рақмет!",ok_maybe:"Жауабыңызға рақмет. Шешіміңізді күтеміз!",
- e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
+ e_name:"Атыңызды жазыңыз",e_fam:"Тегіңізді жазыңыз",e_name_bad:"Шынайы атыңызды жазыңыз",e_fam_bad:"Шынайы тегіңізді жазыңыз",e_send:"Жауап жіберілмеді. Интернет пен ұйымдастырушының пошта баптауларын тексеріңіз.",
  e_wait:"Қайта жіберу алдында 30 секунд күтіңіз.",
  by:"Қатысатыныңызды {date} күніне дейін растауыңызды сұраймыз",cal:"Күнтізбеге қосу",gcal:"Немесе Google Күнтізбеде ашу",
  calhint:"Күнтізбе файлы 24 сағат бұрын еске салуды қамтиды. Хабарландырудың көрсетілуі күнтізбе қолданбасы мен құрылғы баптауларына байланысты.",
@@ -408,20 +408,27 @@ var CAL_ICON='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke
 var CHECK_ICON='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M14 25l8 8 14-16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 var TPL={
  luxury:{cls:"theme-luxury",glyph:"❧",tglyph:"❧",crest:"♕",orn:true,
-  dc:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Black Tie & Gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]}},
+  dc:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Классика және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]}},
  floral:{cls:"theme-floral",glyph:"✿",tglyph:"❀",crest:"✿",orn:true,
   deco:'<svg class="flor fl-tl" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><svg class="flor fl-br" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg>',
-  dc:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Garden Pastel",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]}},
+  dc:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Нәзік пастель",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]}},
  qazaq:{cls:"theme-qazaq",glyph:"✦",tglyph:"❧",crest:"❖",band:true,
   dc:{ru:"Дресс-код: Королевский бордо",kz:"Дресс-код: Ұлттық нақыш",sw:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]]}},
  editorial:{cls:"theme-editorial",glyph:"✦",tglyph:"✦",crest:"✦",big:true,
-  dc:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Monochrome Chic",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]}},
+  dc:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Монохром шик",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]}},
  emerald:{cls:"theme-emerald",glyph:"✧",tglyph:"✧",crest:"♕",orn:true,
   deco:'<span class="spk s1">✦</span><span class="spk s2">✦</span><span class="spk s3">✦</span><span class="spk s4">✦</span><span class="spk s5">✦</span>',
-  dc:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Emerald & Gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]}},
+  dc:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Зүбәржат және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]}},
  tusau:{cls:"theme-tusau",glyph:"☀",tglyph:"☀",crest:"☀",innerDeco:SUN_SVG,
   deco:'<svg class="fp fp1" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp2" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp3" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp4" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg>',
   dc:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]}}
+};
+var DC_PALS={
+  gold:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]],
+  pastel:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]],
+  bordo:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]],
+  mono:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]],
+  warm:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]
 };
 
 /* ---------- данные, даты и локальное состояние RSVP ---------- */
@@ -555,15 +562,19 @@ function monogramHTML(rawNames,T,edBigVal){
   return '<div class="inv-mono fx" style="--d:.03s" aria-hidden="true"><span class="mono-ring"></span><div class="mono-disc"><i class="mono-cr">'+(T.crest||T.glyph||"✦")+'</i><b class="mono-txt">'+init+'</b><i class="mono-bt">'+(T.tglyph||"❦")+'</i></div><span class="mono-sp ms1">✦</span><span class="mono-sp ms2">✦</span></div>';
 }
 function dressHTML(T){
-  var dc=T&&T.dc;
-  if(!dc||!Array.isArray(dc.sw)||!dc.sw.length)return"";
-  var title=lang==="kz"?dc.kz:dc.ru;
-  var dots=dc.sw.map(function(s){
+  if(D&&D.dc===false)return"";
+  var dc=T&&T.dc,custom=(D&&D.dc&&typeof D.dc==="object")?D.dc:null;
+  var pal=custom&&custom.pal&&DC_PALS[custom.pal]?DC_PALS[custom.pal]:(dc&&Array.isArray(dc.sw)?dc.sw:[]);
+  var title=custom?(lang==="kz"?(custom.kz||custom.ru):(custom.ru||custom.kz)):(dc?(lang==="kz"?(dc.kz||dc.ru):(dc.ru||dc.kz)):"");
+  if(!title)title=(dc?(lang==="kz"?(dc.kz||dc.ru):(dc.ru||dc.kz)):"")||"Дресс-код";
+  var subTxt=(custom&&(custom.sru||custom.skz))?(lang==="kz"?(custom.skz||custom.sru):(custom.sru||custom.skz)):t("dc_sub");
+  if(!title&&!pal.length)return"";
+  var dots=pal.map(function(s){
     var lbl=lang==="kz"?s[1]:s[0],cols=String(s[2]||"").split(",");
     var bg="linear-gradient(135deg,"+(cols[0]||"#fff")+" 0%,"+(cols[1]||cols[0]||"#999")+" 100%)";
     return '<div class="dress-dot"><span class="dress-pearl" style="background:'+esc(bg)+'"></span><span>'+esc(lbl)+'</span></div>';
   }).join("");
-  return '<section class="iv-sec fx" style="--d:.41s"><div class="dress-card"><h4 class="dress-h">❖ '+esc(title)+' ❖</h4><p class="dress-sub">'+esc(t("dc_sub"))+'</p><div class="dress-dots">'+dots+'</div></div></section>';
+  return '<section class="iv-sec fx" style="--d:.41s"><div class="dress-card"><h4 class="dress-h">❖ '+esc(title)+' ❖</h4><p class="dress-sub">'+esc(subTxt)+'</p>'+(dots?'<div class="dress-dots">'+dots+'</div>':'')+'</div></section>';
 }
 function render(){
   var T=TPL[D.t]||TPL.luxury,c=blk(),pr=c.pr||[];
@@ -619,7 +630,7 @@ function render(){
   var img=app.querySelector(".ph-frame img");
   if(img)img.addEventListener("error",function(){img.closest(".ph-frame").classList.remove("has-img");});
   document.documentElement.lang=lang==="kz"?"kk":"ru";
-  document.title=names()||"Приглашение";
+  document.title=names()||t("inv");
   tick();
   updateStatsDOM();
   if(D.rsvp!==false)fetchInviteStats(false);
@@ -641,7 +652,7 @@ function readLocalStatsRows(){
 function parseStatAtt(r){
   var a=String((r&&r.att)||"").toLowerCase().trim(),lbl=String((r&&r.att_label)||"").toLowerCase();
   if(a==="yes"||lbl.indexOf("прид")===0||lbl.indexOf("келед")>=0)return"yes";
-  if(a==="no"||lbl.indexOf("не прид")>=0||lbl.indexOf("келмей")>=0)return"no";
+  if(a==="no"||lbl.indexOf("не прид")>=0||lbl.indexOf("келмей")>=0||lbl.indexOf("алмай")>=0)return"no";
   if(a==="maybe"||lbl.indexOf("пока")>=0||lbl.indexOf("ойлан")>=0||lbl.indexOf("дума")>=0)return"maybe";
   return validAtt(a);
 }
@@ -1073,6 +1084,14 @@ async function init(){
       pr:Array.isArray(b.pr)?b.pr.slice(0,20).map(function(p){return Array.isArray(p)?[String(p[0]||"").slice(0,5),String(p[1]||"").slice(0,60),String(p[2]||"").slice(0,90)]:[];}).filter(function(p){return p[0]&&p[1];}):[]};
   });
   D.rsvp=D.rsvp!==false;
+  if(D.dc===false){D.dc=false;}
+  else if(D.dc&&typeof D.dc==="object"){
+    D.dc={
+      ru:String(D.dc.ru||"").slice(0,80),kz:String(D.dc.kz||"").slice(0,80),
+      sru:String(D.dc.sru||"").slice(0,140),skz:String(D.dc.skz||"").slice(0,140),
+      pal:DC_PALS[D.dc.pal]?String(D.dc.pal):""
+    };
+  }else{delete D.dc;}
   langs=D.l==="both"?["ru","kz"]:[D.l==="kz"?"kz":"ru"];
   rsvpState=loadRsvpState();
   lang=langs[0];
@@ -1093,7 +1112,7 @@ async function init(){
     }
   }catch(e){
     console.error("SAQTAA_INIT_ERR",e);
-    screen("Ошибка загрузки ✦","<p>Не удалось отобразить приглашение: "+esc(e&&e.message?e.message:String(e))+"</p>");
+    screen("Ошибка загрузки ✦","<p>Не удалось отобразить приглашение: "+esc(e&&e.message?e.message:String(e))+"</p><p>Шақыруды ашу мүмкін болмады.</p>");
   }
 }
 addEventListener("hashchange",function(){init();});
