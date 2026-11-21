@@ -298,6 +298,7 @@ h1,h2,h3{font-family:var(--fd);font-weight:700;line-height:1.08}
 .ed-rule{width:100%;max-width:460px;height:2px;background:#141414;transform:scaleX(0);transform-origin:left;transition:transform .9s cubic-bezier(.22,1,.36,1)}
 .ed-rule.in{transform:scaleX(1)}
 .ed-big{font-family:var(--fd);font-weight:800;font-size:clamp(4.4rem,18vw,6.4rem);line-height:.84;color:#F3EFE5;-webkit-text-stroke:2.5px #141414;text-shadow:5px 5px 0 #141414;letter-spacing:.02em;animation:edFloat 4.2s ease-in-out infinite}
+.ed-big.ed-big-date{font-size:clamp(2.5rem,10vw,3.6rem);-webkit-text-stroke:1.8px #141414;text-shadow:3px 3px 0 #141414}
 @keyframes edFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(-2px,-2px)}}
 .theme-editorial .mono-ring{display:none}
 .theme-editorial .mono-disc{border-radius:0;background:#F3EFE5;box-shadow:6px 6px 0 #141414;width:110px;height:110px}
@@ -881,8 +882,10 @@ function observeFx(instantAll){
     });
   });
 }
+var DEF_EV={luxury:"wedding",floral:"wedding",qazaq:"toy",editorial:"jubilee",emerald:"birthday",tusau:"tusau",uzatu:"uzatu",uzatu2:"uzatu",tusau2:"tusau",jubilee:"jubilee",lavender:"birthday",sunset:"birthday"};
+function evType(){return(D&&D.ev)?D.ev:(DEF_EV[D&&D.t]||"wedding");}
 function render(instantFx){
-  var T=TPL[D.t]||TPL.luxury,c=blk(),pr=c.pr||[];
+  var T=TPL[D.t]||TPL.luxury,c=blk(),pr=c.pr||[],ev=evType(),isTusau=(ev==="tusau");
   var photo=safeUrl(D.p),title=esc(c.ti||""),nm=esc(names());
   var progHTML=pr.length?'<section class="iv-sec fx" style="--d:.32s"><p class="iv-eyebrow">'+t("prog")+'</p><ul class="prog">'+pr.map(function(p){
     return'<li><b>'+esc(p[0])+'</b><i></i><div><strong>'+esc(p[1])+'</strong>'+(p[2]?'<span>'+esc(p[2])+'</span>':'')+'</div></li>';}).join("")+'</ul></section>':"";
@@ -914,9 +917,10 @@ function render(instantFx){
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
         :'<p class="inv-kicker fx" style="--d:.08s">'+t("inv")+' · '+dDot(D.d)+'</p><h2 class="inv-names fx" style="--d:.1s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
   }else if(D.t==="editorial"){
-    var edIssue=lang==="kz"?"АРНАЙЫ БАСЫЛЫМ · NO. 04":"SPECIAL ISSUE · NO. 04";
+    var edIssue=lang==="kz"?"АРНАЙЫ БАСЫЛЫМ":"SPECIAL ISSUE";
+    var edFallback='<div class="ed-big ed-big-date">'+dDot(D.d).slice(0,5)+'</div>';
     head='<div class="ed-masthead fx" style="--d:.01s"><span>'+edIssue+'</span><span>'+dDot(D.d)+'</span></div>'+
-      '<div class="ed-split fx" style="--d:.05s"><div class="ed-split-meta">'+(big||'<div class="ed-big">№4</div>')+'<h2 class="ed-split-nm">'+nm+'</h2>'+(title?'<p class="ed-split-sub">'+title+'</p>':'')+'</div><div>'+heroBox+'</div></div>'+
+      '<div class="ed-split fx" style="--d:.05s"><div class="ed-split-meta">'+(big||edFallback)+'<h2 class="ed-split-nm">'+nm+'</h2>'+(title?'<p class="ed-split-sub">'+title+'</p>':'')+'</div><div>'+heroBox+'</div></div>'+
       '<div class="ed-rule fx" style="--d:.1s"></div>'+
       '<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>';
   }else if(D.t==="emerald"){
@@ -925,7 +929,7 @@ function render(instantFx){
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
         :'<p class="inv-kicker fx" style="--d:.06s">'+t("inv")+' · '+dDot(D.d)+'</p><h2 class="inv-names fx" style="--d:.1s">'+nm+'</h2>'+(title?'<p class="inv-sub fx" style="--d:.14s">'+title+'</p>':''));
   }else if(D.t==="tusau"){
-    var fpRow='<div class="tus-steps-row fx" style="--d:.09s" aria-hidden="true">'+(new Array(6).join('<svg class="tus-foot" viewBox="0 0 24 42">'+FP_SVG+'</svg>'))+'</div>';
+    var fpRow=isTusau?('<div class="tus-steps-row fx" style="--d:.09s" aria-hidden="true">'+(new Array(6).join('<svg class="tus-foot" viewBox="0 0 24 42">'+FP_SVG+'</svg>'))+'</div>'):"";
     head=heroBox+fpRow+
       (photo
         ?'<p class="iv-eyebrow fx" style="--d:.12s">'+t("joy")+'</p>'+(title?'<h3 class="joy-h fx" style="--d:.16s">'+title+'</h3>':'')
@@ -960,7 +964,8 @@ function render(instantFx){
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div>'+
       '<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div></section>';
   var showDateRow=(D.t!=="luxury"&&D.t!=="floral");
-  app.innerHTML='<article class="inv-page '+T.cls+(photo?'':' is-deco')+'">'+sw+'<canvas class="fx-cv" aria-hidden="true"></canvas>'+(T.deco||"")+'<div class="inv-inner">'+
+  var decoHTML=(D.t==="tusau"||D.t==="tusau2")?(isTusau?(T.deco||""):'<span class="spk s1">✦</span><span class="spk s2">✧</span><span class="spk s4">✦</span>'):(T.deco||"");
+  app.innerHTML='<article class="inv-page '+T.cls+(photo?'':' is-deco')+'">'+sw+'<canvas class="fx-cv" aria-hidden="true"></canvas>'+decoHTML+'<div class="inv-inner">'+
     (T.band?qband("0s"):"")+(T.innerDeco||"")+(photo&&T.orn?ORN:"")+head+
     (c.le?'<div class="inv-lead-box fx" style="--d:.18s"><p class="inv-lead">'+esc(sub(c.le))+'</p></div>':'')+
     '<div class="orn-div fx" style="--d:.22s"><span>❧</span></div>'+
