@@ -964,12 +964,80 @@ body.menu-open{overflow:hidden}
 .dt-order:hover{background:var(--gold-soft)}
 .dt-order:active{transform:scale(.96)}
 
+/* Плавающая нижняя панель быстрого доступа на телефоне */
+.sticky-cta{
+  position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));z-index:75;
+  transform:translate(-50%,120%);opacity:0;pointer-events:none;
+  display:flex;align-items:center;gap:8px;
+  padding:6px;border-radius:999px;
+  background:rgba(10,53,39,.94);
+  border:1px solid rgba(217,188,127,.45);
+  box-shadow:0 16px 34px -10px rgba(10,35,27,.65);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .26s;
+  max-width:calc(100vw - 24px);
+}
+.sticky-cta.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.sticky-cta .btn{min-height:42px;padding:0 16px;font-size:.82rem}
+.sticky-cta .btn-ghost-dark{color:#F6F1E4;border:1px solid rgba(217,188,127,.35);background:rgba(255,255,255,.06)}
+.sticky-cta .btn-ghost-dark:active{background:rgba(255,255,255,.14)}
+
+/* ============ УДОБСТВО НА ТЕЛЕФОНЕ (С СОХРАНЕНИЕМ КРАСОТЫ И ДЕТАЛЕЙ) ============ */
+@media (max-width:899px){
+  .chips{
+    position:sticky;top:calc(62px + env(safe-area-inset-top));z-index:45;
+    margin:0 calc(var(--pad) * -1) 14px;
+    padding:10px var(--pad);
+    background:rgba(245,239,226,.94);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--hair);
+  }
+  .hp-btn{width:44px;height:44px;font-size:1.05rem}
+  .preview-tap:active{transform:scale(.988)}
+  .inside-item:active{transform:scale(.99)}
+}
+@media (max-width:600px){
+  .hero{padding:16px var(--pad) 26px}
+  .hero .wrap{gap:22px}
+  .hero-txt h1{font-size:clamp(2.05rem,9vw,2.75rem);margin:.3em 0 .28em}
+  .hero-lead{font-size:.93rem}
+  .hero-cta{display:grid;grid-template-columns:1fr;gap:9px;margin:18px 0 16px}
+  .hero-cta .btn{width:100%;min-height:52px}
+  .hero-pills{gap:6px}
+  .hero-pills span{padding:5px 10px;font-size:.74rem}
+  .invite{padding:18px 16px}
+  .invite .h-mono{width:60px;height:60px;margin-bottom:8px}
+  .invite .hm-disc{width:48px;height:48px}
+  .hero-tap-badge{width:100%;min-height:42px;font-size:.78rem}
+  .section{padding:36px var(--pad)}
+  .catalog-sec{padding-top:10px}
+  .preview{aspect-ratio:4/3.75}
+  .card-info{padding:14px 14px 16px}
+  .ci-btns{grid-template-columns:1.25fr 1fr;gap:8px;margin-top:8px}
+  .ci-btns .btn{min-height:48px;padding:0 12px;font-size:.84rem}
+  .inside-item{padding:17px 16px 16px}
+  .price-card{padding:22px 18px;border-radius:20px}
+  .price-card .btn-gold{width:100%;min-height:52px}
+  .foot-cta{width:100%}
+  .foot-cta .btn-gold{width:100%;min-height:48px}
+  .foot-contacts{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+  .foot-contacts a{min-height:42px;justify-content:center}
+  .foot{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  .dt-back span{display:none}
+  .dt-back{min-width:38px;justify-content:center;padding:0 6px}
+  .dt-name{font-size:.82rem}
+  .dt-order{min-height:36px;padding:0 11px;font-size:.72rem}
+  .dnav{width:40px;height:40px;flex:0 0 40px}
+  .dphoto-ui .tab,.dphoto-ui .upl{min-height:36px;padding:0 12px;font-size:.75rem}
+}
+
 /* ============ ПЛАНШЕТ / ДЕСКТОП ============ */
 @media (min-width:900px){
   .head-nav{display:flex}
   .head-wa{display:inline-flex}
   .burger{display:none}
   .mmenu{display:none}
+  .sticky-cta{display:none}
   .hero .wrap{grid-template-columns:1.1fr .9fr}
   .demo-stage{cursor:grab}
 }
@@ -1456,7 +1524,7 @@ body.menu-open{overflow:hidden}
         <ul>
           <li><span data-i18n="tm1t">Готово за 1 день</span></li>
           <li><span data-i18n="tm2t">2 правки бесплатно</span></li>
-          <li><span data-i18n="tm3t">Оплата через Kaspi</span> · <span data-i18n="tm3d">50% — предоплата, 50% — после готовности приглашения.</span></li>
+          <li><span data-i18n="tm3t">Оплата переводом</span> · <span data-i18n="tm3d">Kaspi, Halyk и другие банки · 50% предоплата, 50% после готовности.</span></li>
           <li><span data-i18n="tm4t">Ссылка работает</span>: <span data-i18n="tm4d">До дня мероприятия включительно.</span></li>
           <li><span data-i18n="tm5t">Свой дизайн</span> — <span data-i18n="tm5d">Возможен — цена по договорённости.</span></li>
         </ul>
@@ -1493,6 +1561,11 @@ body.menu-open{overflow:hidden}
     <a class="up" href="#top">↑ <span data-i18n="up">наверх</span></a>
   </div>
 </footer>
+
+<div class="sticky-cta" id="stickyCta">
+  <a class="btn btn-ghost-dark" href="#designs" data-i18n="nav_designs">Дизайны</a>
+  <a class="btn btn-gold wa-order" href="https://wa.me/77788613881" target="_blank" rel="noopener">✦ WhatsApp</a>
+</div>
 
 <div class="toast" id="toast" role="status"></div>
 
@@ -1625,7 +1698,7 @@ body.menu-open{overflow:hidden}
       pr_note:"для первых 15 клиентов",
       tm_h:"Условия заказа",tm1t:"Готово за 1 день",tm1d:"После получения всех данных и предоплаты.",
       tm2t:"2 правки бесплатно",tm2d:"Каждая следующая — 500 ₸. Одна правка — все изменения, присланные одним сообщением.",
-      tm3t:"Оплата через Kaspi",tm3d:"50% — предоплата, 50% — после готовности приглашения.",
+      tm3t:"Оплата переводом",tm3d:"Kaspi, Halyk и другие банки · 50% предоплата, 50% после готовности.",
       tm4t:"Ссылка работает",tm4d:"До дня мероприятия включительно.",
       tm5t:"Свой дизайн",tm5d:"Возможен — цена по договорённости.",c_phone:"Телефон",
       quote:"Приглашение — это первое впечатление от вашего праздника.",
@@ -1768,7 +1841,7 @@ pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee 
       pr_note:"алғашқы 15 клиентке",
       tm_h:"Тапсырыс шарттары",tm1t:"1 күнде дайын",tm1d:"Барлық мәліметтер мен алдын ала төлем түскеннен кейін.",
       tm2t:"2 түзету тегін",tm2d:"Әр келесі түзету — 500 ₸. Бір түзету — бір хабарламамен жіберілген барлық өзгерістер.",
-      tm3t:"Kaspi арқылы төлем",tm3d:"50% — алдын ала төлем, 50% — шақыру дайын болғаннан кейін.",
+      tm3t:"Аударыммен төлем",tm3d:"Kaspi, Halyk және басқа банктер · 50% алдын ала, 50% дайын болған соң.",
       tm4t:"Сілтеме жұмыс істейді",tm4d:"Іс-шара өтетін күнді қоса алғанда.",
       tm5t:"Жеке дизайн",tm5d:"Мүмкін — бағасы келісім бойынша.",c_phone:"Телефон",
       quote:"Шақыру — тойыңыздың алғашқы әсері.",
@@ -2591,7 +2664,21 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   function heroStop(){clearInterval(hTimer);hTimer=null;}
   qs("#heroPrev").addEventListener("click",()=>{heroStop();setHero((hIdx-1+HERO.length)%HERO.length);heroStart();});
   qs("#heroNext").addEventListener("click",()=>{heroStop();setHero((hIdx+1)%HERO.length);heroStart();});
-  invEl.addEventListener("click",()=>openViewer(hIdx));
+  let hTouchX=0,hTouchY=0,hSwiped=false;
+  invEl.addEventListener("touchstart",e=>{
+    if(!e.touches||!e.touches[0])return;
+    hTouchX=e.touches[0].clientX;hTouchY=e.touches[0].clientY;hSwiped=false;
+  },{passive:true});
+  invEl.addEventListener("touchend",e=>{
+    if(!e.changedTouches||!e.changedTouches[0])return;
+    const dx=e.changedTouches[0].clientX-hTouchX,dy=e.changedTouches[0].clientY-hTouchY;
+    if(Math.abs(dx)>42&&Math.abs(dx)>Math.abs(dy)*1.2){
+      hSwiped=true;heroStop();
+      setHero((hIdx+(dx<0?1:-1)+HERO.length)%HERO.length);
+      clearTimeout(hResume);hResume=setTimeout(heroStart,6000);
+    }
+  },{passive:true});
+  invEl.addEventListener("click",()=>{if(hSwiped){hSwiped=false;return;}openViewer(hIdx);});
   invEl.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openViewer(hIdx);}});
   invEl.addEventListener("mouseenter",heroStop);
   invEl.addEventListener("mouseleave",heroStart);
@@ -2631,7 +2718,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       window.scrollTo({top:0,behavior:reduced?"auto":"smooth"});
       return;
     }
-    const anchorEl=target.querySelector(".coll-head,.feat-h,.price-card")||target;
+    const anchorEl=target.querySelector(".coll-head,.inside-head,.price-card")||target;
     qsa("[data-reveal]",target).forEach(el=>{el.classList.add("in");if(io&&io.unobserve)io.unobserve(el);});
     const sticky=getComputedStyle(head).position==="sticky";
     const offset=(sticky?head.getBoundingClientRect().height:0)+16;
@@ -2664,7 +2751,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   setTimeout(()=>qsa("[data-reveal]").forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)el.classList.add("in");}),2500);
 
   /* ---------- фильтр ---------- */
-  const cards=qsa(".card"),rail=qs("#cards"),swipeHint=qs(".swipe-hint");
+  const cards=qsa(".card"),rail=qs("#cards"),swipeHint=qs(".swipe-hint"),chipsBar=qs(".chips");
   function syncSwipeHint(){
     if(!swipeHint||!rail)return;
     swipeHint.hidden=rail.scrollWidth<=rail.clientWidth+4;
@@ -2673,6 +2760,7 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
   qsa(".chip").forEach(ch=>ch.addEventListener("click",()=>{
     qsa(".chip").forEach(c=>{c.classList.remove("on");c.setAttribute("aria-pressed","false");});
     ch.classList.add("on");ch.setAttribute("aria-pressed","true");
+    if(ch.scrollIntoView)ch.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});
     const cat=ch.dataset.cat;
     let visCount=0;
     cards.forEach(c=>{
@@ -2681,7 +2769,10 @@ pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:
       else{c.classList.add("off");setTimeout(()=>{if(c.classList.contains("off"))c.hidden=true;syncSwipeHint();},260);}
     });
     rail.classList.toggle("few-2",visCount===2);
-    
+    if(innerWidth<900&&rail){
+      const topY=pageTop(rail)-(head.getBoundingClientRect().height+(chipsBar?chipsBar.getBoundingClientRect().height:0)+12);
+      if(scrollY>topY+10)window.scrollTo({top:Math.max(0,topY),behavior:reduced?"auto":"smooth"});
+    }
     setTimeout(syncSwipeHint,280);
   }));
   addEventListener("resize",syncSwipeHint);
