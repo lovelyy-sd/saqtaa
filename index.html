@@ -144,22 +144,47 @@ body.menu-open{overflow:hidden}
 .invite-wrap::before,.invite-wrap::after{content:"";position:absolute;inset:0;background:var(--card);border:1px solid var(--hair);border-radius:10px;z-index:-1}
 .invite-wrap::before{transform:rotate(3.5deg) translate(8px,6px)}
 .invite-wrap::after{transform:rotate(-5deg) translate(-9px,10px);opacity:.7}
-.invite{background:var(--card);border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 60%,transparent);border-radius:10px;padding:clamp(22px,6vw,34px) clamp(18px,5vw,30px);text-align:center;box-shadow:0 30px 60px -30px rgba(16,42,32,.4);position:relative;transition:border-color .5s}
-.invite::before{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 50%,transparent);border-radius:6px;pointer-events:none;transition:border-color .5s}
-.invite.t-lux{--inv-acc:#B98E45}.invite.t-flor{--inv-acc:#C08379}.invite.t-qaz{--inv-acc:#9E4453}
-.invite.t-edit{--inv-acc:#5A5A5A}.invite.t-emer{--inv-acc:#2E7B62}.invite.t-tus{--inv-acc:#C98A2E}
-.orn-svg{width:120px;color:var(--inv-acc,var(--gold));margin:0 auto;transition:color .5s}
-.invite .names{font-family:var(--fd);font-size:clamp(2.2rem,8vw,2.8rem);font-weight:700;letter-spacing:.06em;margin:8px 0 2px}
-.invite .sub{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink2)}
-.cycle-tag{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;color:var(--inv-acc,var(--gold));font-weight:700;margin-top:6px;transition:color .5s}
+.invite{background:linear-gradient(180deg,#FFFCF6 0%,#F9F1DF 100%);color:var(--ink);border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 65%,transparent);border-radius:14px;padding:clamp(22px,6vw,34px) clamp(18px,5vw,30px);text-align:center;box-shadow:0 32px 64px -28px rgba(16,42,32,.42),0 6px 20px rgba(185,142,69,.14);position:relative;overflow:hidden;transition:background .5s,border-color .5s,color .45s,box-shadow .5s}
+.invite::before{content:"";position:absolute;inset:9px;border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 48%,transparent);border-radius:9px;pointer-events:none;transition:border-color .5s}
+.invite.t-lux{--inv-acc:#B98E45}
+.invite.t-flor{--inv-acc:#C08379;background:linear-gradient(180deg,#FFFBF9 0%,#F7EAE7 100%)}
+.invite.t-qaz{--inv-acc:#9E4453;background:linear-gradient(180deg,#FCF6EC 0%,#F4E8D4 100%)}
+.invite.t-edit{--inv-acc:#242424;background:linear-gradient(180deg,#FCFCFA 0%,#F1EFE9 100%);border-width:1.5px}
+.invite.t-emer{--inv-acc:#D9BC7F;background:linear-gradient(180deg,#124E3B 0%,#082D21 100%);color:#F7EFE0;box-shadow:0 34px 68px -24px rgba(7,35,25,.66)}
+.invite.t-tus{--inv-acc:#C98A2E;background:linear-gradient(180deg,#FFFDF7 0%,#F7E7C4 100%);color:#4C3416}
+.h-band{position:absolute;left:0;right:0;top:0;height:13px;opacity:0;pointer-events:none;transition:opacity .45s;background:repeating-linear-gradient(90deg,rgba(158,68,83,.85) 0 10px,rgba(185,142,69,.55) 10px 14px);-webkit-mask:linear-gradient(90deg,transparent 0%,#000 18%,#000 82%,transparent 100%);mask:linear-gradient(90deg,transparent 0%,#000 18%,#000 82%,transparent 100%)}
+.invite.t-qaz .h-band{opacity:1}
+.h-mono{position:relative;width:68px;height:68px;margin:0 auto 10px;display:grid;place-items:center}
+.hm-ring{position:absolute;inset:0;border-radius:50%;border:1px dashed color-mix(in srgb,var(--inv-acc,#B98E45) 65%,transparent);animation:spin 26s linear infinite}
+.hm-disc{position:relative;width:54px;height:54px;border-radius:50%;display:grid;place-content:center;gap:1px;border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 75%,transparent);background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.94),rgba(247,237,214,.62));box-shadow:0 6px 16px -6px rgba(16,42,32,.22),inset 0 1px 0 rgba(255,255,255,.9);color:var(--inv-acc,#B98E45);transition:background .45s,color .45s,border-color .45s}
+.invite.t-emer .hm-disc{background:radial-gradient(circle at 30% 25%,rgba(24,98,74,.95),rgba(8,43,31,.96));box-shadow:0 8px 20px -6px rgba(0,0,0,.45),inset 0 1px 0 rgba(217,188,127,.4)}
+.invite.t-edit .hm-disc{background:#161616;color:#F7EFE0;border-radius:6px;border-color:#161616}
+.invite.t-edit .hm-ring{border-radius:10px}
+.hm-cr{font-style:normal;font-size:.58rem;line-height:1;opacity:.85}
+.hm-txt{font-family:var(--fd);font-size:1.02rem;font-weight:700;line-height:1;letter-spacing:.02em;color:inherit}
+.hm-txt small{font-weight:400;font-style:italic;font-size:.8em;opacity:.85}
+.hm-bt{font-style:normal;font-size:.52rem;line-height:1;opacity:.7}
+.invite .names{font-family:var(--fd);font-size:clamp(2.2rem,8vw,2.8rem);font-weight:700;letter-spacing:.06em;margin:6px 0 3px}
+.invite .sub{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink2);transition:color .45s}
+.cycle-tag{display:inline-block;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--inv-acc,var(--gold));font-weight:700;margin-top:8px;padding:4px 12px;border-radius:999px;border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 35%,transparent);background:color-mix(in srgb,var(--inv-acc,#B98E45) 8%,transparent);transition:color .5s,background .5s,border-color .5s}
+.h-div{display:flex;align-items:center;justify-content:center;gap:10px;margin:10px auto 2px;max-width:160px;color:var(--inv-acc,#B98E45);font-size:.8rem}
+.h-div::before,.h-div::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--inv-acc,#B98E45) 65%,transparent))}
+.h-div::after{background:linear-gradient(270deg,transparent,color-mix(in srgb,var(--inv-acc,#B98E45) 65%,transparent))}
 .swap-target{transition:opacity .32s,transform .32s}
 .invite.swapping .swap-target{opacity:0;transform:translateY(8px)}
-.invite .date{font-size:.85rem;color:var(--inv-acc,var(--gold));font-weight:700;letter-spacing:.12em;margin:14px 0;transition:color .5s}
+.invite .date{font-size:.85rem;color:var(--inv-acc,var(--gold));font-weight:700;letter-spacing:.12em;margin:10px 0 13px;transition:color .5s}
 .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
-.cd>div{border:1px solid var(--hair);background:rgba(185,142,69,.07);border-radius:8px;padding:9px 2px 7px}
+.cd>div{border:1px solid color-mix(in srgb,var(--inv-acc,#B98E45) 30%,transparent);background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(247,239,220,.45));box-shadow:0 3px 0 rgba(185,142,69,.18),0 6px 14px -8px rgba(16,42,32,.18);border-radius:9px;padding:9px 2px 7px;transition:background .45s,border-color .45s}
 .cd b{display:block;font-family:var(--fd);font-size:clamp(1.15rem,4.5vw,1.45rem);font-weight:700}
 .cd span{font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
-.invite .tags{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);margin-top:14px}
+.invite.t-emer .sub,.invite.t-emer .tags{color:rgba(247,239,224,.78)}
+.invite.t-emer .names{color:#FFF7E4}
+.invite.t-emer .cycle-tag{background:rgba(217,188,127,.14);border-color:rgba(217,188,127,.45);color:#F3DC9E}
+.invite.t-emer .date{color:#E9D297}
+.invite.t-emer .cd>div{background:rgba(255,255,255,.08);border-color:rgba(217,188,127,.35);box-shadow:0 3px 0 rgba(0,0,0,.35)}
+.invite.t-emer .cd b{color:#F6DE9D}
+.invite.t-emer .cd span{color:rgba(247,239,224,.72)}
+.invite .tags{font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink2);margin-top:14px;transition:color .45s}
 .invite .tags b{color:var(--inv-acc,var(--gold))}
 .hero-dots{display:flex;gap:6px;justify-content:center;margin-top:16px}
 .hero-dots button{width:26px;height:26px;position:relative;display:grid;place-items:center}
@@ -228,14 +253,18 @@ body.menu-open{overflow:hidden}
 .p-emer:hover .e-frame{box-shadow:inset 0 0 0 6px rgba(217,188,127,.2),0 0 34px rgba(217,188,127,.25)}
 .p-emer strong{font-family:var(--fd);font-size:1.5rem;margin-top:12px;display:block}
 .p-emer span{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase}
-.p-tusau{background:linear-gradient(180deg,#F8E8C8,#F2D9A8);color:#5C4322}
-.t-sun{position:absolute;top:16px;left:50%;translate:-50% 0;font-size:1.9rem;color:#D89A3E;animation:spin 22s linear infinite}
+.p-tusau{background:linear-gradient(180deg,#FDF5E2,#F3DAB0);color:#5C4322}
+.t-sun{position:absolute;top:16px;left:50%;translate:-50% 0;width:36px;height:36px;color:#D89A3E;animation:spin 22s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .p-tusau strong{font-family:var(--fd);font-size:1.7rem}
-.t-age{display:inline-block;margin-top:8px;border:1px solid #B98E45;border-radius:999px;padding:4px 14px;font-size:.68rem;letter-spacing:.2em}
-.t-steps span{position:absolute;font-size:1rem;opacity:.45;transition:opacity .3s}
-.p-tusau:hover .t-steps span{opacity:1}
-.t-steps span:nth-child(1){bottom:22%;left:16%}.t-steps span:nth-child(2){bottom:30%;left:38%;transition-delay:.08s}.t-steps span:nth-child(3){bottom:24%;right:20%;transition-delay:.16s}
+.t-age{display:inline-block;margin-top:8px;border:1px solid #B98E45;background:rgba(255,255,255,.55);border-radius:999px;padding:4px 14px;font-size:.66rem;font-weight:700;letter-spacing:.18em}
+.t-steps span{position:absolute;width:16px;height:26px;color:#C98A2E;opacity:.42;transition:opacity .3s}
+.p-tusau:hover .t-steps span{opacity:.95}
+.t-steps span:nth-child(1){bottom:20%;left:14%;transform:rotate(-16deg)}.t-steps span:nth-child(2){bottom:31%;left:34%;transform:rotate(12deg);transition-delay:.08s}.t-steps span:nth-child(3){bottom:22%;right:16%;transform:rotate(-10deg);transition-delay:.16s}
+.p-seal{display:inline-grid;place-items:center;width:34px;height:34px;margin:0 auto 6px;border-radius:50%;border:1px solid currentColor;font-family:var(--fd);font-size:.76rem;font-weight:700;letter-spacing:0;background:rgba(255,255,255,.45)}
+.p-emer .p-seal{background:rgba(217,188,127,.12);border-color:rgba(217,188,127,.75);color:var(--gold-soft)}
+.p-flor-svg{position:absolute;width:62px;height:62px;color:#C08379;opacity:.32;pointer-events:none}
+.p-flor-svg.tl{top:10px;left:10px}.p-flor-svg.br{bottom:10px;right:10px;transform:rotate(180deg)}
 
 .card-info{padding:18px 18px 20px;display:flex;flex-direction:column;gap:9px;flex:1}
 .ci-top{display:flex;justify-content:space-between;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2)}
@@ -713,10 +742,15 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     </div>
     <div class="invite-wrap" data-reveal style="--d:.15s">
       <div class="invite t-lux" id="heroInvite">
-        <svg class="orn-svg" viewBox="0 0 140 40" aria-hidden="true"><path d="M70 34 C70 18 52 20 52 11 a8 8 0 1 1 16 2 M70 34 C70 18 88 20 88 11 a8 8 0 1 0 -16 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="70" cy="35" r="1.8" fill="currentColor"/></svg>
+        <div class="h-band" aria-hidden="true"></div>
+        <div class="h-mono swap-target" id="heroMono" aria-hidden="true">
+          <span class="hm-ring"></span>
+          <div class="hm-disc"><i class="hm-cr" id="hmCr">♕</i><b class="hm-txt" id="hmTxt">Е <small>&amp;</small> А</b><i class="hm-bt" id="hmBt">❧</i></div>
+        </div>
         <div class="names swap-target" id="cycleNames">Ерасыл &amp; Аяулым</div>
         <div class="sub" data-i18n="inv_sub">Приглашение на той</div>
         <div class="cycle-tag swap-target" id="cycleTag">Luxury · Wedding</div>
+        <div class="h-div" aria-hidden="true"><span id="hDivGlyph">❧</span></div>
         <div class="date" id="heroDate">14 · 02 · 2027 — 17:30</div>
         <div class="cd" id="heroCd" data-ev="0" aria-hidden="true">
           <div><b data-cd="d">00</b><span data-cdl="d">дней</span></div>
@@ -779,7 +813,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
         <article class="card" data-cat="wedding">
           <div class="preview p-luxury">
             <span class="p-no">№ 01</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
-            <div class="p-frame"><span>✦</span><strong>Ерасыл &amp; Аяулым</strong><em>Luxury · Wedding</em><span>❧</span></div>
+            <div class="p-frame"><span class="p-seal">Е&amp;А</span><strong>Ерасыл &amp; Аяулым</strong><em data-i18n="pk0">Luxury · Wedding</em><span>❧</span></div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 01 ✦</b><span>Luxury</span></div>
@@ -796,10 +830,9 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
         <article class="card" data-cat="wedding">
           <div class="preview p-floral">
             <span class="p-no">№ 02</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
-            <span class="flor" style="top:14%;left:12%">✿</span>
-            <span class="flor" style="bottom:12%;right:12%;font-size:1.4rem">✿</span>
-            <span class="flor" style="top:24%;right:16%;font-size:.8rem">✿</span>
-            <div class="p-arch"><strong>Әмір &amp;<br>Томирис</strong><span>Floral · Wedding</span></div>
+            <svg class="p-flor-svg tl" viewBox="0 0 100 100" aria-hidden="true"><path d="M12 85C15 50 40 25 85 15M25 65C45 65 58 50 62 32M18 42C36 42 46 30 48 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="85" cy="15" r="4" fill="currentColor" opacity=".6"/><circle cx="62" cy="32" r="3" fill="currentColor" opacity=".5"/></svg>
+            <svg class="p-flor-svg br" viewBox="0 0 100 100" aria-hidden="true"><path d="M12 85C15 50 40 25 85 15M25 65C45 65 58 50 62 32M18 42C36 42 46 30 48 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="85" cy="15" r="4" fill="currentColor" opacity=".6"/><circle cx="62" cy="32" r="3" fill="currentColor" opacity=".5"/></svg>
+            <div class="p-arch"><span class="p-seal" style="color:#C08379">Ә&amp;Т</span><strong>Әмір &amp;<br>Томирис</strong><span data-i18n="pk1">Floral · Wedding</span></div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 02 ✿</b><span>Floral</span></div>
@@ -818,7 +851,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
             <span class="badge" data-i18n="badge_hit">хит</span>
             <span class="p-no">№ 03</span><span class="p-tag" data-i18n="cat_wed">Свадьба</span>
             <svg class="q-orn top" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            <div class="q-mid"><span>❧</span><strong>Бауыржан &amp; Айым</strong><span data-i18n="cat_wed">Свадьба</span></div>
+            <div class="q-mid"><span class="p-seal" style="color:#9E4453">Б&amp;А</span><strong>Бауыржан &amp; Айым</strong><span data-i18n="pk2">Qazaq · Toy</span></div>
             <svg class="q-orn bot" viewBox="0 0 300 26" aria-hidden="true"><path d="M150 24 C150 12 136 13 136 6 a6 6 0 1 1 12 1 M150 24 C150 12 164 13 164 6 a6 6 0 1 0 -12 1 M20 13 H120 M180 13 H280" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           </div>
           <div class="card-info">
@@ -837,7 +870,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
           <div class="preview p-edit">
             <span class="p-no">№ 04</span><span class="p-tag" data-i18n="cat_jub">Юбилей</span>
             <span class="dot"></span>
-            <div class="lab">Jubilee · Editorial</div>
+            <div class="lab" data-i18n="pk3">Jubilee · Editorial</div>
             <div class="rule"></div>
             <div class="big50">50</div>
             <div class="rule"></div>
@@ -858,9 +891,9 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
         <article class="card" data-cat="birthday">
           <div class="preview p-emer">
             <span class="p-no">№ 05</span><span class="p-tag" data-i18n="cat_bd">День рождения</span>
-            <div class="e-frame">✧</div>
+            <div class="e-frame"><span class="p-seal" style="margin:0">М</span></div>
             <strong>Медина</strong>
-            <span>Emerald · Birthday</span>
+            <span data-i18n="pk4">Emerald · Birthday</span>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 05 ✧</b><span>Emerald</span></div>
@@ -878,10 +911,10 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
           <div class="preview p-tusau">
             <span class="badge new" data-i18n="badge_new">новинка</span>
             <span class="p-no">№ 06</span><span class="p-tag" data-i18n="cat_tusau">Тұсау кесер</span>
-            <span class="t-sun">☀</span>
-            <div><strong>Айсұлтан</strong><br><span class="t-age">👶 1 жас</span></div>
-            <div class="t-steps" aria-hidden="true"><span>👣</span><span>👣</span><span>👣</span></div>
-            <div style="font-size:.66rem;letter-spacing:.28em;text-transform:uppercase">Tusau · 1 жас</div>
+            <svg class="t-sun" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="12" fill="none" stroke="currentColor" stroke-width="1.8"/><g stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="30" y1="6" x2="30" y2="13"/><line x1="30" y1="47" x2="30" y2="54"/><line x1="6" y1="30" x2="13" y2="30"/><line x1="47" y1="30" x2="54" y2="30"/><line x1="13" y1="13" x2="18" y2="18"/><line x1="42" y1="42" x2="47" y2="47"/><line x1="47" y1="13" x2="42" y2="18"/><line x1="18" y1="42" x2="13" y2="47"/></g></svg>
+            <div><strong>Айсұлтан</strong><br><span class="t-age">✦ 1 жас</span></div>
+            <div class="t-steps" aria-hidden="true"><span><svg viewBox="0 0 24 42"><path d="M12 10c4 0 7 4 7 9 0 4-2 7-4 10-1 2 1 5-3 6-4 0-3-4-4-6-2-4-3-7-3-11 0-4 3-8 7-8z" fill="currentColor"/><circle cx="7" cy="6" r="1.7" fill="currentColor"/><circle cx="11" cy="4" r="1.8" fill="currentColor"/><circle cx="15" cy="5" r="1.7" fill="currentColor"/></svg></span><span><svg viewBox="0 0 24 42"><path d="M12 10c4 0 7 4 7 9 0 4-2 7-4 10-1 2 1 5-3 6-4 0-3-4-4-6-2-4-3-7-3-11 0-4 3-8 7-8z" fill="currentColor"/><circle cx="7" cy="6" r="1.7" fill="currentColor"/><circle cx="11" cy="4" r="1.8" fill="currentColor"/><circle cx="15" cy="5" r="1.7" fill="currentColor"/></svg></span><span><svg viewBox="0 0 24 42"><path d="M12 10c4 0 7 4 7 9 0 4-2 7-4 10-1 2 1 5-3 6-4 0-3-4-4-6-2-4-3-7-3-11 0-4 3-8 7-8z" fill="currentColor"/><circle cx="7" cy="6" r="1.7" fill="currentColor"/><circle cx="11" cy="4" r="1.8" fill="currentColor"/><circle cx="15" cy="5" r="1.7" fill="currentColor"/></svg></span></div>
+            <div style="font-size:.66rem;letter-spacing:.22em;text-transform:uppercase" data-i18n="pk5">Tusau · 1 жас</div>
           </div>
           <div class="card-info">
             <div class="ci-top"><b>№ 06 ☀</b><span>Tusau</span></div>
@@ -1137,6 +1170,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       dot_st:"Стиль",dot_tpl:"Шаблон",
       a_menu:"Меню",a_close:"Закрыть",a_prev:"Назад",a_next:"Вперёд",a_tprev:"Предыдущий шаблон",a_tnext:"Следующий шаблон",a_lang:"Переключить язык",
       kicks:["Luxury · Wedding","Floral · Wedding","Qazaq · Toy","Jubilee · Editorial","Emerald · Birthday","Tusau · 1 жас"],
+pk0:"Luxury · Wedding",pk1:"Floral · Wedding",pk2:"Qazaq · Toy",pk3:"Jubilee · Editorial",pk4:"Emerald · Birthday",pk5:"Tusau · 1 жас",
       inv:[
         {title:"Свадебное торжество",
          lead:"Дорогие родные и близкие! В нашей жизни начинается самая красивая глава, и мы хотим разделить этот день с вами. Приглашаем вас на торжество по случаю нашей свадьбы.",
@@ -1243,6 +1277,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
       dot_st:"Стиль",dot_tpl:"Үлгі",
       a_menu:"Мәзір",a_close:"Жабу",a_prev:"Артқа",a_next:"Алға",a_tprev:"Алдыңғы үлгі",a_tnext:"Келесі үлгі",a_lang:"Тілді ауыстыру",
       kicks:["Luxury · Үйлену тойы","Floral · Үйлену тойы","Qazaq · Той","Jubilee · Мерейтой","Emerald · Туған күн","Tusau · Тұсау кесер"],
+pk0:"Luxury · Үйлену тойы",pk1:"Floral · Үйлену тойы",pk2:"Qazaq · Той",pk3:"Jubilee · Мерейтой",pk4:"Emerald · Туған күн",pk5:"Tusau · Тұсау кесер",
       inv:[
         {title:"Үйлену тойы",
          lead:"Құрметті туыстар мен достар! Өміріміздің ең әдемі тарауы басталып келеді — осы күнді сіздермен бірге өткізгіміз келеді. Тойымызға шақырамыз!",
@@ -1314,17 +1349,17 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
   const SUN_SVG='<svg class="t-sun2" viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M32 4V12" transform="rotate(0 32 32)"/><path d="M32 4V12" transform="rotate(30 32 32)"/><path d="M32 4V12" transform="rotate(60 32 32)"/><path d="M32 4V12" transform="rotate(90 32 32)"/><path d="M32 4V12" transform="rotate(120 32 32)"/><path d="M32 4V12" transform="rotate(150 32 32)"/><path d="M32 4V12" transform="rotate(180 32 32)"/><path d="M32 4V12" transform="rotate(210 32 32)"/><path d="M32 4V12" transform="rotate(240 32 32)"/><path d="M32 4V12" transform="rotate(270 32 32)"/><path d="M32 4V12" transform="rotate(300 32 32)"/><path d="M32 4V12" transform="rotate(330 32 32)"/></g><circle cx="32" cy="32" r="12" fill="currentColor"/><circle cx="32" cy="32" r="12" fill="none" stroke="#FFF6E2" stroke-opacity=".55" stroke-width="2" transform="scale(.7) translate(13.7 13.7)"/></svg>';
   const DEMOS=[
     {theme:"theme-luxury",  names:"Ерасыл & Аяулым", kicker:"Luxury · Wedding",   orn:ORN, glyph:"❧", tglyph:"❧", crest:"♕",
-     dc:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Black Tie & Gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]}},
+     dc:{ru:"Дресс-код: Black Tie & Gold",kz:"Дресс-код: Классика және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Шампань","Шампань","#ffffff,#ab9e7d"],["Смокинг","Қара","#3d3d3d,#050505"]]}},
     {theme:"theme-floral",  names:"Әмір & Томирис", kicker:"Floral · Wedding",   orn:ORN, glyph:"✿", tglyph:"❀", crest:"✿",
      deco:'<svg class="flor fl-tl" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg><svg class="flor fl-br" viewBox="0 0 200 200" aria-hidden="true">'+FLOR_SVG+'</svg>',
-     dc:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Garden Pastel",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]}},
+     dc:{ru:"Дресс-код: Garden Pastel",kz:"Дресс-код: Нәзік пастель",sw:[["Пудра","Пудра","#f7dde2,#b56b7d"],["Айвори","Айвори","#ffffff,#d9c7b2"],["Шалфей","Шалфей","#b9cbb6,#5e735c"],["Бордо","Бордо","#9e3b52,#4d1624"]]}},
     {theme:"theme-qazaq",   names:"Бауыржан & Айым", kicker:"Қазақ тойы",         orn:"",   glyph:"✦", tglyph:"❧", crest:"❖", band:true,
      dc:{ru:"Дресс-код: Королевский бордо",kz:"Дресс-код: Ұлттық нақыш",sw:[["Бордо","Бордо","#9c293a,#4a0e18"],["Золото","Алтын","#fff0b5,#9c751e"],["Молочный","Ақ","#ffffff,#d9ceb6"],["Изумруд","Зүбәржат","#1e664b,#0a2b1f"]]}},
     {theme:"theme-editorial",names:"Гүлнара",       kicker:"Jubilee · Editorial",orn:"",   glyph:"✦", tglyph:"✦", crest:"✦", edBig:"50",
-     dc:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Monochrome Chic",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]}},
+     dc:{ru:"Дресс-код: Monochrome Chic",kz:"Дресс-код: Монохром шик",sw:[["Чёрный","Қара","#2b2b2b,#0a0a0a"],["Молочный","Сүт түсті","#ffffff,#ded8ca"],["Графит","Графит","#7a7a7a,#333333"],["Серебро","Күміс","#e8e8e8,#9a9a9a"]]}},
     {theme:"theme-emerald", names:"Медина",          kicker:"Emerald · Birthday", orn:ORN, glyph:"✧", tglyph:"✧", crest:"♕",
      deco:'<span class="spk s1">✦</span><span class="spk s2">✦</span><span class="spk s3">✦</span><span class="spk s4">✦</span><span class="spk s5">✦</span>',
-     dc:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Emerald & Gold",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]}},
+     dc:{ru:"Дресс-код: Emerald & Gold",kz:"Дресс-код: Зүбәржат және алтын",sw:[["Изумруд","Зүбәржат","#277852,#071f14"],["Золото","Алтын","#fff3be,#8d6a16"],["Жемчуг","Інжу","#ffffff,#b5a98a"],["Ночь","Түн","#2b3245,#090d16"]]}},
     {theme:"theme-tusau",   names:"Айсұлтан · 1 жас", kicker:"Tusau · Тұсау кесер",orn:"",   glyph:"☀", tglyph:"☀", crest:"☀", innerDeco:SUN_SVG,
      deco:'<svg class="fp fp1" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp2" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp3" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg><svg class="fp fp4" viewBox="0 0 24 42" aria-hidden="true">'+FP_SVG+'</svg>',
      dc:{ru:"Дресс-код: Тёплый семейный",kz:"Дресс-код: Жылы реңктер",sw:[["Кремовый","Кремді","#fffdf5,#dfd0ac"],["Медовый","Бал түсті","#f5c66b,#9c6614"],["Терракота","Терракота","#d98359,#803e22"],["Олива","Зәйтүн","#a2ad7e,#535c38"]]}}
@@ -1794,20 +1829,26 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
 
   /* ---------- hero: авто-перелистывание тем ---------- */
   const HERO=[
-    {n:"Ерасыл & Аяулым",tag:"Luxury · Wedding",cls:"t-lux"},
-    {n:"Әмір & Томирис",tag:"Floral · Wedding",cls:"t-flor"},
-    {n:"Бауыржан & Айым",tag:"Qazaq · Toy",cls:"t-qaz"},
-    {n:"Гүлнара · 50",tag:"Jubilee · Editorial",cls:"t-edit"},
-    {n:"Медина",tag:"Emerald · Birthday",cls:"t-emer"},
-    {n:"Айсұлтан · 1 жас",tag:"Tusau · 1 жас",cls:"t-tus"}
+    {n:"Ерасыл & Аяулым",mono:"Е <small>&amp;</small> А",crest:"♕",bt:"❧",cls:"t-lux"},
+    {n:"Әмір & Томирис",mono:"Ә <small>&amp;</small> Т",crest:"✿",bt:"❀",cls:"t-flor"},
+    {n:"Бауыржан & Айым",mono:"Б <small>&amp;</small> А",crest:"❖",bt:"❧",cls:"t-qaz"},
+    {n:"Гүлнара · 50",mono:"50",crest:"✦",bt:"✦",cls:"t-edit"},
+    {n:"Медина",mono:"М",crest:"♕",bt:"✧",cls:"t-emer"},
+    {n:"Айсұлтан · 1 жас",mono:"А",crest:"☀",bt:"☀",cls:"t-tus"}
   ];
   const invEl=qs("#heroInvite"),cNames=qs("#cycleNames"),cTag=qs("#cycleTag"),hDots=qs("#heroDots");
+  const hmCr=qs("#hmCr"),hmTxt=qs("#hmTxt"),hmBt=qs("#hmBt"),hDivGlyph=qs("#hDivGlyph");
   let hIdx=0,hTimer=null,hSwapT=null;
   /* дата и отсчёт на карточке — из EVENTS того же шаблона */
   const heroDate=qs("#heroDate"),heroCd=qs("#heroCd");
   function heroEvent(i){heroDate.textContent=dSpaced(EVENTS[i].date)+" — "+EVENTS[i].times[0];heroCd.dataset.ev=String(i);tick();}
   hDots.innerHTML=HERO.map((_,i)=>`<button data-i="${i}" aria-label="${t("dot_st")} ${i+1}"></button>`).join("");
   function heroDots(){qsa("#heroDots button").forEach((b,k)=>b.classList.toggle("on",k===hIdx));}
+  function syncHeroLang(){
+    cTag.textContent=kick(hIdx);
+    qsa("#heroDots button").forEach((b,k)=>b.setAttribute("aria-label",t("dot_st")+" "+(k+1)));
+    heroEvent(hIdx);
+  }
   function setHero(i){
     hIdx=i;const h=HERO[i];
     invEl.classList.add("swapping");
@@ -1815,7 +1856,11 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     hSwapT=setTimeout(()=>{
       HERO.forEach(x=>invEl.classList.remove(x.cls));
       invEl.classList.add(h.cls);
-      cNames.textContent=h.n;cTag.textContent=h.tag;
+      cNames.textContent=h.n;cTag.textContent=kick(i);
+      if(hmCr)hmCr.textContent=h.crest;
+      if(hmTxt)hmTxt.innerHTML=h.mono;
+      if(hmBt)hmBt.textContent=h.bt;
+      if(hDivGlyph)hDivGlyph.textContent=h.bt;
       heroEvent(i);
       invEl.classList.remove("swapping");
       heroDots();
@@ -1930,6 +1975,7 @@ body.menu-open .mmenu{visibility:visible;transition:transform .5s cubic-bezier(.
     const mq=t("mq");qs("#mq1").textContent=mq;qs("#mq2").textContent=mq;
     try{localStorage.setItem("saqtaa-lang",lang);}catch(_){}
     applyWA();
+    syncHeroLang();
     renderSlides();
   }
   qs("#langBtn").addEventListener("click",()=>{lang=lang==="ru"?"kz":"ru";applyLang();});

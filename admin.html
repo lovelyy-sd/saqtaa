@@ -495,10 +495,10 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
         <div class="card">
           <label class="lbl" for="tpl">Шаблон</label>
           <div class="tpl-grid" id="tplGrid">
-            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Свадьба</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Свадьба</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Семейный той</span></span></button>
-            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Юбилей</span></span></button>
+            <button type="button" class="tpl-card on" data-tpl="luxury"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0B1511,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Luxury</span><span class="tpl-sub">Свадьба · Королевский</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="floral"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7B2C3E,#F2C5B8)"></span><span class="tpl-info"><span class="tpl-name">Floral</span><span class="tpl-sub">Свадьба · Цветы</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="qazaq"><span class="tpl-swatch" style="background:linear-gradient(135deg,#7C2230,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Qazaq</span><span class="tpl-sub">Той · Орнамент</span></span></button>
+            <button type="button" class="tpl-card" data-tpl="editorial"><span class="tpl-swatch" style="background:linear-gradient(135deg,#141414,#F3EFE5)"></span><span class="tpl-info"><span class="tpl-name">Editorial</span><span class="tpl-sub">Юбилей · Журнал</span></span></button>
             <button type="button" class="tpl-card" data-tpl="emerald"><span class="tpl-swatch" style="background:linear-gradient(135deg,#0E4D3C,#D9BC7F)"></span><span class="tpl-info"><span class="tpl-name">Emerald</span><span class="tpl-sub">День рождения</span></span></button>
             <button type="button" class="tpl-card" data-tpl="tusau"><span class="tpl-swatch" style="background:linear-gradient(135deg,#734B18,#F3D08A)"></span><span class="tpl-info"><span class="tpl-name">Tusau</span><span class="tpl-sub">Тұсау кесер</span></span></button>
           </div>
@@ -547,13 +547,37 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
           <textarea class="inp inp-wrap" id="ad" rows="2" maxlength="160" placeholder="г. Алматы, пр. Достык, 180" autocomplete="off"></textarea>
         </div>
 
-        <!-- Раскрывающийся блок: Фото, 2ГИС, Тексты и Программа -->
+        <!-- Раскрывающийся блок: Фото, Дресс-код, 2ГИС, Тексты и Программа -->
         <button type="button" class="acc-btn" id="accMediaBtn">
-          <span>📸 Фото, 2ГИС и тексты программы</span>
+          <span>📸 Фото, дресс-код, 2ГИС и тексты</span>
           <span id="accMediaChev">▾</span>
         </button>
         <div class="card acc-body" id="accMediaWrap" hidden>
-          <label class="lbl" for="photoFile">Фотография с телефона</label>
+          <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--hair2)">
+            <label class="lbl" style="margin-top:0">Дресс-код для гостей</label>
+            <div class="seg" id="dcSeg">
+              <button type="button" data-dc="auto" class="on">По шаблону</button>
+              <button type="button" data-dc="custom">Свой</button>
+              <button type="button" data-dc="off">Скрыть</button>
+            </div>
+            <div id="dcCustomBox" hidden style="margin-top:10px;padding:10px 12px;border:1px dashed var(--hair2);border-radius:12px">
+              <label class="lbl" for="dcPal" style="margin-top:0">Палитра оттенков</label>
+              <select class="inp" id="dcPal">
+                <option value="">По выбранному шаблону</option>
+                <option value="gold">Изумруд · Золото · Шампань</option>
+                <option value="pastel">Пудра · Айвори · Шалфей</option>
+                <option value="bordo">Бордо · Золото · Молочный</option>
+                <option value="mono">Монохром (Чёрный · Серебро)</option>
+                <option value="warm">Тёплый (Крем · Медовый · Терракота)</option>
+              </select>
+              <label class="lbl" for="dcRu">Заголовок (RU)</label>
+              <input class="inp" id="dcRu" type="text" maxlength="80" placeholder="Дресс-код: Black Tie & Gold" autocomplete="off">
+              <label class="lbl" for="dcKz">Атауы (ҚАЗ)</label>
+              <input class="inp" id="dcKz" type="text" maxlength="80" placeholder="Дресс-код: Классика және алтын" autocomplete="off">
+            </div>
+          </div>
+
+          <label class="lbl" for="photoFile" style="margin-top:0">Фотография с телефона</label>
           <div class="photo-drop">
             <span>📷 Выбрать фото из галереи</span>
             <input id="photoFile" type="file" accept="image/*">
@@ -1006,7 +1030,7 @@ function showText(){
   $("#txt").innerHTML=act().map(function(k){
     return'<div class="lblock">'+(two?'<p class="lh">'+(k==="ru"?"Русский":"Қазақша")+'</p>':'')+
       '<label class="lbl" for="ti_'+k+'">Заголовок</label><input class="inp" id="ti_'+k+'" type="text" maxlength="80" autocomplete="off" value="'+esc(st[k].ti)+'">'+
-      '<label class="lbl" for="le_'+k+'">Текст приглашения</label><textarea class="inp" id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
+      '<label class="lbl" for="le_'+k+'">Текст приглашения</label><textarea class="inp inp-wrap" id="le_'+k+'" maxlength="700">'+esc(st[k].le)+'</textarea>'+
       '<label class="lbl" for="sg_'+k+'">Подпись</label><input class="inp" id="sg_'+k+'" type="text" maxlength="160" autocomplete="off" value="'+esc(st[k].sg)+'"></div>';}).join("");
   $("#prog").innerHTML=st.rows.map(function(r,i){
     return'<div class="prow" data-i="'+i+'"><div class="prow-acts">'+
@@ -1187,6 +1211,15 @@ function collect(){
     if(srv){o.srv=srv;o.sheet=srv;}
   }
   if(o.t==="editorial")o.b=clean($("#b").value);
+  if(currentDcMode==="off")o.dc=false;
+  else if(currentDcMode==="custom"){
+    var dcObj={};
+    var dRu=clean($("#dcRu").value),dKz=clean($("#dcKz").value),dPal=clean($("#dcPal").value);
+    if(dRu)dcObj.ru=dRu;
+    if(dKz)dcObj.kz=dKz;
+    if(dPal)dcObj.pal=dPal;
+    if(dRu||dKz||dPal)o.dc=dcObj;
+  }
   if(lang==="ru"||lang==="both")o.ru=langBlock(0);
   if(lang==="kz"||lang==="both")o.kz=langBlock(1);
   return o;
@@ -1266,6 +1299,14 @@ function fillFrom(o){
   $("#n").value=o.n||"";$("#d").value=o.d||defaultFutureDate(14);$("#s").value=o.s||"18:00";$("#e").value=o.e||"23:30";
   $("#ve").value=o.ve||"";$("#ad").value=o.ad||"";$("#g").value=o.g||"";$("#h").value=o.h||"";
   $("#p").value=o.p||"";$("#b").value=o.b||"";
+  if(o.dc===false){
+    setDcMode("off");$("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";
+  }else if(o.dc&&typeof o.dc==="object"){
+    setDcMode("custom");
+    $("#dcPal").value=o.dc.pal||"";$("#dcRu").value=o.dc.ru||"";$("#dcKz").value=o.dc.kz||"";
+  }else{
+    setDcMode("auto");$("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";
+  }
   $("#clientEmail").value=o.em||"";
   if(o.srv||o.sheet)$("#srvUrl").value=o.srv||o.sheet;
   if(o.ejs&&o.ejs.s){
@@ -1673,8 +1714,8 @@ async function loadStatsForOrder(order){
 }
 function classifyRow(r){
   var stStr=String(r.att||r.status||"").toLowerCase();
-  if(stStr==="no"||stStr.indexOf("не смогу")!==-1||stStr.indexOf("не приду")!==-1||stStr.indexOf("келмей")!==-1)return"no";
-  if(stStr==="maybe"||stStr.indexOf("пока")!==-1||stStr.indexOf("дума")!==-1||stStr.indexOf("білмей")!==-1)return"maybe";
+  if(stStr==="no"||stStr.indexOf("не смогу")!==-1||stStr.indexOf("не прид")!==-1||stStr.indexOf("келмей")!==-1||stStr.indexOf("алмай")!==-1)return"no";
+  if(stStr==="maybe"||stStr.indexOf("пока")!==-1||stStr.indexOf("дума")!==-1||stStr.indexOf("білмей")!==-1||stStr.indexOf("ойлан")!==-1)return"maybe";
   return"yes";
 }
 function renderStatsView(rows){
@@ -1799,7 +1840,9 @@ $("#statsGuestRows").addEventListener("click",function(e){
 $("#statsExportCsvBtn").addEventListener("click",function(){
   if(!currentStatsRows.length){toast("Список гостей пуст");return;}
   var csv="\uFEFFИмя;Фамилия;Статус;Гостей;Время\n"+currentStatsRows.map(function(r){
-    return[r.name||"",r.fam||"",r.status||r.att||"",r.guests||0,r.time||""].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(";");
+    var c=classifyRow(r),stLbl=c==="yes"?"Придёт":(c==="no"?"Не придёт":"Думает");
+    var gc=c==="yes"?Math.max(1,parseInt(r.guests,10)||1):0;
+    return[r.name||"",r.fam||"",stLbl,gc,r.time||""].map(function(v){return'"'+String(v).replace(/"/g,'""')+'"';}).join(";");
   }).join("\n");
   var blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),u=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=u;a.download="saqtaa-guests-"+(currentStatsOrder?currentStatsOrder.id:"export")+".csv";
@@ -1808,8 +1851,13 @@ $("#statsExportCsvBtn").addEventListener("click",function(){
 });
 $("#statsCopyWaBtn").addEventListener("click",async function(){
   if(!currentStatsOrder){toast("Нет активного заказа");return;}
-  var lines=["📊 Статистика: "+(currentStatsOrder.name||""),"Всего ответов: "+currentStatsRows.length,"Придут: "+$("#stYes").textContent+" · Не придут: "+$("#stNo").textContent+" · Думают: "+$("#stMaybe").textContent,""];
-  currentStatsRows.forEach(function(r,i){lines.push((i+1)+". "+(r.name||"")+" "+(r.fam||"")+" — "+(r.status||r.att||""));});
+  var note=$("#stYesGuestsNote")?$("#stYesGuestsNote").textContent:"";
+  var lines=["📊 Статистика: "+(currentStatsOrder.name||""),"Всего ответов: "+currentStatsRows.length,"Придут: "+$("#stYes").textContent+(note?" "+note:"")+" · Не придут: "+$("#stNo").textContent+" · Думают: "+$("#stMaybe").textContent,""];
+  currentStatsRows.forEach(function(r,i){
+    var c=classifyRow(r),gc=c==="yes"?Math.max(1,parseInt(r.guests,10)||1):0;
+    var stLbl=c==="yes"?("Придёт"+(gc>1?" ("+gc+" чел.)":"")):(c==="no"?"Не придёт":"Думает");
+    lines.push((i+1)+". "+((r.name||"")+" "+(r.fam||"")).trim()+" — "+stLbl);
+  });
   try{await navigator.clipboard.writeText(lines.join("\n"));toast("📲 Отчёт скопирован для WhatsApp");}catch(_){toast("Не удалось скопировать");}
 });
 $("#statsCopyClientLinkBtn").addEventListener("click",async function(){
@@ -1947,6 +1995,13 @@ $("#tplGrid").addEventListener("click",function(e){
 });
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
 document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
+var currentDcMode="auto";
+function setDcMode(m){
+  currentDcMode=(m==="off"||m==="custom")?m:"auto";
+  document.querySelectorAll("#dcSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.dc===currentDcMode);});
+  var box=$("#dcCustomBox");if(box)box.hidden=(currentDcMode!=="custom");
+}
+document.querySelectorAll("#dcSeg button").forEach(function(b){b.addEventListener("click",function(){setDcMode(b.dataset.dc);save();});});
 $("#goToRsvpSettingsBtn").addEventListener("click",function(){
   switchScreen("settings");
   var pid=(currentRsvpMode==="ejs")?"setNotifPanel":"setServerPanel";
