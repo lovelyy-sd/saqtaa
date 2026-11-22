@@ -1,12 +1,13 @@
 /**
- * SAQTAA BACKEND v4.0 (Google Apps Script)
+ * SAQTAA BACKEND v4.1 (Google Apps Script)
  * Единый защищённый сервер для:
  * 1) Серверной авторизации админ-панели (PIN хранится только в Script Properties → ADMIN_PIN)
- * 2) Загрузки фотографий с телефона на Google Диск SAQTAA
- * 3) Сохранения, поиска и удаления заказов (только POST + ADMIN_PIN)
- * 4) Приёма ответов гостей (RSVP) с лимитами, защитой от спама и формул
- * 5) Отправки HTML-уведомлений на Email клиента через GmailApp (Email берётся только из таблицы ORDERS)
- * 6) Раздельной статистики: публичные счётчики (action=counts) и список гостей по токену (action=stats)
+ * 2) Авторизации доверенных устройств по отзывным SHA-256 токенам (90 дней, управление в Настройках)
+ * 3) Загрузки фотографий с телефона на Google Диск SAQTAA
+ * 4) Сохранения, поиска и удаления заказов (только POST + ADMIN_PIN или токен устройства)
+ * 5) Приёма ответов гостей (RSVP) с лимитами, защитой от спама и формул
+ * 6) Отправки HTML-уведомлений на Email клиента через GmailApp (Email берётся только из таблицы ORDERS)
+ * 7) Раздельной статистики: публичные счётчики (action=counts) и список гостей по токену (action=stats)
  *
  * НАСТРОЙКА ПАРОЛЯ:
  * В редакторе Google Apps Script откройте:
@@ -19,6 +20,8 @@
 var BRAND_NAME = "SAQTAA · Цифровые приглашения";
 var TIMEZONE = "Asia/Almaty";
 var MAX_EMAILS_PER_ORDER_HOUR = 120;
+var DEVICE_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90 дней
+var MAX_DEVICES = 15;
 // =============================================
 
 function getAdminPin() {
@@ -51,6 +54,101 @@ function pinError() {
     return "Серверный пароль ADMIN_PIN не задан. Откройте Google Apps Script → Настройки проекта → Свойства скрипта и добавьте ADMIN_PIN (от 4 символов).";
   }
   return "Неверный серверный пароль администратора";
+}
+
+function sha256Hex(str) {
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(str || ""), Utilities.Charset.UTF_8);
+  var out = "";
+  for (var i = 0; i < digest.length; i++) {
+    var b = digest[i];
+    if (b < 0) b += 256;
+    out += (b < 16 ? "0" : "") + b.toString(16);
+  }
+  return out;
+}
+
+function loadDevices() {
+  var raw = PropertiesService.getScriptProperties().getProperty("ADMIN_DEVICES");
+  if (!raw) return [];
+  try {
+    var arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return [];
+    var now = Date.now();
+    return arr.filter(function(d) {
+      return d && typeof d === "object" && d.id && d.hash && (!d.exp || Number(d.exp) > now);
+    });
+  } catch (_) {
+    return [];
+  }
+}
+
+function saveDevices(list) {
+  var trimmed = Array.isArray(list) ? list.slice(-MAX_DEVICES) : [];
+  PropertiesService.getScriptProperties().setProperty("ADMIN_DEVICES", JSON.stringify(trimmed));
+}
+
+function issueDeviceToken(rawLabel) {
+  var token = Utilities.getUuid() + "_" + Utilities.getUuid();
+  var nowMs = Date.now();
+  var nowStr = Utilities.formatDate(new Date(nowMs), TIMEZONE, "dd.MM.yyyy HH:mm");
+  var devId = "dev_" + nowMs.toString(36) + "_" + Utilities.getUuid().slice(0, 6);
+  var label = safeSingleLine(rawLabel || "Устройство администратора", 80) || "Устройство администратора";
+  var list = loadDevices();
+  list.push({
+    id: devId,
+    hash: sha256Hex(token),
+    label: label,
+    created: nowStr,
+    lastSeen: nowStr,
+    lastSeenMs: nowMs,
+    exp: nowMs + DEVICE_TTL_MS
+  });
+  saveDevices(list);
+  return { token: token, id: devId, label: label, created: nowStr };
+}
+
+function findDeviceByToken(token, touchLastSeen) {
+  var cleanTok = String(token || "").trim();
+  if (cleanTok.length < 24) return null;
+  var targetHash = sha256Hex(cleanTok);
+  var list = loadDevices();
+  var found = null;
+  var changed = false;
+  var nowMs = Date.now();
+  for (var i = 0; i < list.length; i++) {
+    if (timingSafeEqual(list[i].hash, targetHash)) {
+      found = list[i];
+      if (touchLastSeen && (!found.lastSeenMs || (nowMs - Number(found.lastSeenMs)) > 1800000)) {
+        found.lastSeen = Utilities.formatDate(new Date(nowMs), TIMEZONE, "dd.MM.yyyy HH:mm");
+        found.lastSeenMs = nowMs;
+        changed = true;
+      }
+      break;
+    }
+  }
+  if (changed) {
+    try { saveDevices(list); } catch (_) {}
+  }
+  return found;
+}
+
+function verifyAdmin(p) {
+  if (!isPinConfigured()) return { ok: false, mode: "", deviceId: "", error: pinError() };
+  if (p && p.pin && verifyPin(p.pin)) {
+    var curDevId = "";
+    if (p.device_token) {
+      var d = findDeviceByToken(p.device_token, false);
+      if (d) curDevId = d.id;
+    }
+    return { ok: true, mode: "pin", deviceId: curDevId };
+  }
+  var tok = String((p && p.device_token) || "").trim();
+  if (tok.length >= 24) {
+    var dev = findDeviceByToken(tok, true);
+    if (dev) return { ok: true, mode: "device", deviceId: dev.id, label: dev.label };
+    return { ok: false, mode: "", deviceId: "", token_invalid: true, error: "Доступ для этого устройства отозван или истёк. Войдите снова по паролю." };
+  }
+  return { ok: false, mode: "", deviceId: "", error: pinError() };
 }
 
 function escHtml(s) {
@@ -150,41 +248,140 @@ function doPost(e) {
 function handle(p, isPost) {
   var action = String(p.action || "ping").trim();
   if (action === "ping") {
-    return jsonOut({ ok: true, status: "SAQTAA Server Active", version: "4.0", pin_configured: isPinConfigured() });
+    return jsonOut({ ok: true, status: "SAQTAA Server Active", version: "4.1", pin_configured: isPinConfigured() });
   }
 
   // Защищённые действия принимаются строго через POST, чтобы PIN и токены не попадали в URL/логи
   var postOnlyActions = {
-    auth: 1, change_pin: 1, test_email: 1, upload_photo: 1,
+    auth: 1, change_pin: 1, remember_device: 1, list_devices: 1, revoke_device: 1,
+    test_email: 1, upload_photo: 1,
     save_order: 1, list_orders: 1, delete_order: 1, stats: 1, get: 1
   };
   if (postOnlyActions[action] && !isPost) {
     return jsonOut({ ok: false, error: "Используйте POST-запрос для защищённого действия" });
   }
 
-  // 1. ПРОВЕРКА СВЯЗИ И АВТОРИЗАЦИИ АДМИНКИ
+  // 1. ПРОВЕРКА СВЯЗИ, АВТОРИЗАЦИЯ И ЗАПОМИНАНИЕ УСТРОЙСТВА
   if (action === "auth") {
-    if (!verifyPin(p.pin)) {
+    if (!isPinConfigured()) {
       return jsonOut({ ok: false, error: pinError() });
     }
-    ensureSheets(true, true);
-    return jsonOut({ ok: true, message: "Авторизация успешна", version: "4.0" });
+    if (p.pin) {
+      if (!verifyPin(p.pin)) {
+        return jsonOut({ ok: false, error: pinError() });
+      }
+      ensureSheets(true, true);
+      var outAuth = { ok: true, message: "Авторизация успешна", version: "4.1" };
+      if (p.remember === true || p.remember === "1" || p.remember === "true") {
+        var devLock = LockService.getScriptLock();
+        var gotDevLock = devLock.tryLock(5000);
+        try {
+          var issued = issueDeviceToken(p.device_label);
+          outAuth.device_token = issued.token;
+          outAuth.device_id = issued.id;
+          outAuth.device_label = issued.label;
+        } finally {
+          if (gotDevLock) devLock.releaseLock();
+        }
+      }
+      return jsonOut(outAuth);
+    }
+    if (p.device_token) {
+      var dev = findDeviceByToken(p.device_token, true);
+      if (!dev) {
+        return jsonOut({ ok: false, token_invalid: true, error: "Доступ для этого устройства отозван или истёк. Войдите снова по паролю." });
+      }
+      ensureSheets(true, true);
+      return jsonOut({ ok: true, message: "Устройство авторизовано", version: "4.1", device_id: dev.id, device_label: dev.label });
+    }
+    return jsonOut({ ok: false, error: pinError() });
   }
 
-  // Смена пароля администратора
+  // Запомнить текущее устройство из Настроек (если вошли по паролю без галочки)
+  if (action === "remember_device") {
+    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+    var remLock = LockService.getScriptLock();
+    var gotRemLock = remLock.tryLock(5000);
+    if (!gotRemLock) return jsonOut({ ok: false, error: "Сервер занят, попробуйте ещё раз" });
+    try {
+      var issued2 = issueDeviceToken(p.device_label);
+      return jsonOut({ ok: true, device_token: issued2.token, device_id: issued2.id, device_label: issued2.label, created: issued2.created });
+    } finally {
+      remLock.releaseLock();
+    }
+  }
+
+  // Список всех запомненных устройств
+  if (action === "list_devices") {
+    var ldAuth = verifyAdmin(p);
+    if (!ldAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(ldAuth.token_invalid), error: ldAuth.error });
+    var devs = loadDevices();
+    return jsonOut({
+      ok: true,
+      devices: devs.map(function(d) {
+        return {
+          id: d.id,
+          label: d.label,
+          created: d.created || "",
+          lastSeen: d.lastSeen || d.created || "",
+          current: Boolean(ldAuth.deviceId && d.id === ldAuth.deviceId)
+        };
+      }).reverse()
+    });
+  }
+
+  // Отзыв одного или всех доверенных устройств
+  if (action === "revoke_device") {
+    var rvAuth = verifyAdmin(p);
+    if (!rvAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(rvAuth.token_invalid), error: rvAuth.error });
+    var rvLock = LockService.getScriptLock();
+    var gotRvLock = rvLock.tryLock(5000);
+    if (!gotRvLock) return jsonOut({ ok: false, error: "Сервер занят, попробуйте ещё раз" });
+    try {
+      if (p.all === true || p.all === "1" || p.all === "true") {
+        saveDevices([]);
+        return jsonOut({ ok: true, revoked_all: true, remaining: 0 });
+      }
+      var targetDevId = safeSingleLine(p.device_id || rvAuth.deviceId || "", 80);
+      if (!targetDevId) return jsonOut({ ok: false, error: "Устройство не указано" });
+      var curList = loadDevices();
+      var nextList = curList.filter(function(d) { return d.id !== targetDevId; });
+      saveDevices(nextList);
+      return jsonOut({ ok: true, revoked_id: targetDevId, remaining: nextList.length });
+    } finally {
+      rvLock.releaseLock();
+    }
+  }
+
+  // Смена пароля администратора (сбрасывает старые токены устройств)
   if (action === "change_pin") {
     if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
     var newPin = String(p.new_pin || "").trim();
     if (newPin.length < 4 || newPin.length > 64) {
       return jsonOut({ ok: false, error: "Новый пароль должен быть от 4 до 64 символов" });
     }
-    PropertiesService.getScriptProperties().setProperty("ADMIN_PIN", newPin);
-    return jsonOut({ ok: true });
+    var cpLock = LockService.getScriptLock();
+    var gotCpLock = cpLock.tryLock(5000);
+    try {
+      PropertiesService.getScriptProperties().setProperty("ADMIN_PIN", newPin);
+      saveDevices([]);
+      var cpOut = { ok: true, devices_cleared: true };
+      if (p.remember === true || p.remember === "1" || p.remember === "true") {
+        var reIssued = issueDeviceToken(p.device_label);
+        cpOut.device_token = reIssued.token;
+        cpOut.device_id = reIssued.id;
+        cpOut.device_label = reIssued.label;
+      }
+      return jsonOut(cpOut);
+    } finally {
+      if (gotCpLock) cpLock.releaseLock();
+    }
   }
 
   // Тест отправки письма через GmailApp (из Настроек админ-панели)
   if (action === "test_email") {
-    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+    var teAuth = verifyAdmin(p);
+    if (!teAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(teAuth.token_invalid), error: teAuth.error });
     var toAddr = safeSingleLine(p.to, 120);
     if (!toAddr || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(toAddr)) {
       return jsonOut({ ok: false, error: "Укажите корректный Email получателя" });
@@ -203,7 +400,8 @@ function handle(p, isPost) {
 
   // 2. ЗАГРУЗКА ФОТО С ТЕЛЕФОНА НА GOOGLE ДИСК SAQTAA
   if (action === "upload_photo") {
-    if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+    var upAuth = verifyAdmin(p);
+    if (!upAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(upAuth.token_invalid), error: upAuth.error });
     try {
       var b64 = String(p.base64 || "");
       var mime = String(p.mime || "image/jpeg").toLowerCase().trim();
@@ -248,7 +446,8 @@ function handle(p, isPost) {
 
     // 3. СОХРАНЕНИЕ ЗАКАЗА В ОБЛАЧНУЮ БАЗУ
     if (action === "save_order") {
-      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+      var soAuth = verifyAdmin(p);
+      if (!soAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(soAuth.token_invalid), error: soAuth.error });
       var orderId = safeSingleLine(p.id || ("ord_" + new Date().getTime()), 80);
       var nowStr = Utilities.formatDate(new Date(), TIMEZONE, "dd.MM.yyyy HH:mm");
       var names = safeCell(safeSingleLine(p.names || p.name || "", 140));
@@ -288,7 +487,8 @@ function handle(p, isPost) {
 
     // 4. СПИСОК И ПОИСК ЗАКАЗОВ ДЛЯ АДМИНКИ
     if (action === "list_orders") {
-      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+      var loAuth = verifyAdmin(p);
+      if (!loAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(loAuth.token_invalid), error: loAuth.error });
       var rows = db.orders.getDataRange().getValues();
       var list = [];
       for (var i = 1; i < rows.length; i++) {
@@ -315,7 +515,8 @@ function handle(p, isPost) {
 
     // 5. УДАЛЕНИЕ ЗАКАЗА
     if (action === "delete_order") {
-      if (!verifyPin(p.pin)) return jsonOut({ ok: false, error: pinError() });
+      var doAuth = verifyAdmin(p);
+      if (!doAuth.ok) return jsonOut({ ok: false, token_invalid: Boolean(doAuth.token_invalid), error: doAuth.error });
       var targetId = safeSingleLine(p.id || "", 80);
       var rows = db.orders.getDataRange().getValues();
       for (var i = rows.length - 1; i >= 1; i--) {
@@ -553,13 +754,14 @@ function handle(p, isPost) {
       return jsonOut({ ok: true, yes: cYes, no: cNo, maybe: cMaybe, responses: cResp });
     }
 
-    // 8. ПОЛНЫЙ СПИСОК ГОСТЕЙ ДЛЯ КЛИЕНТА И АДМИНКИ (POST + oid + токен st или ADMIN_PIN)
+    // 8. ПОЛНЫЙ СПИСОК ГОСТЕЙ ДЛЯ КЛИЕНТА И АДМИНКИ (POST + oid + токен st, ADMIN_PIN или device_token)
     if (action === "stats" || action === "get") {
       var filterOrderId = safeSingleLine(p.oid || p.order_id || "", 80);
       if (!filterOrderId || filterOrderId === "default") {
         return jsonOut({ ok: false, error: "Укажите корректный ID заказа" });
       }
-      var hasAccess = verifyPin(p.pin);
+      var stAdmin = verifyAdmin(p);
+      var hasAccess = stAdmin.ok;
       if (!hasAccess) {
         var givenToken = String(p.st || p.token || "").trim();
         if (givenToken && db.orders) {
@@ -602,7 +804,7 @@ function handle(p, isPost) {
       return jsonOut({ ok: true, rows: outRows });
     }
 
-    return jsonOut({ ok: true, status: "SAQTAA Server Active", version: "4.0" });
+    return jsonOut({ ok: true, status: "SAQTAA Server Active", version: "4.1" });
   } catch (err) {
     return jsonOut({ ok: false, error: String(err) });
   } finally {
