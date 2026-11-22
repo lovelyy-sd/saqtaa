@@ -968,7 +968,7 @@ function render(instantFx){
     '<div class="rs-done"'+(showDone?'':' hidden')+'><div class="rd-card"><span class="rd-check">'+CHECK_ICON+'</span><h3 class="rd-title">'+t("thanks")+'</h3><p class="rd-name">'+esc(sentFull)+'</p><p class="rd-msg">'+esc(t("ok_"+sentAtt))+'</p><p class="rd-guests"'+(sentAtt==="yes"?'':' hidden')+'>'+(sentAtt==="yes"?esc(guestDoneText(sentCnt)):'')+'</p><span class="rd-div"></span>'+
       '<p class="rd-date">'+dHuman(D.d)+' · '+esc(D.s)+'</p>'+(venueLine?'<p class="rd-venue">'+esc(venueLine)+'</p>':'')+
       '<button class="rd-edit" type="button">'+t("edit")+'</button></div></div>'+
-      '<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div></section>';
+      (D.rst===false?'':'<div class="rs-stats" aria-live="polite"><p class="rs-stats-h">'+t("st_h")+'</p><div class="rs-stat-grid"><div><b data-stat="yes">0</b><span>'+t("st_yes")+'</span></div><div><b data-stat="no">0</b><span>'+t("st_no")+'</span></div><div><b data-stat="maybe">0</b><span>'+t("st_maybe")+'</span></div></div><p class="rs-stats-tot" data-stat="tot"></p></div>')+'</section>';
   var showDateRow=(D.t!=="luxury"&&D.t!=="floral");
   var decoHTML=(D.t==="tusau"||D.t==="tusau2")?(isTusau?(T.deco||""):'<span class="spk s1">✦</span><span class="spk s2">✧</span><span class="spk s4">✦</span>'):(T.deco||"");
   app.innerHTML='<article class="inv-page '+T.cls+(photo?'':' is-deco')+'">'+sw+'<canvas class="fx-cv" aria-hidden="true"></canvas>'+decoHTML+'<div class="inv-inner">'+
@@ -999,7 +999,7 @@ function render(instantFx){
   tick(true);
   observeFx(Boolean(instantFx));
   updateStatsDOM();
-  if(D.rsvp!==false)fetchInviteStats(false);
+  if(D.rsvp!==false&&D.rst!==false)fetchInviteStats(false);
 }
 var fxRaf=0,fxRo=null,fxResume=null;
 document.addEventListener("visibilitychange",function(){
@@ -1155,7 +1155,7 @@ function computeStatsCounts(){
   return{yes:yes,no:no,maybe:maybe,responses:rows.length};
 }
 function updateStatsDOM(){
-  if(!D||D.rsvp===false)return;
+  if(!D||D.rsvp===false||D.rst===false)return;
   var box=app.querySelector(".rs-stats");
   if(!box)return;
   var c=computeStatsCounts();
@@ -1166,7 +1166,7 @@ function updateStatsDOM(){
   if(elT)elT.textContent=c.responses?fill(t("st_tot"),{n:c.responses}):t("st_empty");
 }
 async function fetchInviteStats(force){
-  if(!D||D.rsvp===false)return;
+  if(!D||D.rsvp===false||D.rst===false)return;
   var srv=D.srv||D.sheet;
   if(!srv)return;
   var oid=statsOid();
@@ -1542,6 +1542,7 @@ async function applyInviteData(rawD,instantPreview){
       pr:Array.isArray(b.pr)?b.pr.slice(0,20).map(function(p){return Array.isArray(p)?[String(p[0]||"").slice(0,5),String(p[1]||"").slice(0,60),String(p[2]||"").slice(0,90)]:[];}).filter(function(p){return p[0]&&p[1];}):[]};
   });
   D.rsvp=D.rsvp!==false;
+  D.rst=D.rst!==false;
   if(D.dc===false){D.dc=false;}
   else if(D.dc&&typeof D.dc==="object"){
     var rawSw=Array.isArray(D.dc.sw)?D.dc.sw.slice(0,10).map(function(s){

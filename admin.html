@@ -714,6 +714,15 @@ body.kb-open .bottom-nav,body.kb-open .ed-sticky-bar{display:none!important}
             <p class="hint">Клиенту не нужна регистрация — письма с ответами приходят автоматически.</p>
           </div>
 
+          <div id="rsvpStatsToggleWrap">
+            <label class="lbl">Сводка «Ответы гостей» внизу приглашения</label>
+            <div class="seg" id="rsvpStatsSeg">
+              <button type="button" data-rst="on" class="on">👁️ Показывать</button>
+              <button type="button" data-rst="off">🚫 Скрыть</button>
+            </div>
+            <p class="hint">Показывает гостям общие цифры (Придут / Не придут / Думают) под формой. Отдельная статистика клиента работает в любом случае.</p>
+          </div>
+
           <div class="srv-info-box" id="rsvpSrvInfo">
             <span id="rsvpSrvInfoTxt">✓ Сервер SAQTAA подключён</span>
             <button type="button" id="goToRsvpSettingsBtn">⚙️ Настройки</button>
@@ -1033,6 +1042,7 @@ var photoDBPromise=null;
 var currentPhotoBlob=null;
 var currentPhotoUrl="";
 var currentRsvpMode="saqtaa";
+var currentShowRsvpStats=true;
 var currentOrderId="";
 var currentStatsToken="";
 var sessionPin="";
@@ -1491,6 +1501,7 @@ function collect(){
     ve:clean($("#ve").value),ad:clean($("#ad").value),g:clean($("#g").value),h:clean($("#h").value),p:clean($("#p").value),
     rsvp:currentRsvpMode!=="none"
   };
+  if(currentRsvpMode!=="none"&&!currentShowRsvpStats)o.rst=false;
   var em=clean($("#clientEmail").value);
   if(em&&currentRsvpMode!=="none")o.em=em;
   var srv=getSrvUrl();
@@ -1569,11 +1580,18 @@ function save(){
   schedulePreview();
 }
 function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(save,240);schedulePreview();}
+function setShowRsvpStats(show){
+  currentShowRsvpStats=(show!==false);
+  document.querySelectorAll("#rsvpStatsSeg button").forEach(function(b){
+    b.classList.toggle("on",b.dataset.rst===(currentShowRsvpStats?"on":"off"));
+  });
+}
 function setRsvpMode(mode){
   if(mode==="w3f")mode="ejs";
   currentRsvpMode=mode;
   document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.classList.toggle("on",b.dataset.r===mode);});
   $("#rsvpEmailCommon").hidden=(mode!=="saqtaa"&&mode!=="ejs");
+  if($("#rsvpStatsToggleWrap"))$("#rsvpStatsToggleWrap").hidden=(mode==="none");
   var info=$("#rsvpSrvInfo"),txt=$("#rsvpSrvInfoTxt");
   if(info){
     info.hidden=(mode==="none");
@@ -1641,6 +1659,7 @@ function fillFrom(o){
   }else{
     setRsvpMode("saqtaa");
   }
+  setShowRsvpStats(o.rst!==false);
   function fromBlock(b){return{ti:(b&&b.ti)||"",le:(b&&b.le)||"",sg:(b&&b.sg)||""};}
   st.ru=fromBlock(o.ru);st.kz=fromBlock(o.kz);
   var a=(o.ru&&o.ru.pr)||[],b=(o.kz&&o.kz.pr)||[],n=Math.max(a.length,b.length);st.rows=[];
@@ -2389,6 +2408,7 @@ if($("#evChips")){
 }
 document.querySelectorAll("#langSeg button").forEach(function(b){b.addEventListener("click",function(){setLang(b.dataset.l);save();});});
 document.querySelectorAll("#rsvpSeg button").forEach(function(b){b.addEventListener("click",function(){setRsvpMode(b.dataset.r);save();});});
+document.querySelectorAll("#rsvpStatsSeg button").forEach(function(b){b.addEventListener("click",function(){setShowRsvpStats(b.dataset.rst!=="off");save();});});
 document.querySelectorAll("#dcSeg button").forEach(function(b){b.addEventListener("click",function(){setDcMode(b.dataset.dc);save();});});
 if($("#dcEditFromAutoBtn")){
   $("#dcEditFromAutoBtn").addEventListener("click",function(){
@@ -2593,6 +2613,7 @@ async function startNewOrder(){
   dcCustomTouched=false;dcSwatches=[];
   $("#dcPal").value="";$("#dcRu").value="";$("#dcKz").value="";$("#dcSubRu").value="";$("#dcSubKz").value="";
   setDcMode("auto",true);
+  setShowRsvpStats(true);
   $("#activeOrderBadge").textContent="Создать приглашение";
   $("#result").hidden=true;$("#mkErr").hidden=true;
   try{await delPhoto("current");}catch(_){}
@@ -2837,7 +2858,7 @@ var sessionOk=false;try{sessionOk=(sessionStorage.getItem(OK_KEY)==="1"&&Boolean
 try{historyItems=JSON.parse(localStorage.getItem(HIST_KEY)||"[]");if(!Array.isArray(historyItems))historyItems=[];}catch(_){historyItems=[];}
 var saved=null;try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(_){}
 if(saved&&saved.o){fillFrom(saved.o);if(saved.base)$("#base").value=saved.base;}
-else{syncTplCards("luxury");applyEventPreset("wedding");setRsvpMode("saqtaa");}
+else{syncTplCards("luxury");applyEventPreset("wedding");setRsvpMode("saqtaa");setShowRsvpStats(true);}
 syncSecurityBadge();
 autoGrowAll();
 getPhoto(currentOrderId||"current").then(setCurrentPhoto).catch(function(){});
